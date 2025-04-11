@@ -72,12 +72,32 @@ public:
 	void CreateParticleGroup(const std::string name, const std::string textureFilePath);
 
 	/// <summary>
-	/// 生成
+	/// パーティクルの生成
 	/// </summary>
-	/// <param name="name">名前</param>
-	/// <param name="position">座標</param>
-	/// <param name="count">数</param>
-	void Emit(const std::string name, const Vector3& translate, const AABB& area, const Vector3& minVelocity, const Vector3& maxVelocity, float minTime, float maxTime, bool useRandomColor, uint32_t count);
+	/// <param name="groupName">グループ名</param>
+	/// <param name="translate">初期座標</param>
+	/// <param name="area">生成範囲</param>
+	/// <param name="minVelocity">最小速度</param>
+	/// <param name="maxVelocity">最大速度</param>
+	/// <param name="minTime">最小時間</param>
+	/// <param name="maxTime">最大時間</param>
+	/// <param name="useRandomColor">色のランダムフラグ</param>
+	/// <param name="count">生成数</param>
+	void Emit(const std::string groupName, const Vector3& translate, const AABB& area, const Vector3& minVelocity, const Vector3& maxVelocity, float minTime, float maxTime, bool useRandomColor, uint32_t count);
+
+	/// <summary>
+	/// パーティクルの生成
+	/// </summary>
+	/// <param name="groupName">グループ名</param>
+	/// <param name="translate">初期座標</param>
+	/// <param name="area">生成範囲</param>
+	/// <param name="minVelocity">最小速度</param>
+	/// <param name="maxVelocity">最大速度</param>
+	/// <param name="minTime">最小時間</param>
+	/// <param name="maxTime">最大時間</param>
+	/// <param name="useRandomColor">色のランダムフラグ</param>
+	/// <param name="count">生成数</param>
+	void EmitPlane(const std::string groupName, const Vector3& translate, const AABB& area, const Vector3& minVelocity, const Vector3& maxVelocity, float minTime, float maxTime, bool useRandomColor, uint32_t count);
 
 	/// <summary>
 	/// 加速場との接触判定

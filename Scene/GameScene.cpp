@@ -80,6 +80,10 @@ void GameScene::Initialize() {
 
 	//モデルの設定
 	ground_->SetModel("Ground");
+
+	/// === パーティクルの生成 === ///
+
+	ParticleManager::GetInstance()->CreateParticleGroup("Particle", "star.png");
 }
 
 void GameScene::Finalize() {
@@ -128,7 +132,12 @@ void GameScene::Update() {
 	if (ImGui::Button("Start Audio")) {
 
 		//音声データの再生
-		Audio::GetInstance()->StartSound("SE",false);
+		Audio::GetInstance()->StartSound("SE", false);
+	}
+
+	if (ImGui::Button("Emit Particle")) {
+
+		ParticleManager::GetInstance()->EmitPlane("Particle", { 0.0f,1.0f,0.0f }, { {0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} }, { 0.0f,0.0f,0.0f }, { 0.0f,0.0f,0.0f }, 0.0f, 1.0f, false, 16);
 	}
 
 	ImGui::Text("Shift + LeftClick : Move Camera");

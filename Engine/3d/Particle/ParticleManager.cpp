@@ -105,6 +105,15 @@ void ParticleManager::Emit(const std::string name, const Vector3& translate, con
 
 }
 
+void ParticleManager::EmitPlane(const std::string groupName, const Vector3& translate, const AABB& area, const Vector3& minVelocity, const Vector3& maxVelocity, float minTime, float maxTime, bool useRandomColor, uint32_t count) {
+
+	//登録済みの名前かチェック
+	if (particleGroups.contains(groupName)) {
+		particleGroups[groupName].EmitPlane(translate, area, minVelocity, maxVelocity, minTime, maxTime, useRandomColor, count);
+	}
+
+}
+
 ///=====================================================/// 
 /// 加速場との接触判定
 ///=====================================================///

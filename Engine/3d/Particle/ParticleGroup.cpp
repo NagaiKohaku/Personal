@@ -136,12 +136,14 @@ void ParticleGroup::Initialize(const std::string textureFilePath, Camera* camera
 void ParticleGroup::Update() {
 
 	//ビルボード行列の計算
-	Matrix4x4 backToFrontMatrix = MakeRotateYMatrix(std::numbers::pi_v<float>);
-	Matrix4x4 billboardMatrix = backToFrontMatrix * defaultCamera_->GetWorldTransform().GetWorldMatrix();
+	Matrix4x4 billboardMatrix = defaultCamera_->GetViewMatrix();
 
 	billboardMatrix.m[3][0] = 0.0f;
 	billboardMatrix.m[3][1] = 0.0f;
 	billboardMatrix.m[3][2] = 0.0f;
+	billboardMatrix.m[3][3] = 1.0f;
+
+	billboardMatrix = Inverse4x4(billboardMatrix);
 
 	//カメラからビュープロジェクション行列を取得
 	Matrix4x4 viewProjectionMatrix = defaultCamera_->GetViewProjectionMatrix();
@@ -167,11 +169,16 @@ void ParticleGroup::Update() {
 			//拡縮行列の計算
 			Matrix4x4 scaleMatrix = MakeScaleMatrix(particleIterator->transform.scale);
 
+			Matrix4x4 rotateXMatrix = MakeRotateXMatrix(particleIterator->transform.rotate.x);
+			Matrix4x4 rotateYMatrix = MakeRotateYMatrix(particleIterator->transform.rotate.y);
+			Matrix4x4 rotateZMatrix = MakeRotateZMatrix(particleIterator->transform.rotate.z);
+			Matrix4x4 rotateMatrix = rotateXMatrix * (rotateYMatrix * rotateZMatrix);
+
 			//座標行列の計算
 			Matrix4x4 translateMatrix = MakeTranslateMatrix(particleIterator->transform.translate);
 
 			//ワールド行列の計算
-			Matrix4x4 worldMatrix = scaleMatrix * (billboardMatrix * translateMatrix);
+			Matrix4x4 worldMatrix = scaleMatrix * rotateMatrix * translateMatrix;
 
 			//ワールドビュープロジェクション行列の合成
 			Matrix4x4 worldViewProjectionMatrix = worldMatrix * viewProjectionMatrix;
@@ -216,6 +223,19 @@ void ParticleGroup::Emit(const Vector3& translate, const AABB& area, const Vecto
 	}
 
 	particles_.splice(particles_.end(), particles);
+}
+
+void ParticleGroup::EmitPlane(const Vector3& translate, const AABB& area, const Vector3& minVelocity, const Vector3& maxVelocity, float minTime, float maxTime, bool useRandomColor, uint32_t count) {
+
+	std::list<Particle> particles;
+
+	for (uint32_t i = 0; i < count; i++) {
+
+		particles.push_back(MakeNewPlaneParticle(translate, area, minVelocity, maxVelocity, minTime, maxTime, useRandomColor));
+	}
+
+	particles_.splice(particles_.end(), particles);
+
 }
 
 void ParticleGroup::CheckCollisionAccelerationField() {
@@ -274,6 +294,46 @@ ParticleGroup::Particle ParticleGroup::MakeNewParticle(const Vector3& translate,
 
 	particle.transform.scale = { 1.0f,1.0f,1.0f };
 	particle.transform.rotate = { 0.0f,3.14f,0.0f };
+	particle.transform.translate = { distPosX(randomEngine_),distPosY(randomEngine_) ,distPosZ(randomEngine_) };
+
+	particle.velocity = { distVelocityX(randomEngine_),distVelocityY(randomEngine_),distVelocityZ(randomEngine_) };
+
+	if (useRandomColor) {
+		particle.color = { distColor(randomEngine_) ,distColor(randomEngine_) ,distColor(randomEngine_) ,1.0f };
+	} else {
+		particle.color = { 1.0f,1.0f,1.0f,1.0f };
+	}
+
+	particle.lifeTime = distTime(randomEngine_);
+	particle.currentTime = 0.0f;
+
+	particle.transform.translate = particle.transform.translate + translate;
+
+	return particle;
+}
+
+ParticleGroup::Particle ParticleGroup::MakeNewPlaneParticle(const Vector3& translate, const AABB& area, const Vector3& minVelocity, const Vector3& maxVelocity, float minTime, float maxTime, bool useRandomColor) {
+
+	Particle particle;
+
+	std::uniform_real_distribution<float> distPosX(area.min.x, area.max.x);
+	std::uniform_real_distribution<float> distPosY(area.min.y, area.max.y);
+	std::uniform_real_distribution<float> distPosZ(area.min.z, area.max.z);
+
+	std::uniform_real_distribution<float> distVelocityX(minVelocity.x, maxVelocity.x);
+	std::uniform_real_distribution<float> distVelocityY(minVelocity.y, maxVelocity.y);
+	std::uniform_real_distribution<float> distVelocityZ(minVelocity.z, maxVelocity.z);
+
+	std::uniform_real_distribution<float> distRotationX(-std::numbers::pi_v<float>, std::numbers::pi_v<float>);
+	std::uniform_real_distribution<float> distRotationY(-std::numbers::pi_v<float>, std::numbers::pi_v<float>);
+	std::uniform_real_distribution<float> distRotationZ(-std::numbers::pi_v<float>, std::numbers::pi_v<float>);
+
+	std::uniform_real_distribution<float> distColor(-1.0f, 1.0f);
+
+	std::uniform_real_distribution<float> distTime(minTime, maxTime);
+
+	particle.transform.scale = { 1.0f,1.0f,1.0f };
+	particle.transform.rotate = { 0.0f,0.0f,distRotationZ(randomEngine_) };
 	particle.transform.translate = { distPosX(randomEngine_),distPosY(randomEngine_) ,distPosZ(randomEngine_) };
 
 	particle.velocity = { distVelocityX(randomEngine_),distVelocityY(randomEngine_),distVelocityZ(randomEngine_) };

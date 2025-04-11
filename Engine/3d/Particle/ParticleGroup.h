@@ -116,12 +116,30 @@ public:
 	void Draw();
 
 	/// <summary>
-	/// 生成
+	/// パーティクルの生成
 	/// </summary>
-	/// <param name="name">名前</param>
-	/// <param name="position">座標</param>
-	/// <param name="count">数</param>
+	/// <param name="translate">初期座標</param>
+	/// <param name="area">生成範囲</param>
+	/// <param name="minVelocity">最小速度</param>
+	/// <param name="maxVelocity">最大速度</param>
+	/// <param name="minTime">最小時間</param>
+	/// <param name="maxTime">最大時間</param>
+	/// <param name="useRandomColor">色のランダムフラグ</param>
+	/// <param name="count">生成数</param>
 	void Emit(const Vector3& translate, const AABB& area, const Vector3& minVelocity, const Vector3& maxVelocity, float minTime, float maxTime, bool useRandomColor, uint32_t count);
+
+	/// <summary>
+	/// パーティクルの生成
+	/// </summary>
+	/// <param name="translate">初期座標</param>
+	/// <param name="area">生成範囲</param>
+	/// <param name="minVelocity">最小速度</param>
+	/// <param name="maxVelocity">最大速度</param>
+	/// <param name="minTime">最小時間</param>
+	/// <param name="maxTime">最大時間</param>
+	/// <param name="useRandomColor">色のランダムフラグ</param>
+	/// <param name="count">生成数</param>
+	void EmitPlane(const Vector3& translate, const AABB& area, const Vector3& minVelocity, const Vector3& maxVelocity, float minTime, float maxTime, bool useRandomColor, uint32_t count);
 
 	void CheckCollisionAccelerationField();
 
@@ -147,8 +165,27 @@ private:
 	/// 新しいパーティクルの生成
 	/// </summary>
 	/// <param name="translate">座標</param>
+	/// <param name="area">生成範囲</param>
+	/// <param name="minVelocity">最小速度</param>
+	/// <param name="maxVelocity">最大速度</param>
+	/// <param name="minTime">最小生成時間</param>
+	/// <param name="maxTime">最大生成時間</param>
+	/// <param name="useRandomColor">色のランダムフラグ</param>
 	/// <returns>パーティクル</returns>
 	Particle MakeNewParticle(const Vector3& translate, const AABB& area, const Vector3& minVelocity, const Vector3& maxVelocity, float minTime, float maxTime, bool useRandomColor);
+
+	/// <summary>
+	/// 新しいパーティクルの生成
+	/// </summary>
+	/// <param name="translate">座標</param>
+	/// <param name="area">生成範囲</param>
+	/// <param name="minVelocity">最小速度</param>
+	/// <param name="maxVelocity">最大速度</param>
+	/// <param name="minTime">最小生成時間</param>
+	/// <param name="maxTime">最大生成時間</param>
+	/// <param name="useRandomColor">色のランダムフラグ</param>
+	/// <returns>パーティクル</returns>
+	Particle MakeNewPlaneParticle(const Vector3& translate, const AABB& area, const Vector3& minVelocity, const Vector3& maxVelocity, float minTime, float maxTime, bool useRandomColor);
 
 	///-------------------------------------------/// 
 	/// メンバ変数

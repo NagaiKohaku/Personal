@@ -55,4 +55,5 @@ private:
 
 	//地面
 	std::unique_ptr<Object3D> ground_;
+
 };
