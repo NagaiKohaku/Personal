@@ -329,7 +329,7 @@ void DirectXCommon::InitializeDescriptorHeap() {
 	descriptorSizeRTV_ = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 
 	//RTVを初期化
-	rtvDescriptorHeap_ = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_RTV, 2, false);
+	rtvDescriptorHeap_ = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_RTV, 3, false);
 
 	/// === DSVの初期化 === ///
 
@@ -394,16 +394,54 @@ void DirectXCommon::InitializeRenderTargetView() {
 	rtvHandles_[0] = rtvStartHandle;
 
 	//1つ目を作る
-	device_->CreateRenderTargetView(backBuffers_[0].Get(), &rtvDesc, rtvHandles_[0]);
+	device_->CreateRenderTargetView(
+		backBuffers_[0].Get(),
+		&rtvDesc,
+		rtvHandles_[0]
+	);
 
 	//2つ目のディスクリプタハンドルを得る
 	rtvHandles_[1].ptr = rtvHandles_[0].ptr + device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 
 	//2つ目を作る
-	device_->CreateRenderTargetView(backBuffers_[1].Get(), &rtvDesc, rtvHandles_[1]);
+	device_->CreateRenderTargetView(
+		backBuffers_[1].Get(),
+		&rtvDesc,
+		rtvHandles_[1]
+	);
+
+	/// === オフスクリーンレンダーターゲットビューの初期化 === ///
+
+	//TextureResorceを作成する
+	offScreenResrouce_ = CreateRenderTexture(
+		device_,
+		WinApp::kClientWidth,
+		WinApp::kClientHeight,
+		DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,
+		offScreenClearColor_
+	);
+
+	rtvHandles_[2].ptr = rtvHandles_[1].ptr + device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+
+	//オフスクリーンレンダーターゲットビューを作成する
+	device_->CreateRenderTargetView(
+		offScreenResrouce_.Get(),
+		&rtvDesc,
+		rtvHandles_[2]
+	);
 
 	//初期化完了のログを出す
 	OutPutLog("Complete Initialize RenderTargetView\n");
+}
+
+void DirectXCommon::InitializeOffScreenRenderTargetView() {
+
+	//RTVの情報
+	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc{};
+
+	//RTVの設定
+	rtvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;      //出力結果をSRGBに変換して書き込む
+	rtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D; //2dテクスチャとして書き込む
 }
 
 ///=====================================================/// 
@@ -719,6 +757,92 @@ void DirectXCommon::PostDraw() {
 
 }
 
+void DirectXCommon::OffScreenPreDraw() {
+
+	/// === 現在のバッファをコマンドが詰めるようにする === ///
+
+	//TransitionBarrierの設定
+	D3D12_RESOURCE_BARRIER barrier{};
+
+	//バリアはTransitionタイプ
+	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+
+	//フラグはNone
+	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+
+	//バリアを張る対象のリソース。現在のバックバッファに対して行う
+	barrier.Transition.pResource = offScreenResrouce_.Get();
+
+	//現在のバッファをコマンドの命令待機状態に設定
+	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;
+
+	//バッファの次の命令を描画状態に設定
+	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
+
+	//TransitionBarrierを張る
+	commandList_->ResourceBarrier(1, &barrier);
+
+	/// === 画面をクリアする === ///
+
+	//DSVハンドル
+	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle;
+
+	//DSVを取得
+	dsvHandle = GetCPUDescriptorHandle(dsvDescriptorHeap_, descriptorSizeDSV_, 0);
+
+	//RTVとDSVに描画先を設定する
+	commandList_->OMSetRenderTargets(1, &rtvHandles_[2], false, &dsvHandle);
+
+	//指定した色で画面全体をクリアする
+	float clearColor[] = {
+		offScreenClearColor_.x,
+		offScreenClearColor_.y,
+		offScreenClearColor_.z,
+		offScreenClearColor_.w,
+	};
+
+	commandList_->ClearRenderTargetView(rtvHandles_[2], clearColor, 0, nullptr);
+
+	//指定した深度で画面全体をクリアする
+	commandList_->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
+
+	/// === 描画範囲の設定 === ///
+
+	//Viewportを設定
+	commandList_->RSSetViewports(1, &viewport_);
+
+	//Scissor設定
+	commandList_->RSSetScissorRects(1, &scissorRect_);
+
+}
+
+void DirectXCommon::OffScreenPostDraw() {
+
+	/// === 現在のバッファを描画ができるようにする=== ///
+
+	//TransitionBarrierの設定
+	D3D12_RESOURCE_BARRIER barrier{};
+
+	//バリアのタイプはTransition
+	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+
+	//フラグはNone
+	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+
+	//バリアを張る対象のリソース。現在のバックバッファに対して行う
+	barrier.Transition.pResource = offScreenResrouce_.Get();
+
+	//現在のバッファを描画状態に設定
+	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
+
+	//バッファの次の命令をコマンドの命令待機状態に設定
+	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
+
+	//TransitionBarrierを張る
+	commandList_->ResourceBarrier(1, &barrier);
+
+}
+
 ///=====================================================/// 
 /// シェーダーファイルのコンパイル
 ///=====================================================///
@@ -906,6 +1030,50 @@ void DirectXCommon::ClearDepthBuffer() {
 	//指定した深度で画面全体をクリアする
 	commandList_->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 
+}
+
+Microsoft::WRL::ComPtr<ID3D12Resource> DirectXCommon::CreateRenderTexture(Microsoft::WRL::ComPtr<ID3D12Device> device, uint32_t width, uint32_t height, DXGI_FORMAT format, const Vector4& clearColor) {
+
+	Microsoft::WRL::ComPtr<ID3D12Resource> resource;
+
+	//リソースの情報
+	D3D12_RESOURCE_DESC resourceDesc{};
+
+	//リソースの設定
+	resourceDesc.Width = width;										//ウィンドウの幅
+	resourceDesc.Height = height;									//ウィンドウの高さ
+	resourceDesc.MipLevels = 1;										//mipmapの数
+	resourceDesc.DepthOrArraySize = 1;								//奥行き or 配列Textureの配列数
+	resourceDesc.Format = format;									//DepthSthncilとして利用可能なフォーマット
+	resourceDesc.SampleDesc.Count = 1;								//サンプリングカウント。1固定
+	resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;	//2次元
+	resourceDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET;	//RenderTargetとして使う通知
+
+	//利用するHeapの設定
+	D3D12_HEAP_PROPERTIES heapProperties{};
+	heapProperties.Type = D3D12_HEAP_TYPE_DEFAULT; //VRAM上に作る
+
+	//RenderTargetのクリア設定
+	D3D12_CLEAR_VALUE renderTargetClearValue{};
+	renderTargetClearValue.Color[0] = clearColor.x;
+	renderTargetClearValue.Color[1] = clearColor.y;
+	renderTargetClearValue.Color[2] = clearColor.z;
+	renderTargetClearValue.Color[3] = clearColor.w;
+	renderTargetClearValue.Format = format; //フォーマット。Resourceと合わせる
+
+	//RenderTargetの初期化
+	HRESULT hr = device->CreateCommittedResource(
+		&heapProperties,					//Heapの設定
+		D3D12_HEAP_FLAG_NONE,				//Heapの特殊な設定。特になし
+		&resourceDesc,						//Resourceの設定
+		D3D12_RESOURCE_STATE_RENDER_TARGET,	//深度値を書き込む状態にしておく
+		&renderTargetClearValue,			//Clear最適値
+		IID_PPV_ARGS(&resource)
+	);
+
+	assert(SUCCEEDED(hr));
+
+	return resource;
 }
 
 ///=====================================================/// 

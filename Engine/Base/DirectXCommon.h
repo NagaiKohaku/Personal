@@ -17,6 +17,8 @@
 #include "vector"
 #include "wrl.h"
 
+#include "Math/Vector4.h"
+
 /// === 前方宣言 === ///
 class WinApp;
 
@@ -77,6 +79,10 @@ public:
 	/// </summary>
 	void PostDraw();
 
+	void OffScreenPreDraw();
+
+	void OffScreenPostDraw();
+
 	/// <summary>
 	/// シェーダーファイルのコンパイル
 	/// </summary>
@@ -109,6 +115,14 @@ public:
 	);
 
 	void ClearDepthBuffer();
+
+	Microsoft::WRL::ComPtr<ID3D12Resource> CreateRenderTexture(
+		Microsoft::WRL::ComPtr<ID3D12Device> device,
+		uint32_t width,
+		uint32_t height,
+		DXGI_FORMAT format,
+		const Vector4& clearColor
+	);
 
 	///-------------------------------------------/// 
 	/// ゲッター・セッター
@@ -155,6 +169,9 @@ private:
 
 	//レンダーターゲットビューの初期化
 	void InitializeRenderTargetView();
+
+	//オフスクリーンレンダーターゲットビューの初期化
+	void InitializeOffScreenRenderTargetView();
 
 	//深度ステンシルビューの初期化
 	void InitializeDepthStencilView();
@@ -228,8 +245,11 @@ private:
 	//バックバッファー
 	std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>> backBuffers_;
 
+	//オフスクリーン用のリソース
+	Microsoft::WRL::ComPtr<ID3D12Resource> offScreenResrouce_;
+
 	//RTVハンドル
-	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles_[2];
+	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles_[3];
 
 	//フェンス
 	Microsoft::WRL::ComPtr<ID3D12Fence> fence_ = nullptr;
@@ -251,6 +271,8 @@ private:
 
 	//includeHander
 	IDxcIncludeHandler* includeHandler_ = nullptr;
+
+	Vector4 offScreenClearColor_ = { 1.0f,0.0f,0.0f,1.0f };
 
 	//記録時間(FPS固定用)
 	std::chrono::steady_clock::time_point reference_;
