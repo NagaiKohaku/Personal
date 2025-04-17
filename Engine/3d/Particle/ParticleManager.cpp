@@ -4,7 +4,7 @@
 #include "Base/SrvManager.h"
 #include "2d/Sprite/TextureManager.h"
 #include "3d/Camera/Camera.h"
-#include "3d/Particle/ParticleGroup.h"
+#include "3d/Particle/ParticleEmitter.h"
 #include "3d/Particle/ParticleCommon.h"
 
 #include "Math/MakeMatrixMath.h"
@@ -36,8 +36,8 @@ void ParticleManager::Initialize() {
 	//SRVマネージャーのインスタンスを取得
 	srvManager_ = SrvManager::GetInstance();
 
-	particleGroups.reserve(srvManager_->kMaxSRVCount_);
-
+	//エミッターの最大数を設定
+	particleEmitters.reserve(srvManager_->kMaxSRVCount_);
 }
 
 ///=====================================================/// 
@@ -46,14 +46,17 @@ void ParticleManager::Initialize() {
 void ParticleManager::Update() {
 
 	//すべてのパーティクルグループの処理をする
-	for (std::unordered_map<std::string, ParticleGroup>::iterator particleGroupIterator = particleGroups.begin();
-		particleGroupIterator != particleGroups.end();) {
+	for (std::unordered_map<std::string, ParticleEmitter>::iterator particleEmitterIterator = particleEmitters.begin();
+		particleEmitterIterator != particleEmitters.end();) {
 
-		particleGroupIterator->second.Update();
+		//エミッターの更新
+		particleEmitterIterator->second.Update();
 
-		++particleGroupIterator;
+		//次のエミッターへ移動
+		++particleEmitterIterator;
 	}
 
+	//加速場との接触判定
 	CheckCollisionAccelerationField();
 }
 
@@ -62,34 +65,33 @@ void ParticleManager::Update() {
 ///=====================================================///
 void ParticleManager::Draw() {
 
+	//パーティクルの描画前処理
 	ParticleCommon::GetInstance()->CommonDrawSetting();
 
 	//すべてのパーティクルグループの処理をする
-	for (std::unordered_map<std::string, ParticleGroup>::iterator particleGroupIterator = particleGroups.begin();
-		particleGroupIterator != particleGroups.end();) {
+	for (std::unordered_map<std::string, ParticleEmitter>::iterator particleEmitterIterator = particleEmitters.begin();
+		particleEmitterIterator != particleEmitters.end();) {
 
-		particleGroupIterator->second.Draw();
+		//エミッターの描画
+		particleEmitterIterator->second.Draw();
 
-		++particleGroupIterator;
+		//次のエミッターへ移動
+		++particleEmitterIterator;
 	}
-
 }
 
-///=====================================================/// 
-/// パーティクルグループの生成
-///=====================================================///
-void ParticleManager::CreateParticleGroup(const std::string name, const std::string textureFilePath) {
+void ParticleManager::CreateEmitter(const std::string name, const std::string textureFileName) {
 
 	//登録済みの名前かチェック
-	if (particleGroups.contains(name)) {
+	if (particleEmitters.contains(name)) {
+
 		//登録済みなら早期return
 		return;
 	}
 
-	//あたらしいパーティクルグループを生成
-	ParticleGroup& particleGroup = particleGroups[name];
+	ParticleEmitter& emitter = particleEmitters[name];
 
-	particleGroup.Initialize("Resource/Sprite/Particle/" + textureFilePath, defaultCamera_);
+	emitter.Initialize(name, textureFileName, defaultCamera_);
 }
 
 ///=====================================================/// 
@@ -98,20 +100,21 @@ void ParticleManager::CreateParticleGroup(const std::string name, const std::str
 void ParticleManager::Emit(const std::string name, const Vector3& translate, const AABB& area, const Vector3& minVelocity, const Vector3& maxVelocity, float minTime, float maxTime, bool useRandomColor, uint32_t count) {
 
 	//登録済みの名前かチェック
-	if (particleGroups.contains(name)) {
+	if (particleEmitters.contains(name)) {
 
-		particleGroups[name].Emit(translate, area, minVelocity, maxVelocity, minTime, maxTime, useRandomColor, count);
+		//エミッターからパーティクルを生成する
+		particleEmitters[name].Emit(translate, area, minVelocity, maxVelocity, minTime, maxTime, useRandomColor, count);
 	}
-
 }
 
 void ParticleManager::EmitPlane(const std::string groupName, const Vector3& translate, const AABB& area, const Vector3& minVelocity, const Vector3& maxVelocity, float minTime, float maxTime, bool useRandomColor, uint32_t count) {
 
 	//登録済みの名前かチェック
-	if (particleGroups.contains(groupName)) {
-		particleGroups[groupName].EmitPlane(translate, area, minVelocity, maxVelocity, minTime, maxTime, useRandomColor, count);
-	}
+	if (particleEmitters.contains(groupName)) {
 
+		//エミッターからパーティクルを生成する
+		particleEmitters[groupName].EmitPlane(translate, area, minVelocity, maxVelocity, minTime, maxTime, useRandomColor, count);
+	}
 }
 
 ///=====================================================/// 
@@ -120,12 +123,14 @@ void ParticleManager::EmitPlane(const std::string groupName, const Vector3& tran
 void ParticleManager::CheckCollisionAccelerationField() {
 
 	//すべてのパーティクルグループの処理をする
-	for (std::unordered_map<std::string, ParticleGroup>::iterator particleGroupIterator = particleGroups.begin();
-		particleGroupIterator != particleGroups.end();) {
+	for (std::unordered_map<std::string, ParticleEmitter>::iterator particleEmitterIterator = particleEmitters.begin();
+		particleEmitterIterator != particleEmitters.end();) {
 
-		particleGroupIterator->second.CheckCollisionAccelerationField();
+		//加速場との接触判定
+		particleEmitterIterator->second.CheckCollisionAccelerationField();
 
-		++particleGroupIterator;
+		//次のエミッターへ移動
+		++particleEmitterIterator;
 	}
 }
 
@@ -135,8 +140,9 @@ void ParticleManager::CheckCollisionAccelerationField() {
 void ParticleManager::SetAcceleration(const std::string name, const Vector3& acceleration, const AABB& area) {
 
 	//登録済みの名前かチェック
-	if (particleGroups.contains(name)) {
+	if (particleEmitters.contains(name)) {
 
-		particleGroups[name].SetAccelerationField(acceleration, area);
+		//エミッターに加速場を設定する
+		particleEmitters[name].SetAccelerationField(acceleration, area);
 	}
 }

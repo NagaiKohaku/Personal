@@ -1,6 +1,6 @@
 #pragma once
 
-#include "3d/Particle/ParticleGroup.h"
+#include "3d/Particle/ParticleEmitter.h"
 
 #include "Math/Vector2.h"
 #include "Math/Vector3.h"
@@ -64,12 +64,7 @@ public:
 	/// </summary>
 	void Draw();
 
-	/// <summary>
-	/// パーティクルグループの生成
-	/// </summary>
-	/// <param name="name">名前</param>
-	/// <param name="textureFilePath">テクスチャパス</param>
-	void CreateParticleGroup(const std::string name, const std::string textureFilePath);
+	void CreateEmitter(const std::string name, const std::string textureFileName);
 
 	/// <summary>
 	/// パーティクルの生成
@@ -129,10 +124,10 @@ public:
 	Camera* GetDefaultCamera() const { return defaultCamera_; }
 
 	/// <summary>
-	/// パーティクルグループのゲッター
+	/// エミッターのゲッター
 	/// </summary>
-	/// <returns>パーティクルグループ</returns>
-	std::unordered_map<std::string, ParticleGroup> GetParticleGroup() { return particleGroups; }
+	/// <returns>エミッター</returns>
+	std::unordered_map<std::string, ParticleEmitter> GetParticleEmitter() { return particleEmitters; }
 
 	///-------------------------------------------/// 
 	/// メンバ変数
@@ -151,7 +146,7 @@ private:
 	//デフォルトカメラ
 	Camera* defaultCamera_;
 
-	//パーティクルグループ
-	std::unordered_map<std::string, ParticleGroup> particleGroups;
+	//エミッター
+	std::unordered_map<std::string, ParticleEmitter> particleEmitters;
 
 };

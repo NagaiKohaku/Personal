@@ -6,6 +6,7 @@
 #include "3d/Camera/Camera.h"
 #include "3d/Object/Object3D.h"
 #include "3d/Object/DebugLine.h"
+#include "3d/Particle/ParticleEmitter.h"
 
 #include "memory"
 
@@ -56,4 +57,5 @@ private:
 	//地面
 	std::unique_ptr<Object3D> ground_;
 
+	std::unique_ptr<ParticleEmitter> particleEmitter_;
 };

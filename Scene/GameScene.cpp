@@ -83,7 +83,8 @@ void GameScene::Initialize() {
 
 	/// === パーティクルの生成 === ///
 
-	ParticleManager::GetInstance()->CreateParticleGroup("Particle", "star.png");
+	ParticleManager::GetInstance()->CreateEmitter("Particle", "circle.png");
+
 }
 
 void GameScene::Finalize() {
@@ -137,7 +138,18 @@ void GameScene::Update() {
 
 	if (ImGui::Button("Emit Particle")) {
 
-		ParticleManager::GetInstance()->EmitPlane("Particle", { 0.0f,1.0f,0.0f }, { {0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} }, { 0.0f,0.0f,0.0f }, { 0.0f,0.0f,0.0f }, 0.0f, 1.0f, false, 16);
+		ParticleManager::GetInstance()->EmitPlane(
+			"Particle",
+			{ 0.0f,0.0f,0.0f },
+			{ {0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} },
+			{ 0.0f,0.0f,0.0f },
+			{ 0.0f,0.0f,0.0f },
+			1.0f,
+			1.0f,
+			false,
+			8
+		);
+
 	}
 
 	ImGui::Text("Shift + LeftClick : Move Camera");
