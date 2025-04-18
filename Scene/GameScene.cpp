@@ -163,11 +163,11 @@ void GameScene::Update() {
 
 void GameScene::Draw() {
 
-	//箱の描画 : オブジェクトレイヤー
-	cube_->Draw(Object);
+	////箱の描画 : オブジェクトレイヤー
+	//cube_->Draw(Object);
 
-	//球の描画 : オブジェクトレイヤー
-	ball_->Draw(Object);
+	////球の描画 : オブジェクトレイヤー
+	//ball_->Draw(Object);
 
 	//地面の描画 : オブジェクトレイヤー
 	ground_->Draw(Object);

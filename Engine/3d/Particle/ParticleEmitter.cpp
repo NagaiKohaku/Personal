@@ -37,12 +37,17 @@ void ParticleEmitter::Initialize(std::string name, const std::string textureFile
 	defaultCamera_ = camera;
 
 	//ワールドトランスフォームの初期化
-	worldTransform_.Initialize();
+	emitterWorldTransform_.Initialize();
 
-	worldTransform_.translate_ = { 0.0f,1.0f,0.0f };
+	emitterWorldTransform_.translate_ = { 0.0f,3.0f,0.0f };
+
+	emitterWorldTransform_.scale_ = { 3.0f,3.0f,3.0f };
 
 	//加速場フラグの初期化
 	useAccelerationField_ = false;
+
+	//アンカーポイントの設定
+	anchorPoint_ = { 0.5f,0.5f,0.0f };
 
 	//テクスチャパスを取得
 	material_.textureFilePath = "Resource/Sprite/Particle/" + textureFileName;
@@ -72,19 +77,19 @@ void ParticleEmitter::Initialize(std::string name, const std::string textureFile
 
 	//頂点データの初期化
 	//左下
-	vertexData_[0].position = { -0.5f,0.5f,0.0f,1.0f };
+	vertexData_[0].position = { 0.0f - anchorPoint_.x,1.0f - anchorPoint_.y,0.0f - anchorPoint_.z,1.0f };
 	vertexData_[0].texcoord = { 0.0f,1.0f };
 	vertexData_[0].normal = { 0.0f,0.0f,-1.0f };
 	//左上
-	vertexData_[1].position = { -0.5f,-0.5f,0.0f,1.0f };
+	vertexData_[1].position = { 0.0f - anchorPoint_.x,0.0f - anchorPoint_.y,0.0f - anchorPoint_.z,1.0f };
 	vertexData_[1].texcoord = { 0.0f,0.0f };
 	vertexData_[1].normal = { 0.0f,0.0f,-1.0f };
 	//右下
-	vertexData_[2].position = { 0.5f,0.5f,0.0f,1.0f };
+	vertexData_[2].position = { 1.0f - anchorPoint_.x,1.0f - anchorPoint_.y,0.0f - anchorPoint_.z,1.0f };
 	vertexData_[2].texcoord = { 1.0f,1.0f };
 	vertexData_[2].normal = { 0.0f,0.0f,-1.0f };
 	//右上
-	vertexData_[3].position = { 0.5f,-0.5f,0.0f,1.0f };
+	vertexData_[3].position = { 1.0f - anchorPoint_.x,0.0f - anchorPoint_.y,0.0f - anchorPoint_.z,1.0f };
 	vertexData_[3].texcoord = { 1.0f,0.0f };
 	vertexData_[3].normal = { 0.0f,0.0f,-1.0f };
 
@@ -157,6 +162,8 @@ void ParticleEmitter::Initialize(std::string name, const std::string textureFile
 
 void ParticleEmitter::Update() {
 
+	emitterWorldTransform_.UpdateMatrix();
+
 	//ビルボード行列の計算
 	Matrix4x4 billboardMatrix = defaultCamera_->GetViewMatrix();
 
@@ -202,6 +209,9 @@ void ParticleEmitter::Update() {
 
 			//ワールド行列の計算
 			Matrix4x4 worldMatrix = scaleMatrix * (rotateMatrix * translateMatrix);
+
+			//エミッターのワールド行列も合成
+			worldMatrix = worldMatrix * emitterWorldTransform_.GetWorldMatrix();
 
 			//ワールドビュープロジェクション行列の合成
 			Matrix4x4 worldViewProjectionMatrix = worldMatrix * viewProjectionMatrix;
@@ -316,8 +326,6 @@ ParticleEmitter::Particle ParticleEmitter::MakeNewParticle(const Vector3& transl
 	particle.lifeTime = RandomFloat(minTime, maxTime);
 	particle.currentTime = 0.0f;
 
-	particle.transform.translate = particle.transform.translate + translate;
-
 	return particle;
 }
 
@@ -325,8 +333,8 @@ ParticleEmitter::Particle ParticleEmitter::MakeNewPlaneParticle(const Vector3& t
 
 	Particle particle;
 
-	particle.transform.scale = { 0.05f,1.0f,1.0f };
-	particle.transform.rotate = { RandomVector3({0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f}) };
+	particle.transform.scale = { 0.05f,RandomFloat(0.4f,1.5f),1.0f };
+	particle.transform.rotate = { RandomVector3({0.0f,0.0f,-std::numbers::pi_v<float>},{0.0f,0.0f,std::numbers::pi_v<float>}) };
 	particle.transform.translate = { 0.0f,0.0f,0.0f };
 
 	particle.velocity = { RandomVector3(minVelocity,maxVelocity) };
@@ -335,8 +343,6 @@ ParticleEmitter::Particle ParticleEmitter::MakeNewPlaneParticle(const Vector3& t
 
 	particle.lifeTime = RandomFloat(minTime, maxTime);
 	particle.currentTime = 0.0f;
-
-	particle.transform.translate = particle.transform.translate + worldTransform_.translate_;
 
 	return particle;
 }

@@ -173,7 +173,7 @@ public:
 	/// <param name="acceleration"></param>
 	void SetAccelerationField(const Vector3& acceleration, const AABB& area);
 
-	WorldTransform& GetWorldTransform() { return worldTransform_; }
+	WorldTransform& GetWorldTransform() { return emitterWorldTransform_; }
 
 	///-------------------------------------------/// 
 	/// クラス内処理関数
@@ -227,7 +227,7 @@ private:
 	ParticleManager* particleManager_;
 
 	//ワールドトランスフォーム
-	WorldTransform worldTransform_;
+	WorldTransform emitterWorldTransform_;
 
 	//SRVインデックス
 	uint32_t srvIndex_;
@@ -237,6 +237,9 @@ private:
 
 	//加速場のフラグ
 	bool useAccelerationField_;
+
+	//アンカーポイント
+	Vector3 anchorPoint_;
 
 	//マテリアルデータ
 	MaterialData material_;
