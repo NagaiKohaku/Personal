@@ -6,11 +6,13 @@
 #include "Math/Matrix4x4.h"
 #include "Math/WorldTransform.h"
 #include "Math/AABB.h"
+#include "3d/Primitive/PrimitiveBase.h"
 
 #include "d3d12.h"
 
 #include "string"
 #include "list"
+#include "memory"
 #include "wrl.h"
 
 /// === 前方宣言 === ///
@@ -32,13 +34,6 @@ class ParticleEmitter {
 	/// メンバ構造体
 	///-------------------------------------------///
 private:
-
-	//頂点データ
-	struct VertexData {
-		Vector4 position;
-		Vector2 texcoord;
-		Vector3 normal;
-	};
 
 	//マテリアル
 	struct Material {
@@ -250,13 +245,9 @@ private:
 	//パーティクルリスト
 	std::list<Particle> particles_;
 
+	std::unique_ptr<PrimitiveBase> primitive_;
+
 	/// === バッファリソース === ///
-
-	//頂点リソース
-	Microsoft::WRL::ComPtr<ID3D12Resource> vertexResource_ = nullptr;
-
-	//頂点番号リソース
-	Microsoft::WRL::ComPtr<ID3D12Resource> IndexResource_ = nullptr;
 
 	//マテリアルリソース
 	Microsoft::WRL::ComPtr<ID3D12Resource> materialResource_ = nullptr;
@@ -266,24 +257,10 @@ private:
 
 	/// === バッファリソース内のデータを指すポインタ === ///
 
-	//頂点データ
-	VertexData* vertexData_ = nullptr;
-
-	//頂点番号データ
-	uint32_t* indexData_ = nullptr;
-
 	//マテリアルデータ
 	Material* materialData_ = nullptr;
 
 	//インスタンシングデータ
 	ParticleForGPU* instancingData_;
-
-	/// === バッファビュー === ///
-
-	//頂点バッファービュー
-	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_;
-
-	//頂点番号バッファビュー
-	D3D12_INDEX_BUFFER_VIEW indexBufferView_;
 
 };
