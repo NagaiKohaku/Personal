@@ -116,14 +116,6 @@ public:
 
 	void ClearDepthBuffer();
 
-	Microsoft::WRL::ComPtr<ID3D12Resource> CreateRenderTexture(
-		Microsoft::WRL::ComPtr<ID3D12Device> device,
-		uint32_t width,
-		uint32_t height,
-		DXGI_FORMAT format,
-		const Vector4& clearColor
-	);
-
 	///-------------------------------------------/// 
 	/// ゲッター・セッター
 	///-------------------------------------------///
@@ -194,6 +186,18 @@ private:
 	//FPS固定更新
 	void UpdateFixFPS();
 
+	Microsoft::WRL::ComPtr<ID3D12Resource> CreateRenderTexture(
+		Microsoft::WRL::ComPtr<ID3D12Device> device,
+		uint32_t width,
+		uint32_t height,
+		DXGI_FORMAT format,
+		const Vector4& clearColor
+	);
+
+	void CreateOffScreenRootSignature();
+
+	void CreateOffScreenPipeline();
+
 	//CPUデスクリプタヒープのゲッター
 	D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>& descriptorHeap, uint32_t descriptorSize, uint32_t index);
 
@@ -249,7 +253,15 @@ private:
 	Microsoft::WRL::ComPtr<ID3D12Resource> offScreenResrouce_;
 
 	//RTVハンドル
-	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles_[3];
+	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles_[2];
+
+	D3D12_CPU_DESCRIPTOR_HANDLE offScreenRTVHandle_;
+
+	//ルートシグネチャ
+	Microsoft::WRL::ComPtr<ID3D12RootSignature> offScreenRootSignature_ = nullptr;
+
+	//グラフィックパイプラインステート
+	std::vector<Microsoft::WRL::ComPtr<ID3D12PipelineState>> offScreenGraphicsPipelineState_;
 
 	//フェンス
 	Microsoft::WRL::ComPtr<ID3D12Fence> fence_ = nullptr;

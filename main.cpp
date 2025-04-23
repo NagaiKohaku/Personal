@@ -133,23 +133,23 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		/// 描画処理
 		///-------------------------------------------///
 
-		////OffScreenの描画前処理
-		//directXCommon->OffScreenPreDraw();
+		//OffScreenの描画前処理
+		directXCommon->OffScreenPreDraw();
 
-		////SRVマネージャーの描画前処理
-		//srvManager->PreDraw();
+		//SRVマネージャーの描画前処理
+		srvManager->PreDraw();
 
-		////シーンの描画
-		////sceneManager->Draw();
+		//シーンの描画
+		sceneManager->Draw();
 
-		////OffScreen用のレンダラーの描画
-		////renderer->OffScreenDraw();
+		//OffScreen用のレンダラーの描画
+		renderer->OffScreenDraw();
 
-		////パーティクルの描画
-		////particleManager->Draw();
+		//パーティクルの描画
+		particleManager->Draw();
 
-		////OffScreenの描画後処理
-		//directXCommon->OffScreenPostDraw();
+		//OffScreenの描画後処理
+		directXCommon->OffScreenPostDraw();
 
 		//DirectX基底の描画前処理
 		directXCommon->PreDraw();
@@ -158,10 +158,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		srvManager->PreDraw();
 
 		//レンダラーの描画
-		//renderer->Draw();
+		renderer->Draw();
 
 		//ImGuiの描画
-		//imGuiManager->Draw();
+		imGuiManager->Draw();
 
 		//DirectX基底の描画後処理
 		directXCommon->PostDraw();

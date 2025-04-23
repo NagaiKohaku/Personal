@@ -135,6 +135,9 @@
     <ClCompile Include="Engine\Math\Clamp.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\Base\OffScreen.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\Audio.h">
@@ -260,12 +263,16 @@
     <ClInclude Include="Engine\Math\Clamp.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\Base\OffScreen.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resource\Shaders\Object3d.hlsli" />
     <None Include="Resource\Shaders\Particle.hlsli" />
     <None Include="Resource\Shader\Object2d.hlsli" />
     <None Include="Resource\Shader\DebugObject.hlsli" />
+    <None Include="Resource\Shader\CopyImage.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resource\Shaders\Object3d.PS.hlsl" />
@@ -276,5 +283,7 @@
     <FxCompile Include="Resource\Shader\Object2d.VS.hlsl" />
     <FxCompile Include="Resource\Shader\DebugObject.PS.hlsl" />
     <FxCompile Include="Resource\Shader\DebugObject.VS.hlsl" />
+    <FxCompile Include="Resource\Shader\CopyImage.PS.hlsl" />
+    <FxCompile Include="Resource\Shader\CopyImage.VS.hlsl" />
   </ItemGroup>
 </Project>
