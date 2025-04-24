@@ -2,6 +2,8 @@
 
 #include "d3d12.h"
 
+#include "Base/DirectXCommon.h"
+
 #include "Math/Vector2.h"
 #include "Math/Vector3.h"
 #include "Math/Vector4.h"
@@ -9,8 +11,6 @@
 
 #include "string"
 #include "wrl.h"
-
-class DirectXCommon;
 
 class PrimitiveBase {
 
@@ -44,6 +44,8 @@ protected:
 
 	DirectXCommon* directXCommon_ = nullptr;
 
+	Vector3 anchorPoint_ = { 0.5f,0.5f,0.0f };
+
 	/// === バッファリソース === ///
 
 	//頂点リソース
@@ -67,5 +69,6 @@ protected:
 
 	//頂点番号バッファビュー
 	D3D12_INDEX_BUFFER_VIEW indexBufferView_;
+
 };
 

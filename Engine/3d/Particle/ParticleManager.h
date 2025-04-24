@@ -127,7 +127,7 @@ public:
 	/// エミッターのゲッター
 	/// </summary>
 	/// <returns>エミッター</returns>
-	std::unordered_map<std::string, ParticleEmitter> GetParticleEmitter() { return particleEmitters; }
+	//std::unordered_map<std::string, ParticleEmitter> GetParticleEmitter() { return particleEmitters; }
 
 	///-------------------------------------------/// 
 	/// メンバ変数

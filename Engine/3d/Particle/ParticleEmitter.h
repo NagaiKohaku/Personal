@@ -7,6 +7,7 @@
 #include "Math/WorldTransform.h"
 #include "Math/AABB.h"
 #include "3d/Primitive/PrimitiveBase.h"
+#include "3d/Primitive/Plane.h"
 
 #include "d3d12.h"
 

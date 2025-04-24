@@ -6,7 +6,6 @@
 #include "3d/Camera/Camera.h"
 #include "3d/Particle/ParticleCommon.h"
 #include "3d/Particle/ParticleManager.h"
-#include "3d/Primitive/Plane.h"
 
 #include "Math/MakeMatrixMath.h"
 #include "Math/Easing.h"
