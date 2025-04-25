@@ -31,6 +31,10 @@ public:
 	/// </summary>
 	virtual void Draw() = 0;
 
+public:
+
+	uint32_t GetIndexCount() const { return indexCount_; }
+
 protected:
 
 	//頂点データ
@@ -44,7 +48,7 @@ protected:
 
 	DirectXCommon* directXCommon_ = nullptr;
 
-	Vector3 anchorPoint_ = { 0.5f,0.5f,0.0f };
+	uint32_t indexCount_ = 0;
 
 	/// === バッファリソース === ///
 

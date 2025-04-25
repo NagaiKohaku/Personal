@@ -83,7 +83,7 @@ void GameScene::Initialize() {
 
 	/// === パーティクルの生成 === ///
 
-	ParticleManager::GetInstance()->CreateEmitter("Particle", "circle.png");
+	ParticleManager::GetInstance()->CreateEmitter("Particle", "gradationLine.png");
 
 }
 

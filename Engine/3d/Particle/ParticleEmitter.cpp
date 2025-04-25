@@ -6,6 +6,8 @@
 #include "3d/Camera/Camera.h"
 #include "3d/Particle/ParticleCommon.h"
 #include "3d/Particle/ParticleManager.h"
+#include "3d/Primitive/Plane.h"
+#include "3d/Primitive/Ring.h"
 
 #include "Math/MakeMatrixMath.h"
 #include "Math/Easing.h"
@@ -59,7 +61,7 @@ void ParticleEmitter::Initialize(std::string name, const std::string textureFile
 	material_.textureIndex = textureManager_->GetSrvIndex(material_.textureFilePath);
 
 	//プリミティブの生成
-	primitive_ = std::make_unique<Plane>();
+	primitive_ = std::make_unique<Ring>();
 
 	primitive_->Initialize();
 
@@ -184,7 +186,7 @@ void ParticleEmitter::Draw() {
 
 	directXCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(2, srvManager_->GetGPUDescriptorHandle(material_.textureIndex));
 
-	directXCommon_->GetCommandList()->DrawIndexedInstanced(6, numInstance_, 0, 0, 0);
+	directXCommon_->GetCommandList()->DrawIndexedInstanced(primitive_->GetIndexCount(), numInstance_, 0, 0, 0);
 
 }
 
@@ -275,9 +277,20 @@ ParticleEmitter::Particle ParticleEmitter::MakeNewPlaneParticle(const Vector3& t
 
 	Particle particle;
 
-	particle.transform.scale = { 0.05f,RandomFloat(0.4f,1.5f),1.0f };
-	particle.transform.rotate = { RandomVector3({0.0f,0.0f,-std::numbers::pi_v<float>},{0.0f,0.0f,std::numbers::pi_v<float>}) };
-	particle.transform.translate = { 0.0f,0.0f,0.0f };
+	//particle.transform.scale = { 0.05f,RandomFloat(0.4f,1.5f),1.0f };
+	//particle.transform.rotate = { RandomVector3({0.0f,0.0f,-std::numbers::pi_v<float>},{0.0f,0.0f,std::numbers::pi_v<float>}) };
+	//particle.transform.translate = { 0.0f,0.0f,0.0f };
+
+	//particle.velocity = { RandomVector3(minVelocity,maxVelocity) };
+
+	//particle.color = { 1.0f,1.0f,1.0f,1.0f };
+
+	//particle.lifeTime = RandomFloat(minTime, maxTime);
+	//particle.currentTime = 0.0f;
+
+	particle.transform.scale = { 1.0f,1.0f,1.0f };
+	particle.transform.rotate = { 0.0f,0.0f,0.0f };
+	particle.transform.translate = { RandomVector3(area.min,area.max) };
 
 	particle.velocity = { RandomVector3(minVelocity,maxVelocity) };
 
