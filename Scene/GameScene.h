@@ -7,6 +7,8 @@
 #include "3d/Object/Object3D.h"
 #include "3d/Object/DebugLine.h"
 
+#include "Player/Player.h"
+
 #include "memory"
 
 ///=====================================================/// 
@@ -47,12 +49,6 @@ private:
 	//カメラ
 	std::unique_ptr<Camera> camera_;
 
-	//箱
-	std::unique_ptr<Object3D> cube_;
-
-	//球
-	std::unique_ptr<Object3D> ball_;
-
-	//地面
-	std::unique_ptr<Object3D> ground_;
+	//プレイヤー
+	std::unique_ptr<Player> player_;
 };
