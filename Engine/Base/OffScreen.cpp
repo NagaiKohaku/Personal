@@ -7,6 +7,8 @@
 #include "Base/SrvManager.h"
 #include "Other/Log.h"
 
+#include "imgui.h"
+
 #include "cassert"
 
 OffScreen* OffScreen::GetInstance() {
@@ -24,6 +26,8 @@ void OffScreen::Initialize() {
 	dsvManager_ = DSVManager::GetInstance();
 	//SRVマネージャーのインスタンスを取得
 	srvManager_ = SrvManager::GetInstance();
+
+	currentShaderName_ = L"CopyImage";
 
 	renderTextureResrouce_ = CreateRenderTexture(
 		dxCommon_->GetDevice(),
@@ -143,6 +147,34 @@ void OffScreen::DrawToSwapChain() {
 	dxCommon_->GetCommandList()->DrawInstanced(3, 1, 0, 0);
 }
 
+void OffScreen::ImGui() {
+
+	ImGui::Begin("OffScreen");
+
+	if (ImGui::Button("None")) {
+
+		currentShaderName_ = L"CopyImage";
+
+		CreatePipeline();
+	}
+
+	if (ImGui::Button("GrayScale")) {
+
+		currentShaderName_ = L"GrayScale";
+
+		CreatePipeline();
+	}
+
+	if (ImGui::Button("Vignette")) {
+
+		currentShaderName_ = L"Vignette";
+
+		CreatePipeline();
+	}
+
+	ImGui::End();
+}
+
 void OffScreen::CreateRootSignature() {
 
 	HRESULT hr;
@@ -210,6 +242,8 @@ void OffScreen::CreatePipeline() {
 
 	HRESULT hr;
 
+	offScreenGraphicsPipelineState_.clear();
+
 	/// === RootSignatureを設定する === ///
 
 	CreateRootSignature();
@@ -244,10 +278,14 @@ void OffScreen::CreatePipeline() {
 
 	/// === Shaderのコンパイル === ///
 
+	const std::wstring shaderDirectory = L"Resource/Shader/";
+
+	const std::wstring shaderFileName = shaderDirectory + currentShaderName_;
+
 	//VertexShaderをコンパイルする
 	Microsoft::WRL::ComPtr<IDxcBlob> vertexShaderBlob =
 		dxCommon_->CompileShader(
-			L"Resource/Shader/GrayScale.VS.hlsl",
+			shaderFileName + L".VS.hlsl",
 			L"vs_6_0"
 		);
 
@@ -256,7 +294,7 @@ void OffScreen::CreatePipeline() {
 	//PixelShaderをコンパイルする
 	Microsoft::WRL::ComPtr<IDxcBlob> pixelShaderBlob =
 		dxCommon_->CompileShader(
-			L"Resource/Shader/GrayScale.PS.hlsl",
+			shaderFileName + L".PS.hlsl",
 			L"ps_6_0"
 		);
 

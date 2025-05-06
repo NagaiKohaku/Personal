@@ -7,6 +7,7 @@
 #include "wrl.h"
 #include "vector"
 #include "cstdint"
+#include "string"
 
 class DirectXCommon;
 
@@ -45,6 +46,8 @@ public:
 	/// 描画結果をSwapChainにコピー
 	/// </summary>
 	void DrawToSwapChain();
+
+	void ImGui();
 
 private:
 
@@ -146,6 +149,8 @@ private:
 
 	//グラフィックパイプラインステート
 	std::vector<Microsoft::WRL::ComPtr<ID3D12PipelineState>> offScreenGraphicsPipelineState_;
+
+	std::wstring currentShaderName_;
 
 	//オフスクリーンのクリア値
 	Vector4 offScreenClearColor_ = { 1.0f,0.0f,0.0f,1.0f };
