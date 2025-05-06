@@ -1,5 +1,8 @@
 #include "Base/WinApp.h"
 #include "Base/DirectXCommon.h"
+#include "Base/OffScreen.h"
+#include "Base/RTVManager.h"
+#include "Base/DSVManager.h"
 #include "Base/SrvManager.h"
 #include "Base/Input.h"
 #include "Base/Audio.h"
@@ -32,13 +35,28 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	DirectXCommon* directXCommon = DirectXCommon::GetInstance();
 	directXCommon->Initialize();
 
-	//ImGuiマネージャー
-	ImGuiManager* imGuiManager = ImGuiManager::GetInstance();
-	imGuiManager->Initialize();
+	//RTVマネージャー
+	RTVManager* rtvManager = RTVManager::GetInstance();
+	rtvManager->Initialize();
+
+	//DSVマネージャー
+	DSVManager* dsvManager = DSVManager::GetInstance();
+	dsvManager->Initialize();
 
 	//SRVマネージャー
 	SrvManager* srvManager = SrvManager::GetInstance();
 	srvManager->Initialize();
+
+	//描画系の初期化
+	directXCommon->InitializeRendering();
+
+	//ImGuiマネージャー
+	ImGuiManager* imGuiManager = ImGuiManager::GetInstance();
+	imGuiManager->Initialize();
+
+	//オフスクリーン
+	OffScreen* offScreen = OffScreen::GetInstance();
+	offScreen->Initialize();
 
 	//スプライト基底
 	SpriteCommon* spriteCommon = SpriteCommon::GetInstance();
@@ -134,7 +152,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///-------------------------------------------///
 
 		//OffScreenの描画前処理
-		directXCommon->OffScreenPreDraw();
+		offScreen->PreDraw();
 
 		//SRVマネージャーの描画前処理
 		srvManager->PreDraw();
@@ -149,13 +167,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		particleManager->Draw();
 
 		//OffScreenの描画後処理
-		directXCommon->OffScreenPostDraw();
+		offScreen->PostDraw();
 
 		//DirectX基底の描画前処理
 		directXCommon->PreDraw();
 
 		//SRVマネージャーの描画前処理
 		srvManager->PreDraw();
+
+		offScreen->DrawToSwapChain();
 
 		//レンダラーの描画
 		renderer->Draw();

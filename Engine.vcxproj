@@ -98,6 +98,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Engine\Base\DSVManager.cpp" />
     <ClCompile Include="Engine\2d\Sprite\Sprite.cpp" />
     <ClCompile Include="Engine\2d\Sprite\SpriteCommon.cpp" />
     <ClCompile Include="Engine\3d\Model\Model.cpp" />
@@ -133,6 +134,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\3d\Particle\ParticleGroup.cpp" />
     <ClCompile Include="Engine\Base\Renderer.cpp" />
     <ClCompile Include="Engine\Base\OffScreen.cpp" />
+    <ClCompile Include="Engine\Base\RTVManager.cpp" />
     <ClCompile Include="Scene\BaseScene.cpp" />
     <ClCompile Include="Scene\GameScene.cpp" />
     <ClCompile Include="Scene\SceneManager.cpp" />
@@ -141,6 +143,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\3d\Light\SpotLight.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Engine\Base\DSVManager.h" />
     <ClInclude Include="Engine\2d\Sprite\Sprite.h" />
     <ClInclude Include="Engine\2d\Sprite\SpriteCommon.h" />
     <ClInclude Include="Engine\Base\LayerType.h" />
@@ -177,6 +180,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\3d\Particle\ParticleGroup.h" />
     <ClInclude Include="Engine\Base\Renderer.h" />
     <ClInclude Include="Engine\Base\OffScreen.h" />
+    <ClInclude Include="Engine\Base\RTVManager.h" />
     <ClInclude Include="Scene\BaseScene.h" />
     <ClInclude Include="Scene\GameScene.h" />
     <ClInclude Include="Scene\SceneManager.h" />

@@ -22,6 +22,10 @@
 /// === 前方宣言 === ///
 class WinApp;
 
+class RTVManager;
+
+class DSVManager;
+
 ///-------------------------------------------/// 
 /// メモリリークチェッカー
 ///-------------------------------------------///
@@ -70,6 +74,11 @@ public:
 	void Initialize();
 
 	/// <summary>
+	/// 描画系の初期化処理
+	/// </summary>
+	void InitializeRendering();
+
+	/// <summary>
 	/// 描画前処理
 	/// </summary>
 	void PreDraw();
@@ -78,10 +87,6 @@ public:
 	/// 描画後処理
 	/// </summary>
 	void PostDraw();
-
-	void OffScreenPreDraw();
-
-	void OffScreenPostDraw();
 
 	/// <summary>
 	/// シェーダーファイルのコンパイル
@@ -139,6 +144,10 @@ public:
 	/// <returns>バックバッファ</returns>
 	size_t GetBackBufferCount() const { return backBuffers_.size(); }
 
+	D3D12_VIEWPORT GetViewport() const { return viewport_; }
+
+	D3D12_RECT GetScissorRect() const { return scissorRect_; }
+
 	///-------------------------------------------/// 
 	/// クラス内処理関数
 	///-------------------------------------------///
@@ -186,18 +195,6 @@ private:
 	//FPS固定更新
 	void UpdateFixFPS();
 
-	Microsoft::WRL::ComPtr<ID3D12Resource> CreateRenderTexture(
-		Microsoft::WRL::ComPtr<ID3D12Device> device,
-		uint32_t width,
-		uint32_t height,
-		DXGI_FORMAT format,
-		const Vector4& clearColor
-	);
-
-	void CreateOffScreenRootSignature();
-
-	void CreateOffScreenPipeline();
-
 	//CPUデスクリプタヒープのゲッター
 	D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>& descriptorHeap, uint32_t descriptorSize, uint32_t index);
 
@@ -211,6 +208,12 @@ private:
 
 	//WinAppクラス(借り物)
 	WinApp* winApp = nullptr;
+
+	//RTVマネージャー
+	RTVManager* rtvManager_ = nullptr;
+
+	//DSVマネージャー
+	DSVManager* dsvManager_ = nullptr;
 
 	//メモリリークチェック
 	D3DResourceLeakChecker leakCheck;
@@ -255,13 +258,11 @@ private:
 	//RTVハンドル
 	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles_[2];
 
-	D3D12_CPU_DESCRIPTOR_HANDLE offScreenRTVHandle_;
+	uint32_t rtvIndex_[2];
 
-	//ルートシグネチャ
-	Microsoft::WRL::ComPtr<ID3D12RootSignature> offScreenRootSignature_ = nullptr;
+	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle_;
 
-	//グラフィックパイプラインステート
-	std::vector<Microsoft::WRL::ComPtr<ID3D12PipelineState>> offScreenGraphicsPipelineState_;
+	uint32_t dsvIndex_ = 0;
 
 	//フェンス
 	Microsoft::WRL::ComPtr<ID3D12Fence> fence_ = nullptr;
