@@ -59,7 +59,7 @@ void OffScreen::PreDraw() {
 	//バリアを張る対象のリソース。現在のバックバッファに対して行う
 	barrier.Transition.pResource = renderTextureResrouce_.Get();
 
-	//現在のバッファをコマンドの命令待機状態に設定
+	//現在のバッファの状態を設定
 	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
 
 	//バッファの次の命令を描画状態に設定
@@ -81,9 +81,10 @@ void OffScreen::PreDraw() {
 		offScreenClearColor_.w,
 	};
 
+	//画面情報のクリアする
 	dxCommon_->GetCommandList()->ClearRenderTargetView(offScreenRTVHandle_, clearColor, 0, nullptr);
 
-	//指定した深度で画面全体をクリアする
+	//深度情報のクリアする
 	dxCommon_->GetCommandList()->ClearDepthStencilView(offScreenDSVHandle_, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 
 	/// === 描画範囲の設定 === ///
@@ -116,10 +117,10 @@ void OffScreen::PostDraw() {
 	//バリアを張る対象のリソース。現在のバックバッファに対して行う
 	barrier.Transition.pResource = renderTextureResrouce_.Get();
 
-	//現在のバッファを描画状態に設定
+	//現在のバッファの状態を設定
 	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
 
-	//バッファの次の命令をコマンドの命令待機状態に設定
+	//テクスチャとして使える状態に設定
 	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
 
 	//TransitionBarrierを張る
@@ -129,12 +130,16 @@ void OffScreen::PostDraw() {
 
 void OffScreen::DrawToSwapChain() {
 
+	//ルートシグネチャの設定
 	dxCommon_->GetCommandList()->SetGraphicsRootSignature(offScreenRootSignature_.Get());
 
+	//PSOの設定
 	dxCommon_->GetCommandList()->SetPipelineState(offScreenGraphicsPipelineState_[0].Get());
 
+	//SRVの設定
 	dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(0, srvManager_->GetGPUDescriptorHandle(srvIndex_));
 
+	//描画命令
 	dxCommon_->GetCommandList()->DrawInstanced(3, 1, 0, 0);
 }
 
@@ -166,6 +171,7 @@ void OffScreen::CreateRootSignature() {
 	descriptionRootSignature.pParameters = rootParameters;               //ルートパラメータ配列へのポインタ
 	descriptionRootSignature.NumParameters = _countof(rootParameters);   //配列の長さ
 
+	//サンプラー
 	D3D12_STATIC_SAMPLER_DESC staticSamplers[1] = {};
 	staticSamplers[0].Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR; //バイリニアフィルタ
 	staticSamplers[0].AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP; //0~1の範囲外をリピート
@@ -210,8 +216,9 @@ void OffScreen::CreatePipeline() {
 
 	/// === InputLayoutを設定する === ///
 
-	//InputLayoutを確定する
 	D3D12_INPUT_LAYOUT_DESC inputLayoutDesc{};
+
+	//VSに送るデータがないため設定はなし
 	inputLayoutDesc.pInputElementDescs = nullptr;
 	inputLayoutDesc.NumElements = 0;
 
@@ -386,34 +393,44 @@ void OffScreen::CreatePipeline() {
 
 void OffScreen::CreateRenderTargetView() {
 
+	//RTVのメモリを確保
 	rtvIndex_ = rtvManager_->Allocate();
 
+	//RTVのハンドルを取得
 	offScreenRTVHandle_ = rtvManager_->GetCPUDescriptorHandle(rtvIndex_);
 
+	//RTVを生成
 	rtvManager_->CreateRenderTargetView(rtvIndex_, renderTextureResrouce_.Get());
 }
 
 void OffScreen::CreateDepthStencilView() {
 
+	//DSVリソースを生成
 	offScreenDSVResrouce_ = CreateDepthStencilBuffer(
 		dxCommon_->GetDevice(),
 		WinApp::kClientWidth,
 		WinApp::kClientHeight
 	);
 
+	//DSVのメモリを確保
 	dsvIndex_ = dsvManager_->Allocate();
 
+	//DSVのハンドルを取得
 	offScreenDSVHandle_ = dsvManager_->GetCPUDescriptorHandle(dsvIndex_);
 
+	//DSVを生成
 	dsvManager_->CreateDepthStencilView(dsvIndex_, offScreenDSVResrouce_.Get());
 }
 
 void OffScreen::CreateShaderResourceView() {
 
+	//SRVのメモリを確保
 	srvIndex_ = srvManager_->Allocate();
 
+	//SRVのハンドルを取得
 	offScreenSRVHandle_ = srvManager_->GetCPUDescriptorHandle(srvIndex_);
 
+	//SRVを生成
 	srvManager_->CreateRenderTargetSRV(srvIndex_, renderTextureResrouce_.Get());
 }
 

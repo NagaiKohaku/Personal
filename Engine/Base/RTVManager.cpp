@@ -26,10 +26,10 @@ void RTVManager::PreDraw() {
 
 uint32_t RTVManager::Allocate() {
 
-	//SRV番号が最大数を越えていないかの確認
+	//RTV番号が最大数を越えていないかの確認
 	assert(kMaxRTVCount_ > useIndex_);
 
-	//現在のsrv番号を返す
+	//現在のRTV番号を返す
 	int index = useIndex_;
 
 	//1つずらした番号を確保する
@@ -40,7 +40,7 @@ uint32_t RTVManager::Allocate() {
 
 bool RTVManager::AllocateCheck() {
 
-	//SRV番号が最大数を越えていないかの確認
+	//RTV番号が最大数を越えていないかの確認
 	if (kMaxRTVCount_ > useIndex_) {
 		return true;
 	}

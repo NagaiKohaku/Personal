@@ -53,9 +53,6 @@ void DirectXCommon::InitializeRendering() {
 	//深度バッファの初期化
 	InitializeDepthBuffer();
 
-	//各種デスクリプタヒープの初期化
-	InitializeDescriptorHeap();
-
 	//レンダーターゲットビューの初期化
 	InitializeRenderTargetView();
 
@@ -334,31 +331,6 @@ void DirectXCommon::InitializeDepthBuffer() {
 }
 
 ///=====================================================/// 
-/// 各種デスクリプタヒープの初期化
-///=====================================================///
-void DirectXCommon::InitializeDescriptorHeap() {
-
-	/// === RTVの初期化 === ///
-
-	//サイズを取得
-	descriptorSizeRTV_ = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
-
-	//RTVを初期化
-	rtvDescriptorHeap_ = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_RTV, 3, false);
-
-	/// === DSVの初期化 === ///
-
-	//サイズを取得
-	descriptorSizeDSV_ = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
-
-	//DSVを初期化
-	dsvDescriptorHeap_ = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1, false);
-
-	//初期化完了のログを出力
-	OutPutLog("Complete Initialize DescriptorHeap\n");
-}
-
-///=====================================================/// 
 /// レンダーターゲットビューの初期化
 ///=====================================================///
 void DirectXCommon::InitializeRenderTargetView() {
@@ -397,11 +369,13 @@ void DirectXCommon::InitializeRenderTargetView() {
 
 	for (size_t i = 0; i < 2; i++) {
 
+		//RTVのメモリを確保
 		rtvIndex_[i] = rtvManager_->Allocate();
 
-		//1つ目のディスクリプタハンドルを得る
+		//RTVのCPUハンドルを取得
 		rtvHandles_[i] = rtvManager_->GetCPUDescriptorHandle(rtvIndex_[i]);
 
+		//RTVを生成
 		rtvManager_->CreateRenderTargetView(rtvIndex_[i], backBuffers_[i].Get());
 
 	}
@@ -410,26 +384,18 @@ void DirectXCommon::InitializeRenderTargetView() {
 	OutPutLog("Complete Initialize RenderTargetView\n");
 }
 
-void DirectXCommon::InitializeOffScreenRenderTargetView() {
-
-	//RTVの情報
-	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc{};
-
-	//RTVの設定
-	rtvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;      //出力結果をSRGBに変換して書き込む
-	rtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D; //2dテクスチャとして書き込む
-}
-
 ///=====================================================/// 
 /// 深度ステンシルビューの初期化
 ///=====================================================///
 void DirectXCommon::InitializeDepthStencilView() {
 
+	//DSVのメモリを確保
 	dsvIndex_ = dsvManager_->Allocate();
 
-	//DSVを取得
+	//DSVのCPUハンドルを取得
 	dsvHandle_ = rtvManager_->GetCPUDescriptorHandle(dsvIndex_);
 
+	//DSVを生成
 	dsvManager_->CreateDepthStencilView(dsvIndex_, depthStancilResource_.Get());
 
 	//初期化完了のログを出す
@@ -907,38 +873,4 @@ void DirectXCommon::ClearDepthBuffer() {
 	//指定した深度で画面全体をクリアする
 	commandList_->ClearDepthStencilView(dsvHandle_, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 
-}
-
-///=====================================================/// 
-/// CPUデスクリプタヒープのゲッター
-///=====================================================///
-D3D12_CPU_DESCRIPTOR_HANDLE DirectXCommon::GetCPUDescriptorHandle(Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>& descriptorHeap, uint32_t descriptorSize, uint32_t index) {
-
-	//CPUデスクリプタヒープ
-	D3D12_CPU_DESCRIPTOR_HANDLE handleCPU;
-
-	//CPUデスクリプタヒープの最初のメモリを取得
-	handleCPU = descriptorHeap->GetCPUDescriptorHandleForHeapStart();
-
-	//指定の番号までメモリをずらす
-	handleCPU.ptr += (descriptorSize * index);
-
-	return handleCPU;
-}
-
-///=====================================================/// 
-/// GPUデスクリプタヒープのゲッター
-///=====================================================///
-D3D12_GPU_DESCRIPTOR_HANDLE DirectXCommon::GetGPUDescriptorHandle(Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>& descriptorHeap, uint32_t descriptorSize, uint32_t index) {
-
-	//GPUデスクリプタヒープ
-	D3D12_GPU_DESCRIPTOR_HANDLE handleGPU;
-
-	//GPUデスクリプタヒープの最初のメモリを取得
-	handleGPU = descriptorHeap->GetGPUDescriptorHandleForHeapStart();
-
-	//指定の番号までメモリをずらす
-	handleGPU.ptr += (descriptorSize * index);
-
-	return handleGPU;
 }

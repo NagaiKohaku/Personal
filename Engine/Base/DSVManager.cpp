@@ -26,10 +26,10 @@ void DSVManager::PreDraw() {
 
 uint32_t DSVManager::Allocate() {
 
-	//SRV番号が最大数を越えていないかの確認
+	//DSV番号が最大数を越えていないかの確認
 	assert(kMaxDSVCount_ > useIndex_);
 
-	//現在のsrv番号を返す
+	//現在のDSV番号を返す
 	int index = useIndex_;
 
 	//1つずらした番号を確保する
@@ -40,7 +40,7 @@ uint32_t DSVManager::Allocate() {
 
 bool DSVManager::AllocateCheck() {
 
-	//SRV番号が最大数を越えていないかの確認
+	//DSV番号が最大数を越えていないかの確認
 	if (kMaxDSVCount_ > useIndex_) {
 		return true;
 	}

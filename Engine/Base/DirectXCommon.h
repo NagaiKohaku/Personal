@@ -165,14 +165,8 @@ private:
 	//深度バッファの初期化
 	void InitializeDepthBuffer();
 
-	//各種デスクリプタヒープの初期化
-	void InitializeDescriptorHeap();
-
 	//レンダーターゲットビューの初期化
 	void InitializeRenderTargetView();
-
-	//オフスクリーンレンダーターゲットビューの初期化
-	void InitializeOffScreenRenderTargetView();
 
 	//深度ステンシルビューの初期化
 	void InitializeDepthStencilView();
@@ -194,12 +188,6 @@ private:
 
 	//FPS固定更新
 	void UpdateFixFPS();
-
-	//CPUデスクリプタヒープのゲッター
-	D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>& descriptorHeap, uint32_t descriptorSize, uint32_t index);
-
-	//GPUデスクリプタヒープのゲッター
-	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>& descriptorHeap, uint32_t descriptorSize, uint32_t index);
 
 	///-------------------------------------------/// 
 	/// メンバ変数
@@ -239,16 +227,6 @@ private:
 	//深度ステンシル
 	Microsoft::WRL::ComPtr<ID3D12Resource> depthStancilResource_ = nullptr;
 
-	//各種でスクリプタのサイズ
-	uint32_t descriptorSizeRTV_;
-	uint32_t descriptorSizeDSV_;
-
-	//RTVデスクリプタヒープ
-	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> rtvDescriptorHeap_;
-
-	//DSVデスクリプタヒープ
-	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> dsvDescriptorHeap_;
-
 	//バックバッファー
 	std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>> backBuffers_;
 
@@ -258,10 +236,13 @@ private:
 	//RTVハンドル
 	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles_[2];
 
+	//RTVのメモリ番号
 	uint32_t rtvIndex_[2];
 
+	//DSVハンドル
 	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle_;
 
+	//DSVのメモリ番号
 	uint32_t dsvIndex_ = 0;
 
 	//フェンス
@@ -284,8 +265,6 @@ private:
 
 	//includeHander
 	IDxcIncludeHandler* includeHandler_ = nullptr;
-
-	Vector4 offScreenClearColor_ = { 1.0f,0.0f,0.0f,1.0f };
 
 	//記録時間(FPS固定用)
 	std::chrono::steady_clock::time_point reference_;

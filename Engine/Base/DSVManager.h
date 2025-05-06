@@ -13,7 +13,7 @@ class DSVManager {
 	///-------------------------------------------///
 public:
 
-	//最大RTV数
+	//最大DSV数
 	static const uint32_t kMaxDSVCount_ = 3;
 
 	///-------------------------------------------/// 
@@ -49,7 +49,7 @@ public:
 	/// <returns>フラグ</returns>
 	bool AllocateCheck();
 
-	void CreateDepthStencilView(uint32_t rtvIndex, ID3D12Resource* pResource);
+	void CreateDepthStencilView(uint32_t dsvIndex, ID3D12Resource* pResource);
 
 	///-------------------------------------------/// 
 	/// ゲッター・セッター
@@ -81,10 +81,10 @@ private:
 	//現在のSRV番号
 	uint32_t useIndex_ = 0;
 
-	//RTV用のデスクリプタサイズ
+	//DSV用のデスクリプタサイズ
 	uint32_t dsvDescriptorSize_;
 
-	//RTVデスクリプタヒープ
+	//DSVデスクリプタヒープ
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> dsvDescriptorHeap_;
 
 };

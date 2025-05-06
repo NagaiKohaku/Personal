@@ -73,7 +73,7 @@ public:
 	void CreateSRVForStructuredBuffer(uint32_t srvIndex, ID3D12Resource* pResource, UINT numElements, UINT structureByteStride);
 
 	/// <summary>
-	/// 
+	/// SRV生成(レンダーターゲット用)
 	/// </summary>
 	/// <param name="srvIndex"></param>
 	/// <param name="pResource"></param>

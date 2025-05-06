@@ -50,6 +50,11 @@ public:
 	/// <returns>フラグ</returns>
 	bool AllocateCheck();
 
+	/// <summary>
+	/// RTV生成
+	/// </summary>
+	/// <param name="rtvIndex"></param>
+	/// <param name="pResource"></param>
 	void CreateRenderTargetView(uint32_t rtvIndex, ID3D12Resource* pResource);
 
 	///-------------------------------------------/// 
