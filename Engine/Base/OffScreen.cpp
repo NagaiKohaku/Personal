@@ -247,7 +247,7 @@ void OffScreen::CreatePipeline() {
 	//VertexShaderをコンパイルする
 	Microsoft::WRL::ComPtr<IDxcBlob> vertexShaderBlob =
 		dxCommon_->CompileShader(
-			L"Resource/Shader/CopyImage.VS.hlsl",
+			L"Resource/Shader/GrayScale.VS.hlsl",
 			L"vs_6_0"
 		);
 
@@ -256,7 +256,7 @@ void OffScreen::CreatePipeline() {
 	//PixelShaderをコンパイルする
 	Microsoft::WRL::ComPtr<IDxcBlob> pixelShaderBlob =
 		dxCommon_->CompileShader(
-			L"Resource/Shader/CopyImage.PS.hlsl",
+			L"Resource/Shader/GrayScale.PS.hlsl",
 			L"ps_6_0"
 		);
 

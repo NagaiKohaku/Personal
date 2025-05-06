@@ -285,6 +285,7 @@
     <None Include="Resource\Shader\Object2d.hlsli" />
     <None Include="Resource\Shader\DebugObject.hlsli" />
     <None Include="Resource\Shader\CopyImage.hlsli" />
+    <None Include="Resource\Shader\GrayScale.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resource\Shaders\Object3d.PS.hlsl" />
@@ -297,5 +298,7 @@
     <FxCompile Include="Resource\Shader\DebugObject.VS.hlsl" />
     <FxCompile Include="Resource\Shader\CopyImage.PS.hlsl" />
     <FxCompile Include="Resource\Shader\CopyImage.VS.hlsl" />
+    <FxCompile Include="Resource\Shader\GrayScale.PS.hlsl" />
+    <FxCompile Include="Resource\Shader\GrayScale.VS.hlsl" />
   </ItemGroup>
 </Project>
