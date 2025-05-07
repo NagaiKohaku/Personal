@@ -172,6 +172,13 @@ void OffScreen::ImGui() {
 		CreatePipeline();
 	}
 
+	if (ImGui::Button("Smooth")) {
+
+		currentShaderName_ = L"Smooth";
+
+		CreatePipeline();
+	}
+
 	ImGui::End();
 }
 

@@ -287,6 +287,7 @@
     <None Include="Resource\Shader\CopyImage.hlsli" />
     <None Include="Resource\Shader\GrayScale.hlsli" />
     <None Include="Resource\Shader\Vignette.hlsli" />
+    <None Include="Resource\Shader\Smooth.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resource\Shaders\Object3d.PS.hlsl" />
@@ -303,5 +304,7 @@
     <FxCompile Include="Resource\Shader\GrayScale.VS.hlsl" />
     <FxCompile Include="Resource\Shader\Vignette.PS.hlsl" />
     <FxCompile Include="Resource\Shader\Vignette.VS.hlsl" />
+    <FxCompile Include="Resource\Shader\Smooth.PS.hlsl" />
+    <FxCompile Include="Resource\Shader\Smooth.VS.hlsl" />
   </ItemGroup>
 </Project>
