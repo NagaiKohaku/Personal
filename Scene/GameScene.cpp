@@ -34,11 +34,17 @@ void GameScene::Initialize() {
 
 	/// === オブジェクトの生成 === ///
 
+	bulletManager_ = std::make_unique<BulletManager>();
+
+	bulletManager_->Initialize();
+
 	//プレイヤーの生成
 	player_ = std::make_unique<Player>();
 
 	//プレイヤーの初期化
 	player_->Initialize();
+
+	player_->SetBulletManager(bulletManager_.get());
 
 }
 
@@ -55,6 +61,9 @@ void GameScene::Update() {
 
 	//プレイヤーの更新
 	player_->Update();
+
+	//弾の更新
+	bulletManager_->Update();
 
 	//ImGuiを起動
 	ImGui::Begin("Scene");
@@ -80,4 +89,6 @@ void GameScene::Draw() {
 	//プレイヤーの描画
 	player_->Draw();
 
+	//弾の描画
+	bulletManager_->Draw();
 }

@@ -8,6 +8,7 @@
 #include "3d/Object/DebugLine.h"
 
 #include "Player/Player.h"
+#include "Bullet/BulletManager.h"
 
 #include "memory"
 
@@ -51,4 +52,6 @@ private:
 
 	//プレイヤー
 	std::unique_ptr<Player> player_;
+
+	std::unique_ptr<BulletManager> bulletManager_;
 };
