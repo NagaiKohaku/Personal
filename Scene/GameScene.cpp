@@ -147,7 +147,7 @@ void GameScene::Update() {
 			1.0f,
 			1.0f,
 			false,
-			8
+			1
 		);
 
 	}
