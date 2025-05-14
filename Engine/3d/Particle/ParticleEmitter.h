@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Base/LayerType.h"
 #include "Math/Vector2.h"
 #include "Math/Vector3.h"
 #include "Math/Vector4.h"
@@ -43,18 +44,67 @@ private:
 		Matrix4x4 uvTransform;
 	};
 
-	//ローカル情報
-	struct Transform {
-		Vector3 scale;
-		Vector3 rotate;
-		Vector3 translate;
+	struct Parameter {
+		Vector3 startNum;
+		Vector3 startRandomRange;
+		Vector3 endNum;
+		Vector3 endRandomRange;
+		Vector3 velocity;
+		Vector3 velocityRandomRange;
+		Vector3 acceleration;
+		Vector3 accelerationRandomRange;
+	};
+
+	struct ColorParameter {
+		Vector4 startColor;
+		Vector4 startRandomRange;
+		Vector4 endColor;
+		Vector4 endRandomRange;
+		Vector4 velocity;
+		Vector4 velocityRandomRange;
+		Vector4 acceleration;
+		Vector4 accelerationRandomRange;
+	};
+
+	struct ParticleParameter {
+		Vector3 startNum;
+		Vector3 endNum;
+		Vector3 velocity;
+		Vector3 acceleration;
+	};
+
+	struct ParticleColorParameter {
+		Vector4 startColor;
+		Vector4 endColor;
+		Vector4 velocity;
+		Vector4 acceleration;
+	};
+
+	enum State {
+		START,
+		VELOCITY,
+		EASING
+	};
+
+	enum EasingState {
+		LINEAR,
+		EASE_IN,
+		EASE_OUT
+	};
+
+	enum PrimitiveType {
+		PLANE,
+		RING
 	};
 
 	//パーティクル
 	struct Particle {
-		Transform transform;
-		Vector3 velocity;
+		WorldTransform transform;
 		Vector4 color;
+		ParticleParameter positionPara;
+		ParticleParameter rotationPara;
+		ParticleParameter scalePara;
+		ParticleColorParameter colorPara;
 		float lifeTime;
 		float currentTime;
 	};
@@ -97,7 +147,7 @@ public:
 	/// <summary>
 	/// 初期化処理
 	/// </summary>
-	void Initialize(std::string name, const std::string textureFilePath, Camera* camera);
+	void Initialize(const std::string& fileName, Camera* camera);
 
 	/// <summary>
 	/// 更新処理
@@ -107,7 +157,7 @@ public:
 	/// <summary>
 	/// 描画処理
 	/// </summary>
-	void Draw();
+	void Draw(LayerType layer);
 
 	/// <summary>
 	/// パーティクルの生成
@@ -132,19 +182,6 @@ public:
 	);
 
 	/// <summary>
-	/// パーティクルの生成
-	/// </summary>
-	/// <param name="translate">初期座標</param>
-	/// <param name="area">生成範囲</param>
-	/// <param name="minVelocity">最小速度</param>
-	/// <param name="maxVelocity">最大速度</param>
-	/// <param name="minTime">最小時間</param>
-	/// <param name="maxTime">最大時間</param>
-	/// <param name="useRandomColor">色のランダムフラグ</param>
-	/// <param name="count">生成数</param>
-	void EmitPlane(const Vector3& translate, const AABB& area, const Vector3& minVelocity, const Vector3& maxVelocity, float minTime, float maxTime, bool useRandomColor, uint32_t count);
-
-	/// <summary>
 	/// 加速場との接触判定
 	/// </summary>
 	void CheckCollisionAccelerationField();
@@ -156,6 +193,10 @@ public:
 	/// <param name="point"></param>
 	/// <returns>フラグ</returns>
 	bool IsCollision(const AABB& aabb, const Vector3& point);
+
+	void ExportEmitterData(const std::string& fileName);
+
+	void ImportEmitterData(const std::string& fileName);
 
 	///-------------------------------------------/// 
 	/// ゲッター・セッター
@@ -169,6 +210,8 @@ public:
 	void SetAccelerationField(const Vector3& acceleration, const AABB& area);
 
 	WorldTransform& GetWorldTransform() { return emitterWorldTransform_; }
+
+	std::unique_ptr<PrimitiveBase> GetPrimitiveType(PrimitiveType primitiveType);
 
 	///-------------------------------------------/// 
 	/// クラス内処理関数
@@ -188,23 +231,12 @@ private:
 	/// <returns>パーティクル</returns>
 	Particle MakeNewParticle(const Vector3& translate, const AABB& area, const Vector3& minVelocity, const Vector3& maxVelocity, float minTime, float maxTime, bool useRandomColor);
 
-	/// <summary>
-	/// 新しいパーティクルの生成
-	/// </summary>
-	/// <param name="translate">座標</param>
-	/// <param name="area">生成範囲</param>
-	/// <param name="minVelocity">最小速度</param>
-	/// <param name="maxVelocity">最大速度</param>
-	/// <param name="minTime">最小生成時間</param>
-	/// <param name="maxTime">最大生成時間</param>
-	/// <param name="useRandomColor">色のランダムフラグ</param>
-	/// <returns>パーティクル</returns>
-	Particle MakeNewPlaneParticle(const Vector3& translate, const AABB& area, const Vector3& minVelocity, const Vector3& maxVelocity, float minTime, float maxTime, bool useRandomColor);
-
 	///-------------------------------------------/// 
 	/// メンバ変数
 	///-------------------------------------------///
 private:
+
+	/// === 他クラスからの借り物 === ///
 
 	//DirectC基底
 	DirectXCommon* directXCommon_;
@@ -215,37 +247,11 @@ private:
 	//SRVマネージャー
 	SrvManager* srvManager_;
 
-	//デフォルトカメラ
-	Camera* defaultCamera_;
-
 	//パーティクルマネージャー
 	ParticleManager* particleManager_;
 
-	//ワールドトランスフォーム
-	WorldTransform emitterWorldTransform_;
-
-	//SRVインデックス
-	uint32_t srvIndex_;
-
-	//インスタンス数
-	uint32_t numInstance_;
-
-	//加速場のフラグ
-	bool useAccelerationField_;
-
-	//アンカーポイント
-	Vector3 anchorPoint_;
-
-	//マテリアルデータ
-	MaterialData material_;
-
-	//加速場
-	AccelerationField accelerationField_;
-
-	//パーティクルリスト
-	std::list<Particle> particles_;
-
-	std::unique_ptr<PrimitiveBase> primitive_;
+	//デフォルトカメラ
+	Camera* defaultCamera_;
 
 	/// === バッファリソース === ///
 
@@ -262,5 +268,69 @@ private:
 
 	//インスタンシングデータ
 	ParticleForGPU* instancingData_;
+
+	//SRVインデックス
+	uint32_t srvIndex_;
+
+	/// === パーティクル情報 === ///
+
+	//プリミティブ
+	std::unique_ptr<PrimitiveBase> primitive_;
+
+	//マテリアルデータ
+	MaterialData material_;
+
+	//インスタンス数
+	uint32_t numInstance_;
+
+	//パーティクルリスト
+	std::list<Particle> particles_;
+
+	/// === エミッター情報 === ///
+
+	//エミッター名
+	std::string name_;
+
+	//テクスチャ名
+	std::string textureFileName_;
+
+	//プリミティブタイプ
+	PrimitiveType primitiveType_;
+
+	//ワールドトランスフォーム
+	WorldTransform emitterWorldTransform_;
+
+	//座標
+	Parameter positionParameter_;
+
+	//回転角
+	Parameter rotationParameter_;
+
+	//スケール
+	Parameter scaleParameter_;
+
+	//色
+	ColorParameter colorParameter_;
+
+	//パーティクルの生存時間
+	float particleLifeTime_;
+
+	//生成間隔
+	float emitFrequency_;
+
+	//生成数
+	int32_t emitCount_;
+
+	//生成する最大数
+	int32_t emitMaxCount_;
+
+	//生成タイマー
+	float emitTimer_;
+
+	//加速場のフラグ
+	bool useAccelerationField_;
+
+	//加速場
+	AccelerationField accelerationField_;
 
 };

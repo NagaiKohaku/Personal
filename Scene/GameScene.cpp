@@ -83,8 +83,9 @@ void GameScene::Initialize() {
 
 	/// === パーティクルの生成 === ///
 
-	ParticleManager::GetInstance()->CreateEmitter("Particle", "gradationLine.png");
+	particleEmitter_ = std::make_unique<ParticleEmitter>();
 
+	particleEmitter_->Initialize("test", camera_.get());
 }
 
 void GameScene::Finalize() {
@@ -104,6 +105,8 @@ void GameScene::Update() {
 	ball_->Update();
 
 	ground_->Update();
+
+	particleEmitter_->Update();
 
 	//ImGuiを起動
 	ImGui::Begin("Scene");
@@ -138,18 +141,22 @@ void GameScene::Update() {
 
 	if (ImGui::Button("Emit Particle")) {
 
-		ParticleManager::GetInstance()->EmitPlane(
-			"Particle",
-			{ 0.0f,0.0f,0.0f },
-			{ {0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} },
+		particleEmitter_->Emit(
+			{ 0.0f,3.0f,0.0f },
+			{ { -1.0f,-1.0f,-1.0f },{ 1.0f,1.0f,1.0f } },
 			{ 0.0f,0.0f,0.0f },
 			{ 0.0f,0.0f,0.0f },
 			1.0f,
-			1.0f,
+			1.5f,
 			false,
 			1
 		);
 
+	}
+
+	if (ImGui::Button("Emitter Export")) {
+
+		particleEmitter_->ExportEmitterData("test");
 	}
 
 	ImGui::Text("Shift + LeftClick : Move Camera");
@@ -171,4 +178,7 @@ void GameScene::Draw() {
 
 	//地面の描画 : オブジェクトレイヤー
 	ground_->Draw(Object);
+
+	//パーティクルの描画 : パーティクルレイヤー
+	particleEmitter_->Draw(Object);
 }

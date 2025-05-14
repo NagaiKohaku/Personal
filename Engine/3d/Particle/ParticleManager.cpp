@@ -73,7 +73,7 @@ void ParticleManager::Draw() {
 		particleEmitterIterator != particleEmitters.end();) {
 
 		//エミッターの描画
-		particleEmitterIterator->second.Draw();
+		//particleEmitterIterator->second.Draw();
 
 		//次のエミッターへ移動
 		++particleEmitterIterator;
@@ -91,7 +91,7 @@ void ParticleManager::CreateEmitter(const std::string name, const std::string te
 
 	ParticleEmitter& emitter = particleEmitters[name];
 
-	emitter.Initialize(name, textureFileName, defaultCamera_);
+	//emitter.Initialize(name, textureFileName, defaultCamera_);
 }
 
 ///=====================================================/// 
@@ -104,16 +104,6 @@ void ParticleManager::Emit(const std::string name, const Vector3& translate, con
 
 		//エミッターからパーティクルを生成する
 		particleEmitters[name].Emit(translate, area, minVelocity, maxVelocity, minTime, maxTime, useRandomColor, count);
-	}
-}
-
-void ParticleManager::EmitPlane(const std::string groupName, const Vector3& translate, const AABB& area, const Vector3& minVelocity, const Vector3& maxVelocity, float minTime, float maxTime, bool useRandomColor, uint32_t count) {
-
-	//登録済みの名前かチェック
-	if (particleEmitters.contains(groupName)) {
-
-		//エミッターからパーティクルを生成する
-		particleEmitters[groupName].EmitPlane(translate, area, minVelocity, maxVelocity, minTime, maxTime, useRandomColor, count);
 	}
 }
 

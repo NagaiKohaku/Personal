@@ -43,14 +43,16 @@ void Plane::Initialize() {
 
 	/// === 頂点インデックスリソースの生成 === ///
 
+	indexCount_ = 6;
+
 	//頂点インデックスリソースの生成
-	IndexResource_ = directXCommon_->CreateBufferResource(sizeof(uint32_t) * 6);
+	IndexResource_ = directXCommon_->CreateBufferResource(sizeof(uint32_t) * indexCount_);
 
 	//リソースの場所を取得
 	indexBufferView_.BufferLocation = IndexResource_->GetGPUVirtualAddress();
 
 	//使用するリソースのサイズを設定
-	indexBufferView_.SizeInBytes = sizeof(uint32_t) * 6;
+	indexBufferView_.SizeInBytes = sizeof(uint32_t) * indexCount_;
 
 	//フォーマットを設定
 	indexBufferView_.Format = DXGI_FORMAT_R32_UINT;
