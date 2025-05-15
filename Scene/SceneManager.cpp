@@ -4,6 +4,7 @@
 #include "BaseScene.h"
 
 #include "GameScene.h"
+#include "ParticleEditorScene.h"
 
 ///=====================================================/// 
 /// シングルトンインスタンス
@@ -78,7 +79,10 @@ std::unique_ptr<BaseScene> SceneManager::CreateScene(SceneType sceneType) {
 		//ゲームシーン
 	case SceneType::kGame:
 		return std::make_unique<GameScene>();
-		// 他のシーンタイプの処理
+
+	case SceneType::kParticleEditor:
+		return std::make_unique<ParticleEditorScene>();
+
 	default:
 		return nullptr;
 	}

@@ -14,6 +14,8 @@ Vector3 RandomVector3(Vector3 min, Vector3 max);
 
 Vector4 RandomVector4(Vector4 min, Vector4 max);
 
+float RandomRangeFloat(float num, float range);
+
 Vector2 RandomRangeVector2(Vector2 num, Vector2 range);
 
 Vector3 RandomRangeVector3(Vector3 num, Vector3 range);

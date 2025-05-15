@@ -141,16 +141,7 @@ void GameScene::Update() {
 
 	if (ImGui::Button("Emit Particle")) {
 
-		particleEmitter_->Emit(
-			{ 0.0f,3.0f,0.0f },
-			{ { -1.0f,-1.0f,-1.0f },{ 1.0f,1.0f,1.0f } },
-			{ 0.0f,0.0f,0.0f },
-			{ 0.0f,0.0f,0.0f },
-			1.0f,
-			1.5f,
-			false,
-			1
-		);
+		particleEmitter_->Emit();
 
 	}
 

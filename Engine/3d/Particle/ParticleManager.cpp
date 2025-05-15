@@ -103,7 +103,7 @@ void ParticleManager::Emit(const std::string name, const Vector3& translate, con
 	if (particleEmitters.contains(name)) {
 
 		//エミッターからパーティクルを生成する
-		particleEmitters[name].Emit(translate, area, minVelocity, maxVelocity, minTime, maxTime, useRandomColor, count);
+		particleEmitters[name].Emit();
 	}
 }
 

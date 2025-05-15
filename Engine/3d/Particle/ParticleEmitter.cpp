@@ -3,6 +3,7 @@
 #include "Base/DirectXCommon.h"
 #include "Base/SrvManager.h"
 #include "Base/Renderer.h"
+#include "Base//Input.h"
 #include "2d/Sprite/TextureManager.h"
 #include "3d/Camera/Camera.h"
 #include "3d/Particle/ParticleCommon.h"
@@ -13,6 +14,8 @@
 #include "Math/MakeMatrixMath.h"
 #include "Math/Easing.h"
 #include "Math/Random.h"
+
+#include "imgui.h"
 
 #include "json.hpp"
 #include "fstream"
@@ -91,13 +94,17 @@ void ParticleEmitter::Initialize(const std::string& fileName, Camera* camera) {
 
 	emitTimer_ = 0.0f;
 
+	emitCount_ = 0;
+
+	isActive_ = false;
+
 	//加速場フラグの初期化
 	useAccelerationField_ = false;
 
 	/// === パーティクル情報の初期化 === ///
 
 	//プリミティブの生成
-	primitive_ = GetPrimitiveType(primitiveType_);
+	primitive_ = CreatePrimitive(primitiveType_);
 
 	primitive_->Initialize();
 
@@ -115,6 +122,31 @@ void ParticleEmitter::Initialize(const std::string& fileName, Camera* camera) {
 void ParticleEmitter::Update() {
 
 	emitterWorldTransform_.UpdateMatrix();
+
+	emitTimer_ += 1.0f / 60.0f;
+
+	if (isActive_) {
+
+		std::list<Particle> particles;
+
+		while (emitTimer_ >= emitFrequency_) {
+
+			if (emitCount_ >= emitMaxCount_) {
+
+				isActive_ = false;
+
+				break;
+			}
+
+			particles.push_back(MakeNewParticle());
+
+			emitTimer_ -= emitFrequency_;
+
+			emitCount_++;
+		}
+
+		particles_.splice(particles_.end(), particles);
+	}
 
 	//ビルボード行列の計算
 	Matrix4x4 billboardMatrix = defaultCamera_->GetViewMatrix();
@@ -149,7 +181,7 @@ void ParticleEmitter::Update() {
 
 			/// === 回転角の計算 === ///
 
-			particle->positionPara.velocity = particle->rotationPara.velocity + particle->rotationPara.acceleration * kDeltaTime;
+			particle->rotationPara.velocity = particle->rotationPara.velocity + particle->rotationPara.acceleration * kDeltaTime;
 
 			particle->transform.rotate_ = particle->transform.rotate_ + particle->rotationPara.velocity * kDeltaTime;
 
@@ -175,11 +207,25 @@ void ParticleEmitter::Update() {
 
 			particle->transform.UpdateMatrix();
 
-			//ワールド行列の計算
-			Matrix4x4 worldMatrix = particle->transform.GetWorldMatrix();
+			Matrix4x4 translateEMatrix = emitterWorldTransform_.GetTranslateMatrix();
+			Matrix4x4 rotateEMatrix = emitterWorldTransform_.GetRotateMatrix();
+			Matrix4x4 scaleEMatrix = emitterWorldTransform_.GetScaleMatrix();
 
-			//エミッターのワールド行列も合成
-			worldMatrix = worldMatrix * emitterWorldTransform_.GetWorldMatrix();
+			Matrix4x4 translateMatrix = particle->transform.GetTranslateMatrix();
+			Matrix4x4 rotateMatrix = particle->transform.GetRotateMatrix();
+			Matrix4x4 scaleMatrix = particle->transform.GetScaleMatrix();
+
+			translateMatrix = translateMatrix * translateEMatrix;
+			rotateMatrix = rotateMatrix * rotateEMatrix;
+			scaleMatrix = scaleMatrix * scaleEMatrix;
+
+			if (isBillboard_) {
+
+				rotateMatrix = billboardMatrix;
+			}
+
+			//ワールド行列の計算
+			Matrix4x4 worldMatrix = (scaleMatrix * rotateMatrix) * translateMatrix;
 
 			//ワールドビュープロジェクション行列の合成
 			Matrix4x4 worldViewProjectionMatrix = worldMatrix * viewProjectionMatrix;
@@ -221,17 +267,242 @@ void ParticleEmitter::Draw(LayerType layer) {
 	Renderer::GetInstance()->AddDraw(layer, command);
 }
 
-void ParticleEmitter::Emit(const Vector3& translate, const AABB& area, const Vector3& minVelocity, const Vector3& maxVelocity, float minTime, float maxTime, bool useRandomColor, uint32_t count) {
+void ParticleEmitter::ImGui() {
 
-	std::list<Particle> particles;
+	std::string currentName = name_;
 
-	for (uint32_t i = 0; i < count; i++) {
+	if (ImGui::CollapsingHeader("EmitterSettiing")) {
+		ImGui::Columns(2, "EmitterColumns", false);
 
-		particles.push_back(MakeNewParticle(translate, area, minVelocity, maxVelocity, minTime, maxTime, useRandomColor));
+		ImGui::Text("Name");
+		if (ImGui::InputText("##Name", currentName.data(), 256)) {
+			if (Input::GetInstance()->IsTriggerPushKey(DIK_RETURN)) {
+				name_ = currentName.c_str();
+			}
+		}
+		ImGui::NextColumn();
+
+		const char* items[] = { "Plane","Ring" };
+
+		int currentItem = static_cast<int>(primitiveType_);
+
+		ImGui::Text("Primitive");
+		if (ImGui::Combo("##Primitive", &currentItem, items, IM_ARRAYSIZE(items))) {
+
+			primitiveType_ = static_cast<PrimitiveType>(currentItem);
+
+			primitive_.reset();
+
+			primitive_ = CreatePrimitive(primitiveType_);
+
+			primitive_->Initialize();
+		}
+		ImGui::NextColumn();
+
+		ImGui::Text("EmitterPosition");
+		ImGui::DragFloat3("##EmitterPosition", &emitterWorldTransform_.translate_.x, 0.1f);
+		ImGui::NextColumn();
+
+		ImGui::Text("EmitterRotation");
+		ImGui::DragFloat3("##EmitterRotation", &emitterWorldTransform_.rotate_.x, 0.01f);
+		ImGui::NextColumn();
+
+		ImGui::Text("EmitterScale");
+		ImGui::DragFloat3("##EmitterScale", &emitterWorldTransform_.scale_.x, 0.1f);
+		ImGui::NextColumn();
+
+		ImGui::Text("EmitCount");
+		ImGui::InputInt("##EmitCount", &emitMaxCount_);
+		ImGui::NextColumn();
+
+		ImGui::Text("frequency");
+		ImGui::DragFloat("##frequency", &emitFrequency_, 0.01f);
+		ImGui::NextColumn();
+
+		ImGui::Text("lifeTime");
+		ImGui::DragFloat("##lifeTime", &particleLifeTime_, 0.1f);
+		ImGui::NextColumn();
+
+		ImGui::Text("lifeTimeRandomRange");
+		ImGui::DragFloat("##lifeTimeRandomRange", &particleLifeTimeRandomRange_, 0.1f);
+		ImGui::NextColumn();
+
+		ImGui::Text("isLoop");
+		ImGui::Checkbox("##isLoop", &isLoop_);
+		ImGui::NextColumn();
+
+		ImGui::Text("isBillboard");
+		ImGui::Checkbox("##isBillboard", &isBillboard_);
+		ImGui::NextColumn();
+
+		ImGui::Columns(1);
 	}
 
-	particles_.splice(particles_.end(), particles);
+	if (ImGui::CollapsingHeader("Position")) {
+		ImGui::Columns(2, "PositionColumns", false);
 
+		ImGui::Text("StartNum");
+		ImGui::DragFloat3("##PositionStartNum", &positionParameter_.startNum.x, 0.1f);
+		ImGui::NextColumn();
+
+		ImGui::Text("StartRandomRange");
+		ImGui::DragFloat3("##PositionStartRandomRange", &positionParameter_.startRandomRange.x, 0.1f);
+		ImGui::NextColumn();
+
+		ImGui::Text("EndNum");
+		ImGui::DragFloat3("##PositionEndNum", &positionParameter_.endNum.x, 0.1f);
+		ImGui::NextColumn();
+
+		ImGui::Text("EndRandomRange");
+		ImGui::DragFloat3("##PositionEndRandomRange", &positionParameter_.endRandomRange.x, 0.1f);
+		ImGui::NextColumn();
+
+		ImGui::Text("Velocity");
+		ImGui::DragFloat3("##PositionVelocity", &positionParameter_.velocity.x, 0.1f);
+		ImGui::NextColumn();
+
+		ImGui::Text("VelocityRandomRange");
+		ImGui::DragFloat3("##PositionVelocityRandomRange", &positionParameter_.velocityRandomRange.x, 0.1f);
+		ImGui::NextColumn();
+
+		ImGui::Text("Acceleration");
+		ImGui::DragFloat3("##PositionAcceleration", &positionParameter_.acceleration.x, 0.1f);
+		ImGui::NextColumn();
+
+		ImGui::Text("AccelerationRandomRange");
+		ImGui::DragFloat3("##PositionAccelerationRandomRange", &positionParameter_.accelerationRandomRange.x, 0.1f);
+		ImGui::NextColumn();
+
+		ImGui::Columns(1);
+	}
+
+	if (ImGui::CollapsingHeader("Rotation")) {
+		ImGui::Columns(2, "RotationColumns", false);
+
+		ImGui::Text("StartNum");
+		ImGui::DragFloat3("##StartNum", &rotationParameter_.startNum.x, 0.1f);
+		ImGui::NextColumn();
+
+		ImGui::Text("StartRandomRange");
+		ImGui::DragFloat3("##StartRandomRange", &rotationParameter_.startRandomRange.x, 0.1f);
+		ImGui::NextColumn();
+
+		ImGui::Text("EndNum");
+		ImGui::DragFloat3("##EndNum", &rotationParameter_.endNum.x, 0.1f);
+		ImGui::NextColumn();
+
+		ImGui::Text("EndRandomRange");
+		ImGui::DragFloat3("##EndRandomRange", &rotationParameter_.endRandomRange.x, 0.1f);
+		ImGui::NextColumn();
+
+		ImGui::Text("Velocity");
+		ImGui::DragFloat3("##Velocity", &rotationParameter_.velocity.x, 0.1f);
+		ImGui::NextColumn();
+
+		ImGui::Text("VelocityRandomRange");
+		ImGui::DragFloat3("##VelocityRandomRange", &rotationParameter_.velocityRandomRange.x, 0.1f);
+		ImGui::NextColumn();
+
+		ImGui::Text("Acceleration");
+		ImGui::DragFloat3("##Acceleration", &rotationParameter_.acceleration.x, 0.1f);
+		ImGui::NextColumn();
+
+		ImGui::Text("AccelerationRandomRange");
+		ImGui::DragFloat3("##AccelerationRandomRange", &rotationParameter_.accelerationRandomRange.x, 0.1f);
+		ImGui::NextColumn();
+
+		ImGui::Columns(1);
+	}
+
+	if (ImGui::CollapsingHeader("Scale")) {
+		ImGui::Columns(2, "ScaleColumns", false);
+
+		ImGui::Text("StartNum");
+		ImGui::DragFloat3("##StartNum", &scaleParameter_.startNum.x, 0.1f);
+		ImGui::NextColumn();
+
+		ImGui::Text("StartRandomRange");
+		ImGui::DragFloat3("##StartRandomRange", &scaleParameter_.startRandomRange.x, 0.1f);
+		ImGui::NextColumn();
+
+		ImGui::Text("EndNum");
+		ImGui::DragFloat3("##EndNum", &scaleParameter_.endNum.x, 0.1f);
+		ImGui::NextColumn();
+
+		ImGui::Text("EndRandomRange");
+		ImGui::DragFloat3("##EndRandomRange", &scaleParameter_.endRandomRange.x, 0.1f);
+		ImGui::NextColumn();
+
+		ImGui::Text("Velocity");
+		ImGui::DragFloat3("##Velocity", &scaleParameter_.velocity.x, 0.1f);
+		ImGui::NextColumn();
+
+		ImGui::Text("VelocityRandomRange");
+		ImGui::DragFloat3("##VelocityRandomRange", &scaleParameter_.velocityRandomRange.x, 0.1f);
+		ImGui::NextColumn();
+
+		ImGui::Text("Acceleration");
+		ImGui::DragFloat3("##Acceleration", &scaleParameter_.acceleration.x, 0.1f);
+		ImGui::NextColumn();
+
+		ImGui::Text("AccelerationRandomRange");
+		ImGui::DragFloat3("##AccelerationRandomRange", &scaleParameter_.accelerationRandomRange.x, 0.1f);
+		ImGui::NextColumn();
+
+		ImGui::Columns(1);
+	}
+
+	if (ImGui::CollapsingHeader("Color")) {
+		ImGui::Columns(2, "ColorColumns", false);
+
+		ImGui::Text("StartColor");
+		ImGui::ColorEdit4("##StartColor", &colorParameter_.startColor.x);
+		ImGui::NextColumn();
+
+		ImGui::Text("StartColorRandomRange");
+		ImGui::ColorEdit4("##StartColorRandomRange", &colorParameter_.startRandomRange.x);
+		ImGui::NextColumn();
+
+		ImGui::Text("EndColor");
+		ImGui::ColorEdit4("##EndColor", &colorParameter_.endColor.x);
+		ImGui::NextColumn();
+
+		ImGui::Text("EndColorRandomRange");
+		ImGui::ColorEdit4("##EndColorRandomRange", &colorParameter_.endRandomRange.x);
+		ImGui::NextColumn();
+
+		ImGui::Text("Velocity");
+		ImGui::ColorEdit4("##Velocity", &colorParameter_.velocity.x);
+		ImGui::NextColumn();
+
+		ImGui::Text("VelocityRandomRange");
+		ImGui::ColorEdit4("##VelocityRandomRange", &colorParameter_.velocityRandomRange.x);
+		ImGui::NextColumn();
+
+		ImGui::Text("Acceleration");
+		ImGui::ColorEdit4("##Acceleration", &colorParameter_.acceleration.x);
+		ImGui::NextColumn();
+
+		ImGui::Text("AccelerationRandomRange");
+		ImGui::ColorEdit4("##AccelerationRandomRange", &colorParameter_.accelerationRandomRange.x);
+		ImGui::NextColumn();
+
+		ImGui::Columns(1);
+	}
+
+	if (ImGui::Button("Emit")) {
+		Emit();
+	}
+
+}
+
+void ParticleEmitter::Emit() {
+
+	isActive_ = true;
+
+	emitCount_ = 0;
+
+	emitTimer_ = 0;
 }
 
 void ParticleEmitter::CheckCollisionAccelerationField() {
@@ -279,6 +550,7 @@ void ParticleEmitter::ExportEmitterData(const std::string& fileName) {
 	jsonData["primitiveType"] = primitiveType_;
 
 	jsonData["lifeTime"] = particleLifeTime_;
+	jsonData["lifeTimeRandomRange"] = particleLifeTimeRandomRange_;
 	jsonData["frequency"] = emitFrequency_;
 	jsonData["maxCount"] = emitMaxCount_;
 
@@ -375,6 +647,7 @@ void ParticleEmitter::ImportEmitterData(const std::string& fileName) {
 	primitiveType_ = static_cast<PrimitiveType>(jsonData["primitiveType"]);
 
 	particleLifeTime_ = jsonData["lifeTime"];
+	particleLifeTimeRandomRange_ = jsonData["lifeTimeRandomRange"];
 	emitFrequency_ = jsonData["frequency"];
 	emitMaxCount_ = jsonData["maxCount"];
 
@@ -436,7 +709,7 @@ void ParticleEmitter::SetAccelerationField(const Vector3& acceleration, const AA
 	useAccelerationField_ = true;
 }
 
-std::unique_ptr<PrimitiveBase> ParticleEmitter::GetPrimitiveType(PrimitiveType primitiveType) {
+std::unique_ptr<PrimitiveBase> ParticleEmitter::CreatePrimitive(PrimitiveType primitiveType) {
 
 	switch (primitiveType) {
 	case ParticleEmitter::PLANE:
@@ -450,7 +723,7 @@ std::unique_ptr<PrimitiveBase> ParticleEmitter::GetPrimitiveType(PrimitiveType p
 	return std::move(std::make_unique<Plane>());
 }
 
-ParticleEmitter::Particle ParticleEmitter::MakeNewParticle(const Vector3& translate, const AABB& area, const Vector3& minVelocity, const Vector3& maxVelocity, float minTime, float maxTime, bool useRandomColor) {
+ParticleEmitter::Particle ParticleEmitter::MakeNewParticle() {
 
 	//新しいパーティクルの生成
 	Particle particle;
@@ -491,7 +764,7 @@ ParticleEmitter::Particle ParticleEmitter::MakeNewParticle(const Vector3& transl
 
 	particle.color = particle.colorPara.startColor;
 
-	particle.lifeTime = RandomFloat(minTime, maxTime);
+	particle.lifeTime = RandomRangeFloat(particleLifeTime_, particleLifeTimeRandomRange_);
 	particle.currentTime = 0.0f;
 
 	return particle;

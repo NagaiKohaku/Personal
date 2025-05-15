@@ -20,6 +20,7 @@ public:
 	enum SceneType {
 		kTitle,
 		kGame,
+		kParticleEditor
 	};
 
 	///-------------------------------------------/// 

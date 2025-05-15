@@ -159,27 +159,12 @@ public:
 	/// </summary>
 	void Draw(LayerType layer);
 
+	void ImGui();
+
 	/// <summary>
 	/// パーティクルの生成
 	/// </summary>
-	/// <param name="translate">初期座標</param>
-	/// <param name="area">生成範囲</param>
-	/// <param name="minVelocity">最小速度</param>
-	/// <param name="maxVelocity">最大速度</param>
-	/// <param name="minTime">最小時間</param>
-	/// <param name="maxTime">最大時間</param>
-	/// <param name="useRandomColor">色のランダムフラグ</param>
-	/// <param name="count">生成数</param>
-	void Emit(
-		const Vector3& translate,
-		const AABB& area,
-		const Vector3& minVelocity,
-		const Vector3& maxVelocity,
-		float minTime,
-		float maxTime,
-		bool useRandomColor,
-		uint32_t count
-	);
+	void Emit();
 
 	/// <summary>
 	/// 加速場との接触判定
@@ -211,25 +196,14 @@ public:
 
 	WorldTransform& GetWorldTransform() { return emitterWorldTransform_; }
 
-	std::unique_ptr<PrimitiveBase> GetPrimitiveType(PrimitiveType primitiveType);
+	std::unique_ptr<PrimitiveBase> CreatePrimitive(PrimitiveType primitiveType);
 
 	///-------------------------------------------/// 
 	/// クラス内処理関数
 	///-------------------------------------------///
 private:
 
-	/// <summary>
-	/// 新しいパーティクルの生成
-	/// </summary>
-	/// <param name="translate">座標</param>
-	/// <param name="area">生成範囲</param>
-	/// <param name="minVelocity">最小速度</param>
-	/// <param name="maxVelocity">最大速度</param>
-	/// <param name="minTime">最小生成時間</param>
-	/// <param name="maxTime">最大生成時間</param>
-	/// <param name="useRandomColor">色のランダムフラグ</param>
-	/// <returns>パーティクル</returns>
-	Particle MakeNewParticle(const Vector3& translate, const AABB& area, const Vector3& minVelocity, const Vector3& maxVelocity, float minTime, float maxTime, bool useRandomColor);
+	Particle MakeNewParticle();
 
 	///-------------------------------------------/// 
 	/// メンバ変数
@@ -315,17 +289,28 @@ private:
 	//パーティクルの生存時間
 	float particleLifeTime_;
 
+	//パーティクルの生存時間のランダム幅
+	float particleLifeTimeRandomRange_;
+
 	//生成間隔
 	float emitFrequency_;
-
-	//生成数
-	int32_t emitCount_;
 
 	//生成する最大数
 	int32_t emitMaxCount_;
 
+	//ループフラグ
+	bool isLoop_;
+
+	//ビルボードフラグ
+	bool isBillboard_;
+
+	//生成数
+	int32_t emitCount_;
+
 	//生成タイマー
 	float emitTimer_;
+
+	bool isActive_;
 
 	//加速場のフラグ
 	bool useAccelerationField_;

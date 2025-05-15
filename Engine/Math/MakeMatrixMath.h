@@ -39,6 +39,13 @@ Matrix4x4 MakeRotateYMatrix(float radian);
 Matrix4x4 MakeRotateZMatrix(float radian);
 
 /// <summary>
+/// 回転行列
+/// </summary>
+/// <param name="rotate"></param>
+/// <returns></returns>
+Matrix4x4 MakeRotateMatrix(Vector3 rotate);
+
+/// <summary>
 /// 三次元アフィン変換
 /// </summary>
 /// <param name="scale"></param>

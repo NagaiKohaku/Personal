@@ -51,6 +51,7 @@
     },
     "frequency": 0.10000000149011612,
     "lifeTime": 1.0,
+    "lifeTimeRandomRange": 0.0,
     "maxCount": 8,
     "name": "test",
     "position": {
@@ -95,7 +96,7 @@
             0.0
         ]
     },
-    "primitiveType": 0,
+    "primitiveType": 1,
     "rotation": {
         "acceleration": [
             0.0,

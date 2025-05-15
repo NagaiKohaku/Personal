@@ -43,6 +43,16 @@ Vector4 RandomVector4(Vector4 min, Vector4 max) {
 	return Vector4(distX(randomEngine), distY(randomEngine), distZ(randomEngine), distW(randomEngine));
 }
 
+float RandomRangeFloat(float num, float range) {
+
+	std::random_device seedGenerator;
+	std::mt19937 randomEngine(seedGenerator());
+
+	std::uniform_real_distribution<float> dist(num - range, num + range);
+
+	return dist(randomEngine);
+}
+
 Vector2 RandomRangeVector2(Vector2 num, Vector2 range) {
 
 	std::random_device seedGenerator;
