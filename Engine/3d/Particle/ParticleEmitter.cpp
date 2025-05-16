@@ -10,6 +10,7 @@
 #include "3d/Particle/ParticleManager.h"
 #include "3d/Primitive/Plane.h"
 #include "3d/Primitive/Ring.h"
+#include "3d/Primitive/Cylinder.h"
 
 #include "Math/MakeMatrixMath.h"
 #include "Math/Easing.h"
@@ -124,6 +125,15 @@ void ParticleEmitter::Update() {
 	emitterWorldTransform_.UpdateMatrix();
 
 	emitTimer_ += 1.0f / 60.0f;
+
+	uvTimer_ += 1.0f / 60.0f;
+
+	Vector3 uvTransform = { uvTimer_,0.0f,0.0f };
+	Matrix4x4 uvTransformMatrix = MakeTranslateMatrix(uvTransform);
+	Matrix4x4 uvScaleMatrix = MakeIdentity4x4();
+	Matrix4x4 uvRotateMatrix = MakeIdentity4x4();
+
+	materialData_->uvTransform = (uvScaleMatrix * uvRotateMatrix) * uvTransformMatrix;
 
 	if (isActive_) {
 
@@ -282,7 +292,7 @@ void ParticleEmitter::ImGui() {
 		}
 		ImGui::NextColumn();
 
-		const char* items[] = { "Plane","Ring" };
+		const char* items[] = { "Plane","Ring","Cylinder"};
 
 		int currentItem = static_cast<int>(primitiveType_);
 
@@ -717,6 +727,9 @@ std::unique_ptr<PrimitiveBase> ParticleEmitter::CreatePrimitive(PrimitiveType pr
 		break;
 	case ParticleEmitter::RING:
 		return std::move(std::make_unique<Ring>());
+		break;
+	case ParticleEmitter::CYLINDER:
+		return std::move(std::make_unique<Cylinder>());
 		break;
 	}
 

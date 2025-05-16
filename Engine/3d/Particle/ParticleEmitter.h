@@ -94,7 +94,8 @@ private:
 
 	enum PrimitiveType {
 		PLANE,
-		RING
+		RING,
+		CYLINDER
 	};
 
 	//パーティクル
@@ -318,4 +319,5 @@ private:
 	//加速場
 	AccelerationField accelerationField_;
 
+	float uvTimer_ = 0.0f;
 };
