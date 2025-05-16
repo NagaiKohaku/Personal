@@ -266,6 +266,7 @@
     <None Include="Resource\Shaders\Particle.hlsli" />
     <None Include="Resource\Shader\Object2d.hlsli" />
     <None Include="Resource\Shader\DebugObject.hlsli" />
+    <None Include="Application\level_editor.py" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resource\Shaders\Object3d.PS.hlsl" />
