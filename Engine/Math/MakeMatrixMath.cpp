@@ -83,6 +83,20 @@ Matrix4x4 MakeRotateZMatrix(float radian) {
 	return result;
 }
 
+///=====================================================/// 
+/// 回転行列
+///=====================================================///
+Matrix4x4 MakeRotateMatrix(Vector3 rotate) {
+
+	// 回転行列
+	Matrix4x4 rotateXMatrix = MakeRotateXMatrix(rotate.x);
+	Matrix4x4 rotateYMatrix = MakeRotateYMatrix(rotate.y);
+	Matrix4x4 rotateZMatrix = MakeRotateZMatrix(rotate.z);
+	Matrix4x4 rotateMatrix = rotateXMatrix * (rotateYMatrix * rotateZMatrix);
+
+	return rotateMatrix;
+}
+
 ///=====================================================///
 /// 三次元アフィン変換
 ///=====================================================///

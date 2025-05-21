@@ -6,6 +6,8 @@
 #include "3d/Camera/Camera.h"
 #include "3d/Object/Object3D.h"
 #include "3d/Object/DebugLine.h"
+#include "3d/Particle/ParticleEmitter.h"
+#include "3d/Particle/EmitterGroup.h"
 
 #include "Player/Player.h"
 #include "Bullet/BulletManager.h"
@@ -41,6 +43,11 @@ public:
 	/// 描画
 	/// </summary>
 	void Draw() override;
+
+	/// <summary>
+	/// デバッグ
+	/// </summary>
+	void ImGui() override;
 
 	///-------------------------------------------/// 
 	/// メンバ変数

@@ -11,3 +11,6 @@ void BaseScene::Update() {
 
 void BaseScene::Draw() {
 }
+
+void BaseScene::ImGui() {
+}

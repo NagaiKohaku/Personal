@@ -4,6 +4,7 @@
 #include "BaseScene.h"
 
 #include "GameScene.h"
+#include "ParticleEditorScene.h"
 
 ///=====================================================/// 
 /// シングルトンインスタンス
@@ -48,6 +49,14 @@ void SceneManager::Draw() {
 	}
 }
 
+void SceneManager::ImGui() {
+	/// ===シーンの中身の確認=== ///
+	if (currentScene_) {
+		//現在のシーンのデバッグ
+		currentScene_->ImGui();
+	}
+}
+
 ///=====================================================/// 
 ///シーンの管理
 ///=====================================================///
@@ -78,7 +87,10 @@ std::unique_ptr<BaseScene> SceneManager::CreateScene(SceneType sceneType) {
 		//ゲームシーン
 	case SceneType::kGame:
 		return std::make_unique<GameScene>();
-		// 他のシーンタイプの処理
+
+	case SceneType::kParticleEditor:
+		return std::make_unique<ParticleEditorScene>();
+
 	default:
 		return nullptr;
 	}

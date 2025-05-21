@@ -45,7 +45,6 @@ void GameScene::Initialize() {
 	player_->Initialize();
 
 	player_->SetBulletManager(bulletManager_.get());
-
 }
 
 void GameScene::Finalize() {
@@ -64,6 +63,8 @@ void GameScene::Update() {
 
 	//弾の更新
 	bulletManager_->Update();
+
+	emitterGroup_->Update();
 
 	//ImGuiを起動
 	ImGui::Begin("Scene");

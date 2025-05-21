@@ -12,17 +12,29 @@ void WorldTransform::Initialize() {
 
 	offset_ = { 0.0f,0.0f,0.0f };
 
+	parent_ = nullptr;
+
 	UpdateMatrix();
 }
 
 void WorldTransform::UpdateMatrix() {
 
-	worldMatrix_ = MakeAffineMatrix(scale_, rotate_, translate_ + offset_);
+	translateMatrix_ = MakeTranslateMatrix(translate_ + offset_);
+
+	rotateMatrix_ = MakeRotateMatrix(rotate_);
+
+	scaleMatrix_ = MakeScaleMatrix(scale_);
 
 	if (parent_) {
 
-		worldMatrix_ *= parent_->GetWorldMatrix();
+		translateMatrix_ *= parent_->GetTranslateMatrix();
+
+		rotateMatrix_ *= parent_->GetRotateMatrix();
+
+		scaleMatrix_ *= parent_->GetScaleMatrix();
 	}
+
+	worldMatrix_ = (scaleMatrix_ * rotateMatrix_) * translateMatrix_;
 }
 
 void WorldTransform::DisplayImGui() {
@@ -61,6 +73,21 @@ const Vector3& WorldTransform::GetRight() const {
 	Vector3 result = { worldMatrix_.m[0][0],worldMatrix_.m[0][1],worldMatrix_.m[0][2] };
 
 	return result;
+}
+
+const Matrix4x4& WorldTransform::GetTranslateMatrix() {
+
+	return MakeTranslateMatrix(translate_ + offset_);
+}
+
+const Matrix4x4& WorldTransform::GetRotateMatrix() {
+
+	return MakeRotateMatrix(rotate_);
+}
+
+const Matrix4x4& WorldTransform::GetScaleMatrix() {
+
+	return MakeScaleMatrix(scale_);
 }
 
 const Vector3& WorldTransform::GetWorldTranslate() const {

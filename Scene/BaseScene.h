@@ -39,6 +39,11 @@ public:
 	virtual void Draw();
 
 	/// <summary>
+	/// デバッグ
+	/// </summary>
+	virtual void ImGui();
+
+	/// <summary>
 	/// シーンマネージャーのセット
 	/// </summary>
 	/// <param name="sceneManager">シーンマネージャー</param>
