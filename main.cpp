@@ -117,6 +117,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//3dオブジェクト基底の更新
 		object3DCommon->Update();
 
+		//シーンのデバッグ
+		sceneManager->ImGui();
+
 		//シーンの更新
 		sceneManager->Update();
 

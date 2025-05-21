@@ -7,6 +7,7 @@
 #include "3d/Object/Object3D.h"
 #include "3d/Object/DebugLine.h"
 #include "3d/Particle/ParticleEmitter.h"
+#include "3d/Particle/EmitterGroup.h"
 
 #include "memory"
 
@@ -20,11 +21,19 @@ public:
 
 	void Draw() override;
 
+	void ImGui() override;
+
+private:
+
+	void CreateGroup();
+
 private:
 
 	//カメラ
 	std::unique_ptr<Camera> camera_;
 
-	std::list<std::unique_ptr<ParticleEmitter>> emitters_;
+	std::list<std::unique_ptr<EmitterGroup>> emitterGroups_;
+
+	std::vector<std::string> textureList_;
 
 };

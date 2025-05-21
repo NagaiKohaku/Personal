@@ -1,6 +1,7 @@
 #include "ParticleEditorScene.h"
 
 #include "2d/Sprite/SpriteManager.h"
+#include "2d/Sprite/TextureManager.h"
 #include "3d/Model/ModelManager.h"
 #include "3d/Particle/ParticleManager.h"
 
@@ -8,6 +9,8 @@
 #include "3d/Object/DebugObjectCommon.h"
 
 #include "imgui.h"
+#include "fstream"
+#include "filesystem"
 
 void ParticleEditorScene::Initialize() {
 
@@ -25,11 +28,18 @@ void ParticleEditorScene::Initialize() {
 
 	ParticleManager::GetInstance()->SetDefaultCamera(camera_.get());
 
-	std::unique_ptr<ParticleEmitter> newEmitter = std::make_unique<ParticleEmitter>();
+	for (const auto& entry : std::filesystem::directory_iterator("Resource/Sprite/Particle/")) {
+		if (entry.path().extension() == ".png") {
+			textureList_.push_back(entry.path().filename().string());
+		}
+	}
 
-	newEmitter->Initialize("default", camera_.get());
+	for (auto& textureName : textureList_) {
 
-	emitters_.push_back(std::move(newEmitter));
+		TextureManager::GetInstance()->LoadTexture("Resource/Sprite/Particle/" + textureName);
+	}
+
+	CreateGroup();
 }
 
 void ParticleEditorScene::Update() {
@@ -37,22 +47,54 @@ void ParticleEditorScene::Update() {
 	//カメラをデバッグ状態で更新
 	camera_->Update();
 
-	ImGui::Begin("ParticleEditor");
+	for (auto& group : emitterGroups_) {
 
-	for (auto& emitter : emitters_) {
+		group->Update();
+	}
 
-		emitter->ImGui();
+}
 
-		emitter->Update();
+void ParticleEditorScene::Draw() {
+
+	for (auto& group : emitterGroups_) {
+
+		group->Draw();
+	}
+}
+
+void ParticleEditorScene::ImGui() {
+
+	ImGui::Begin("ParticleEditor", (bool*)0, ImGuiWindowFlags_MenuBar);
+
+	if (ImGui::BeginMenuBar()) {
+
+		if (ImGui::BeginMenu("Menu", "MENU")) {
+
+			if (ImGui::MenuItem("Create New Group")) {
+
+				CreateGroup();
+			}
+
+			ImGui::EndMenu();
+		}
+
+		ImGui::EndMenuBar();
+	}
+
+	for (auto& group : emitterGroups_) {
+		group->ImGui();
 	}
 
 	ImGui::End();
 }
 
-void ParticleEditorScene::Draw() {
+void ParticleEditorScene::CreateGroup() {
 
-	for (auto& emitter : emitters_) {
+	std::unique_ptr<EmitterGroup> newGroup = std::make_unique<EmitterGroup>();
 
-		emitter->Draw(Object);
-	}
+	newGroup->Initialize(camera_.get());
+
+	newGroup->LoadEmitter("defaultGroup");
+
+	emitterGroups_.push_back(std::move(newGroup));
 }

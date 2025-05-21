@@ -7,6 +7,7 @@
 #include "3d/Object/Object3D.h"
 #include "3d/Object/DebugLine.h"
 #include "3d/Particle/ParticleEmitter.h"
+#include "3d/Particle/EmitterGroup.h"
 
 #include "memory"
 
@@ -40,6 +41,11 @@ public:
 	/// </summary>
 	void Draw() override;
 
+	/// <summary>
+	/// デバッグ
+	/// </summary>
+	void ImGui() override;
+
 	///-------------------------------------------/// 
 	/// メンバ変数
 	///-------------------------------------------///
@@ -57,5 +63,5 @@ private:
 	//地面
 	std::unique_ptr<Object3D> ground_;
 
-	std::unique_ptr<ParticleEmitter> particleEmitter_;
+	std::unique_ptr<EmitterGroup> emitterGroup_;
 };

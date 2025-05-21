@@ -83,9 +83,11 @@ void GameScene::Initialize() {
 
 	/// === パーティクルの生成 === ///
 
-	particleEmitter_ = std::make_unique<ParticleEmitter>();
+	emitterGroup_ = std::make_unique<EmitterGroup>();
 
-	particleEmitter_->Initialize("test", camera_.get());
+	emitterGroup_->Initialize(camera_.get());
+
+	emitterGroup_->LoadEmitter("defaultGroup");
 }
 
 void GameScene::Finalize() {
@@ -106,7 +108,7 @@ void GameScene::Update() {
 
 	ground_->Update();
 
-	particleEmitter_->Update();
+	emitterGroup_->Update();
 
 	//ImGuiを起動
 	ImGui::Begin("Scene");
@@ -141,13 +143,13 @@ void GameScene::Update() {
 
 	if (ImGui::Button("Emit Particle")) {
 
-		particleEmitter_->Emit();
+		emitterGroup_->Emit();
 
 	}
 
 	if (ImGui::Button("Emitter Export")) {
 
-		particleEmitter_->ExportEmitterData("test");
+		emitterGroup_->SaveEmitter();
 	}
 
 	ImGui::Text("Shift + LeftClick : Move Camera");
@@ -171,5 +173,8 @@ void GameScene::Draw() {
 	ground_->Draw(Object);
 
 	//パーティクルの描画 : パーティクルレイヤー
-	particleEmitter_->Draw(Object);
+	emitterGroup_->Draw();
+}
+
+void GameScene::ImGui() {
 }

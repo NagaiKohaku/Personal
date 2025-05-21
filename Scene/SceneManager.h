@@ -50,6 +50,11 @@ public:
 	void Draw();
 
 	/// <summary>
+	/// 現在のシーンのデバッグ
+	/// </summary>
+	void ImGui();
+
+	/// <summary>
 	/// シーンを変更する
 	/// </summary>
 	void ChangeScene(SceneType sceneType);

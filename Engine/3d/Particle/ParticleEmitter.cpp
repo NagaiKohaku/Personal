@@ -88,6 +88,8 @@ void ParticleEmitter::Initialize(const std::string& fileName, Camera* camera) {
 
 	/// === エミッター情報の初期化 === ///
 
+	directoryPath_ = "Resource/Json/Particle/Emitter/";
+
 	//ワールドトランスフォームの初期化
 	emitterWorldTransform_.Initialize();
 
@@ -117,7 +119,6 @@ void ParticleEmitter::Initialize(const std::string& fileName, Camera* camera) {
 
 	//テクスチャのSRVインデックスを取得
 	material_.textureIndex = textureManager_->GetSrvIndex(material_.textureFilePath);
-
 }
 
 void ParticleEmitter::Update() {
@@ -292,14 +293,14 @@ void ParticleEmitter::ImGui() {
 		}
 		ImGui::NextColumn();
 
-		const char* items[] = { "Plane","Ring","Cylinder"};
+		const char* primitiveItems[] = { "Plane","Ring","Cylinder" };
 
-		int currentItem = static_cast<int>(primitiveType_);
+		int currentPrimitive = static_cast<int>(primitiveType_);
 
 		ImGui::Text("Primitive");
-		if (ImGui::Combo("##Primitive", &currentItem, items, IM_ARRAYSIZE(items))) {
+		if (ImGui::Combo("##Primitive", &currentPrimitive, primitiveItems, IM_ARRAYSIZE(primitiveItems))) {
 
-			primitiveType_ = static_cast<PrimitiveType>(currentItem);
+			primitiveType_ = static_cast<PrimitiveType>(currentPrimitive);
 
 			primitive_.reset();
 
@@ -309,15 +310,36 @@ void ParticleEmitter::ImGui() {
 		}
 		ImGui::NextColumn();
 
+		std::vector<const char*> textureItems;
+
+		int currentTexture = 0;
+
+		for (auto& textureName : textureList_) {
+
+			textureItems.push_back(textureName.c_str());
+		}
+
+		textureItems.insert(textureItems.begin(), "Select Texture");
+
+		ImGui::Text("Texture");
+		if (ImGui::Combo("##Texture", &currentTexture, textureItems.data(), static_cast<int>(textureItems.size()))) {
+
+			textureFileName_ = textureItems[currentTexture];
+
+			material_.textureFilePath = "Resource/Sprite/Particle/" + textureFileName_;
+
+			material_.textureIndex = textureManager_->GetSrvIndex(material_.textureFilePath);
+		}
+
 		ImGui::Text("EmitterPosition");
-		ImGui::DragFloat3("##EmitterPosition", &emitterWorldTransform_.translate_.x, 0.1f);
-		ImGui::NextColumn();
+			ImGui::DragFloat3("##EmitterPosition", &emitterWorldTransform_.translate_.x, 0.1f);
+			ImGui::NextColumn();
 
-		ImGui::Text("EmitterRotation");
-		ImGui::DragFloat3("##EmitterRotation", &emitterWorldTransform_.rotate_.x, 0.01f);
-		ImGui::NextColumn();
+			ImGui::Text("EmitterRotation");
+			ImGui::DragFloat3("##EmitterRotation", &emitterWorldTransform_.rotate_.x, 0.01f);
+			ImGui::NextColumn();
 
-		ImGui::Text("EmitterScale");
+			ImGui::Text("EmitterScale");
 		ImGui::DragFloat3("##EmitterScale", &emitterWorldTransform_.scale_.x, 0.1f);
 		ImGui::NextColumn();
 
@@ -549,9 +571,7 @@ void ParticleEmitter::ExportEmitterData(const std::string& fileName) {
 
 	nlohmann::json jsonData;
 
-	std::string kDirectoryPath = "Resource/Json/Particle/";
-
-	std::string filePath = kDirectoryPath + fileName + ".json";
+	std::string filePath = directoryPath_ + fileName + ".json";
 
 	jsonData["name"] = name_;
 
@@ -608,9 +628,9 @@ void ParticleEmitter::ExportEmitterData(const std::string& fileName) {
 		{"accelerationRandomRange", {colorParameter_.accelerationRandomRange.x,colorParameter_.accelerationRandomRange.y,colorParameter_.accelerationRandomRange.z,colorParameter_.accelerationRandomRange.w}}
 	};
 
-	std::filesystem::path dir(kDirectoryPath);
-	if (!std::filesystem::exists(kDirectoryPath)) {
-		std::filesystem::create_directory(kDirectoryPath);
+	std::filesystem::path dir(directoryPath_);
+	if (!std::filesystem::exists(directoryPath_)) {
+		std::filesystem::create_directory(directoryPath_);
 	}
 
 	std::ofstream file;
@@ -633,9 +653,7 @@ void ParticleEmitter::ImportEmitterData(const std::string& fileName) {
 
 	nlohmann::json jsonData;
 
-	std::string kDirectoryPath = "Resource/Json/Particle/";
-
-	std::string filePath = kDirectoryPath + fileName + ".json";
+	std::string filePath = directoryPath_ + fileName + ".json";
 
 	std::ifstream file(filePath);
 

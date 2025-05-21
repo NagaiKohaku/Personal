@@ -197,7 +197,11 @@ public:
 
 	WorldTransform& GetWorldTransform() { return emitterWorldTransform_; }
 
+	std::string GetName() { return name_; }
+
 	std::unique_ptr<PrimitiveBase> CreatePrimitive(PrimitiveType primitiveType);
+
+	void SetTextureList(std::vector<std::string> list) { textureList_ = list; }
 
 	///-------------------------------------------/// 
 	/// クラス内処理関数
@@ -268,6 +272,10 @@ private:
 
 	//テクスチャ名
 	std::string textureFileName_;
+
+	std::string directoryPath_;
+
+	std::vector<std::string> textureList_;
 
 	//プリミティブタイプ
 	PrimitiveType primitiveType_;
