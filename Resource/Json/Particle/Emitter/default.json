@@ -49,11 +49,13 @@
             0.0
         ]
     },
-    "frequency": 0.1,
+    "frequency": 0.10000000149011612,
+    "isLoop": false,
+    "isInfinity": false,
     "lifeTime": 1.0,
     "lifeTimeRandomRange": 0.0,
     "maxCount": 1,
-    "name": "Default",
+    "name": "default",
     "position": {
         "acceleration": [
             0.0,

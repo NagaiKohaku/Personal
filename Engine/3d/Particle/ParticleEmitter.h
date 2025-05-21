@@ -180,7 +180,7 @@ public:
 	/// <returns>フラグ</returns>
 	bool IsCollision(const AABB& aabb, const Vector3& point);
 
-	void ExportEmitterData(const std::string& fileName);
+	void ExportEmitterData();
 
 	void ImportEmitterData(const std::string& fileName);
 
@@ -310,6 +310,8 @@ private:
 	//ループフラグ
 	bool isLoop_;
 
+	bool isInfinity_;
+
 	//ビルボードフラグ
 	bool isBillboard_;
 
@@ -326,6 +328,4 @@ private:
 
 	//加速場
 	AccelerationField accelerationField_;
-
-	float uvTimer_ = 0.0f;
 };

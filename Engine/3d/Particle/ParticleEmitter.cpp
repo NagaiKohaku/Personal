@@ -127,15 +127,6 @@ void ParticleEmitter::Update() {
 
 	emitTimer_ += 1.0f / 60.0f;
 
-	uvTimer_ += 1.0f / 60.0f;
-
-	Vector3 uvTransform = { uvTimer_,0.0f,0.0f };
-	Matrix4x4 uvTransformMatrix = MakeTranslateMatrix(uvTransform);
-	Matrix4x4 uvScaleMatrix = MakeIdentity4x4();
-	Matrix4x4 uvRotateMatrix = MakeIdentity4x4();
-
-	materialData_->uvTransform = (uvScaleMatrix * uvRotateMatrix) * uvTransformMatrix;
-
 	if (isActive_) {
 
 		std::list<Particle> particles;
@@ -145,6 +136,11 @@ void ParticleEmitter::Update() {
 			if (emitCount_ >= emitMaxCount_) {
 
 				isActive_ = false;
+
+				if (isInfinity_) {
+
+					Emit();
+				}
 
 				break;
 			}
@@ -214,7 +210,10 @@ void ParticleEmitter::Update() {
 				particle->currentTime / particle->lifeTime
 			);
 
-			particle->currentTime += kDeltaTime;
+			if (!isLoop_) {
+
+				particle->currentTime += kDeltaTime;
+			}
 
 			particle->transform.UpdateMatrix();
 
@@ -282,56 +281,58 @@ void ParticleEmitter::ImGui() {
 
 	std::string currentName = name_;
 
-	if (ImGui::CollapsingHeader("EmitterSettiing")) {
-		ImGui::Columns(2, "EmitterColumns", false);
+	if (ImGui::BeginTabItem(name_.c_str())) {
 
-		ImGui::Text("Name");
-		if (ImGui::InputText("##Name", currentName.data(), 256)) {
-			if (Input::GetInstance()->IsTriggerPushKey(DIK_RETURN)) {
-				name_ = currentName.c_str();
+		if (ImGui::CollapsingHeader("EmitterSettiing")) {
+			ImGui::Columns(2, "EmitterColumns", false);
+
+			ImGui::Text("Name");
+			if (ImGui::InputText("##Name", currentName.data(), 256)) {
+				if (Input::GetInstance()->IsTriggerPushKey(DIK_RETURN)) {
+					name_ = currentName.c_str();
+				}
 			}
-		}
-		ImGui::NextColumn();
+			ImGui::NextColumn();
 
-		const char* primitiveItems[] = { "Plane","Ring","Cylinder" };
+			const char* primitiveItems[] = { "Plane","Ring","Cylinder" };
 
-		int currentPrimitive = static_cast<int>(primitiveType_);
+			int currentPrimitive = static_cast<int>(primitiveType_);
 
-		ImGui::Text("Primitive");
-		if (ImGui::Combo("##Primitive", &currentPrimitive, primitiveItems, IM_ARRAYSIZE(primitiveItems))) {
+			ImGui::Text("Primitive");
+			if (ImGui::Combo("##Primitive", &currentPrimitive, primitiveItems, IM_ARRAYSIZE(primitiveItems))) {
 
-			primitiveType_ = static_cast<PrimitiveType>(currentPrimitive);
+				primitiveType_ = static_cast<PrimitiveType>(currentPrimitive);
 
-			primitive_.reset();
+				primitive_.reset();
 
-			primitive_ = CreatePrimitive(primitiveType_);
+				primitive_ = CreatePrimitive(primitiveType_);
 
-			primitive_->Initialize();
-		}
-		ImGui::NextColumn();
+				primitive_->Initialize();
+			}
+			ImGui::NextColumn();
 
-		std::vector<const char*> textureItems;
+			std::vector<const char*> textureItems;
 
-		int currentTexture = 0;
+			int currentTexture = 0;
 
-		for (auto& textureName : textureList_) {
+			for (auto& textureName : textureList_) {
 
-			textureItems.push_back(textureName.c_str());
-		}
+				textureItems.push_back(textureName.c_str());
+			}
 
-		textureItems.insert(textureItems.begin(), "Select Texture");
+			textureItems.insert(textureItems.begin(), "Select Texture");
 
-		ImGui::Text("Texture");
-		if (ImGui::Combo("##Texture", &currentTexture, textureItems.data(), static_cast<int>(textureItems.size()))) {
+			ImGui::Text("Texture");
+			if (ImGui::Combo("##Texture", &currentTexture, textureItems.data(), static_cast<int>(textureItems.size()))) {
 
-			textureFileName_ = textureItems[currentTexture];
+				textureFileName_ = textureItems[currentTexture];
 
-			material_.textureFilePath = "Resource/Sprite/Particle/" + textureFileName_;
+				material_.textureFilePath = "Resource/Sprite/Particle/" + textureFileName_;
 
-			material_.textureIndex = textureManager_->GetSrvIndex(material_.textureFilePath);
-		}
+				material_.textureIndex = textureManager_->GetSrvIndex(material_.textureFilePath);
+			}
 
-		ImGui::Text("EmitterPosition");
+			ImGui::Text("EmitterPosition");
 			ImGui::DragFloat3("##EmitterPosition", &emitterWorldTransform_.translate_.x, 0.1f);
 			ImGui::NextColumn();
 
@@ -340,192 +341,198 @@ void ParticleEmitter::ImGui() {
 			ImGui::NextColumn();
 
 			ImGui::Text("EmitterScale");
-		ImGui::DragFloat3("##EmitterScale", &emitterWorldTransform_.scale_.x, 0.1f);
-		ImGui::NextColumn();
+			ImGui::DragFloat3("##EmitterScale", &emitterWorldTransform_.scale_.x, 0.1f);
+			ImGui::NextColumn();
 
-		ImGui::Text("EmitCount");
-		ImGui::InputInt("##EmitCount", &emitMaxCount_);
-		ImGui::NextColumn();
+			ImGui::Text("EmitCount");
+			ImGui::InputInt("##EmitCount", &emitMaxCount_);
+			ImGui::NextColumn();
 
-		ImGui::Text("frequency");
-		ImGui::DragFloat("##frequency", &emitFrequency_, 0.01f);
-		ImGui::NextColumn();
+			ImGui::Text("frequency");
+			ImGui::DragFloat("##frequency", &emitFrequency_, 0.01f);
+			ImGui::NextColumn();
 
-		ImGui::Text("lifeTime");
-		ImGui::DragFloat("##lifeTime", &particleLifeTime_, 0.1f);
-		ImGui::NextColumn();
+			ImGui::Text("lifeTime");
+			ImGui::DragFloat("##lifeTime", &particleLifeTime_, 0.1f);
+			ImGui::NextColumn();
 
-		ImGui::Text("lifeTimeRandomRange");
-		ImGui::DragFloat("##lifeTimeRandomRange", &particleLifeTimeRandomRange_, 0.1f);
-		ImGui::NextColumn();
+			ImGui::Text("lifeTimeRandomRange");
+			ImGui::DragFloat("##lifeTimeRandomRange", &particleLifeTimeRandomRange_, 0.1f);
+			ImGui::NextColumn();
 
-		ImGui::Text("isLoop");
-		ImGui::Checkbox("##isLoop", &isLoop_);
-		ImGui::NextColumn();
+			ImGui::Text("isLoop");
+			ImGui::Checkbox("##isLoop", &isLoop_);
+			ImGui::NextColumn();
 
-		ImGui::Text("isBillboard");
-		ImGui::Checkbox("##isBillboard", &isBillboard_);
-		ImGui::NextColumn();
+			ImGui::Text("isInfinity");
+			ImGui::Checkbox("##isInfinity", &isInfinity_);
+			ImGui::NextColumn();
 
-		ImGui::Columns(1);
+			ImGui::Text("isBillboard");
+			ImGui::Checkbox("##isBillboard", &isBillboard_);
+			ImGui::NextColumn();
+
+			ImGui::Columns(1);
+		}
+
+		if (ImGui::CollapsingHeader("Position")) {
+			ImGui::Columns(2, "PositionColumns", false);
+
+			ImGui::Text("StartNum");
+			ImGui::DragFloat3("##PositionStartNum", &positionParameter_.startNum.x, 0.1f);
+			ImGui::NextColumn();
+
+			ImGui::Text("StartRandomRange");
+			ImGui::DragFloat3("##PositionStartRandomRange", &positionParameter_.startRandomRange.x, 0.1f);
+			ImGui::NextColumn();
+
+			ImGui::Text("EndNum");
+			ImGui::DragFloat3("##PositionEndNum", &positionParameter_.endNum.x, 0.1f);
+			ImGui::NextColumn();
+
+			ImGui::Text("EndRandomRange");
+			ImGui::DragFloat3("##PositionEndRandomRange", &positionParameter_.endRandomRange.x, 0.1f);
+			ImGui::NextColumn();
+
+			ImGui::Text("Velocity");
+			ImGui::DragFloat3("##PositionVelocity", &positionParameter_.velocity.x, 0.1f);
+			ImGui::NextColumn();
+
+			ImGui::Text("VelocityRandomRange");
+			ImGui::DragFloat3("##PositionVelocityRandomRange", &positionParameter_.velocityRandomRange.x, 0.1f);
+			ImGui::NextColumn();
+
+			ImGui::Text("Acceleration");
+			ImGui::DragFloat3("##PositionAcceleration", &positionParameter_.acceleration.x, 0.1f);
+			ImGui::NextColumn();
+
+			ImGui::Text("AccelerationRandomRange");
+			ImGui::DragFloat3("##PositionAccelerationRandomRange", &positionParameter_.accelerationRandomRange.x, 0.1f);
+			ImGui::NextColumn();
+
+			ImGui::Columns(1);
+		}
+
+		if (ImGui::CollapsingHeader("Rotation")) {
+			ImGui::Columns(2, "RotationColumns", false);
+
+			ImGui::Text("StartNum");
+			ImGui::DragFloat3("##StartNum", &rotationParameter_.startNum.x, 0.1f);
+			ImGui::NextColumn();
+
+			ImGui::Text("StartRandomRange");
+			ImGui::DragFloat3("##StartRandomRange", &rotationParameter_.startRandomRange.x, 0.1f);
+			ImGui::NextColumn();
+
+			ImGui::Text("EndNum");
+			ImGui::DragFloat3("##EndNum", &rotationParameter_.endNum.x, 0.1f);
+			ImGui::NextColumn();
+
+			ImGui::Text("EndRandomRange");
+			ImGui::DragFloat3("##EndRandomRange", &rotationParameter_.endRandomRange.x, 0.1f);
+			ImGui::NextColumn();
+
+			ImGui::Text("Velocity");
+			ImGui::DragFloat3("##Velocity", &rotationParameter_.velocity.x, 0.1f);
+			ImGui::NextColumn();
+
+			ImGui::Text("VelocityRandomRange");
+			ImGui::DragFloat3("##VelocityRandomRange", &rotationParameter_.velocityRandomRange.x, 0.1f);
+			ImGui::NextColumn();
+
+			ImGui::Text("Acceleration");
+			ImGui::DragFloat3("##Acceleration", &rotationParameter_.acceleration.x, 0.1f);
+			ImGui::NextColumn();
+
+			ImGui::Text("AccelerationRandomRange");
+			ImGui::DragFloat3("##AccelerationRandomRange", &rotationParameter_.accelerationRandomRange.x, 0.1f);
+			ImGui::NextColumn();
+
+			ImGui::Columns(1);
+		}
+
+		if (ImGui::CollapsingHeader("Scale")) {
+			ImGui::Columns(2, "ScaleColumns", false);
+
+			ImGui::Text("StartNum");
+			ImGui::DragFloat3("##StartNum", &scaleParameter_.startNum.x, 0.1f);
+			ImGui::NextColumn();
+
+			ImGui::Text("StartRandomRange");
+			ImGui::DragFloat3("##StartRandomRange", &scaleParameter_.startRandomRange.x, 0.1f);
+			ImGui::NextColumn();
+
+			ImGui::Text("EndNum");
+			ImGui::DragFloat3("##EndNum", &scaleParameter_.endNum.x, 0.1f);
+			ImGui::NextColumn();
+
+			ImGui::Text("EndRandomRange");
+			ImGui::DragFloat3("##EndRandomRange", &scaleParameter_.endRandomRange.x, 0.1f);
+			ImGui::NextColumn();
+
+			ImGui::Text("Velocity");
+			ImGui::DragFloat3("##Velocity", &scaleParameter_.velocity.x, 0.1f);
+			ImGui::NextColumn();
+
+			ImGui::Text("VelocityRandomRange");
+			ImGui::DragFloat3("##VelocityRandomRange", &scaleParameter_.velocityRandomRange.x, 0.1f);
+			ImGui::NextColumn();
+
+			ImGui::Text("Acceleration");
+			ImGui::DragFloat3("##Acceleration", &scaleParameter_.acceleration.x, 0.1f);
+			ImGui::NextColumn();
+
+			ImGui::Text("AccelerationRandomRange");
+			ImGui::DragFloat3("##AccelerationRandomRange", &scaleParameter_.accelerationRandomRange.x, 0.1f);
+			ImGui::NextColumn();
+
+			ImGui::Columns(1);
+		}
+
+		if (ImGui::CollapsingHeader("Color")) {
+			ImGui::Columns(2, "ColorColumns", false);
+
+			ImGui::Text("StartColor");
+			ImGui::ColorEdit4("##StartColor", &colorParameter_.startColor.x);
+			ImGui::NextColumn();
+
+			ImGui::Text("StartColorRandomRange");
+			ImGui::ColorEdit4("##StartColorRandomRange", &colorParameter_.startRandomRange.x);
+			ImGui::NextColumn();
+
+			ImGui::Text("EndColor");
+			ImGui::ColorEdit4("##EndColor", &colorParameter_.endColor.x);
+			ImGui::NextColumn();
+
+			ImGui::Text("EndColorRandomRange");
+			ImGui::ColorEdit4("##EndColorRandomRange", &colorParameter_.endRandomRange.x);
+			ImGui::NextColumn();
+
+			ImGui::Text("Velocity");
+			ImGui::ColorEdit4("##Velocity", &colorParameter_.velocity.x);
+			ImGui::NextColumn();
+
+			ImGui::Text("VelocityRandomRange");
+			ImGui::ColorEdit4("##VelocityRandomRange", &colorParameter_.velocityRandomRange.x);
+			ImGui::NextColumn();
+
+			ImGui::Text("Acceleration");
+			ImGui::ColorEdit4("##Acceleration", &colorParameter_.acceleration.x);
+			ImGui::NextColumn();
+
+			ImGui::Text("AccelerationRandomRange");
+			ImGui::ColorEdit4("##AccelerationRandomRange", &colorParameter_.accelerationRandomRange.x);
+			ImGui::NextColumn();
+
+			ImGui::Columns(1);
+		}
+
+		if (ImGui::Button("Emit")) {
+			Emit();
+		}
+
+		ImGui::EndTabItem();
 	}
-
-	if (ImGui::CollapsingHeader("Position")) {
-		ImGui::Columns(2, "PositionColumns", false);
-
-		ImGui::Text("StartNum");
-		ImGui::DragFloat3("##PositionStartNum", &positionParameter_.startNum.x, 0.1f);
-		ImGui::NextColumn();
-
-		ImGui::Text("StartRandomRange");
-		ImGui::DragFloat3("##PositionStartRandomRange", &positionParameter_.startRandomRange.x, 0.1f);
-		ImGui::NextColumn();
-
-		ImGui::Text("EndNum");
-		ImGui::DragFloat3("##PositionEndNum", &positionParameter_.endNum.x, 0.1f);
-		ImGui::NextColumn();
-
-		ImGui::Text("EndRandomRange");
-		ImGui::DragFloat3("##PositionEndRandomRange", &positionParameter_.endRandomRange.x, 0.1f);
-		ImGui::NextColumn();
-
-		ImGui::Text("Velocity");
-		ImGui::DragFloat3("##PositionVelocity", &positionParameter_.velocity.x, 0.1f);
-		ImGui::NextColumn();
-
-		ImGui::Text("VelocityRandomRange");
-		ImGui::DragFloat3("##PositionVelocityRandomRange", &positionParameter_.velocityRandomRange.x, 0.1f);
-		ImGui::NextColumn();
-
-		ImGui::Text("Acceleration");
-		ImGui::DragFloat3("##PositionAcceleration", &positionParameter_.acceleration.x, 0.1f);
-		ImGui::NextColumn();
-
-		ImGui::Text("AccelerationRandomRange");
-		ImGui::DragFloat3("##PositionAccelerationRandomRange", &positionParameter_.accelerationRandomRange.x, 0.1f);
-		ImGui::NextColumn();
-
-		ImGui::Columns(1);
-	}
-
-	if (ImGui::CollapsingHeader("Rotation")) {
-		ImGui::Columns(2, "RotationColumns", false);
-
-		ImGui::Text("StartNum");
-		ImGui::DragFloat3("##StartNum", &rotationParameter_.startNum.x, 0.1f);
-		ImGui::NextColumn();
-
-		ImGui::Text("StartRandomRange");
-		ImGui::DragFloat3("##StartRandomRange", &rotationParameter_.startRandomRange.x, 0.1f);
-		ImGui::NextColumn();
-
-		ImGui::Text("EndNum");
-		ImGui::DragFloat3("##EndNum", &rotationParameter_.endNum.x, 0.1f);
-		ImGui::NextColumn();
-
-		ImGui::Text("EndRandomRange");
-		ImGui::DragFloat3("##EndRandomRange", &rotationParameter_.endRandomRange.x, 0.1f);
-		ImGui::NextColumn();
-
-		ImGui::Text("Velocity");
-		ImGui::DragFloat3("##Velocity", &rotationParameter_.velocity.x, 0.1f);
-		ImGui::NextColumn();
-
-		ImGui::Text("VelocityRandomRange");
-		ImGui::DragFloat3("##VelocityRandomRange", &rotationParameter_.velocityRandomRange.x, 0.1f);
-		ImGui::NextColumn();
-
-		ImGui::Text("Acceleration");
-		ImGui::DragFloat3("##Acceleration", &rotationParameter_.acceleration.x, 0.1f);
-		ImGui::NextColumn();
-
-		ImGui::Text("AccelerationRandomRange");
-		ImGui::DragFloat3("##AccelerationRandomRange", &rotationParameter_.accelerationRandomRange.x, 0.1f);
-		ImGui::NextColumn();
-
-		ImGui::Columns(1);
-	}
-
-	if (ImGui::CollapsingHeader("Scale")) {
-		ImGui::Columns(2, "ScaleColumns", false);
-
-		ImGui::Text("StartNum");
-		ImGui::DragFloat3("##StartNum", &scaleParameter_.startNum.x, 0.1f);
-		ImGui::NextColumn();
-
-		ImGui::Text("StartRandomRange");
-		ImGui::DragFloat3("##StartRandomRange", &scaleParameter_.startRandomRange.x, 0.1f);
-		ImGui::NextColumn();
-
-		ImGui::Text("EndNum");
-		ImGui::DragFloat3("##EndNum", &scaleParameter_.endNum.x, 0.1f);
-		ImGui::NextColumn();
-
-		ImGui::Text("EndRandomRange");
-		ImGui::DragFloat3("##EndRandomRange", &scaleParameter_.endRandomRange.x, 0.1f);
-		ImGui::NextColumn();
-
-		ImGui::Text("Velocity");
-		ImGui::DragFloat3("##Velocity", &scaleParameter_.velocity.x, 0.1f);
-		ImGui::NextColumn();
-
-		ImGui::Text("VelocityRandomRange");
-		ImGui::DragFloat3("##VelocityRandomRange", &scaleParameter_.velocityRandomRange.x, 0.1f);
-		ImGui::NextColumn();
-
-		ImGui::Text("Acceleration");
-		ImGui::DragFloat3("##Acceleration", &scaleParameter_.acceleration.x, 0.1f);
-		ImGui::NextColumn();
-
-		ImGui::Text("AccelerationRandomRange");
-		ImGui::DragFloat3("##AccelerationRandomRange", &scaleParameter_.accelerationRandomRange.x, 0.1f);
-		ImGui::NextColumn();
-
-		ImGui::Columns(1);
-	}
-
-	if (ImGui::CollapsingHeader("Color")) {
-		ImGui::Columns(2, "ColorColumns", false);
-
-		ImGui::Text("StartColor");
-		ImGui::ColorEdit4("##StartColor", &colorParameter_.startColor.x);
-		ImGui::NextColumn();
-
-		ImGui::Text("StartColorRandomRange");
-		ImGui::ColorEdit4("##StartColorRandomRange", &colorParameter_.startRandomRange.x);
-		ImGui::NextColumn();
-
-		ImGui::Text("EndColor");
-		ImGui::ColorEdit4("##EndColor", &colorParameter_.endColor.x);
-		ImGui::NextColumn();
-
-		ImGui::Text("EndColorRandomRange");
-		ImGui::ColorEdit4("##EndColorRandomRange", &colorParameter_.endRandomRange.x);
-		ImGui::NextColumn();
-
-		ImGui::Text("Velocity");
-		ImGui::ColorEdit4("##Velocity", &colorParameter_.velocity.x);
-		ImGui::NextColumn();
-
-		ImGui::Text("VelocityRandomRange");
-		ImGui::ColorEdit4("##VelocityRandomRange", &colorParameter_.velocityRandomRange.x);
-		ImGui::NextColumn();
-
-		ImGui::Text("Acceleration");
-		ImGui::ColorEdit4("##Acceleration", &colorParameter_.acceleration.x);
-		ImGui::NextColumn();
-
-		ImGui::Text("AccelerationRandomRange");
-		ImGui::ColorEdit4("##AccelerationRandomRange", &colorParameter_.accelerationRandomRange.x);
-		ImGui::NextColumn();
-
-		ImGui::Columns(1);
-	}
-
-	if (ImGui::Button("Emit")) {
-		Emit();
-	}
-
 }
 
 void ParticleEmitter::Emit() {
@@ -567,11 +574,11 @@ bool ParticleEmitter::IsCollision(const AABB& aabb, const Vector3& point) {
 	return false;
 }
 
-void ParticleEmitter::ExportEmitterData(const std::string& fileName) {
+void ParticleEmitter::ExportEmitterData() {
 
 	nlohmann::json jsonData;
 
-	std::string filePath = directoryPath_ + fileName + ".json";
+	std::string filePath = directoryPath_ + name_ + ".json";
 
 	jsonData["name"] = name_;
 
@@ -583,6 +590,9 @@ void ParticleEmitter::ExportEmitterData(const std::string& fileName) {
 	jsonData["lifeTimeRandomRange"] = particleLifeTimeRandomRange_;
 	jsonData["frequency"] = emitFrequency_;
 	jsonData["maxCount"] = emitMaxCount_;
+
+	jsonData["isLoop"] = isLoop_;
+	jsonData["isInfinity"] = isInfinity_;
 
 	jsonData["position"] = {
 		{"startNum", {positionParameter_.startNum.x,positionParameter_.startNum.y,positionParameter_.startNum.z}},
@@ -678,6 +688,9 @@ void ParticleEmitter::ImportEmitterData(const std::string& fileName) {
 	particleLifeTimeRandomRange_ = jsonData["lifeTimeRandomRange"];
 	emitFrequency_ = jsonData["frequency"];
 	emitMaxCount_ = jsonData["maxCount"];
+
+	isLoop_ = jsonData["isLoop"];
+	isInfinity_ = jsonData["isInfinity"];
 
 	if (jsonData.contains("position")) {
 

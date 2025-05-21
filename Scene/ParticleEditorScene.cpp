@@ -94,6 +94,8 @@ void ParticleEditorScene::CreateGroup() {
 
 	newGroup->Initialize(camera_.get());
 
+	newGroup->SetTextureList(textureList_);
+
 	newGroup->LoadEmitter("defaultGroup");
 
 	emitterGroups_.push_back(std::move(newGroup));

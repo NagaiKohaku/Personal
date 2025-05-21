@@ -1,5 +1,7 @@
 #include "EmitterGroup.h"
 
+#include "Base/Input.h"
+
 #include "json.hpp"
 #include "filesystem"
 #include "fstream"
@@ -33,20 +35,35 @@ void EmitterGroup::Draw() {
 
 void EmitterGroup::ImGui() {
 
+	std::string currentName = name_;
+
 	if (ImGui::BeginTabBar("EmitterGroup")) {
 
 		if (ImGui::BeginTabItem(name_.c_str())) {
 
-			for (auto& emitter : particleEmitters_) {
+			ImGui::Text("Name");
+			if (ImGui::InputText("##Name", currentName.data(), 256)) {
+				if (Input::GetInstance()->IsTriggerPushKey(DIK_RETURN)) {
+					name_ = currentName.c_str();
+				}
+			}
 
-				emitter->ImGui();
+			if (ImGui::Button("Save")) {
+				SaveEmitter();
+			}
 
-				if (ImGui::BeginTabItem(emitter->GetName().c_str())) {
+			if (ImGui::Button("AddEmitter")) {
+				AddEmitter();
+			}
+
+			if (ImGui::BeginTabBar(name_.c_str())) {
+
+				for (auto& emitter : particleEmitters_) {
 
 					emitter->ImGui();
-
-					ImGui::EndTabItem();
 				}
+
+				ImGui::EndTabBar();
 			}
 
 			ImGui::EndTabItem();
@@ -89,6 +106,8 @@ void EmitterGroup::LoadEmitter(std::string fileName) {
 			std::unique_ptr<ParticleEmitter> newEmitter;
 
 			newEmitter = std::make_unique<ParticleEmitter>();
+
+			newEmitter->SetTextureList(textureList_);
 
 			newEmitter->Initialize(fileName, camera_);
 
@@ -134,9 +153,32 @@ void EmitterGroup::SaveEmitter() {
 	file << jsonData.dump(4);
 
 	file.close();
+
+	for (auto& emitter : particleEmitters_) {
+
+		emitter->ExportEmitterData();
+	}
 }
 
 void EmitterGroup::AddEmitter() {
+
+	for (auto& emitter : particleEmitters_) {
+
+		if (emitter->GetName() == "default") {
+
+			return;
+		}
+	}
+
+	std::unique_ptr<ParticleEmitter> newEmitter;
+
+	newEmitter = std::make_unique<ParticleEmitter>();
+
+	newEmitter->SetTextureList(textureList_);
+
+	newEmitter->Initialize("default", camera_);
+
+	particleEmitters_.push_back(std::move(newEmitter));
 }
 
 void EmitterGroup::Emit() {
