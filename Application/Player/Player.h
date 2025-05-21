@@ -1,6 +1,8 @@
 #pragma once
 
 #include "3d/Object/Object3D.h"
+#include "3d/Particle/EmitterGroup.h"
+#include "3d/Camera/Camera.h"
 
 #include "memory"
 
@@ -22,6 +24,10 @@ public:
 		bulletManager_ = bulletManager;
 	}
 
+	void SetCamera(Camera* ptr) {
+		camera_ = ptr;
+	}
+
 private:
 
 	void Move();
@@ -30,9 +36,13 @@ private:
 
 private:
 
+	Camera* camera_;
+
 	BulletManager* bulletManager_ = nullptr;
 
 	std::unique_ptr<Object3D> player_ = nullptr;
+
+	std::unique_ptr<EmitterGroup> thrusterEffect_ = nullptr;
 
 	float moveSpeed_ = 0.1f;
 

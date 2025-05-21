@@ -17,11 +17,19 @@ void EmitterGroup::Initialize(Camera* ptr) {
 	//エミッターの初期化
 	particleEmitters_.clear();
 
+	transform_.Initialize();
+
 }
 
 void EmitterGroup::Update() {
+
+	transform_.UpdateMatrix();
+
 	//すべてのパーティクルグループの処理をする
 	for (auto& emitter : particleEmitters_) {
+
+		emitter->SetWorldTransform(transform_);
+
 		emitter->Update();
 	}
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "3d/Camera/Camera.h"
+#include "Math/WorldTransform.h"
 #include "ParticleEmitter.h"
 
 #include "list"
@@ -33,6 +34,8 @@ public:
 
 	void SetTextureList(std::vector<std::string> list) { textureList_ = list; }
 
+	void SetWorldTransform(WorldTransform worldTransform) { transform_ = worldTransform; }
+
 private:
 
 	Camera* camera_;
@@ -41,6 +44,8 @@ private:
 	std::list<std::unique_ptr<ParticleEmitter>> particleEmitters_;
 
 	std::vector<std::string> textureList_;
+
+	WorldTransform transform_;
 
 	std::string name_;
 

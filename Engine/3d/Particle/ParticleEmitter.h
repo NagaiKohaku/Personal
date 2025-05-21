@@ -197,6 +197,8 @@ public:
 
 	WorldTransform& GetWorldTransform() { return emitterWorldTransform_; }
 
+	void SetWorldTransform(WorldTransform worldTransform) { emitterWorldTransform_ = worldTransform; }
+
 	std::string GetName() { return name_; }
 
 	std::unique_ptr<PrimitiveBase> CreatePrimitive(PrimitiveType primitiveType);
