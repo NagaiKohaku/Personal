@@ -1,6 +1,7 @@
 #include "Renderer.h"
 
 #include "Base/DirectXCommon.h"
+#include "Base/OffScreen.h"
 
 ///=====================================================/// 
 /// 静的インスタンスの取得
@@ -55,7 +56,7 @@ void Renderer::OffScreenDraw() {
 		}
 
 		//深度情報をクリア
-		DirectXCommon::GetInstance()->ClearDepthBuffer();
+		OffScreen::GetInstance()->ClearOffScreenDepthBuffer();
 	}
 
 	//キューの初期化

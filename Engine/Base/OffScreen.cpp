@@ -182,6 +182,14 @@ void OffScreen::ImGui() {
 	ImGui::End();
 }
 
+void OffScreen::ClearOffScreenDepthBuffer() {
+
+	offScreenDSVHandle_ = dsvManager_->GetCPUDescriptorHandle(dsvIndex_);
+
+	//指定した深度で画面全体をクリアする
+	dxCommon_->GetCommandList()->ClearDepthStencilView(offScreenDSVHandle_, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
+}
+
 void OffScreen::CreateRootSignature() {
 
 	HRESULT hr;

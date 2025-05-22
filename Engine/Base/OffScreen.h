@@ -49,6 +49,8 @@ public:
 
 	void ImGui();
 
+	void ClearOffScreenDepthBuffer();
+
 private:
 
 	/// <summary>

@@ -14,7 +14,7 @@ class DSVManager {
 public:
 
 	//最大DSV数
-	static const uint32_t kMaxDSVCount_ = 3;
+	static const uint32_t kMaxDSVCount_ = 2;
 
 	///-------------------------------------------/// 
 	/// メンバ関数
