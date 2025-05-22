@@ -1,6 +1,6 @@
 #pragma once
 
-#include "3d/Particle/ParticleGroup.h"
+#include "3d/Particle/ParticleEmitter.h"
 
 #include "Math/Vector2.h"
 #include "Math/Vector3.h"
@@ -64,20 +64,21 @@ public:
 	/// </summary>
 	void Draw();
 
-	/// <summary>
-	/// パーティクルグループの生成
-	/// </summary>
-	/// <param name="name">名前</param>
-	/// <param name="textureFilePath">テクスチャパス</param>
-	void CreateParticleGroup(const std::string name, const std::string textureFilePath);
+	void CreateEmitter(const std::string name, const std::string textureFileName);
 
 	/// <summary>
-	/// 生成
+	/// パーティクルの生成
 	/// </summary>
-	/// <param name="name">名前</param>
-	/// <param name="position">座標</param>
-	/// <param name="count">数</param>
-	void Emit(const std::string name, const Vector3& translate, const AABB& area, const Vector3& minVelocity, const Vector3& maxVelocity, float minTime, float maxTime, bool useRandomColor, uint32_t count);
+	/// <param name="groupName">グループ名</param>
+	/// <param name="translate">初期座標</param>
+	/// <param name="area">生成範囲</param>
+	/// <param name="minVelocity">最小速度</param>
+	/// <param name="maxVelocity">最大速度</param>
+	/// <param name="minTime">最小時間</param>
+	/// <param name="maxTime">最大時間</param>
+	/// <param name="useRandomColor">色のランダムフラグ</param>
+	/// <param name="count">生成数</param>
+	void Emit(const std::string groupName, const Vector3& translate, const AABB& area, const Vector3& minVelocity, const Vector3& maxVelocity, float minTime, float maxTime, bool useRandomColor, uint32_t count);
 
 	/// <summary>
 	/// 加速場との接触判定
@@ -109,10 +110,10 @@ public:
 	Camera* GetDefaultCamera() const { return defaultCamera_; }
 
 	/// <summary>
-	/// パーティクルグループのゲッター
+	/// エミッターのゲッター
 	/// </summary>
-	/// <returns>パーティクルグループ</returns>
-	std::unordered_map<std::string, ParticleGroup> GetParticleGroup() { return particleGroups; }
+	/// <returns>エミッター</returns>
+	//std::unordered_map<std::string, ParticleEmitter> GetParticleEmitter() { return particleEmitters; }
 
 	///-------------------------------------------/// 
 	/// メンバ変数
@@ -131,7 +132,7 @@ private:
 	//デフォルトカメラ
 	Camera* defaultCamera_;
 
-	//パーティクルグループ
-	std::unordered_map<std::string, ParticleGroup> particleGroups;
+	//エミッター
+	std::unordered_map<std::string, ParticleEmitter> particleEmitters;
 
 };

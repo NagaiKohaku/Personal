@@ -46,3 +46,14 @@ float Lerp(float n1, float n2, float t) {
 
 	return result;
 }
+
+Vector4 Lerp(const Vector4& v1, const Vector4& v2, float t) {
+	Vector4 result;
+
+	result.x = (1.0f - t) * v1.x + t * v2.x;
+	result.y = (1.0f - t) * v1.y + t * v2.y;
+	result.z = (1.0f - t) * v1.z + t * v2.z;
+	result.w = (1.0f - t) * v1.w + t * v2.w;
+
+	return result;
+}

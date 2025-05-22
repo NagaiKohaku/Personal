@@ -1,5 +1,6 @@
 #pragma once
 #include "Vector3.h"
+#include "Vector4.h"
 
 /// <summary>
 /// ラープ関数 : Vector3
@@ -27,3 +28,5 @@ Vector3 SLerp(const Vector3& v1, const Vector3& v2, float t);
 /// <param name="t"></param>
 /// <returns></returns>
 float Lerp(float n1, float n2, float t);
+
+Vector4 Lerp(const Vector4& v1, const Vector4& v2, float t);
