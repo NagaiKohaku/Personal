@@ -593,6 +593,7 @@ void ParticleEmitter::ExportEmitterData() {
 
 	jsonData["isLoop"] = isLoop_;
 	jsonData["isInfinity"] = isInfinity_;
+	jsonData["isBillboard"] = isBillboard_;
 
 	jsonData["position"] = {
 		{"startNum", {positionParameter_.startNum.x,positionParameter_.startNum.y,positionParameter_.startNum.z}},
@@ -691,6 +692,7 @@ void ParticleEmitter::ImportEmitterData(const std::string& fileName) {
 
 	isLoop_ = jsonData["isLoop"];
 	isInfinity_ = jsonData["isInfinity"];
+	isBillboard_ = jsonData["isBillboard"];
 
 	if (jsonData.contains("position")) {
 

@@ -27,11 +27,15 @@ void WorldTransform::UpdateMatrix() {
 
 	if (parent_) {
 
-		translateMatrix_ *= parent_->GetTranslateMatrix();
+		Matrix4x4 pTranslateMatrix = parent_->GetTranslateMatrix();
+		Matrix4x4 pRotateMatrix = parent_->GetRotateMatrix();
+		Matrix4x4 pScaleMatrix = parent_->GetScaleMatrix();
 
-		rotateMatrix_ *= parent_->GetRotateMatrix();
+		translateMatrix_ *= pTranslateMatrix;
 
-		scaleMatrix_ *= parent_->GetScaleMatrix();
+		rotateMatrix_ *= pRotateMatrix;
+
+		scaleMatrix_ *= pScaleMatrix;
 	}
 
 	worldMatrix_ = (scaleMatrix_ * rotateMatrix_) * translateMatrix_;

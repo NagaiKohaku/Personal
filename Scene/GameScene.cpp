@@ -41,10 +41,13 @@ void GameScene::Initialize() {
 	//プレイヤーの生成
 	player_ = std::make_unique<Player>();
 
+	player_->SetCamera(camera_.get());
+
 	//プレイヤーの初期化
 	player_->Initialize();
 
 	player_->SetBulletManager(bulletManager_.get());
+
 }
 
 void GameScene::Finalize() {
@@ -63,8 +66,6 @@ void GameScene::Update() {
 
 	//弾の更新
 	bulletManager_->Update();
-
-	emitterGroup_->Update();
 
 	//ImGuiを起動
 	ImGui::Begin("Scene");
@@ -92,4 +93,7 @@ void GameScene::Draw() {
 
 	//弾の描画
 	bulletManager_->Draw();
+}
+
+void GameScene::ImGui() {
 }

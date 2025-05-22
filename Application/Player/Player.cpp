@@ -23,6 +23,14 @@ void Player::Initialize() {
 
 	//攻撃のタイマー
 	attackTimer_ = 0.0f;
+
+	thrusterEffect_ = std::make_unique<EmitterGroup>();
+
+	thrusterEffect_->Initialize(camera_);
+
+	thrusterEffect_->LoadEmitter("Thruster");
+
+	thrusterEffect_->Emit();
 }
 
 void Player::Update() {
@@ -36,12 +44,18 @@ void Player::Update() {
 	//プレイヤーの更新
 	player_->Update();
 
+	thrusterEffect_->SetWorldTransform(player_->GetWorldTransform());
+
+	thrusterEffect_->Update();
+
 }
 
 void Player::Draw() {
 
 	//プレイヤーの描画
 	player_->Draw(LayerType::Object);
+
+	thrusterEffect_->Draw();
 }
 
 void Player::Move() {
