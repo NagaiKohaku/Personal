@@ -274,7 +274,7 @@ void ParticleEmitter::Draw(LayerType layer) {
 		directXCommon_->GetCommandList()->DrawIndexedInstanced(primitive_->GetIndexCount(), numInstance_, 0, 0, 0);
 		};
 
-	Renderer::GetInstance()->AddDraw(layer, command);
+	Renderer::GetInstance()->AddDraw(layer, true, command);
 }
 
 void ParticleEmitter::ImGui() {

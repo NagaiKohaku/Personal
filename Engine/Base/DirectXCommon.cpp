@@ -393,7 +393,7 @@ void DirectXCommon::InitializeDepthStencilView() {
 	dsvIndex_ = dsvManager_->Allocate();
 
 	//DSVのCPUハンドルを取得
-	dsvHandle_ = rtvManager_->GetCPUDescriptorHandle(dsvIndex_);
+	dsvHandle_ = dsvManager_->GetCPUDescriptorHandle(dsvIndex_);
 
 	//DSVを生成
 	dsvManager_->CreateDepthStencilView(dsvIndex_, depthStancilResource_.Get());
