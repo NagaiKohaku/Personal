@@ -40,6 +40,13 @@ void ParticleEditorScene::Initialize() {
 	}
 
 	CreateGroup();
+
+	for (size_t i = 0; i < 12; i++) {
+
+		std::unique_ptr<DebugLine> newLine = std::make_unique<DebugLine>();
+
+	}
+
 }
 
 void ParticleEditorScene::Update() {
@@ -64,13 +71,13 @@ void ParticleEditorScene::Draw() {
 
 void ParticleEditorScene::ImGui() {
 
-	ImGui::Begin("ParticleEditor", (bool*)0, ImGuiWindowFlags_MenuBar);
+	ImGui::Begin("ParticleEditor", nullptr, ImGuiWindowFlags_MenuBar);
 
 	if (ImGui::BeginMenuBar()) {
 
-		if (ImGui::BeginMenu("Menu", "MENU")) {
+		if (ImGui::BeginMenu("メニュー", "MENU")) {
 
-			if (ImGui::MenuItem("Create New Group")) {
+			if (ImGui::MenuItem("新しいグループを生成")) {
 
 				CreateGroup();
 			}

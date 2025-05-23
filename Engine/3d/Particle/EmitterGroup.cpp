@@ -45,24 +45,44 @@ void EmitterGroup::ImGui() {
 
 	std::string currentName = name_;
 
+	if (ImGui::BeginMenuBar()) {
+
+		if (ImGui::BeginMenu("メニュー", "MENU")) {
+
+			if (ImGui::BeginMenu(name_.c_str(), name_.c_str())) {
+
+				if (ImGui::MenuItem("グループの名前変更")) {
+
+					ImGui::Text("名前");
+					if (ImGui::InputText("##Name", currentName.data(), 256)) {
+						if (Input::GetInstance()->IsTriggerPushKey(DIK_RETURN)) {
+							name_ = currentName.c_str();
+						}
+					}
+				}
+
+				if (ImGui::MenuItem("グループの保存")) {
+
+					SaveEmitter();
+				}
+
+				if (ImGui::MenuItem("エミッターの追加")) {
+
+					AddEmitter();
+				}
+
+				ImGui::EndMenu();
+			}
+
+			ImGui::EndMenu();
+		}
+
+		ImGui::EndMenuBar();
+	}
+
 	if (ImGui::BeginTabBar("EmitterGroup")) {
 
 		if (ImGui::BeginTabItem(name_.c_str())) {
-
-			ImGui::Text("Name");
-			if (ImGui::InputText("##Name", currentName.data(), 256)) {
-				if (Input::GetInstance()->IsTriggerPushKey(DIK_RETURN)) {
-					name_ = currentName.c_str();
-				}
-			}
-
-			if (ImGui::Button("Save")) {
-				SaveEmitter();
-			}
-
-			if (ImGui::Button("AddEmitter")) {
-				AddEmitter();
-			}
 
 			if (ImGui::BeginTabBar(name_.c_str())) {
 

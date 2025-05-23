@@ -49,6 +49,20 @@ void ImGuiManager::Initialize() {
 		srvHeap_->GetGPUDescriptorHandleForHeapStart()
 	);
 
+	ImGuiIO& io = ImGui::GetIO();
+
+	ImFont* japaneseFont = io.Fonts->AddFontFromFileTTF(
+		"Resource/Font/Mplus1Code-Regular.ttf",
+		16.0f,
+		nullptr,
+		io.Fonts->GetGlyphRangesJapanese()
+	);
+
+	//// 必要ならフォントビルド
+	//io.Fonts->Build();
+
+	// 一番目に追加したフォントをデフォルトにする
+	io.FontDefault = japaneseFont;
 }
 
 ///=====================================================/// 

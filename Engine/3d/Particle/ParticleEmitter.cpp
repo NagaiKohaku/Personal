@@ -283,22 +283,23 @@ void ParticleEmitter::ImGui() {
 
 	if (ImGui::BeginTabItem(name_.c_str())) {
 
-		if (ImGui::CollapsingHeader("EmitterSettiing")) {
+		if (ImGui::CollapsingHeader("エミッター設定")) {
 			ImGui::Columns(2, "EmitterColumns", false);
 
-			ImGui::Text("Name");
+			ImGui::Text("名前");
 			if (ImGui::InputText("##Name", currentName.data(), 256)) {
 				if (Input::GetInstance()->IsTriggerPushKey(DIK_RETURN)) {
 					name_ = currentName.c_str();
 				}
 			}
 			ImGui::NextColumn();
+			ImGui::NextColumn();
 
 			const char* primitiveItems[] = { "Plane","Ring","Cylinder" };
 
 			int currentPrimitive = static_cast<int>(primitiveType_);
 
-			ImGui::Text("Primitive");
+			ImGui::Text("プリミティブ");
 			if (ImGui::Combo("##Primitive", &currentPrimitive, primitiveItems, IM_ARRAYSIZE(primitiveItems))) {
 
 				primitiveType_ = static_cast<PrimitiveType>(currentPrimitive);
@@ -320,9 +321,9 @@ void ParticleEmitter::ImGui() {
 				textureItems.push_back(textureName.c_str());
 			}
 
-			textureItems.insert(textureItems.begin(), "Select Texture");
+			textureItems.insert(textureItems.begin(), "テクスチャを選択");
 
-			ImGui::Text("Texture");
+			ImGui::Text("テクスチャ");
 			if (ImGui::Combo("##Texture", &currentTexture, textureItems.data(), static_cast<int>(textureItems.size()))) {
 
 				textureFileName_ = textureItems[currentTexture];
@@ -331,203 +332,209 @@ void ParticleEmitter::ImGui() {
 
 				material_.textureIndex = textureManager_->GetSrvIndex(material_.textureFilePath);
 			}
+			ImGui::NextColumn();
 
-			ImGui::Text("EmitterPosition");
+			ImGui::Separator();
+
+			ImGui::Text("エミッター座標");
 			ImGui::DragFloat3("##EmitterPosition", &emitterWorldTransform_.translate_.x, 0.1f);
 			ImGui::NextColumn();
 
-			ImGui::Text("EmitterRotation");
+			ImGui::Text("エミッター角度");
 			ImGui::DragFloat3("##EmitterRotation", &emitterWorldTransform_.rotate_.x, 0.01f);
 			ImGui::NextColumn();
 
-			ImGui::Text("EmitterScale");
+			ImGui::Text("エミッター拡縮");
 			ImGui::DragFloat3("##EmitterScale", &emitterWorldTransform_.scale_.x, 0.1f);
 			ImGui::NextColumn();
+			ImGui::NextColumn();
 
-			ImGui::Text("EmitCount");
+			ImGui::Separator();
+
+			ImGui::Text("生成数");
 			ImGui::InputInt("##EmitCount", &emitMaxCount_);
 			ImGui::NextColumn();
 
-			ImGui::Text("frequency");
+			ImGui::Text("生成間隔");
 			ImGui::DragFloat("##frequency", &emitFrequency_, 0.01f);
 			ImGui::NextColumn();
 
-			ImGui::Text("lifeTime");
+			ImGui::Text("生存時間");
 			ImGui::DragFloat("##lifeTime", &particleLifeTime_, 0.1f);
 			ImGui::NextColumn();
 
-			ImGui::Text("lifeTimeRandomRange");
+			ImGui::Text("生存時間のランダム幅");
 			ImGui::DragFloat("##lifeTimeRandomRange", &particleLifeTimeRandomRange_, 0.1f);
 			ImGui::NextColumn();
 
-			ImGui::Text("isLoop");
+			ImGui::Text("ループ");
 			ImGui::Checkbox("##isLoop", &isLoop_);
 			ImGui::NextColumn();
 
-			ImGui::Text("isInfinity");
+			ImGui::Text("生成数無限");
 			ImGui::Checkbox("##isInfinity", &isInfinity_);
 			ImGui::NextColumn();
 
-			ImGui::Text("isBillboard");
+			ImGui::Text("ビルボード");
 			ImGui::Checkbox("##isBillboard", &isBillboard_);
 			ImGui::NextColumn();
 
 			ImGui::Columns(1);
 		}
 
-		if (ImGui::CollapsingHeader("Position")) {
+		if (ImGui::CollapsingHeader("生成座標")) {
 			ImGui::Columns(2, "PositionColumns", false);
 
-			ImGui::Text("StartNum");
+			ImGui::Text("初期値");
 			ImGui::DragFloat3("##PositionStartNum", &positionParameter_.startNum.x, 0.1f);
 			ImGui::NextColumn();
 
-			ImGui::Text("StartRandomRange");
+			ImGui::Text("初期値のランダム幅");
 			ImGui::DragFloat3("##PositionStartRandomRange", &positionParameter_.startRandomRange.x, 0.1f);
 			ImGui::NextColumn();
 
-			ImGui::Text("EndNum");
+			ImGui::Text("終了値");
 			ImGui::DragFloat3("##PositionEndNum", &positionParameter_.endNum.x, 0.1f);
 			ImGui::NextColumn();
 
-			ImGui::Text("EndRandomRange");
+			ImGui::Text("終了値のランダム幅");
 			ImGui::DragFloat3("##PositionEndRandomRange", &positionParameter_.endRandomRange.x, 0.1f);
 			ImGui::NextColumn();
 
-			ImGui::Text("Velocity");
+			ImGui::Text("移動量");
 			ImGui::DragFloat3("##PositionVelocity", &positionParameter_.velocity.x, 0.1f);
 			ImGui::NextColumn();
 
-			ImGui::Text("VelocityRandomRange");
+			ImGui::Text("移動量のランダム幅");
 			ImGui::DragFloat3("##PositionVelocityRandomRange", &positionParameter_.velocityRandomRange.x, 0.1f);
 			ImGui::NextColumn();
 
-			ImGui::Text("Acceleration");
+			ImGui::Text("加速度");
 			ImGui::DragFloat3("##PositionAcceleration", &positionParameter_.acceleration.x, 0.1f);
 			ImGui::NextColumn();
 
-			ImGui::Text("AccelerationRandomRange");
+			ImGui::Text("加速度のランダム幅");
 			ImGui::DragFloat3("##PositionAccelerationRandomRange", &positionParameter_.accelerationRandomRange.x, 0.1f);
 			ImGui::NextColumn();
 
 			ImGui::Columns(1);
 		}
 
-		if (ImGui::CollapsingHeader("Rotation")) {
+		if (ImGui::CollapsingHeader("生成角度")) {
 			ImGui::Columns(2, "RotationColumns", false);
 
-			ImGui::Text("StartNum");
-			ImGui::DragFloat3("##StartNum", &rotationParameter_.startNum.x, 0.1f);
+			ImGui::Text("初期値");
+			ImGui::DragFloat3("##RotationStartNum", &rotationParameter_.startNum.x, 0.1f);
 			ImGui::NextColumn();
 
-			ImGui::Text("StartRandomRange");
-			ImGui::DragFloat3("##StartRandomRange", &rotationParameter_.startRandomRange.x, 0.1f);
+			ImGui::Text("初期値のランダム幅");
+			ImGui::DragFloat3("##RotationStartRandomRange", &rotationParameter_.startRandomRange.x, 0.1f);
 			ImGui::NextColumn();
 
-			ImGui::Text("EndNum");
-			ImGui::DragFloat3("##EndNum", &rotationParameter_.endNum.x, 0.1f);
+			ImGui::Text("終了値");
+			ImGui::DragFloat3("##RotationEndNum", &rotationParameter_.endNum.x, 0.1f);
 			ImGui::NextColumn();
 
-			ImGui::Text("EndRandomRange");
-			ImGui::DragFloat3("##EndRandomRange", &rotationParameter_.endRandomRange.x, 0.1f);
+			ImGui::Text("終了値のランダム幅");
+			ImGui::DragFloat3("##RotationEndRandomRange", &rotationParameter_.endRandomRange.x, 0.1f);
 			ImGui::NextColumn();
 
-			ImGui::Text("Velocity");
-			ImGui::DragFloat3("##Velocity", &rotationParameter_.velocity.x, 0.1f);
+			ImGui::Text("移動量");
+			ImGui::DragFloat3("##RotationVelocity", &rotationParameter_.velocity.x, 0.1f);
 			ImGui::NextColumn();
 
-			ImGui::Text("VelocityRandomRange");
-			ImGui::DragFloat3("##VelocityRandomRange", &rotationParameter_.velocityRandomRange.x, 0.1f);
+			ImGui::Text("移動量のランダム幅");
+			ImGui::DragFloat3("##RotationVelocityRandomRange", &rotationParameter_.velocityRandomRange.x, 0.1f);
 			ImGui::NextColumn();
 
-			ImGui::Text("Acceleration");
-			ImGui::DragFloat3("##Acceleration", &rotationParameter_.acceleration.x, 0.1f);
+			ImGui::Text("加速度");
+			ImGui::DragFloat3("##RotationAcceleration", &rotationParameter_.acceleration.x, 0.1f);
 			ImGui::NextColumn();
 
-			ImGui::Text("AccelerationRandomRange");
-			ImGui::DragFloat3("##AccelerationRandomRange", &rotationParameter_.accelerationRandomRange.x, 0.1f);
+			ImGui::Text("加速度のランダム幅");
+			ImGui::DragFloat3("##RotationAccelerationRandomRange", &rotationParameter_.accelerationRandomRange.x, 0.1f);
 			ImGui::NextColumn();
 
 			ImGui::Columns(1);
 		}
 
-		if (ImGui::CollapsingHeader("Scale")) {
+		if (ImGui::CollapsingHeader("生成拡縮")) {
 			ImGui::Columns(2, "ScaleColumns", false);
 
-			ImGui::Text("StartNum");
-			ImGui::DragFloat3("##StartNum", &scaleParameter_.startNum.x, 0.1f);
+			ImGui::Text("初期値");
+			ImGui::DragFloat3("##ScaleStartNum", &scaleParameter_.startNum.x, 0.1f);
 			ImGui::NextColumn();
 
-			ImGui::Text("StartRandomRange");
-			ImGui::DragFloat3("##StartRandomRange", &scaleParameter_.startRandomRange.x, 0.1f);
+			ImGui::Text("初期値のランダム幅");
+			ImGui::DragFloat3("##ScaleStartRandomRange", &scaleParameter_.startRandomRange.x, 0.1f);
 			ImGui::NextColumn();
 
-			ImGui::Text("EndNum");
-			ImGui::DragFloat3("##EndNum", &scaleParameter_.endNum.x, 0.1f);
+			ImGui::Text("終了値");
+			ImGui::DragFloat3("##ScaleEndNum", &scaleParameter_.endNum.x, 0.1f);
 			ImGui::NextColumn();
 
-			ImGui::Text("EndRandomRange");
-			ImGui::DragFloat3("##EndRandomRange", &scaleParameter_.endRandomRange.x, 0.1f);
+			ImGui::Text("終了値のランダム幅");
+			ImGui::DragFloat3("##ScaleEndRandomRange", &scaleParameter_.endRandomRange.x, 0.1f);
 			ImGui::NextColumn();
 
-			ImGui::Text("Velocity");
-			ImGui::DragFloat3("##Velocity", &scaleParameter_.velocity.x, 0.1f);
+			ImGui::Text("移動量");
+			ImGui::DragFloat3("##ScaleVelocity", &scaleParameter_.velocity.x, 0.1f);
 			ImGui::NextColumn();
 
-			ImGui::Text("VelocityRandomRange");
-			ImGui::DragFloat3("##VelocityRandomRange", &scaleParameter_.velocityRandomRange.x, 0.1f);
+			ImGui::Text("移動量のランダム幅");
+			ImGui::DragFloat3("##ScaleVelocityRandomRange", &scaleParameter_.velocityRandomRange.x, 0.1f);
 			ImGui::NextColumn();
 
-			ImGui::Text("Acceleration");
-			ImGui::DragFloat3("##Acceleration", &scaleParameter_.acceleration.x, 0.1f);
+			ImGui::Text("加速度");
+			ImGui::DragFloat3("##ScaleAcceleration", &scaleParameter_.acceleration.x, 0.1f);
 			ImGui::NextColumn();
 
-			ImGui::Text("AccelerationRandomRange");
-			ImGui::DragFloat3("##AccelerationRandomRange", &scaleParameter_.accelerationRandomRange.x, 0.1f);
+			ImGui::Text("加速度のランダム幅");
+			ImGui::DragFloat3("##ScaleAccelerationRandomRange", &scaleParameter_.accelerationRandomRange.x, 0.1f);
 			ImGui::NextColumn();
 
 			ImGui::Columns(1);
 		}
 
-		if (ImGui::CollapsingHeader("Color")) {
+		if (ImGui::CollapsingHeader("生成色")) {
 			ImGui::Columns(2, "ColorColumns", false);
 
-			ImGui::Text("StartColor");
+			ImGui::Text("初期色");
 			ImGui::ColorEdit4("##StartColor", &colorParameter_.startColor.x);
 			ImGui::NextColumn();
 
-			ImGui::Text("StartColorRandomRange");
+			ImGui::Text("初期色のランダム幅");
 			ImGui::ColorEdit4("##StartColorRandomRange", &colorParameter_.startRandomRange.x);
 			ImGui::NextColumn();
 
-			ImGui::Text("EndColor");
+			ImGui::Text("終了色");
 			ImGui::ColorEdit4("##EndColor", &colorParameter_.endColor.x);
 			ImGui::NextColumn();
 
-			ImGui::Text("EndColorRandomRange");
+			ImGui::Text("終了色のランダム幅");
 			ImGui::ColorEdit4("##EndColorRandomRange", &colorParameter_.endRandomRange.x);
 			ImGui::NextColumn();
 
-			ImGui::Text("Velocity");
-			ImGui::ColorEdit4("##Velocity", &colorParameter_.velocity.x);
+			ImGui::Text("変化量");
+			ImGui::ColorEdit4("##ColorVelocity", &colorParameter_.velocity.x);
 			ImGui::NextColumn();
 
-			ImGui::Text("VelocityRandomRange");
-			ImGui::ColorEdit4("##VelocityRandomRange", &colorParameter_.velocityRandomRange.x);
+			ImGui::Text("変化量のランダム幅");
+			ImGui::ColorEdit4("##ColorVelocityRandomRange", &colorParameter_.velocityRandomRange.x);
 			ImGui::NextColumn();
 
-			ImGui::Text("Acceleration");
-			ImGui::ColorEdit4("##Acceleration", &colorParameter_.acceleration.x);
+			ImGui::Text("加速度");
+			ImGui::ColorEdit4("##ColorAcceleration", &colorParameter_.acceleration.x);
 			ImGui::NextColumn();
 
-			ImGui::Text("AccelerationRandomRange");
-			ImGui::ColorEdit4("##AccelerationRandomRange", &colorParameter_.accelerationRandomRange.x);
+			ImGui::Text("加速度のランダム幅");
+			ImGui::ColorEdit4("##ColorAccelerationRandomRange", &colorParameter_.accelerationRandomRange.x);
 			ImGui::NextColumn();
 
 			ImGui::Columns(1);
 		}
 
-		if (ImGui::Button("Emit")) {
+		if (ImGui::Button("生成")) {
 			Emit();
 		}
 

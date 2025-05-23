@@ -8,6 +8,7 @@
 #include "3d/Object/DebugLine.h"
 #include "3d/Particle/ParticleEmitter.h"
 #include "3d/Particle/EmitterGroup.h"
+#include "3d/Object/DebugLine.h"
 
 #include "memory"
 
@@ -33,6 +34,8 @@ private:
 	std::unique_ptr<Camera> camera_;
 
 	std::list<std::unique_ptr<EmitterGroup>> emitterGroups_;
+
+	std::vector<std::unique_ptr<DebugLine>> lines_;
 
 	std::vector<std::string> textureList_;
 
