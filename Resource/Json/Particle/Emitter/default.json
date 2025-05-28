@@ -12,6 +12,12 @@
             0.0,
             0.0
         ],
+        "easingState": [
+            0
+        ],
+        "easingStrength": [
+            1.0
+        ],
         "endColor": [
             1.0,
             1.0,
@@ -36,6 +42,9 @@
             0.0,
             0.0
         ],
+        "updateState": [
+            0
+        ],
         "velocity": [
             0.0,
             0.0,
@@ -50,9 +59,9 @@
         ]
     },
     "frequency": 0.10000000149011612,
-    "isLoop": false,
+    "isBillboard": false,
     "isInfinity": false,
-    "isBillboard": true,
+    "isLoop": false,
     "lifeTime": 1.0,
     "lifeTimeRandomRange": 0.0,
     "maxCount": 1,
@@ -67,6 +76,12 @@
             0.0,
             0.0,
             0.0
+        ],
+        "easingState": [
+            0
+        ],
+        "easingStrength": [
+            1.0
         ],
         "endNum": [
             0.0,
@@ -87,6 +102,9 @@
             0.0,
             0.0,
             0.0
+        ],
+        "updateState": [
+            0
         ],
         "velocity": [
             0.0,
@@ -111,6 +129,12 @@
             0.0,
             0.0
         ],
+        "easingState": [
+            0
+        ],
+        "easingStrength": [
+            1.0
+        ],
         "endNum": [
             0.0,
             0.0,
@@ -130,6 +154,9 @@
             0.0,
             0.0,
             0.0
+        ],
+        "updateState": [
+            0
         ],
         "velocity": [
             0.0,
@@ -153,6 +180,12 @@
             0.0,
             0.0
         ],
+        "easingState": [
+            0
+        ],
+        "easingStrength": [
+            1.0
+        ],
         "endNum": [
             1.0,
             1.0,
@@ -172,6 +205,9 @@
             0.0,
             0.0,
             0.0
+        ],
+        "updateState": [
+            0
         ],
         "velocity": [
             0.0,

@@ -39,4 +39,6 @@ private:
 
 	std::vector<std::string> textureList_;
 
+	float lineDivide_;
+
 };

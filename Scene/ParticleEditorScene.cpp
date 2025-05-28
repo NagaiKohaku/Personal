@@ -21,6 +21,10 @@ void ParticleEditorScene::Initialize() {
 
 	camera_->SetDebugCameraFlag(true);
 
+	camera_->SetOffsetZ(-30.0f);
+
+	camera_->SetRotate({ 0.6f,-0.3f,0.0f });
+
 	//デフォルトカメラを設定
 	Object3DCommon::GetInstance()->SetDefaultCamera(camera_.get());
 
@@ -41,12 +45,41 @@ void ParticleEditorScene::Initialize() {
 
 	CreateGroup();
 
-	for (size_t i = 0; i < 12; i++) {
+	lineDivide_ = 12.0f;
+
+	for (size_t i = 0; i < lineDivide_ + 1; i++) {
 
 		std::unique_ptr<DebugLine> newLine = std::make_unique<DebugLine>();
 
+		newLine->Initialize(
+			{ i - lineDivide_ / 2.0f,0.0f,-lineDivide_ / 2.0f },
+			{ i - lineDivide_ / 2.0f,0.0f,lineDivide_ / 2.0f },
+			{ 1.0f,1.0f,1.0f,1.0f }
+		);
+
+		if (i == static_cast<int>(lineDivide_ / 2.0f)) {
+			newLine->SetColor({ 1.0f,0.0f,0.0f,1.0f });
+		}
+
+		lines_.push_back(std::move(newLine));
 	}
 
+	for (size_t i = 0; i < lineDivide_ + 1; i++) {
+
+		std::unique_ptr<DebugLine> newLine = std::make_unique<DebugLine>();
+
+		newLine->Initialize(
+			{ -lineDivide_ / 2.0f,0.0f,i - lineDivide_ / 2.0f },
+			{ lineDivide_ / 2.0f,0.0f,i - lineDivide_ / 2.0f },
+			{ 1.0f,1.0f,1.0f,1.0f }
+		);
+
+		if (i == static_cast<int>(lineDivide_ / 2.0f)) {
+			newLine->SetColor({ 0.0f,1.0f,0.0f,1.0f });
+		}
+
+		lines_.push_back(std::move(newLine));
+	}
 }
 
 void ParticleEditorScene::Update() {
@@ -59,6 +92,10 @@ void ParticleEditorScene::Update() {
 		group->Update();
 	}
 
+	for (auto& line : lines_) {
+
+		line->Update();
+	}
 }
 
 void ParticleEditorScene::Draw() {
@@ -66,6 +103,11 @@ void ParticleEditorScene::Draw() {
 	for (auto& group : emitterGroups_) {
 
 		group->Draw();
+	}
+
+	for (auto& line : lines_) {
+
+		line->Draw();
 	}
 }
 

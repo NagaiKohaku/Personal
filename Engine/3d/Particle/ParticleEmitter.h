@@ -80,7 +80,7 @@ private:
 		Vector4 acceleration;
 	};
 
-	enum State {
+	enum UpdateState {
 		START,
 		VELOCITY,
 		EASING
@@ -89,7 +89,8 @@ private:
 	enum EasingState {
 		LINEAR,
 		EASE_IN,
-		EASE_OUT
+		EASE_OUT,
+		EASE_INOUT,
 	};
 
 	enum PrimitiveType {
@@ -212,6 +213,12 @@ private:
 
 	Particle MakeNewParticle();
 
+	void UpdateParameter(Vector3& num, ParticleParameter& parameter, UpdateState& updateState, EasingState& easingState, float& easingStrength, float& currentTime, float& lifeTime);
+
+	void ImGuiParameter(std::string labelName, Parameter& parameter, UpdateState& updateState, EasingState& easingState, float& easingStrength);
+
+	std::string CreateLabelName(std::string labelName, const char* label);
+
 	///-------------------------------------------/// 
 	/// メンバ変数
 	///-------------------------------------------///
@@ -219,7 +226,7 @@ private:
 
 	/// === 他クラスからの借り物 === ///
 
-	//DirectC基底
+	//DirectX基底
 	DirectXCommon* directXCommon_;
 
 	//テクスチャマネージャー
@@ -269,15 +276,15 @@ private:
 
 	/// === エミッター情報 === ///
 
+	std::string directoryPath_;
+
+	std::vector<std::string> textureList_;
+
 	//エミッター名
 	std::string name_;
 
 	//テクスチャ名
 	std::string textureFileName_;
-
-	std::string directoryPath_;
-
-	std::vector<std::string> textureList_;
 
 	//プリミティブタイプ
 	PrimitiveType primitiveType_;
@@ -288,14 +295,38 @@ private:
 	//座標
 	Parameter positionParameter_;
 
+	UpdateState positionUpdateState_;
+
+	EasingState positionEasingState_;
+
+	float positionEasingStrength_;
+
 	//回転角
 	Parameter rotationParameter_;
+
+	UpdateState rotationUpdateState_;
+
+	EasingState rotationEasingState_;
+
+	float rotationEasingStrength_;
 
 	//スケール
 	Parameter scaleParameter_;
 
+	UpdateState scaleUpdateState_;
+
+	EasingState scaleEasingState_;
+
+	float scaleEasingStrength_;
+
 	//色
 	ColorParameter colorParameter_;
+
+	UpdateState colorUpdateState_;
+
+	EasingState colorEasingState_;
+
+	float colorEasingStrength_;
 
 	//パーティクルの生存時間
 	float particleLifeTime_;
@@ -312,6 +343,7 @@ private:
 	//ループフラグ
 	bool isLoop_;
 
+	//生成数無限フラグ
 	bool isInfinity_;
 
 	//ビルボードフラグ
