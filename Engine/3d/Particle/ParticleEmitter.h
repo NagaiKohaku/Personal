@@ -149,7 +149,7 @@ public:
 	/// <summary>
 	/// 初期化処理
 	/// </summary>
-	void Initialize(const std::string& fileName, Camera* camera);
+	void Initialize(const std::string& groupName, const std::string& fileName, Camera* camera);
 
 	/// <summary>
 	/// 更新処理
@@ -181,9 +181,9 @@ public:
 	/// <returns>フラグ</returns>
 	bool IsCollision(const AABB& aabb, const Vector3& point);
 
-	void ExportEmitterData();
+	void ExportEmitterData(const std::string& groupName);
 
-	void ImportEmitterData(const std::string& fileName);
+	void ImportEmitterData(const std::string& groupName, const std::string& fileName);
 
 	///-------------------------------------------/// 
 	/// ゲッター・セッター
@@ -354,6 +354,8 @@ private:
 
 	//生成タイマー
 	float emitTimer_;
+
+	bool isEmit_;
 
 	bool isActive_;
 

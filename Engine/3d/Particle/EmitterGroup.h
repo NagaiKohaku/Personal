@@ -49,5 +49,5 @@ private:
 
 	std::string name_;
 
-	std::string directoryPath;
+	std::string directoryPath_;
 };

@@ -28,7 +28,7 @@ const uint32_t ParticleEmitter::kNumMaxInstance = 1000;
 //1フレームで進む秒数
 const float ParticleEmitter::kDeltaTime = 1.0f / 60.0f;
 
-void ParticleEmitter::Initialize(const std::string& fileName, Camera* camera) {
+void ParticleEmitter::Initialize(const std::string& groupName, const std::string& fileName, Camera* camera) {
 
 	/// === シングルトンインスタンスの取得 === ///
 
@@ -88,18 +88,20 @@ void ParticleEmitter::Initialize(const std::string& fileName, Camera* camera) {
 
 	/// === エミッター情報の初期化 === ///
 
-	directoryPath_ = "Resource/Json/Particle/Emitter/";
+	directoryPath_ = "Resource/Json/Particle/Group/";
 
 	//ワールドトランスフォームの初期化
 	emitterWorldTransform_.Initialize();
 
-	ImportEmitterData(fileName);
+	ImportEmitterData(groupName,fileName);
 
 	emitTimer_ = 0.0f;
 
 	emitCount_ = 0;
 
-	isActive_ = false;
+	isEmit_ = false;
+
+	isActive_ = true;
 
 	//加速場フラグの初期化
 	useAccelerationField_ = false;
@@ -125,9 +127,13 @@ void ParticleEmitter::Update() {
 
 	emitterWorldTransform_.UpdateMatrix();
 
+	if (!isActive_) {
+		return;
+	}
+
 	emitTimer_ += 1.0f / 60.0f;
 
-	if (isActive_) {
+	if (isEmit_) {
 
 		std::list<Particle> particles;
 
@@ -135,7 +141,7 @@ void ParticleEmitter::Update() {
 
 			if (emitCount_ >= emitMaxCount_) {
 
-				isActive_ = false;
+				isEmit_ = false;
 
 				if (isInfinity_) {
 
@@ -327,6 +333,10 @@ void ParticleEmitter::Draw(LayerType layer) {
 	//Renderクラスに渡す
 	std::function<void()> command;
 
+	if (!isActive_) {
+		return;
+	}
+
 	command = [this]() {
 
 		//パーティクルの描画前処理
@@ -448,6 +458,10 @@ void ParticleEmitter::ImGui() {
 			ImGui::Checkbox("##isBillboard", &isBillboard_);
 			ImGui::NextColumn();
 
+			ImGui::Text("アクティブ");
+			ImGui::Checkbox("##isActive", &isActive_);
+			ImGui::NextColumn();
+
 			ImGui::Columns(1);
 		}
 
@@ -496,37 +510,100 @@ void ParticleEmitter::ImGui() {
 		if (ImGui::CollapsingHeader("生成色")) {
 			ImGui::Columns(2, "ColorColumns", false);
 
-			ImGui::Text("初期色");
-			ImGui::ColorEdit4("##StartColor", &colorParameter_.startColor.x);
+			const char* stateItems[] = { "Start","Velocity","Easing" };
+
+			int currentState = static_cast<int>(colorUpdateState_);
+
+			ImGui::Text("更新ステート");
+			if (ImGui::Combo(CreateLabelName("Color", "UpdateState").c_str(), &currentState, stateItems, IM_ARRAYSIZE(stateItems))) {
+
+				colorUpdateState_ = static_cast<UpdateState>(currentState);
+			}
+			ImGui::NextColumn();
 			ImGui::NextColumn();
 
-			ImGui::Text("初期色のランダム幅");
-			ImGui::ColorEdit4("##StartColorRandomRange", &colorParameter_.startRandomRange.x);
-			ImGui::NextColumn();
+			switch (colorUpdateState_) {
+			case ParticleEmitter::START:
 
-			ImGui::Text("終了色");
-			ImGui::ColorEdit4("##EndColor", &colorParameter_.endColor.x);
-			ImGui::NextColumn();
+				ImGui::Text("初期値");
+				ImGui::ColorEdit4(CreateLabelName("Color", "StartNum").c_str(), &colorParameter_.startColor.x);
+				ImGui::NextColumn();
 
-			ImGui::Text("終了色のランダム幅");
-			ImGui::ColorEdit4("##EndColorRandomRange", &colorParameter_.endRandomRange.x);
-			ImGui::NextColumn();
+				ImGui::Text("初期値のランダム幅");
+				ImGui::ColorEdit4(CreateLabelName("Color", "StartRandomRange").c_str(), &colorParameter_.startRandomRange.x);
+				ImGui::NextColumn();
 
-			ImGui::Text("変化量");
-			ImGui::ColorEdit4("##ColorVelocity", &colorParameter_.velocity.x);
-			ImGui::NextColumn();
+				break;
+			case ParticleEmitter::VELOCITY:
 
-			ImGui::Text("変化量のランダム幅");
-			ImGui::ColorEdit4("##ColorVelocityRandomRange", &colorParameter_.velocityRandomRange.x);
-			ImGui::NextColumn();
+				ImGui::Text("初期値");
+				ImGui::ColorEdit4(CreateLabelName("Color", "StartNum").c_str(), &colorParameter_.startColor.x);
+				ImGui::NextColumn();
 
-			ImGui::Text("加速度");
-			ImGui::ColorEdit4("##ColorAcceleration", &colorParameter_.acceleration.x);
-			ImGui::NextColumn();
+				ImGui::Text("初期値のランダム幅");
+				ImGui::ColorEdit4(CreateLabelName("Color", "StartRandomRange").c_str(), &colorParameter_.startRandomRange.x);
+				ImGui::NextColumn();
 
-			ImGui::Text("加速度のランダム幅");
-			ImGui::ColorEdit4("##ColorAccelerationRandomRange", &colorParameter_.accelerationRandomRange.x);
-			ImGui::NextColumn();
+				ImGui::Text("終了値");
+				ImGui::ColorEdit4(CreateLabelName("Color", "EndNum").c_str(), &colorParameter_.endColor.x);
+				ImGui::NextColumn();
+
+				ImGui::Text("終了値のランダム幅");
+				ImGui::ColorEdit4(CreateLabelName("Color", "EndRandomRange").c_str(), &colorParameter_.endRandomRange.x);
+				ImGui::NextColumn();
+
+				ImGui::Text("移動量");
+				ImGui::ColorEdit4(CreateLabelName("Color", "Velocity").c_str(), &colorParameter_.velocity.x);
+				ImGui::NextColumn();
+
+				ImGui::Text("移動量のランダム幅");
+				ImGui::ColorEdit4(CreateLabelName("Color", "VelocityRandomRange").c_str(), &colorParameter_.velocityRandomRange.x);
+				ImGui::NextColumn();
+
+				ImGui::Text("加速度");
+				ImGui::ColorEdit4(CreateLabelName("Color", "Acceleration").c_str(), &colorParameter_.acceleration.x);
+				ImGui::NextColumn();
+
+				ImGui::Text("加速度のランダム幅");
+				ImGui::ColorEdit4(CreateLabelName("Color", "AccelerationRandomRange").c_str(), &colorParameter_.accelerationRandomRange.x);
+				ImGui::NextColumn();
+
+				break;
+			case ParticleEmitter::EASING:
+
+				const char* easingStateItems[] = { "Lerp","EaseIn","EaseOut","EaseInOut" };
+
+				int currentEasingState = static_cast<int>(colorEasingState_);
+
+				ImGui::Text("イージングステート");
+				if (ImGui::Combo(CreateLabelName("Color", "EasingState").c_str(), &currentEasingState, easingStateItems, IM_ARRAYSIZE(easingStateItems))) {
+
+					colorEasingState_ = static_cast<EasingState>(currentEasingState);
+				}
+				ImGui::NextColumn();
+
+				ImGui::Text("イージング強度");
+				ImGui::InputFloat(CreateLabelName("Color", "EasingStrength").c_str(), &colorEasingStrength_);
+				ImGui::NextColumn();
+
+				ImGui::Text("初期値");
+				ImGui::ColorEdit4(CreateLabelName("Color", "StartNum").c_str(), &colorParameter_.startColor.x);
+				ImGui::NextColumn();
+
+				ImGui::Text("初期値のランダム幅");
+				ImGui::ColorEdit4(CreateLabelName("Color", "StartRandomRange").c_str(), &colorParameter_.startRandomRange.x);
+				ImGui::NextColumn();
+
+				ImGui::Text("終了値");
+				ImGui::ColorEdit4(CreateLabelName("Color", "EndNum").c_str(), &colorParameter_.endColor.x);
+				ImGui::NextColumn();
+
+				ImGui::Text("終了値のランダム幅");
+				ImGui::ColorEdit4(CreateLabelName("Color", "EndRandomRange").c_str(), &colorParameter_.endRandomRange.x);
+				ImGui::NextColumn();
+
+				break;
+			}
 
 			ImGui::Columns(1);
 		}
@@ -541,7 +618,7 @@ void ParticleEmitter::ImGui() {
 
 void ParticleEmitter::Emit() {
 
-	isActive_ = true;
+	isEmit_ = true;
 
 	emitCount_ = 0;
 
@@ -578,11 +655,13 @@ bool ParticleEmitter::IsCollision(const AABB& aabb, const Vector3& point) {
 	return false;
 }
 
-void ParticleEmitter::ExportEmitterData() {
+void ParticleEmitter::ExportEmitterData(const std::string& groupName) {
 
 	nlohmann::json jsonData;
 
-	std::string filePath = directoryPath_ + name_ + ".json";
+	std::string directoryPath = directoryPath_ + groupName + "/Emitter/";
+
+	std::string filePath = directoryPath + name_ + ".json";
 
 	jsonData["name"] = name_;
 
@@ -655,9 +734,9 @@ void ParticleEmitter::ExportEmitterData() {
 		{"accelerationRandomRange", {colorParameter_.accelerationRandomRange.x,colorParameter_.accelerationRandomRange.y,colorParameter_.accelerationRandomRange.z,colorParameter_.accelerationRandomRange.w}}
 	};
 
-	std::filesystem::path dir(directoryPath_);
-	if (!std::filesystem::exists(directoryPath_)) {
-		std::filesystem::create_directory(directoryPath_);
+	std::filesystem::path dir(directoryPath);
+	if (!std::filesystem::exists(directoryPath)) {
+		std::filesystem::create_directory(directoryPath);
 	}
 
 	std::ofstream file;
@@ -676,11 +755,13 @@ void ParticleEmitter::ExportEmitterData() {
 	file.close();
 }
 
-void ParticleEmitter::ImportEmitterData(const std::string& fileName) {
+void ParticleEmitter::ImportEmitterData(const std::string& groupName, const std::string& fileName) {
 
 	nlohmann::json jsonData;
 
-	std::string filePath = directoryPath_ + fileName + ".json";
+	std::string directoryPath = directoryPath_ + groupName + "/Emitter/";
+
+	std::string filePath = directoryPath + fileName + ".json";
 
 	std::ifstream file(filePath);
 

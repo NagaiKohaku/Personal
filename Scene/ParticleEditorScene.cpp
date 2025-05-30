@@ -132,6 +132,11 @@ void ParticleEditorScene::ImGui() {
 
 	for (auto& group : emitterGroups_) {
 		group->ImGui();
+
+		if (ImGui::Button("グループ生成")) {
+
+			group->Emit();
+		}
 	}
 
 	ImGui::End();
