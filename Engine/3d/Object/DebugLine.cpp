@@ -89,6 +89,84 @@ void DebugLine::Initialize(Vector3 direction, Vector4 color) {
 	transform_.Initialize();
 }
 
+void DebugLine::Initialize(Vector3 start, Vector3 end, Vector4 color) {
+
+	//デバッグオブジェクト基底のインスタンスを取得
+	debugCommon_ = DebugObjectCommon::GetInstance();
+
+	//カメラ情報を取得
+	camera_ = debugCommon_->GetCamera();
+
+	/// === モデルデータの設定 === ///
+
+	//頂点座標を設定
+	modelData_.vertices = {
+		{start.x,start.y,start.z,1.0f},
+		{end.x,end.y,end.z,1.0f}
+	};
+
+	//頂点番号を設定
+	modelData_.indexes = {
+		0,
+		1
+	};
+
+	/// === 頂点リソースの生成 === ///
+
+	//頂点リソースを生成
+	vertexResource_ = debugCommon_->GetDxCommon()->CreateBufferResource(sizeof(VertexData) * modelData_.vertices.size());
+
+	//バッファービューの参照位置を頂点リソースのGPUアドレスで設定
+	vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
+
+	//バッファビューの全体容量を設定
+	vertexBufferView_.SizeInBytes = UINT(sizeof(VertexData) * modelData_.vertices.size());
+
+	//バッファビューの1頂点当たりの容量を設定
+	vertexBufferView_.StrideInBytes = sizeof(VertexData);
+
+	//頂点リソースに頂点データをマッピング
+	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData_));
+
+	//頂点データに頂点座標を設定する
+	std::memcpy(vertexData_, modelData_.vertices.data(), sizeof(VertexData) * modelData_.vertices.size());
+
+	/// ===頂点番号リソースの生成=== ///
+
+	indexResource_ = debugCommon_->GetDxCommon()->CreateBufferResource(sizeof(uint32_t) * modelData_.indexes.size());
+
+	indexBufferView_.BufferLocation = indexResource_->GetGPUVirtualAddress();
+
+	indexBufferView_.SizeInBytes = UINT(sizeof(uint32_t) * modelData_.indexes.size());
+
+	indexBufferView_.Format = DXGI_FORMAT_R32_UINT;
+
+	indexResource_->Map(0, nullptr, reinterpret_cast<void**>(&indexData_));
+
+	std::memcpy(indexData_, modelData_.indexes.data(), sizeof(uint32_t) * modelData_.indexes.size());
+
+	/// === 座標変換行列リソースの生成 === ///
+
+	//座標変換行列リソースの設定
+	wvpResource_ = debugCommon_->GetDxCommon()->CreateBufferResource(sizeof(TransformationMatrix));
+
+	//座標変換行列リソースに座標変換行列データをマッピング
+	wvpResource_->Map(0, nullptr, reinterpret_cast<void**>(&wvpData_));
+
+	/// === マテリアルリソースの生成 === ///
+
+	//マテリアルリソースの生成
+	materialResource_ = debugCommon_->GetDxCommon()->CreateBufferResource(sizeof(Material));
+
+	//マテリアルリソースにマテリアルデータをマッピング
+	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));
+
+	//マテリアルの色を設定
+	materialData_->color = color;
+
+	transform_.Initialize();
+}
+
 void DebugLine::Update() {
 
 	//ワールドトランスフォームの更新

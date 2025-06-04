@@ -3,6 +3,6 @@
         "name": "defaultGroup"
     },
     {
-        "emitter": "Default"
+        "emitter": "default"
     }
 ]

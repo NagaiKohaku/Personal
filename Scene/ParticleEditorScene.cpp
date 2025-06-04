@@ -21,6 +21,10 @@ void ParticleEditorScene::Initialize() {
 
 	camera_->SetDebugCameraFlag(true);
 
+	camera_->SetOffsetZ(-30.0f);
+
+	camera_->SetRotate({ 0.6f,-0.3f,0.0f });
+
 	//デフォルトカメラを設定
 	Object3DCommon::GetInstance()->SetDefaultCamera(camera_.get());
 
@@ -34,12 +38,56 @@ void ParticleEditorScene::Initialize() {
 		}
 	}
 
+	for (const auto& entry : std::filesystem::directory_iterator("Resource/Json/Particle/Group/")) {
+
+		if (entry.is_directory()) {
+
+			emitterGroupNames_.push_back(entry.path().filename().string());
+		}
+	}
+
 	for (auto& textureName : textureList_) {
 
 		TextureManager::GetInstance()->LoadTexture("Resource/Sprite/Particle/" + textureName);
 	}
 
 	CreateGroup();
+
+	lineDivide_ = 12.0f;
+
+	for (size_t i = 0; i < lineDivide_ + 1; i++) {
+
+		std::unique_ptr<DebugLine> newLine = std::make_unique<DebugLine>();
+
+		newLine->Initialize(
+			{ i - lineDivide_ / 2.0f,0.0f,-lineDivide_ / 2.0f },
+			{ i - lineDivide_ / 2.0f,0.0f,lineDivide_ / 2.0f },
+			{ 1.0f,1.0f,1.0f,1.0f }
+		);
+
+		if (i == static_cast<int>(lineDivide_ / 2.0f)) {
+			newLine->SetColor({ 1.0f,0.0f,0.0f,1.0f });
+		}
+
+		lines_.push_back(std::move(newLine));
+	}
+
+	for (size_t i = 0; i < lineDivide_ + 1; i++) {
+
+		std::unique_ptr<DebugLine> newLine = std::make_unique<DebugLine>();
+
+		newLine->Initialize(
+			{ -lineDivide_ / 2.0f,0.0f,i - lineDivide_ / 2.0f },
+			{ lineDivide_ / 2.0f,0.0f,i - lineDivide_ / 2.0f },
+			{ 1.0f,1.0f,1.0f,1.0f }
+		);
+
+		if (i == static_cast<int>(lineDivide_ / 2.0f)) {
+			newLine->SetColor({ 0.0f,1.0f,0.0f,1.0f });
+		}
+
+		lines_.push_back(std::move(newLine));
+	}
 }
 
 void ParticleEditorScene::Update() {
@@ -52,6 +100,10 @@ void ParticleEditorScene::Update() {
 		group->Update();
 	}
 
+	for (auto& line : lines_) {
+
+		line->Update();
+	}
 }
 
 void ParticleEditorScene::Draw() {
@@ -60,19 +112,36 @@ void ParticleEditorScene::Draw() {
 
 		group->Draw();
 	}
+
+	for (auto& line : lines_) {
+
+		line->Draw();
+	}
 }
 
 void ParticleEditorScene::ImGui() {
 
-	ImGui::Begin("ParticleEditor", (bool*)0, ImGuiWindowFlags_MenuBar);
+	ImGui::Begin("ParticleEditor", nullptr, ImGuiWindowFlags_MenuBar);
 
 	if (ImGui::BeginMenuBar()) {
 
-		if (ImGui::BeginMenu("Menu", "MENU")) {
+		if (ImGui::BeginMenu("メニュー", "MENU")) {
 
-			if (ImGui::MenuItem("Create New Group")) {
+			if (ImGui::BeginMenu("グループを読み込み", "LOAD")) {
 
-				CreateGroup();
+				for (auto& groupName : emitterGroupNames_) {
+
+					if (ImGui::MenuItem(groupName.c_str())) {
+						LoadGroup(groupName);
+					}
+				}
+
+					ImGui::EndMenu();
+			}
+
+			if (ImGui::MenuItem("新しいグループを生成")) {
+
+				LoadGroup("defaultGroup");
 			}
 
 			ImGui::EndMenu();
@@ -82,6 +151,7 @@ void ParticleEditorScene::ImGui() {
 	}
 
 	for (auto& group : emitterGroups_) {
+
 		group->ImGui();
 	}
 
@@ -97,6 +167,19 @@ void ParticleEditorScene::CreateGroup() {
 	newGroup->SetTextureList(textureList_);
 
 	newGroup->LoadEmitter("defaultGroup");
+
+	emitterGroups_.push_back(std::move(newGroup));
+}
+
+void ParticleEditorScene::LoadGroup(const std::string& groupName) {
+
+	std::unique_ptr<EmitterGroup> newGroup = std::make_unique<EmitterGroup>();
+
+	newGroup->Initialize(camera_.get());
+
+	newGroup->SetTextureList(textureList_);
+
+	newGroup->LoadEmitter(groupName);
 
 	emitterGroups_.push_back(std::move(newGroup));
 }

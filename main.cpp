@@ -58,6 +58,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	OffScreen* offScreen = OffScreen::GetInstance();
 	offScreen->Initialize();
 
+	//モデル基底
+	ModelCommon* modelCommon = ModelCommon::GetInstance();
+	modelCommon->Initialize();
+
 	//スプライト基底
 	SpriteCommon* spriteCommon = SpriteCommon::GetInstance();
 	spriteCommon->Initialize();
@@ -73,10 +77,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//デバッグオブジェクト基底
 	DebugObjectCommon* debugObjectCommon = DebugObjectCommon::GetInstance();
 	debugObjectCommon->Initialize();
-
-	//モデル基底
-	ModelCommon* modelCommon = ModelCommon::GetInstance();
-	modelCommon->Initialize();
 
 	//パーティクル基底
 	ParticleCommon* particleCommon = ParticleCommon::GetInstance();
@@ -109,7 +109,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	ModelManager::GetInstance()->Initialize();
 
 	//シーンを設定
-	sceneManager->ChangeScene(SceneManager::kGame);
+	sceneManager->ChangeScene(SceneManager::kParticleEditor);
 
 	///-------------------------------------------/// 
 	/// メインループ
@@ -132,19 +132,24 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//入力の更新
 		input->Update();
 
+#ifdef _DEBUG
+
+		//シーンのImGui
+		sceneManager->ImGui();
+
+		//オフスクリーンのImGui
+		offScreen->ImGui();
+
+#endif // _DEBUG
+
 		//3dオブジェクト基底の更新
 		object3DCommon->Update();
-
-		//シーンのデバッグ
-		sceneManager->ImGui();
 
 		//シーンの更新
 		sceneManager->Update();
 
 		//パーティクルの更新
 		particleManager->Update();
-
-		offScreen->ImGui();
 
 		//音声の更新
 		audio->Update();
@@ -155,6 +160,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///-------------------------------------------/// 
 		/// 描画処理
 		///-------------------------------------------///
+
+		/// === オフスクリーンの描画 === ///
 
 		//OffScreenの描画前処理
 		offScreen->PreDraw();
@@ -174,19 +181,26 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//OffScreenの描画後処理
 		offScreen->PostDraw();
 
+		/// === SwapChainの描画 === ///
+
 		//DirectX基底の描画前処理
 		directXCommon->PreDraw();
 
 		//SRVマネージャーの描画前処理
 		srvManager->PreDraw();
 
+		//オフスクリーンの描画結果をSwapChainに転送
 		offScreen->DrawToSwapChain();
 
 		//レンダラーの描画
 		renderer->Draw();
 
+#ifdef _DEBUG
+
 		//ImGuiの描画
 		imGuiManager->Draw();
+
+#endif // _DEBUG
 
 		//DirectX基底の描画後処理
 		directXCommon->PostDraw();
@@ -197,10 +211,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	/// 終了処理
 	///-------------------------------------------///
 
+	//音声の終了処理
 	audio->Finalize();
 
+	//ImGuiの終了処理
 	imGuiManager->Finalize();
 
+	//ウィンドウの終了処理
 	winApp->Finalize();
 
 	return 0;

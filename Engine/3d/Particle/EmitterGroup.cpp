@@ -12,7 +12,7 @@ void EmitterGroup::Initialize(Camera* ptr) {
 
 	camera_ = ptr;
 
-	directoryPath = "Resource/Json/Particle/Group/";
+	directoryPath_ = "Resource/Json/Particle/Group/";
 
 	//エミッターの初期化
 	particleEmitters_.clear();
@@ -45,23 +45,45 @@ void EmitterGroup::ImGui() {
 
 	std::string currentName = name_;
 
+	if (ImGui::BeginMenuBar()) {
+
+		if (ImGui::BeginMenu("メニュー", "MENU")) {
+
+			if (ImGui::BeginMenu(name_.c_str(), name_.c_str())) {
+
+				if (ImGui::MenuItem("グループの保存")) {
+
+					SaveEmitter();
+				}
+
+				if (ImGui::MenuItem("エミッターの追加")) {
+
+					AddEmitter();
+				}
+
+				ImGui::EndMenu();
+			}
+
+			ImGui::EndMenu();
+		}
+
+		ImGui::EndMenuBar();
+	}
+
 	if (ImGui::BeginTabBar("EmitterGroup")) {
+
+		if (Input::GetInstance()->IsTriggerPushKey(DIK_SPACE)) {
+
+			Emit();
+		}
 
 		if (ImGui::BeginTabItem(name_.c_str())) {
 
-			ImGui::Text("Name");
+			ImGui::Text("名前");
 			if (ImGui::InputText("##Name", currentName.data(), 256)) {
 				if (Input::GetInstance()->IsTriggerPushKey(DIK_RETURN)) {
 					name_ = currentName.c_str();
 				}
-			}
-
-			if (ImGui::Button("Save")) {
-				SaveEmitter();
-			}
-
-			if (ImGui::Button("AddEmitter")) {
-				AddEmitter();
 			}
 
 			if (ImGui::BeginTabBar(name_.c_str())) {
@@ -71,6 +93,10 @@ void EmitterGroup::ImGui() {
 					emitter->ImGui();
 				}
 
+				if (ImGui::Button("グループ生成")) {
+
+					Emit();
+				}
 				ImGui::EndTabBar();
 			}
 
@@ -85,6 +111,8 @@ void EmitterGroup::ImGui() {
 void EmitterGroup::LoadEmitter(std::string fileName) {
 
 	nlohmann::json jsonData;
+
+	std::string directoryPath = directoryPath_ + fileName + "/";
 
 	std::string filePath = directoryPath + fileName + ".json";
 
@@ -117,7 +145,7 @@ void EmitterGroup::LoadEmitter(std::string fileName) {
 
 			newEmitter->SetTextureList(textureList_);
 
-			newEmitter->Initialize(fileName, camera_);
+			newEmitter->Initialize(name_, fileName, camera_);
 
 			particleEmitters_.push_back(std::move(newEmitter));
 		}
@@ -127,6 +155,8 @@ void EmitterGroup::LoadEmitter(std::string fileName) {
 void EmitterGroup::SaveEmitter() {
 
 	nlohmann::json jsonData = nlohmann::json::array();
+
+	std::string directoryPath = directoryPath_ + name_ + "/";
 
 	std::string filePath = directoryPath + name_ + ".json";
 
@@ -164,7 +194,7 @@ void EmitterGroup::SaveEmitter() {
 
 	for (auto& emitter : particleEmitters_) {
 
-		emitter->ExportEmitterData();
+		emitter->ExportEmitterData(name_);
 	}
 }
 
@@ -184,7 +214,7 @@ void EmitterGroup::AddEmitter() {
 
 	newEmitter->SetTextureList(textureList_);
 
-	newEmitter->Initialize("default", camera_);
+	newEmitter->Initialize("defaultGroup", "default", camera_);
 
 	particleEmitters_.push_back(std::move(newEmitter));
 }

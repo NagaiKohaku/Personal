@@ -7,12 +7,32 @@
 ///=====================================================///
 ///Lerp関数
 ///=====================================================///
+float Lerp(float n1, float n2, float t) {
+
+	float result;
+
+	result = (1.0f - t) * n1 + t * n2;
+
+	return result;
+}
+
 Vector3 Lerp(const Vector3& v1, const Vector3& v2, float t) {
 	Vector3 result;
 
 	result.x = (1.0f - t) * v1.x + t * v2.x;
 	result.y = (1.0f - t) * v1.y + t * v2.y;
 	result.z = (1.0f - t) * v1.z + t * v2.z;
+
+	return result;
+}
+
+Vector4 Lerp(const Vector4& v1, const Vector4& v2, float t) {
+	Vector4 result;
+
+	result.x = (1.0f - t) * v1.x + t * v2.x;
+	result.y = (1.0f - t) * v1.y + t * v2.y;
+	result.z = (1.0f - t) * v1.z + t * v2.z;
+	result.w = (1.0f - t) * v1.w + t * v2.w;
 
 	return result;
 }
@@ -38,22 +58,77 @@ Vector3 SLerp(const Vector3& v1, const Vector3& v2, float t) {
 	return result;
 }
 
-float Lerp(float n1, float n2, float t) {
+///=====================================================/// 
+///EaseIn関数
+///=====================================================///
+Vector3 EaseIn(const Vector3& v1, const Vector3& v2, float t, float mag) {
 
-	float result;
+	float easeT = powf(t, mag);
 
-	result = (1.0f - t) * n1 + t * n2;
+	Vector3 result;
+
+	result = Lerp(v1, v2, easeT);
 
 	return result;
 }
 
-Vector4 Lerp(const Vector4& v1, const Vector4& v2, float t) {
+Vector4 EaseIn(const Vector4& v1, const Vector4& v2, float t, float mag) {
+
+	float easeT = powf(t, mag);
+
 	Vector4 result;
 
-	result.x = (1.0f - t) * v1.x + t * v2.x;
-	result.y = (1.0f - t) * v1.y + t * v2.y;
-	result.z = (1.0f - t) * v1.z + t * v2.z;
-	result.w = (1.0f - t) * v1.w + t * v2.w;
+	result = Lerp(v1, v2, easeT);
+
+	return result;
+}
+
+///=====================================================/// 
+///EaseOut関数
+///=====================================================///
+Vector3 EaseOut(const Vector3& v1, const Vector3& v2, float t, float mag) {
+
+	float easeT = 1.0f - powf(1.0f - t,mag);
+
+	Vector3 result;
+
+	result = Lerp(v1, v2, easeT);
+
+	return result;
+}
+
+Vector4 EaseOut(const Vector4& v1, const Vector4& v2, float t, float mag) {
+
+	float easeT = 1.0f - powf(1.0f - t, mag);
+
+	Vector4 result;
+
+	result = Lerp(v1, v2, easeT);
+
+	return result;
+}
+
+///=====================================================/// 
+///EaseInOut関数
+///=====================================================///
+Vector3 EaseInOut(const Vector3& v1, const Vector3& v2, float t, float mag) {
+
+	float easeT = t < 0.5f ? powf(2.0f,mag - 1.0f) * powf(t,mag) : 1.0f - powf(-2.0f, mag) / 2.0f;
+
+	Vector3 result;
+
+	result = Lerp(v1, v2, easeT);
+
+	return result;
+}
+
+Vector4 EaseInOut(const Vector4& v1, const Vector4& v2, float t, float mag) {
+
+	float easeT = t < 0.5f ? powf(2.0f, mag - 1.0f) * powf(t, mag) : 1.0f - powf(-2.0f, mag) / 2.0f;
+
+	Vector4 result;
+
+	result = Lerp(v1, v2, easeT);
 
 	return result;
 }

@@ -3,7 +3,7 @@
 #include "Base/DirectXCommon.h"
 #include "Base/SrvManager.h"
 #include "Base/Renderer.h"
-#include "Base//Input.h"
+#include "Base/Input.h"
 #include "2d/Sprite/TextureManager.h"
 #include "3d/Camera/Camera.h"
 #include "3d/Particle/ParticleCommon.h"
@@ -28,7 +28,7 @@ const uint32_t ParticleEmitter::kNumMaxInstance = 1000;
 //1フレームで進む秒数
 const float ParticleEmitter::kDeltaTime = 1.0f / 60.0f;
 
-void ParticleEmitter::Initialize(const std::string& fileName, Camera* camera) {
+void ParticleEmitter::Initialize(const std::string& groupName, const std::string& fileName, Camera* camera) {
 
 	/// === シングルトンインスタンスの取得 === ///
 
@@ -88,18 +88,20 @@ void ParticleEmitter::Initialize(const std::string& fileName, Camera* camera) {
 
 	/// === エミッター情報の初期化 === ///
 
-	directoryPath_ = "Resource/Json/Particle/Emitter/";
+	directoryPath_ = "Resource/Json/Particle/Group/";
 
 	//ワールドトランスフォームの初期化
 	emitterWorldTransform_.Initialize();
 
-	ImportEmitterData(fileName);
+	ImportEmitterData(groupName,fileName);
 
 	emitTimer_ = 0.0f;
 
 	emitCount_ = 0;
 
-	isActive_ = false;
+	isEmit_ = false;
+
+	isActive_ = true;
 
 	//加速場フラグの初期化
 	useAccelerationField_ = false;
@@ -125,9 +127,13 @@ void ParticleEmitter::Update() {
 
 	emitterWorldTransform_.UpdateMatrix();
 
+	if (!isActive_) {
+		return;
+	}
+
 	emitTimer_ += 1.0f / 60.0f;
 
-	if (isActive_) {
+	if (isEmit_) {
 
 		std::list<Particle> particles;
 
@@ -135,7 +141,7 @@ void ParticleEmitter::Update() {
 
 			if (emitCount_ >= emitMaxCount_) {
 
-				isActive_ = false;
+				isEmit_ = false;
 
 				if (isInfinity_) {
 
@@ -182,33 +188,102 @@ void ParticleEmitter::Update() {
 
 			/// === 座標の計算 === ///
 
-			particle->positionPara.velocity = particle->positionPara.velocity + particle->positionPara.acceleration * kDeltaTime;
-
-			particle->transform.translate_ = particle->transform.translate_ + particle->positionPara.velocity * kDeltaTime;
+			UpdateParameter(
+				particle->transform.translate_,
+				particle->positionPara,
+				positionUpdateState_,
+				positionEasingState_,
+				positionEasingStrength_,
+				particle->currentTime,
+				particle->lifeTime
+			);
 
 			/// === 回転角の計算 === ///
 
-			particle->rotationPara.velocity = particle->rotationPara.velocity + particle->rotationPara.acceleration * kDeltaTime;
-
-			particle->transform.rotate_ = particle->transform.rotate_ + particle->rotationPara.velocity * kDeltaTime;
+			UpdateParameter(
+				particle->transform.rotate_,
+				particle->rotationPara,
+				rotationUpdateState_,
+				rotationEasingState_,
+				rotationEasingStrength_,
+				particle->currentTime,
+				particle->lifeTime
+			);
 
 			/// === 拡縮の計算 === ///
 
-			particle->scalePara.velocity = particle->scalePara.velocity + particle->scalePara.acceleration * kDeltaTime;
-
-			particle->transform.scale_ = particle->transform.scale_ + particle->scalePara.velocity * kDeltaTime;
+			UpdateParameter(
+				particle->transform.scale_,
+				particle->scalePara,
+				scaleUpdateState_,
+				scaleEasingState_,
+				scaleEasingStrength_,
+				particle->currentTime,
+				particle->lifeTime
+			);
 
 			/// === 色の計算 === ///
 
-			particle->colorPara.velocity = particle->colorPara.velocity + particle->colorPara.acceleration * kDeltaTime;
+			switch (colorUpdateState_) {
+			case ParticleEmitter::START:
 
-			//particle->color = particle->color + particle->colorPara.velocity * kDeltaTime;
+				particle->color = particle->colorPara.startColor;
 
-			particle->color = Lerp(
-				particle->colorPara.startColor,
-				particle->colorPara.endColor,
-				particle->currentTime / particle->lifeTime
-			);
+				break;
+			case ParticleEmitter::VELOCITY:
+
+				particle->colorPara.velocity = particle->colorPara.velocity + particle->colorPara.acceleration * kDeltaTime;
+
+				particle->color = particle->color + particle->colorPara.velocity * kDeltaTime;
+
+				break;
+			case ParticleEmitter::EASING:
+
+				float time = particle->currentTime / particle->lifeTime;
+
+				switch (colorEasingState_) {
+				case ParticleEmitter::LINEAR:
+
+					particle->color = Lerp(
+						particle->colorPara.startColor,
+						particle->colorPara.endColor,
+						time
+					);
+
+					break;
+				case ParticleEmitter::EASE_IN:
+
+					particle->color = EaseIn(
+						particle->colorPara.startColor,
+						particle->colorPara.endColor,
+						time,
+						colorEasingStrength_
+					);
+
+					break;
+				case ParticleEmitter::EASE_OUT:
+
+					particle->color = EaseOut(
+						particle->colorPara.startColor,
+						particle->colorPara.endColor,
+						time,
+						colorEasingStrength_
+					);
+
+					break;
+				case ParticleEmitter::EASE_INOUT:
+
+					particle->color = EaseInOut(
+						particle->colorPara.startColor,
+						particle->colorPara.endColor,
+						time,
+						colorEasingStrength_
+					);
+
+					break;
+				}
+				break;
+			}
 
 			if (!isLoop_) {
 
@@ -258,6 +333,10 @@ void ParticleEmitter::Draw(LayerType layer) {
 	//Renderクラスに渡す
 	std::function<void()> command;
 
+	if (!isActive_) {
+		return;
+	}
+
 	command = [this]() {
 
 		//パーティクルの描画前処理
@@ -283,22 +362,23 @@ void ParticleEmitter::ImGui() {
 
 	if (ImGui::BeginTabItem(name_.c_str())) {
 
-		if (ImGui::CollapsingHeader("EmitterSettiing")) {
+		if (ImGui::CollapsingHeader("エミッター設定")) {
 			ImGui::Columns(2, "EmitterColumns", false);
 
-			ImGui::Text("Name");
+			ImGui::Text("名前");
 			if (ImGui::InputText("##Name", currentName.data(), 256)) {
 				if (Input::GetInstance()->IsTriggerPushKey(DIK_RETURN)) {
 					name_ = currentName.c_str();
 				}
 			}
 			ImGui::NextColumn();
+			ImGui::NextColumn();
 
 			const char* primitiveItems[] = { "Plane","Ring","Cylinder" };
 
 			int currentPrimitive = static_cast<int>(primitiveType_);
 
-			ImGui::Text("Primitive");
+			ImGui::Text("プリミティブ");
 			if (ImGui::Combo("##Primitive", &currentPrimitive, primitiveItems, IM_ARRAYSIZE(primitiveItems))) {
 
 				primitiveType_ = static_cast<PrimitiveType>(currentPrimitive);
@@ -320,9 +400,9 @@ void ParticleEmitter::ImGui() {
 				textureItems.push_back(textureName.c_str());
 			}
 
-			textureItems.insert(textureItems.begin(), "Select Texture");
+			textureItems.insert(textureItems.begin(), "テクスチャを選択");
 
-			ImGui::Text("Texture");
+			ImGui::Text("テクスチャ");
 			if (ImGui::Combo("##Texture", &currentTexture, textureItems.data(), static_cast<int>(textureItems.size()))) {
 
 				textureFileName_ = textureItems[currentTexture];
@@ -331,203 +411,204 @@ void ParticleEmitter::ImGui() {
 
 				material_.textureIndex = textureManager_->GetSrvIndex(material_.textureFilePath);
 			}
+			ImGui::NextColumn();
 
-			ImGui::Text("EmitterPosition");
+			ImGui::Separator();
+
+			ImGui::Text("エミッター座標");
 			ImGui::DragFloat3("##EmitterPosition", &emitterWorldTransform_.translate_.x, 0.1f);
 			ImGui::NextColumn();
 
-			ImGui::Text("EmitterRotation");
+			ImGui::Text("エミッター角度");
 			ImGui::DragFloat3("##EmitterRotation", &emitterWorldTransform_.rotate_.x, 0.01f);
 			ImGui::NextColumn();
 
-			ImGui::Text("EmitterScale");
+			ImGui::Text("エミッター拡縮");
 			ImGui::DragFloat3("##EmitterScale", &emitterWorldTransform_.scale_.x, 0.1f);
 			ImGui::NextColumn();
+			ImGui::NextColumn();
 
-			ImGui::Text("EmitCount");
+			ImGui::Separator();
+
+			ImGui::Text("生成数");
 			ImGui::InputInt("##EmitCount", &emitMaxCount_);
 			ImGui::NextColumn();
 
-			ImGui::Text("frequency");
+			ImGui::Text("生成間隔");
 			ImGui::DragFloat("##frequency", &emitFrequency_, 0.01f);
 			ImGui::NextColumn();
 
-			ImGui::Text("lifeTime");
+			ImGui::Text("生存時間");
 			ImGui::DragFloat("##lifeTime", &particleLifeTime_, 0.1f);
 			ImGui::NextColumn();
 
-			ImGui::Text("lifeTimeRandomRange");
+			ImGui::Text("生存時間のランダム幅");
 			ImGui::DragFloat("##lifeTimeRandomRange", &particleLifeTimeRandomRange_, 0.1f);
 			ImGui::NextColumn();
 
-			ImGui::Text("isLoop");
+			ImGui::Text("ループ");
 			ImGui::Checkbox("##isLoop", &isLoop_);
 			ImGui::NextColumn();
 
-			ImGui::Text("isInfinity");
+			ImGui::Text("生成数無限");
 			ImGui::Checkbox("##isInfinity", &isInfinity_);
 			ImGui::NextColumn();
 
-			ImGui::Text("isBillboard");
+			ImGui::Text("ビルボード");
 			ImGui::Checkbox("##isBillboard", &isBillboard_);
 			ImGui::NextColumn();
 
+			ImGui::Text("アクティブ");
+			ImGui::Checkbox("##isActive", &isActive_);
+			ImGui::NextColumn();
+
 			ImGui::Columns(1);
 		}
 
-		if (ImGui::CollapsingHeader("Position")) {
+		if (ImGui::CollapsingHeader("生成座標")) {
 			ImGui::Columns(2, "PositionColumns", false);
 
-			ImGui::Text("StartNum");
-			ImGui::DragFloat3("##PositionStartNum", &positionParameter_.startNum.x, 0.1f);
-			ImGui::NextColumn();
-
-			ImGui::Text("StartRandomRange");
-			ImGui::DragFloat3("##PositionStartRandomRange", &positionParameter_.startRandomRange.x, 0.1f);
-			ImGui::NextColumn();
-
-			ImGui::Text("EndNum");
-			ImGui::DragFloat3("##PositionEndNum", &positionParameter_.endNum.x, 0.1f);
-			ImGui::NextColumn();
-
-			ImGui::Text("EndRandomRange");
-			ImGui::DragFloat3("##PositionEndRandomRange", &positionParameter_.endRandomRange.x, 0.1f);
-			ImGui::NextColumn();
-
-			ImGui::Text("Velocity");
-			ImGui::DragFloat3("##PositionVelocity", &positionParameter_.velocity.x, 0.1f);
-			ImGui::NextColumn();
-
-			ImGui::Text("VelocityRandomRange");
-			ImGui::DragFloat3("##PositionVelocityRandomRange", &positionParameter_.velocityRandomRange.x, 0.1f);
-			ImGui::NextColumn();
-
-			ImGui::Text("Acceleration");
-			ImGui::DragFloat3("##PositionAcceleration", &positionParameter_.acceleration.x, 0.1f);
-			ImGui::NextColumn();
-
-			ImGui::Text("AccelerationRandomRange");
-			ImGui::DragFloat3("##PositionAccelerationRandomRange", &positionParameter_.accelerationRandomRange.x, 0.1f);
-			ImGui::NextColumn();
+			ImGuiParameter(
+				"Position",
+				positionParameter_,
+				positionUpdateState_,
+				positionEasingState_,
+				positionEasingStrength_
+			);
 
 			ImGui::Columns(1);
 		}
 
-		if (ImGui::CollapsingHeader("Rotation")) {
+		if (ImGui::CollapsingHeader("生成角度")) {
 			ImGui::Columns(2, "RotationColumns", false);
 
-			ImGui::Text("StartNum");
-			ImGui::DragFloat3("##StartNum", &rotationParameter_.startNum.x, 0.1f);
-			ImGui::NextColumn();
-
-			ImGui::Text("StartRandomRange");
-			ImGui::DragFloat3("##StartRandomRange", &rotationParameter_.startRandomRange.x, 0.1f);
-			ImGui::NextColumn();
-
-			ImGui::Text("EndNum");
-			ImGui::DragFloat3("##EndNum", &rotationParameter_.endNum.x, 0.1f);
-			ImGui::NextColumn();
-
-			ImGui::Text("EndRandomRange");
-			ImGui::DragFloat3("##EndRandomRange", &rotationParameter_.endRandomRange.x, 0.1f);
-			ImGui::NextColumn();
-
-			ImGui::Text("Velocity");
-			ImGui::DragFloat3("##Velocity", &rotationParameter_.velocity.x, 0.1f);
-			ImGui::NextColumn();
-
-			ImGui::Text("VelocityRandomRange");
-			ImGui::DragFloat3("##VelocityRandomRange", &rotationParameter_.velocityRandomRange.x, 0.1f);
-			ImGui::NextColumn();
-
-			ImGui::Text("Acceleration");
-			ImGui::DragFloat3("##Acceleration", &rotationParameter_.acceleration.x, 0.1f);
-			ImGui::NextColumn();
-
-			ImGui::Text("AccelerationRandomRange");
-			ImGui::DragFloat3("##AccelerationRandomRange", &rotationParameter_.accelerationRandomRange.x, 0.1f);
-			ImGui::NextColumn();
+			ImGuiParameter(
+				"Rotation",
+				rotationParameter_,
+				rotationUpdateState_,
+				rotationEasingState_,
+				rotationEasingStrength_
+			);
 
 			ImGui::Columns(1);
 		}
 
-		if (ImGui::CollapsingHeader("Scale")) {
+		if (ImGui::CollapsingHeader("生成拡縮")) {
 			ImGui::Columns(2, "ScaleColumns", false);
 
-			ImGui::Text("StartNum");
-			ImGui::DragFloat3("##StartNum", &scaleParameter_.startNum.x, 0.1f);
-			ImGui::NextColumn();
-
-			ImGui::Text("StartRandomRange");
-			ImGui::DragFloat3("##StartRandomRange", &scaleParameter_.startRandomRange.x, 0.1f);
-			ImGui::NextColumn();
-
-			ImGui::Text("EndNum");
-			ImGui::DragFloat3("##EndNum", &scaleParameter_.endNum.x, 0.1f);
-			ImGui::NextColumn();
-
-			ImGui::Text("EndRandomRange");
-			ImGui::DragFloat3("##EndRandomRange", &scaleParameter_.endRandomRange.x, 0.1f);
-			ImGui::NextColumn();
-
-			ImGui::Text("Velocity");
-			ImGui::DragFloat3("##Velocity", &scaleParameter_.velocity.x, 0.1f);
-			ImGui::NextColumn();
-
-			ImGui::Text("VelocityRandomRange");
-			ImGui::DragFloat3("##VelocityRandomRange", &scaleParameter_.velocityRandomRange.x, 0.1f);
-			ImGui::NextColumn();
-
-			ImGui::Text("Acceleration");
-			ImGui::DragFloat3("##Acceleration", &scaleParameter_.acceleration.x, 0.1f);
-			ImGui::NextColumn();
-
-			ImGui::Text("AccelerationRandomRange");
-			ImGui::DragFloat3("##AccelerationRandomRange", &scaleParameter_.accelerationRandomRange.x, 0.1f);
-			ImGui::NextColumn();
+			ImGuiParameter(
+				"Scale",
+				scaleParameter_,
+				scaleUpdateState_,
+				scaleEasingState_,
+				scaleEasingStrength_
+			);
 
 			ImGui::Columns(1);
 		}
 
-		if (ImGui::CollapsingHeader("Color")) {
+		if (ImGui::CollapsingHeader("生成色")) {
 			ImGui::Columns(2, "ColorColumns", false);
 
-			ImGui::Text("StartColor");
-			ImGui::ColorEdit4("##StartColor", &colorParameter_.startColor.x);
+			const char* stateItems[] = { "Start","Velocity","Easing" };
+
+			int currentState = static_cast<int>(colorUpdateState_);
+
+			ImGui::Text("更新ステート");
+			if (ImGui::Combo(CreateLabelName("Color", "UpdateState").c_str(), &currentState, stateItems, IM_ARRAYSIZE(stateItems))) {
+
+				colorUpdateState_ = static_cast<UpdateState>(currentState);
+			}
+			ImGui::NextColumn();
 			ImGui::NextColumn();
 
-			ImGui::Text("StartColorRandomRange");
-			ImGui::ColorEdit4("##StartColorRandomRange", &colorParameter_.startRandomRange.x);
-			ImGui::NextColumn();
+			switch (colorUpdateState_) {
+			case ParticleEmitter::START:
 
-			ImGui::Text("EndColor");
-			ImGui::ColorEdit4("##EndColor", &colorParameter_.endColor.x);
-			ImGui::NextColumn();
+				ImGui::Text("初期値");
+				ImGui::ColorEdit4(CreateLabelName("Color", "StartNum").c_str(), &colorParameter_.startColor.x);
+				ImGui::NextColumn();
 
-			ImGui::Text("EndColorRandomRange");
-			ImGui::ColorEdit4("##EndColorRandomRange", &colorParameter_.endRandomRange.x);
-			ImGui::NextColumn();
+				ImGui::Text("初期値のランダム幅");
+				ImGui::ColorEdit4(CreateLabelName("Color", "StartRandomRange").c_str(), &colorParameter_.startRandomRange.x);
+				ImGui::NextColumn();
 
-			ImGui::Text("Velocity");
-			ImGui::ColorEdit4("##Velocity", &colorParameter_.velocity.x);
-			ImGui::NextColumn();
+				break;
+			case ParticleEmitter::VELOCITY:
 
-			ImGui::Text("VelocityRandomRange");
-			ImGui::ColorEdit4("##VelocityRandomRange", &colorParameter_.velocityRandomRange.x);
-			ImGui::NextColumn();
+				ImGui::Text("初期値");
+				ImGui::ColorEdit4(CreateLabelName("Color", "StartNum").c_str(), &colorParameter_.startColor.x);
+				ImGui::NextColumn();
 
-			ImGui::Text("Acceleration");
-			ImGui::ColorEdit4("##Acceleration", &colorParameter_.acceleration.x);
-			ImGui::NextColumn();
+				ImGui::Text("初期値のランダム幅");
+				ImGui::ColorEdit4(CreateLabelName("Color", "StartRandomRange").c_str(), &colorParameter_.startRandomRange.x);
+				ImGui::NextColumn();
 
-			ImGui::Text("AccelerationRandomRange");
-			ImGui::ColorEdit4("##AccelerationRandomRange", &colorParameter_.accelerationRandomRange.x);
-			ImGui::NextColumn();
+				ImGui::Text("終了値");
+				ImGui::ColorEdit4(CreateLabelName("Color", "EndNum").c_str(), &colorParameter_.endColor.x);
+				ImGui::NextColumn();
+
+				ImGui::Text("終了値のランダム幅");
+				ImGui::ColorEdit4(CreateLabelName("Color", "EndRandomRange").c_str(), &colorParameter_.endRandomRange.x);
+				ImGui::NextColumn();
+
+				ImGui::Text("移動量");
+				ImGui::ColorEdit4(CreateLabelName("Color", "Velocity").c_str(), &colorParameter_.velocity.x);
+				ImGui::NextColumn();
+
+				ImGui::Text("移動量のランダム幅");
+				ImGui::ColorEdit4(CreateLabelName("Color", "VelocityRandomRange").c_str(), &colorParameter_.velocityRandomRange.x);
+				ImGui::NextColumn();
+
+				ImGui::Text("加速度");
+				ImGui::ColorEdit4(CreateLabelName("Color", "Acceleration").c_str(), &colorParameter_.acceleration.x);
+				ImGui::NextColumn();
+
+				ImGui::Text("加速度のランダム幅");
+				ImGui::ColorEdit4(CreateLabelName("Color", "AccelerationRandomRange").c_str(), &colorParameter_.accelerationRandomRange.x);
+				ImGui::NextColumn();
+
+				break;
+			case ParticleEmitter::EASING:
+
+				const char* easingStateItems[] = { "Lerp","EaseIn","EaseOut","EaseInOut" };
+
+				int currentEasingState = static_cast<int>(colorEasingState_);
+
+				ImGui::Text("イージングステート");
+				if (ImGui::Combo(CreateLabelName("Color", "EasingState").c_str(), &currentEasingState, easingStateItems, IM_ARRAYSIZE(easingStateItems))) {
+
+					colorEasingState_ = static_cast<EasingState>(currentEasingState);
+				}
+				ImGui::NextColumn();
+
+				ImGui::Text("イージング強度");
+				ImGui::InputFloat(CreateLabelName("Color", "EasingStrength").c_str(), &colorEasingStrength_);
+				ImGui::NextColumn();
+
+				ImGui::Text("初期値");
+				ImGui::ColorEdit4(CreateLabelName("Color", "StartNum").c_str(), &colorParameter_.startColor.x);
+				ImGui::NextColumn();
+
+				ImGui::Text("初期値のランダム幅");
+				ImGui::ColorEdit4(CreateLabelName("Color", "StartRandomRange").c_str(), &colorParameter_.startRandomRange.x);
+				ImGui::NextColumn();
+
+				ImGui::Text("終了値");
+				ImGui::ColorEdit4(CreateLabelName("Color", "EndNum").c_str(), &colorParameter_.endColor.x);
+				ImGui::NextColumn();
+
+				ImGui::Text("終了値のランダム幅");
+				ImGui::ColorEdit4(CreateLabelName("Color", "EndRandomRange").c_str(), &colorParameter_.endRandomRange.x);
+				ImGui::NextColumn();
+
+				break;
+			}
 
 			ImGui::Columns(1);
 		}
 
-		if (ImGui::Button("Emit")) {
+		if (ImGui::Button("生成")) {
 			Emit();
 		}
 
@@ -537,7 +618,7 @@ void ParticleEmitter::ImGui() {
 
 void ParticleEmitter::Emit() {
 
-	isActive_ = true;
+	isEmit_ = true;
 
 	emitCount_ = 0;
 
@@ -574,11 +655,13 @@ bool ParticleEmitter::IsCollision(const AABB& aabb, const Vector3& point) {
 	return false;
 }
 
-void ParticleEmitter::ExportEmitterData() {
+void ParticleEmitter::ExportEmitterData(const std::string& groupName) {
 
 	nlohmann::json jsonData;
 
-	std::string filePath = directoryPath_ + name_ + ".json";
+	std::string directoryPath = directoryPath_ + groupName + "/Emitter/";
+
+	std::string filePath = directoryPath + name_ + ".json";
 
 	jsonData["name"] = name_;
 
@@ -596,6 +679,9 @@ void ParticleEmitter::ExportEmitterData() {
 	jsonData["isBillboard"] = isBillboard_;
 
 	jsonData["position"] = {
+		{"updateState",{positionUpdateState_}},
+		{"easingState",{positionEasingState_}},
+		{"easingStrength",{positionEasingStrength_}},
 		{"startNum", {positionParameter_.startNum.x,positionParameter_.startNum.y,positionParameter_.startNum.z}},
 		{"startRandomRange", {positionParameter_.startRandomRange.x,positionParameter_.startRandomRange.y,positionParameter_.startRandomRange.z}},
 		{"endNum", {positionParameter_.endNum.x,positionParameter_.endNum.y,positionParameter_.endNum.z}},
@@ -607,6 +693,9 @@ void ParticleEmitter::ExportEmitterData() {
 	};
 
 	jsonData["rotation"] = {
+		{"updateState",{rotationUpdateState_}},
+		{"easingState",{rotationEasingState_}},
+		{"easingStrength",{rotationEasingStrength_}},
 		{"startNum", {rotationParameter_.startNum.x,rotationParameter_.startNum.y,rotationParameter_.startNum.z}},
 		{"startRandomRange", {rotationParameter_.startRandomRange.x,rotationParameter_.startRandomRange.y,rotationParameter_.startRandomRange.z}},
 		{"endNum", {rotationParameter_.endNum.x,rotationParameter_.endNum.y,rotationParameter_.endNum.z}},
@@ -618,6 +707,9 @@ void ParticleEmitter::ExportEmitterData() {
 	};
 
 	jsonData["scale"] = {
+		{"updateState",{scaleUpdateState_}},
+		{"easingState",{scaleEasingState_}},
+		{"easingStrength",{scaleEasingStrength_}},
 		{"startNum", {scaleParameter_.startNum.x,scaleParameter_.startNum.y,scaleParameter_.startNum.z}},
 		{"startRandomRange", {scaleParameter_.startRandomRange.x,scaleParameter_.startRandomRange.y,scaleParameter_.startRandomRange.z}},
 		{"endNum", {scaleParameter_.endNum.x,scaleParameter_.endNum.y,scaleParameter_.endNum.z}},
@@ -629,6 +721,9 @@ void ParticleEmitter::ExportEmitterData() {
 	};
 
 	jsonData["color"] = {
+		{"updateState",{colorUpdateState_}},
+		{"easingState",{colorEasingState_}},
+		{"easingStrength",{colorEasingStrength_}},
 		{"startColor", {colorParameter_.startColor.x,colorParameter_.startColor.y,colorParameter_.startColor.z,colorParameter_.startColor.w}},
 		{"startRandomRange", {colorParameter_.startRandomRange.x,colorParameter_.startRandomRange.y,colorParameter_.startRandomRange.z,colorParameter_.startRandomRange.w}},
 		{"endColor", {colorParameter_.endColor.x,colorParameter_.endColor.y,colorParameter_.endColor.z,colorParameter_.endColor.w}},
@@ -639,9 +734,9 @@ void ParticleEmitter::ExportEmitterData() {
 		{"accelerationRandomRange", {colorParameter_.accelerationRandomRange.x,colorParameter_.accelerationRandomRange.y,colorParameter_.accelerationRandomRange.z,colorParameter_.accelerationRandomRange.w}}
 	};
 
-	std::filesystem::path dir(directoryPath_);
-	if (!std::filesystem::exists(directoryPath_)) {
-		std::filesystem::create_directory(directoryPath_);
+	std::filesystem::path dir(directoryPath);
+	if (!std::filesystem::exists(directoryPath)) {
+		std::filesystem::create_directory(directoryPath);
 	}
 
 	std::ofstream file;
@@ -660,11 +755,13 @@ void ParticleEmitter::ExportEmitterData() {
 	file.close();
 }
 
-void ParticleEmitter::ImportEmitterData(const std::string& fileName) {
+void ParticleEmitter::ImportEmitterData(const std::string& groupName, const std::string& fileName) {
 
 	nlohmann::json jsonData;
 
-	std::string filePath = directoryPath_ + fileName + ".json";
+	std::string directoryPath = directoryPath_ + groupName + "/Emitter/";
+
+	std::string filePath = directoryPath + fileName + ".json";
 
 	std::ifstream file(filePath);
 
@@ -697,6 +794,11 @@ void ParticleEmitter::ImportEmitterData(const std::string& fileName) {
 	if (jsonData.contains("position")) {
 
 		auto position = jsonData["position"];
+
+		positionUpdateState_ = position["updateState"][0];
+		positionEasingState_ = position["easingState"][0];
+		positionEasingStrength_ = position["easingStrength"][0];
+
 		positionParameter_.startNum = { position["startNum"][0],position["startNum"][1],position["startNum"][2] };
 		positionParameter_.startRandomRange = { position["startRandomRange"][0],position["startRandomRange"][1],position["startRandomRange"][2] };
 		positionParameter_.endNum = { position["endNum"][0],position["endNum"][1],position["endNum"][2] };
@@ -708,7 +810,13 @@ void ParticleEmitter::ImportEmitterData(const std::string& fileName) {
 	}
 
 	if (jsonData.contains("rotation")) {
+
 		auto rotation = jsonData["rotation"];
+
+		rotationUpdateState_ = rotation["updateState"][0];
+		rotationEasingState_ = rotation["easingState"][0];
+		rotationEasingStrength_ = rotation["easingStrength"][0];
+
 		rotationParameter_.startNum = { rotation["startNum"][0],rotation["startNum"][1],rotation["startNum"][2] };
 		rotationParameter_.startRandomRange = { rotation["startRandomRange"][0],rotation["startRandomRange"][1],rotation["startRandomRange"][2] };
 		rotationParameter_.endNum = { rotation["endNum"][0],rotation["endNum"][1],rotation["endNum"][2] };
@@ -720,7 +828,13 @@ void ParticleEmitter::ImportEmitterData(const std::string& fileName) {
 	}
 
 	if (jsonData.contains("scale")) {
+
 		auto scale = jsonData["scale"];
+
+		scaleUpdateState_ = scale["updateState"][0];
+		scaleEasingState_ = scale["easingState"][0];
+		scaleEasingStrength_ = scale["easingStrength"][0];
+
 		scaleParameter_.startNum = { scale["startNum"][0],scale["startNum"][1],scale["startNum"][2] };
 		scaleParameter_.startRandomRange = { scale["startRandomRange"][0],scale["startRandomRange"][1],scale["startRandomRange"][2] };
 		scaleParameter_.endNum = { scale["endNum"][0],scale["endNum"][1],scale["endNum"][2] };
@@ -732,7 +846,13 @@ void ParticleEmitter::ImportEmitterData(const std::string& fileName) {
 	}
 
 	if (jsonData.contains("color")) {
+
 		auto color = jsonData["color"];
+
+		colorUpdateState_ = color["updateState"][0];
+		colorEasingState_ = color["easingState"][0];
+		colorEasingStrength_ = color["easingStrength"][0];
+
 		colorParameter_.startColor = { color["startColor"][0],color["startColor"][1],color["startColor"][2],color["startColor"][3] };
 		colorParameter_.startRandomRange = { color["startRandomRange"][0],color["startRandomRange"][1],color["startRandomRange"][2],color["startRandomRange"][3] };
 		colorParameter_.endColor = { color["endColor"][0],color["endColor"][1],color["endColor"][2],color["endColor"][3] };
@@ -814,4 +934,173 @@ ParticleEmitter::Particle ParticleEmitter::MakeNewParticle() {
 	particle.currentTime = 0.0f;
 
 	return particle;
+}
+
+void ParticleEmitter::UpdateParameter(Vector3& num, ParticleParameter& parameter, UpdateState& updateState, EasingState& easingState, float& easingStrength, float& currentTime, float& lifeTime) {
+
+	switch (updateState) {
+	case ParticleEmitter::START:
+
+		num = parameter.startNum;
+
+		break;
+	case ParticleEmitter::VELOCITY:
+
+		parameter.velocity = parameter.velocity + parameter.acceleration * kDeltaTime;
+
+		num = num + parameter.velocity * kDeltaTime;
+
+		break;
+	case ParticleEmitter::EASING:
+
+		float time = currentTime / lifeTime;
+
+		switch (easingState) {
+		case ParticleEmitter::LINEAR:
+
+			num = Lerp(
+				parameter.startNum,
+				parameter.endNum,
+				time
+			);
+
+			break;
+		case ParticleEmitter::EASE_IN:
+
+			num = EaseIn(
+				parameter.startNum,
+				parameter.endNum,
+				time,
+				easingStrength
+			);
+
+			break;
+		case ParticleEmitter::EASE_OUT:
+
+			num = EaseOut(
+				parameter.startNum,
+				parameter.endNum,
+				time,
+				easingStrength
+			);
+
+			break;
+		case ParticleEmitter::EASE_INOUT:
+
+			num = EaseInOut(
+				parameter.startNum,
+				parameter.endNum,
+				time,
+				easingStrength
+			);
+
+			break;
+		}
+		break;
+	}
+}
+
+void ParticleEmitter::ImGuiParameter(std::string labelName, Parameter& parameter, UpdateState& updateState, EasingState& easingState, float& easingStrength) {
+
+	/// === 更新ステート === ///
+
+	const char* stateItems[] = { "Start","Velocity","Easing" };
+
+	int currentState = static_cast<int>(updateState);
+
+	ImGui::Text("更新ステート");
+	if (ImGui::Combo(CreateLabelName(labelName, "UpdateState").c_str(), &currentState, stateItems, IM_ARRAYSIZE(stateItems))) {
+
+		updateState = static_cast<UpdateState>(currentState);
+	}
+	ImGui::NextColumn();
+	ImGui::NextColumn();
+
+	switch (updateState) {
+	case ParticleEmitter::START:
+
+		ImGui::Text("初期値");
+		ImGui::DragFloat3(CreateLabelName(labelName, "StartNum").c_str(), &parameter.startNum.x, 0.1f);
+		ImGui::NextColumn();
+
+		ImGui::Text("初期値のランダム幅");
+		ImGui::DragFloat3(CreateLabelName(labelName, "StartRandomRange").c_str(), &parameter.startRandomRange.x, 0.1f);
+		ImGui::NextColumn();
+
+		break;
+	case ParticleEmitter::VELOCITY:
+
+		ImGui::Text("初期値");
+		ImGui::DragFloat3(CreateLabelName(labelName, "StartNum").c_str(), &parameter.startNum.x, 0.1f);
+		ImGui::NextColumn();
+
+		ImGui::Text("初期値のランダム幅");
+		ImGui::DragFloat3(CreateLabelName(labelName, "StartRandomRange").c_str(), &parameter.startRandomRange.x, 0.1f);
+		ImGui::NextColumn();
+
+		ImGui::Text("終了値");
+		ImGui::DragFloat3(CreateLabelName(labelName, "EndNum").c_str(), &parameter.endNum.x, 0.1f);
+		ImGui::NextColumn();
+
+		ImGui::Text("終了値のランダム幅");
+		ImGui::DragFloat3(CreateLabelName(labelName, "EndRandomRange").c_str(), &parameter.endRandomRange.x, 0.1f);
+		ImGui::NextColumn();
+
+		ImGui::Text("移動量");
+		ImGui::DragFloat3(CreateLabelName(labelName, "Velocity").c_str(), &parameter.velocity.x, 0.1f);
+		ImGui::NextColumn();
+
+		ImGui::Text("移動量のランダム幅");
+		ImGui::DragFloat3(CreateLabelName(labelName, "VelocityRandomRange").c_str(), &parameter.velocityRandomRange.x, 0.1f);
+		ImGui::NextColumn();
+
+		ImGui::Text("加速度");
+		ImGui::DragFloat3(CreateLabelName(labelName, "Acceleration").c_str(), &parameter.acceleration.x, 0.1f);
+		ImGui::NextColumn();
+
+		ImGui::Text("加速度のランダム幅");
+		ImGui::DragFloat3(CreateLabelName(labelName, "AccelerationRandomRange").c_str(), &parameter.accelerationRandomRange.x, 0.1f);
+		ImGui::NextColumn();
+
+		break;
+	case ParticleEmitter::EASING:
+
+		const char* easingStateItems[] = { "Lerp","EaseIn","EaseOut","EaseInOut" };
+
+		int currentEasingState = static_cast<int>(easingState);
+
+		ImGui::Text("イージングステート");
+		if (ImGui::Combo(CreateLabelName(labelName, "EasingState").c_str(), &currentEasingState, easingStateItems, IM_ARRAYSIZE(easingStateItems))) {
+
+			easingState = static_cast<EasingState>(currentEasingState);
+		}
+		ImGui::NextColumn();
+
+		ImGui::Text("イージング強度");
+		ImGui::InputFloat(CreateLabelName(labelName, "EasingStrength").c_str(), &easingStrength);
+		ImGui::NextColumn();
+
+		ImGui::Text("初期値");
+		ImGui::DragFloat3(CreateLabelName(labelName, "StartNum").c_str(), &parameter.startNum.x, 0.1f);
+		ImGui::NextColumn();
+
+		ImGui::Text("初期値のランダム幅");
+		ImGui::DragFloat3(CreateLabelName(labelName, "StartRandomRange").c_str(), &parameter.startRandomRange.x, 0.1f);
+		ImGui::NextColumn();
+
+		ImGui::Text("終了値");
+		ImGui::DragFloat3(CreateLabelName(labelName, "EndNum").c_str(), &parameter.endNum.x, 0.1f);
+		ImGui::NextColumn();
+
+		ImGui::Text("終了値のランダム幅");
+		ImGui::DragFloat3(CreateLabelName(labelName, "EndRandomRange").c_str(), &parameter.endRandomRange.x, 0.1f);
+		ImGui::NextColumn();
+
+		break;
+	}
+}
+
+std::string ParticleEmitter::CreateLabelName(std::string labelName, const char* label) {
+
+	return "##" + labelName + label;
 }

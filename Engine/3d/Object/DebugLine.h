@@ -32,11 +32,19 @@ public:
 	DebugLine();
 
 	/// <summary>
-	/// 初期化処理
+	/// 初期化処理(方向)
 	/// </summary>
 	/// <param name="direction">ラインの方向</param>
 	/// <param name="color">ラインの色</param>
 	void Initialize(Vector3 direction,Vector4 color);
+
+	/// <summary>
+	/// 初期化処理(始点・終点)
+	/// </summary>
+	/// <param name="start">始点</param>
+	/// <param name="end">終点</param>
+	/// <param name="color">色</param>
+	void Initialize(Vector3 start, Vector3 end, Vector4 color);
 
 	/// <summary>
 	/// 更新処理

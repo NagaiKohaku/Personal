@@ -1,0 +1,17 @@
+[
+    {
+        "name": "LightAttack"
+    },
+    {
+        "emitter": "Wave"
+    },
+    {
+        "emitter": "Spark01"
+    },
+    {
+        "emitter": "Core"
+    },
+    {
+        "emitter": "Spark02"
+    }
+]

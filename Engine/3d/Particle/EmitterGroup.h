@@ -32,6 +32,8 @@ public:
 
 	std::string GetName() { return name_; }
 
+	WorldTransform& GetWorldTransform() { return transform_; }
+
 	void SetTextureList(std::vector<std::string> list) { textureList_ = list; }
 
 	void SetWorldTransform(WorldTransform worldTransform) { transform_ = worldTransform; }
@@ -49,5 +51,5 @@ private:
 
 	std::string name_;
 
-	std::string directoryPath;
+	std::string directoryPath_;
 };
