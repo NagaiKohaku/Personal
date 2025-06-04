@@ -38,6 +38,14 @@ void ParticleEditorScene::Initialize() {
 		}
 	}
 
+	for (const auto& entry : std::filesystem::directory_iterator("Resource/Json/Particle/Group/")) {
+
+		if (entry.is_directory()) {
+
+			emitterGroupNames_.push_back(entry.path().filename().string());
+		}
+	}
+
 	for (auto& textureName : textureList_) {
 
 		TextureManager::GetInstance()->LoadTexture("Resource/Sprite/Particle/" + textureName);
@@ -119,9 +127,21 @@ void ParticleEditorScene::ImGui() {
 
 		if (ImGui::BeginMenu("メニュー", "MENU")) {
 
+			if (ImGui::BeginMenu("グループを読み込み", "LOAD")) {
+
+				for (auto& groupName : emitterGroupNames_) {
+
+					if (ImGui::MenuItem(groupName.c_str())) {
+						LoadGroup(groupName);
+					}
+				}
+
+					ImGui::EndMenu();
+			}
+
 			if (ImGui::MenuItem("新しいグループを生成")) {
 
-				CreateGroup();
+				LoadGroup("defaultGroup");
 			}
 
 			ImGui::EndMenu();
@@ -131,12 +151,8 @@ void ParticleEditorScene::ImGui() {
 	}
 
 	for (auto& group : emitterGroups_) {
+
 		group->ImGui();
-
-		if (ImGui::Button("グループ生成")) {
-
-			group->Emit();
-		}
 	}
 
 	ImGui::End();
@@ -151,6 +167,19 @@ void ParticleEditorScene::CreateGroup() {
 	newGroup->SetTextureList(textureList_);
 
 	newGroup->LoadEmitter("defaultGroup");
+
+	emitterGroups_.push_back(std::move(newGroup));
+}
+
+void ParticleEditorScene::LoadGroup(const std::string& groupName) {
+
+	std::unique_ptr<EmitterGroup> newGroup = std::make_unique<EmitterGroup>();
+
+	newGroup->Initialize(camera_.get());
+
+	newGroup->SetTextureList(textureList_);
+
+	newGroup->LoadEmitter(groupName);
 
 	emitterGroups_.push_back(std::move(newGroup));
 }

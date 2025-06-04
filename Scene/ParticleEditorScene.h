@@ -28,12 +28,16 @@ private:
 
 	void CreateGroup();
 
+	void LoadGroup(const std::string& groupName = "defaultGroup");
+
 private:
 
 	//カメラ
 	std::unique_ptr<Camera> camera_;
 
 	std::list<std::unique_ptr<EmitterGroup>> emitterGroups_;
+
+	std::list<std::string> emitterGroupNames_;
 
 	std::vector<std::unique_ptr<DebugLine>> lines_;
 

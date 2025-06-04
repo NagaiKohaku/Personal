@@ -1,0 +1,224 @@
+{
+    "color": {
+        "acceleration": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+        ],
+        "accelerationRandomRange": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+        ],
+        "easingState": [
+            2
+        ],
+        "easingStrength": [
+            4.0
+        ],
+        "endColor": [
+            1.0,
+            0.250980406999588,
+            0.0,
+            0.0
+        ],
+        "endRandomRange": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+        ],
+        "startColor": [
+            1.0,
+            0.250980406999588,
+            0.0,
+            1.0
+        ],
+        "startRandomRange": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+        ],
+        "updateState": [
+            2
+        ],
+        "velocity": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+        ],
+        "velocityRandomRange": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+        ]
+    },
+    "frequency": 0.0,
+    "isBillboard": false,
+    "isInfinity": false,
+    "isLoop": false,
+    "lifeTime": 0.5,
+    "lifeTimeRandomRange": 0.0,
+    "maxCount": 1,
+    "name": "RoolWave",
+    "position": {
+        "acceleration": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "accelerationRandomRange": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "easingState": [
+            0
+        ],
+        "easingStrength": [
+            1.0
+        ],
+        "endNum": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "endRandomRange": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "startNum": [
+            0.0,
+            0.0,
+            -1.5
+        ],
+        "startRandomRange": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "updateState": [
+            0
+        ],
+        "velocity": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "velocityRandomRange": [
+            0.0,
+            0.0,
+            0.0
+        ]
+    },
+    "primitiveType": 2,
+    "rotation": {
+        "acceleration": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "accelerationRandomRange": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "easingState": [
+            0
+        ],
+        "easingStrength": [
+            1.0
+        ],
+        "endNum": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "endRandomRange": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "startNum": [
+            1.5700000524520874,
+            0.0,
+            0.0
+        ],
+        "startRandomRange": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "updateState": [
+            1
+        ],
+        "velocity": [
+            0.0,
+            0.0,
+            3.140000104904175
+        ],
+        "velocityRandomRange": [
+            0.0,
+            0.0,
+            0.0
+        ]
+    },
+    "scale": {
+        "acceleration": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "accelerationRandomRange": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "easingState": [
+            2
+        ],
+        "easingStrength": [
+            8.0
+        ],
+        "endNum": [
+            2.0,
+            0.5,
+            2.0
+        ],
+        "endRandomRange": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "startNum": [
+            0.0,
+            0.5,
+            0.0
+        ],
+        "startRandomRange": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "updateState": [
+            2
+        ],
+        "velocity": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "velocityRandomRange": [
+            0.0,
+            0.0,
+            0.0
+        ]
+    },
+    "textureFileName": "gradationLine.png"
+}

@@ -27,8 +27,10 @@ void OffScreen::Initialize() {
 	//SRVマネージャーのインスタンスを取得
 	srvManager_ = SrvManager::GetInstance();
 
+	//CopyImageシェーダーを初期値に設定
 	currentShaderName_ = L"CopyImage";
 
+	//レンダーテクスチャの生成
 	renderTextureResrouce_ = CreateRenderTexture(
 		dxCommon_->GetDevice(),
 		WinApp::kClientWidth,
@@ -37,10 +39,13 @@ void OffScreen::Initialize() {
 		offScreenClearColor_
 	);
 
+	//RTVの生成
 	CreateRenderTargetView();
 
+	//DSVの生成
 	CreateDepthStencilView();
 
+	//SRVの生成
 	CreateShaderResourceView();
 
 	//パイプラインの生成
@@ -153,29 +158,37 @@ void OffScreen::ImGui() {
 
 	if (ImGui::Button("None")) {
 
+		//現在のシェーダーをCopyImageに設定
 		currentShaderName_ = L"CopyImage";
 
+		//パイプラインを再生成
 		CreatePipeline();
 	}
 
 	if (ImGui::Button("GrayScale")) {
 
+		//現在のシェーダーをGrayScaleに設定
 		currentShaderName_ = L"GrayScale";
 
+		//パイプラインを再生成
 		CreatePipeline();
 	}
 
 	if (ImGui::Button("Vignette")) {
 
+		//現在のシェーダーをVignetteに設定
 		currentShaderName_ = L"Vignette";
 
+		//パイプラインを再生成
 		CreatePipeline();
 	}
 
 	if (ImGui::Button("Smooth")) {
 
+		//現在のシェーダーをSmoothに設定
 		currentShaderName_ = L"Smooth";
 
+		//パイプラインを再生成
 		CreatePipeline();
 	}
 
@@ -184,6 +197,7 @@ void OffScreen::ImGui() {
 
 void OffScreen::ClearOffScreenDepthBuffer() {
 
+	//DSVのメモリを確保
 	offScreenDSVHandle_ = dsvManager_->GetCPUDescriptorHandle(dsvIndex_);
 
 	//指定した深度で画面全体をクリアする
@@ -196,10 +210,10 @@ void OffScreen::CreateRootSignature() {
 
 	//RootSignatureを作成
 	D3D12_ROOT_SIGNATURE_DESC descriptionRootSignature{};
-
 	descriptionRootSignature.Flags =
 		D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 
+	//DescriptorRangeを作成
 	D3D12_DESCRIPTOR_RANGE descriptorRange[1] = {};
 	descriptorRange[0].BaseShaderRegister = 0; //0から始まる
 	descriptorRange[0].NumDescriptors = 1; //数は1つ
@@ -215,19 +229,20 @@ void OffScreen::CreateRootSignature() {
 	rootParameters[0].DescriptorTable.pDescriptorRanges = descriptorRange;             //Tableの中身の配列を指定
 	rootParameters[0].DescriptorTable.NumDescriptorRanges = _countof(descriptorRange); //Tableで利用する数
 
-	descriptionRootSignature.pParameters = rootParameters;               //ルートパラメータ配列へのポインタ
-	descriptionRootSignature.NumParameters = _countof(rootParameters);   //配列の長さ
+	descriptionRootSignature.pParameters = rootParameters;                             //ルートパラメータ配列へのポインタ
+	descriptionRootSignature.NumParameters = _countof(rootParameters);                 //配列の長さ
 
 	//サンプラー
 	D3D12_STATIC_SAMPLER_DESC staticSamplers[1] = {};
-	staticSamplers[0].Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR; //バイリニアフィルタ
-	staticSamplers[0].AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP; //0~1の範囲外をリピート
+	staticSamplers[0].Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR;         //バイリニアフィルタ
+	staticSamplers[0].AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP;       //0~1の範囲外をリピート
 	staticSamplers[0].AddressV = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
 	staticSamplers[0].AddressW = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
-	staticSamplers[0].ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER; //比較しない
-	staticSamplers[0].MaxLOD = D3D12_FLOAT32_MAX; //ありったけのMinMapを使う
-	staticSamplers[0].ShaderRegister = 0; //レジスタ番号0を使う
+	staticSamplers[0].ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER;     //比較しない
+	staticSamplers[0].MaxLOD = D3D12_FLOAT32_MAX;                       //ありったけのMinMapを使う
+	staticSamplers[0].ShaderRegister = 0;                               //レジスタ番号0を使う
 	staticSamplers[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; //PixelShaderで使う
+
 	descriptionRootSignature.pStaticSamplers = staticSamplers;
 	descriptionRootSignature.NumStaticSamplers = _countof(staticSamplers);
 
@@ -261,6 +276,7 @@ void OffScreen::CreatePipeline() {
 
 	/// === RootSignatureを設定する === ///
 
+	//ルートシグネチャを生成
 	CreateRootSignature();
 
 	/// === InputLayoutを設定する === ///
@@ -293,8 +309,10 @@ void OffScreen::CreatePipeline() {
 
 	/// === Shaderのコンパイル === ///
 
+	//シェーダーのディレクトリ
 	const std::wstring shaderDirectory = L"Resource/Shader/";
 
+	//現在のシェーダー名を元にファイル名を生成
 	const std::wstring shaderFileName = shaderDirectory + currentShaderName_;
 
 	//VertexShaderをコンパイルする
@@ -319,6 +337,7 @@ void OffScreen::CreatePipeline() {
 
 	//DepthStencilStateの設定
 	D3D12_DEPTH_STENCIL_DESC depthStencilDesc{};
+
 	//Depthの機能を有効化する
 	depthStencilDesc.DepthEnable = false;
 

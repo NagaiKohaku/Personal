@@ -25,8 +25,6 @@ void DirectXCommon::Initialize() {
 	//WinAppクラスを借りる
 	winApp = WinApp::GetInstance();
 
-	
-
 	//FPS固定初期化
 	InitializeFixFPS();
 
@@ -43,8 +41,10 @@ void DirectXCommon::Initialize() {
 ///=====================================================///
 void DirectXCommon::InitializeRendering() {
 
+	//RTVマネージャーの取得
 	rtvManager_ = RTVManager::GetInstance();
 
+	//DSVマネージャーの取得
 	dsvManager_ = DSVManager::GetInstance();
 
 	//スワップチェーンの初期化
@@ -350,7 +350,7 @@ void DirectXCommon::InitializeRenderTargetView() {
 	assert(SUCCEEDED(hr));
 
 	//バッファ全てを取得する
-	for (auto i = 0; i < swapChainDesc.BufferCount; i++) {
+	for (UINT i = 0; i < swapChainDesc.BufferCount; i++) {
 
 		//バッファリソース
 		Microsoft::WRL::ComPtr<ID3D12Resource> backBuffer;
@@ -367,6 +367,7 @@ void DirectXCommon::InitializeRenderTargetView() {
 
 	/// === RTV(レンダーターゲットビュー)の初期化 === ///
 
+	//SwapChainのバッファ数分のRTVを確保する
 	for (size_t i = 0; i < 2; i++) {
 
 		//RTVのメモリを確保
@@ -872,5 +873,4 @@ void DirectXCommon::ClearDepthBuffer() {
 
 	//指定した深度で画面全体をクリアする
 	commandList_->ClearDepthStencilView(dsvHandle_, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
-
 }

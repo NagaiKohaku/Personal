@@ -93,6 +93,10 @@ void EmitterGroup::ImGui() {
 					emitter->ImGui();
 				}
 
+				if (ImGui::Button("グループ生成")) {
+
+					Emit();
+				}
 				ImGui::EndTabBar();
 			}
 
@@ -210,7 +214,7 @@ void EmitterGroup::AddEmitter() {
 
 	newEmitter->SetTextureList(textureList_);
 
-	newEmitter->Initialize(name_, "default", camera_);
+	newEmitter->Initialize("defaultGroup", "default", camera_);
 
 	particleEmitters_.push_back(std::move(newEmitter));
 }

@@ -51,6 +51,7 @@ void ImGuiManager::Initialize() {
 
 	ImGuiIO& io = ImGui::GetIO();
 
+	//日本語フォントを読み込み
 	ImFont* japaneseFont = io.Fonts->AddFontFromFileTTF(
 		"Resource/Font/Mplus1Code-Regular.ttf",
 		16.0f,
@@ -58,10 +59,7 @@ void ImGuiManager::Initialize() {
 		io.Fonts->GetGlyphRangesJapanese()
 	);
 
-	//// 必要ならフォントビルド
-	//io.Fonts->Build();
-
-	// 一番目に追加したフォントをデフォルトにする
+	//日本語フォントをデフォルトにする
 	io.FontDefault = japaneseFont;
 }
 

@@ -3,7 +3,7 @@
 #include "Base/DirectXCommon.h"
 #include "Base/SrvManager.h"
 #include "Base/Renderer.h"
-#include "Base//Input.h"
+#include "Base/Input.h"
 #include "2d/Sprite/TextureManager.h"
 #include "3d/Camera/Camera.h"
 #include "3d/Particle/ParticleCommon.h"
