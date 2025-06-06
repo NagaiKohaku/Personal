@@ -4,6 +4,8 @@
 
 #include "imgui.h"
 
+#include "cmath"
+
 void WorldTransform::Initialize() {
 
 	translate_ = { 0.0f,0.0f,0.0f };
@@ -11,8 +13,6 @@ void WorldTransform::Initialize() {
 	scale_ = { 1.0f,1.0f,1.0f };
 
 	offset_ = { 0.0f,0.0f,0.0f };
-
-	parent_ = nullptr;
 
 	UpdateMatrix();
 }
@@ -27,9 +27,9 @@ void WorldTransform::UpdateMatrix() {
 
 	if (parent_) {
 
-		Matrix4x4 pTranslateMatrix = parent_->GetTranslateMatrix();
-		Matrix4x4 pRotateMatrix = parent_->GetRotateMatrix();
-		Matrix4x4 pScaleMatrix = parent_->GetScaleMatrix();
+		Matrix4x4 pTranslateMatrix = parent_->ExtractTranslateMatrix();
+		Matrix4x4 pRotateMatrix = parent_->ExtractRotateMatrix();
+		Matrix4x4 pScaleMatrix = parent_->ExtractScaleMatrix();
 
 		translateMatrix_ *= pTranslateMatrix;
 
@@ -92,6 +92,78 @@ const Matrix4x4& WorldTransform::GetRotateMatrix() {
 const Matrix4x4& WorldTransform::GetScaleMatrix() {
 
 	return MakeScaleMatrix(scale_);
+}
+
+const Matrix4x4& WorldTransform::ExtractTranslateMatrix() const {
+
+	Matrix4x4 result = MakeIdentity4x4();
+
+	result.m[3][0] = worldMatrix_.m[3][0];
+	result.m[3][1] = worldMatrix_.m[3][1];
+	result.m[3][2] = worldMatrix_.m[3][2];
+
+	return result;
+}
+
+const Matrix4x4& WorldTransform::ExtractRotateMatrix() const {
+
+	Matrix4x4 result = MakeIdentity4x4();
+
+	float scaleX = std::sqrtf(
+		worldMatrix_.m[0][0] * worldMatrix_.m[0][0] + 
+		worldMatrix_.m[1][0] * worldMatrix_.m[1][0] + 
+		worldMatrix_.m[2][0] * worldMatrix_.m[1][0]
+	);
+
+	float scaleY = std::sqrtf(
+		worldMatrix_.m[0][1] * worldMatrix_.m[0][1] +
+		worldMatrix_.m[1][1] * worldMatrix_.m[1][1] +
+		worldMatrix_.m[2][1] * worldMatrix_.m[2][1]
+	);
+
+	float scaleZ = std::sqrtf(
+		worldMatrix_.m[0][2] * worldMatrix_.m[0][2] +
+		worldMatrix_.m[1][2] * worldMatrix_.m[1][2] +
+		worldMatrix_.m[2][2] * worldMatrix_.m[2][2]
+	);
+
+	if (scaleX == 0.0f || scaleY == 0.0f || scaleZ == 0.0f) {
+		return result;
+	}
+
+	for (int row = 0; row < 3; ++row) {
+
+		result.m[row][0] = worldMatrix_.m[row][0] / scaleX;
+		result.m[row][1] = worldMatrix_.m[row][1] / scaleY;
+		result.m[row][2] = worldMatrix_.m[row][2] / scaleZ;
+	}
+
+	return result;
+}
+
+const Matrix4x4& WorldTransform::ExtractScaleMatrix() const {
+
+	Matrix4x4 result = MakeIdentity4x4();
+
+	result.m[0][0] = std::sqrtf(
+		worldMatrix_.m[0][0] * worldMatrix_.m[0][0] +
+		worldMatrix_.m[1][0] * worldMatrix_.m[1][0] +
+		worldMatrix_.m[2][0] * worldMatrix_.m[2][0]
+	);
+
+	result.m[1][1] = std::sqrtf(
+		worldMatrix_.m[0][1] * worldMatrix_.m[0][1] +
+		worldMatrix_.m[1][1] * worldMatrix_.m[1][1] +
+		worldMatrix_.m[2][1] * worldMatrix_.m[2][1]
+	);
+
+	result.m[2][2] = std::sqrtf(
+		worldMatrix_.m[0][2] * worldMatrix_.m[0][2] +
+		worldMatrix_.m[1][2] * worldMatrix_.m[1][2] +
+		worldMatrix_.m[2][2] * worldMatrix_.m[2][2]
+	);
+
+	return result;
 }
 
 const Vector3& WorldTransform::GetWorldTranslate() const {

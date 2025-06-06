@@ -14,10 +14,7 @@
 
 #include "cassert"
 
-///=====================================================/// 
-/// コンストラクタ
-///=====================================================///
-Object3D::Object3D() {
+void Object3D::Initialize() {
 
 	//3Dオブジェクト基底のインスタンスを取得
 	object3DCommon_ = Object3DCommon::GetInstance();
@@ -121,15 +118,9 @@ void Object3D::Draw(LayerType layer) {
 
 	if (isDebug_) {
 
-		command = [this]() {
-
-			for (auto& line : axisLines_) {
-				line->Draw();
-			}
-			};
-
-		Renderer::GetInstance()->AddDraw(Debug, true, command);
-
+		for (auto& line : axisLines_) {
+			line->Draw();
+		}
 	}
 }
 

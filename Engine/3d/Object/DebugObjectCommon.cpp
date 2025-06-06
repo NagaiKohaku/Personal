@@ -168,7 +168,7 @@ void DebugObjectCommon::CreateGraphicsPipeline() {
 	rasterizerDesc.CullMode = D3D12_CULL_MODE_BACK;
 
 	//三角形の中を塗りつぶす
-	rasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
+	rasterizerDesc.FillMode = D3D12_FILL_MODE_WIREFRAME;
 
 	/// === Shaderのコンパイル === ///
 

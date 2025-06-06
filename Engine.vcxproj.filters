@@ -73,6 +73,10 @@
     <ClCompile Include="Engine\2d\Sprite\SpriteManager.cpp" />
     <ClCompile Include="Engine\Math\WorldTransform.cpp" />
     <ClCompile Include="Engine\3d\Light\SpotLight.cpp" />
+    <ClCompile Include="Application\Collider\Collider.cpp" />
+    <ClCompile Include="Application\Collider\ColliderManager.cpp" />
+    <ClCompile Include="Application\Collider\AABBCollider.cpp" />
+    <ClCompile Include="Application\Collider\SphereCollider.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DSVManager.h" />
@@ -130,6 +134,11 @@
     <ClInclude Include="Engine\2d\Sprite\SpriteManager.h" />
     <ClInclude Include="Engine\Math\WorldTransform.h" />
     <ClInclude Include="Engine\3d\Light\SpotLight.h" />
+    <ClInclude Include="Application\Collider\Collider.h" />
+    <ClInclude Include="Application\Collider\ColliderManager.h" />
+    <ClInclude Include="Engine\Math\Sphere.h" />
+    <ClInclude Include="Application\Collider\AABBCollider.h" />
+    <ClInclude Include="Application\Collider\SphereCollider.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resource\Shaders\Object3d.hlsli" />

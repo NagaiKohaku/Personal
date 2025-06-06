@@ -33,10 +33,9 @@ class Object3D {
 public:
 
 	/// <summary>
-	/// コンストラクタ
+	/// 初期化処理
 	/// </summary>
-	Object3D();
-
+	void Initialize();
 
 	/// <summary>
 	/// 更新処理

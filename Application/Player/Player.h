@@ -4,6 +4,8 @@
 #include "3d/Particle/EmitterGroup.h"
 #include "3d/Camera/Camera.h"
 
+#include "Collider/AABBCollider.h"
+
 #include "memory"
 
 class BulletManager;
@@ -42,7 +44,7 @@ private:
 
 	std::unique_ptr<Object3D> player_ = nullptr;
 
-	std::unique_ptr<EmitterGroup> thrusterEffect_ = nullptr;
+	std::unique_ptr<AABBCollider> collider_ = nullptr;
 
 	float moveSpeed_ = 0.1f;
 

@@ -9,11 +9,18 @@ void Player::Initialize() {
 	//プレイヤーの生成
 	player_ = std::make_unique<Object3D>();
 
+	//プレイヤーの初期化
+	player_->Initialize();
+
 	//座標の設定
 	player_->GetWorldTransform().translate_ = { 0.0f,1.0f,0.0f };
 
 	//モデルの設定
 	player_->SetModel("Cube");
+
+	collider_ = std::make_unique<AABBCollider>();
+
+	collider_->Initialize(player_->GetWorldTransform());
 
 	//移動速度の設定
 	moveSpeed_ = 0.1f;
@@ -24,13 +31,6 @@ void Player::Initialize() {
 	//攻撃のタイマー
 	attackTimer_ = 0.0f;
 
-	thrusterEffect_ = std::make_unique<EmitterGroup>();
-
-	thrusterEffect_->Initialize(camera_);
-
-	thrusterEffect_->LoadEmitter("Thruster");
-
-	thrusterEffect_->Emit();
 }
 
 void Player::Update() {
@@ -44,10 +44,7 @@ void Player::Update() {
 	//プレイヤーの更新
 	player_->Update();
 
-	thrusterEffect_->SetWorldTransform(player_->GetWorldTransform());
-
-	thrusterEffect_->Update();
-
+	collider_->Update();
 }
 
 void Player::Draw() {
@@ -55,7 +52,8 @@ void Player::Draw() {
 	//プレイヤーの描画
 	player_->Draw(LayerType::Object);
 
-	thrusterEffect_->Draw();
+	collider_->Draw();
+
 }
 
 void Player::Move() {
