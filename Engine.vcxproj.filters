@@ -140,5 +140,6 @@
     <None Include="Resource\Shader\Object2d.hlsli" />
     <None Include="Resource\Shader\Smooth.hlsli" />
     <None Include="Resource\Shader\Vignette.hlsli" />
+    <None Include="Application\level_editor.py" />
   </ItemGroup>
 </Project>
