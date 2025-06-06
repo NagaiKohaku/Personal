@@ -77,6 +77,24 @@ public:
 	void SetDebugCameraFlag(const bool flag) { isDebugCamera_ = flag; }
 
 	/// <summary>
+	/// 座標のセッター
+	/// </summary>
+	/// <param name="pos">座標</param>
+	void SetTransform(const Vector3 pos) { isDebugCamera_ ? debugTransform_.translate_ = pos : transform_.translate_ = pos; }
+
+	/// <summary>
+	/// 角度のセッター
+	/// </summary>
+	/// <param name="rot">角度</param>
+	void SetRotate(const Vector3 rot) { isDebugCamera_ ? debugTransform_.rotate_ = rot : transform_.rotate_ = rot; }
+
+	/// <summary>
+	/// オフセットのセッター
+	/// </summary>
+	/// <param name="offset">オフセット</param>
+	void SetOffsetZ(const float offset) { isDebugCamera_ ? debugCameraOffsetZ_ = offset : offsetZ_ = offset; }
+
+	/// <summary>
 	/// ワールドトランスフォームのゲッター
 	/// </summary>
 	/// <returns>ワールドトランスフォーム</returns>

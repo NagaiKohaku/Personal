@@ -45,6 +45,12 @@ public:
 	/// <returns>ワールド行列</returns>
 	const Matrix4x4& GetWorldMatrix() const { return worldMatrix_; }
 
+	const Matrix4x4& GetTranslateMatrix();
+
+	const Matrix4x4& GetRotateMatrix();
+
+	const Matrix4x4& GetScaleMatrix();
+
 	/// <summary>
 	/// ワールド座標のゲッター
 	/// </summary>
@@ -56,6 +62,8 @@ public:
 	/// </summary>
 	/// <param name="matrix">ワールド行列</param>
 	void SetWorldMatrix(const Matrix4x4& matrix) { worldMatrix_ = matrix; }
+
+	void SetRotateMatrix(const Matrix4x4& matrix){}
 
 	/// <summary>
 	/// オフセットのセッター
@@ -84,6 +92,12 @@ private:
 
 	//ワールド行列
 	Matrix4x4 worldMatrix_;
+
+	Matrix4x4 translateMatrix_;
+
+	Matrix4x4 rotateMatrix_;
+
+	Matrix4x4 scaleMatrix_;
 
 	//オフセット
 	Vector3 offset_;

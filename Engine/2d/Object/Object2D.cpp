@@ -94,7 +94,7 @@ void Object2D::Draw(LayerType layer) {
 		}
 		};
 
-	Renderer::GetInstance()->AddDraw(layer, func);
+	Renderer::GetInstance()->AddDraw(layer, true, func);
 }
 
 ///=====================================================/// 

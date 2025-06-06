@@ -17,8 +17,14 @@
 #include "vector"
 #include "wrl.h"
 
+#include "Math/Vector4.h"
+
 /// === 前方宣言 === ///
 class WinApp;
+
+class RTVManager;
+
+class DSVManager;
 
 ///-------------------------------------------/// 
 /// メモリリークチェッカー
@@ -66,6 +72,11 @@ public:
 	/// 初期化処理
 	/// </summary>
 	void Initialize();
+
+	/// <summary>
+	/// 描画系の初期化処理
+	/// </summary>
+	void InitializeRendering();
 
 	/// <summary>
 	/// 描画前処理
@@ -133,6 +144,10 @@ public:
 	/// <returns>バックバッファ</returns>
 	size_t GetBackBufferCount() const { return backBuffers_.size(); }
 
+	D3D12_VIEWPORT GetViewport() const { return viewport_; }
+
+	D3D12_RECT GetScissorRect() const { return scissorRect_; }
+
 	///-------------------------------------------/// 
 	/// クラス内処理関数
 	///-------------------------------------------///
@@ -149,9 +164,6 @@ private:
 
 	//深度バッファの初期化
 	void InitializeDepthBuffer();
-
-	//各種デスクリプタヒープの初期化
-	void InitializeDescriptorHeap();
 
 	//レンダーターゲットビューの初期化
 	void InitializeRenderTargetView();
@@ -177,12 +189,6 @@ private:
 	//FPS固定更新
 	void UpdateFixFPS();
 
-	//CPUデスクリプタヒープのゲッター
-	D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>& descriptorHeap, uint32_t descriptorSize, uint32_t index);
-
-	//GPUデスクリプタヒープのゲッター
-	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>& descriptorHeap, uint32_t descriptorSize, uint32_t index);
-
 	///-------------------------------------------/// 
 	/// メンバ変数
 	///-------------------------------------------///
@@ -190,6 +196,12 @@ private:
 
 	//WinAppクラス(借り物)
 	WinApp* winApp = nullptr;
+
+	//RTVマネージャー
+	RTVManager* rtvManager_ = nullptr;
+
+	//DSVマネージャー
+	DSVManager* dsvManager_ = nullptr;
 
 	//メモリリークチェック
 	D3DResourceLeakChecker leakCheck;
@@ -215,21 +227,23 @@ private:
 	//深度ステンシル
 	Microsoft::WRL::ComPtr<ID3D12Resource> depthStancilResource_ = nullptr;
 
-	//各種でスクリプタのサイズ
-	uint32_t descriptorSizeRTV_;
-	uint32_t descriptorSizeDSV_;
-
-	//RTVデスクリプタヒープ
-	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> rtvDescriptorHeap_;
-
-	//DSVデスクリプタヒープ
-	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> dsvDescriptorHeap_;
-
 	//バックバッファー
 	std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>> backBuffers_;
 
+	//オフスクリーン用のリソース
+	Microsoft::WRL::ComPtr<ID3D12Resource> offScreenResrouce_;
+
 	//RTVハンドル
 	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles_[2];
+
+	//RTVのメモリ番号
+	uint32_t rtvIndex_[2];
+
+	//DSVハンドル
+	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle_;
+
+	//DSVのメモリ番号
+	uint32_t dsvIndex_ = 0;
 
 	//フェンス
 	Microsoft::WRL::ComPtr<ID3D12Fence> fence_ = nullptr;

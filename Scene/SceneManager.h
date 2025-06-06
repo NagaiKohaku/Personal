@@ -20,6 +20,7 @@ public:
 	enum SceneType {
 		kTitle,
 		kGame,
+		kParticleEditor
 	};
 
 	///-------------------------------------------/// 
@@ -47,6 +48,11 @@ public:
 	/// 現在のシーンの描画
 	/// </summary>
 	void Draw();
+
+	/// <summary>
+	/// 現在のシーンのデバッグ
+	/// </summary>
+	void ImGui();
 
 	/// <summary>
 	/// シーンを変更する

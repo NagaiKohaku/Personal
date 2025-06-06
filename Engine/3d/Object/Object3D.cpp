@@ -4,7 +4,6 @@
 #include "Base/DirectXCommon.h"
 #include "Base/Renderer.h"
 #include "3d/Object/Object3DCommon.h"
-#include "3d/Object/DebugLine.h"
 #include "3d/Model/Model.h"
 #include "3d/Model/ModelManager.h"
 #include "3d/Camera/Camera.h"
@@ -118,7 +117,7 @@ void Object3D::Draw(LayerType layer) {
 		}
 		};
 
-	Renderer::GetInstance()->AddDraw(layer, command);
+	Renderer::GetInstance()->AddDraw(layer, true, command);
 
 	if (isDebug_) {
 
@@ -129,7 +128,7 @@ void Object3D::Draw(LayerType layer) {
 			}
 			};
 
-		Renderer::GetInstance()->AddDraw(Debug, command);
+		Renderer::GetInstance()->AddDraw(Debug, true, command);
 
 	}
 }

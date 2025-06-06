@@ -1,5 +1,8 @@
 #include "Base/WinApp.h"
 #include "Base/DirectXCommon.h"
+#include "Base/OffScreen.h"
+#include "Base/RTVManager.h"
+#include "Base/DSVManager.h"
 #include "Base/SrvManager.h"
 #include "Base/Input.h"
 #include "Base/Audio.h"
@@ -32,13 +35,32 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	DirectXCommon* directXCommon = DirectXCommon::GetInstance();
 	directXCommon->Initialize();
 
-	//ImGuiマネージャー
-	ImGuiManager* imGuiManager = ImGuiManager::GetInstance();
-	imGuiManager->Initialize();
+	//RTVマネージャー
+	RTVManager* rtvManager = RTVManager::GetInstance();
+	rtvManager->Initialize();
+
+	//DSVマネージャー
+	DSVManager* dsvManager = DSVManager::GetInstance();
+	dsvManager->Initialize();
 
 	//SRVマネージャー
 	SrvManager* srvManager = SrvManager::GetInstance();
 	srvManager->Initialize();
+
+	//描画系の初期化
+	directXCommon->InitializeRendering();
+
+	//ImGuiマネージャー
+	ImGuiManager* imGuiManager = ImGuiManager::GetInstance();
+	imGuiManager->Initialize();
+
+	//オフスクリーン
+	OffScreen* offScreen = OffScreen::GetInstance();
+	offScreen->Initialize();
+
+	//モデル基底
+	ModelCommon* modelCommon = ModelCommon::GetInstance();
+	modelCommon->Initialize();
 
 	//スプライト基底
 	SpriteCommon* spriteCommon = SpriteCommon::GetInstance();
@@ -55,10 +77,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//デバッグオブジェクト基底
 	DebugObjectCommon* debugObjectCommon = DebugObjectCommon::GetInstance();
 	debugObjectCommon->Initialize();
-
-	//モデル基底
-	ModelCommon* modelCommon = ModelCommon::GetInstance();
-	modelCommon->Initialize();
 
 	//パーティクル基底
 	ParticleCommon* particleCommon = ParticleCommon::GetInstance();
@@ -91,7 +109,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	ModelManager::GetInstance()->Initialize();
 
 	//シーンを設定
-	sceneManager->ChangeScene(SceneManager::kGame);
+	sceneManager->ChangeScene(SceneManager::kParticleEditor);
 
 	///-------------------------------------------/// 
 	/// メインループ
@@ -114,6 +132,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//入力の更新
 		input->Update();
 
+#ifdef _DEBUG
+
+		//シーンのImGui
+		sceneManager->ImGui();
+
+		//オフスクリーンのImGui
+		offScreen->ImGui();
+
+#endif // _DEBUG
+
 		//3dオブジェクト基底の更新
 		object3DCommon->Update();
 
@@ -133,8 +161,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		/// 描画処理
 		///-------------------------------------------///
 
-		//DirectX基底の描画前処理
-		directXCommon->PreDraw();
+		/// === オフスクリーンの描画 === ///
+
+		//OffScreenの描画前処理
+		offScreen->PreDraw();
 
 		//SRVマネージャーの描画前処理
 		srvManager->PreDraw();
@@ -142,14 +172,35 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//シーンの描画
 		sceneManager->Draw();
 
-		//レンダラーの描画
-		renderer->Draw();
+		//OffScreen用のレンダラーの描画
+		renderer->OffScreenDraw();
 
 		//パーティクルの描画
 		particleManager->Draw();
 
+		//OffScreenの描画後処理
+		offScreen->PostDraw();
+
+		/// === SwapChainの描画 === ///
+
+		//DirectX基底の描画前処理
+		directXCommon->PreDraw();
+
+		//SRVマネージャーの描画前処理
+		srvManager->PreDraw();
+
+		//オフスクリーンの描画結果をSwapChainに転送
+		offScreen->DrawToSwapChain();
+
+		//レンダラーの描画
+		renderer->Draw();
+
+#ifdef _DEBUG
+
 		//ImGuiの描画
 		imGuiManager->Draw();
+
+#endif // _DEBUG
 
 		//DirectX基底の描画後処理
 		directXCommon->PostDraw();
@@ -160,10 +211,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	/// 終了処理
 	///-------------------------------------------///
 
+	//音声の終了処理
 	audio->Finalize();
 
+	//ImGuiの終了処理
 	imGuiManager->Finalize();
 
+	//ウィンドウの終了処理
 	winApp->Finalize();
 
 	return 0;

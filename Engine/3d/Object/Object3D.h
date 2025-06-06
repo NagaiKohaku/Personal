@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Base/LayerType.h"
+#include "3d/Object/DebugLine.h"
 
 #include "Math/Vector3.h"
 #include "Math/Vector4.h"
@@ -21,8 +22,6 @@ class Model;
 
 class Camera;
 
-class DebugLine;
-
 ///=====================================================/// 
 /// 3Dオブジェクト
 ///=====================================================///
@@ -37,6 +36,7 @@ public:
 	/// コンストラクタ
 	/// </summary>
 	Object3D();
+
 
 	/// <summary>
 	/// 更新処理

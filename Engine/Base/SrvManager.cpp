@@ -108,6 +108,21 @@ void SrvManager::CreateSRVForStructuredBuffer(uint32_t srvIndex, ID3D12Resource*
 	directXCommon->GetDevice()->CreateShaderResourceView(pResource, &srvDesc, GetCPUDescriptorHandle(srvIndex));
 }
 
+void SrvManager::CreateRenderTargetSRV(uint32_t srvIndex, ID3D12Resource* pResource) {
+
+	//SRVの情報
+	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
+
+	//SRVの設定
+	srvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+	srvDesc.Texture2D.MipLevels = 1;
+
+	//SRVの生成
+	directXCommon->GetDevice()->CreateShaderResourceView(pResource, &srvDesc, GetCPUDescriptorHandle(srvIndex));
+}
+
 ///=====================================================/// 
 /// CPUデスクリプターのゲッター
 ///=====================================================///
