@@ -42,8 +42,6 @@ private:
 
 	std::unique_ptr<Object3D> player_ = nullptr;
 
-	std::unique_ptr<EmitterGroup> thrusterEffect_ = nullptr;
-
 	float moveSpeed_ = 0.1f;
 
 	float attackInterval_ = 0.5f;

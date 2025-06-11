@@ -73,6 +73,7 @@
     <ClCompile Include="Engine\2d\Sprite\SpriteManager.cpp" />
     <ClCompile Include="Engine\Math\WorldTransform.cpp" />
     <ClCompile Include="Engine\3d\Light\SpotLight.cpp" />
+    <ClCompile Include="Application\LevelDataLoader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DSVManager.h" />
@@ -130,6 +131,7 @@
     <ClInclude Include="Engine\2d\Sprite\SpriteManager.h" />
     <ClInclude Include="Engine\Math\WorldTransform.h" />
     <ClInclude Include="Engine\3d\Light\SpotLight.h" />
+    <ClInclude Include="Application\LevelDataLoader.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resource\Shaders\Object3d.hlsli" />

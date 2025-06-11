@@ -4,6 +4,8 @@
 
 #include "Base/Input.h"
 
+#include "3d/Model/ModelManager.h"
+
 void Player::Initialize() {
 
 	//プレイヤーの生成
@@ -12,8 +14,10 @@ void Player::Initialize() {
 	//座標の設定
 	player_->GetWorldTransform().translate_ = { 0.0f,1.0f,0.0f };
 
+	ModelManager::GetInstance()->LoadModel("Player", "DirPlayer");
+
 	//モデルの設定
-	player_->SetModel("Cube");
+	player_->SetModel("Player");
 
 	//移動速度の設定
 	moveSpeed_ = 0.1f;
@@ -23,14 +27,6 @@ void Player::Initialize() {
 
 	//攻撃のタイマー
 	attackTimer_ = 0.0f;
-
-	thrusterEffect_ = std::make_unique<EmitterGroup>();
-
-	thrusterEffect_->Initialize(camera_);
-
-	thrusterEffect_->LoadEmitter("Thruster");
-
-	thrusterEffect_->Emit();
 }
 
 void Player::Update() {
@@ -43,19 +39,12 @@ void Player::Update() {
 
 	//プレイヤーの更新
 	player_->Update();
-
-	thrusterEffect_->SetWorldTransform(player_->GetWorldTransform());
-
-	thrusterEffect_->Update();
-
 }
 
 void Player::Draw() {
 
 	//プレイヤーの描画
 	player_->Draw(LayerType::Object);
-
-	thrusterEffect_->Draw();
 }
 
 void Player::Move() {

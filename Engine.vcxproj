@@ -124,6 +124,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\3d\Object\DebugObjectCommon.cpp" />
     <ClCompile Include="Engine\Math\Clamp.cpp" />
     <ClCompile Include="Engine\Math\Random.cpp" />
+    <ClCompile Include="Application\LevelDataLoader.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Engine\Math\Easing.cpp" />
     <ClCompile Include="Engine\Math\MakeMatrixMath.cpp" />
@@ -200,6 +201,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\3d\Primitive\Plane.h" />
     <ClInclude Include="Engine\3d\Primitive\PrimitiveBase.h" />
     <ClInclude Include="Engine\3d\Primitive\Ring.h" />
+    <ClInclude Include="Application\LevelDataLoader.h" />
     <ClInclude Include="Scene\ParticleEditorScene.h" />
     <ClInclude Include="Application\Player\Player.h" />
     <ClInclude Include="Application\Bullet\PlayerBullet.h" />
