@@ -210,13 +210,13 @@ class MYADDON_OT_export_scene(bpy.types.Operator, bpy_extras.io_utils.ExportHelp
         rot = rot.to_euler()
 
         #ラジアンから度数法に変換
-        rot.x = math.degrees(rot.x)
-        rot.y = math.degrees(rot.y)
-        rot.z = math.degrees(rot.z)
+        #rot.x = math.degrees(rot.x)
+        #rot.y = math.degrees(rot.y)
+        #rot.z = math.degrees(rot.z)
 
         #トランスフォーム情報をディクショナリに登録
         transform = dict()
-        transform["trannslation"] = (trans.x,trans.y,trans.z)
+        transform["translation"] = (trans.x,trans.y,trans.z)
         transform["rotation"] = (rot.x,rot.y,rot.z)
         transform["scaling"] = (scale.x,scale.y,scale.z)
 
