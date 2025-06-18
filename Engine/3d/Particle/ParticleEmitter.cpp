@@ -8,10 +8,7 @@
 #include "3d/Camera/Camera.h"
 #include "3d/Particle/ParticleCommon.h"
 #include "3d/Particle/ParticleManager.h"
-#include "3d/Primitive/Plane.h"
-#include "3d/Primitive/Ring.h"
-#include "3d/Primitive/Cylinder.h"
-#include "3d/Primitive/Ball.h"
+#include "3d/Model/ModelManager.h"
 
 #include "Math/MakeMatrixMath.h"
 #include "Math/Easing.h"
@@ -109,19 +106,23 @@ void ParticleEmitter::Initialize(const std::string& groupName, const std::string
 
 	/// === パーティクル情報の初期化 === ///
 
-	//プリミティブの生成
-	primitive_ = CreatePrimitive(primitiveType_);
+	if (modelFileName_.find(".obj")) {
 
-	primitive_->Initialize();
+		//モデルの読み込み
+		ModelManager::GetInstance()->LoadModel(modelName_, modelFileName_);
+	}
 
-	//テクスチャパスを取得
-	material_.textureFilePath = "Resource/Sprite/Particle/" + textureFileName_;
+	//モデルの生成
+	model_ = ModelManager::GetInstance()->FindModel(modelName_);
 
 	//テクスチャのロード
-	textureManager_->LoadTexture(material_.textureFilePath);
+	textureManager_->LoadTexture("Resource/Sprite/Particle/" + textureFileName_);
 
-	//テクスチャのSRVインデックスを取得
-	material_.textureIndex = textureManager_->GetSrvIndex(material_.textureFilePath);
+	//テクスチャの設定
+	model_->SetTextureFilePath("Resource/Sprite/Particle/" + textureFileName_);
+
+	//テクスチャ番号の設定
+	model_->SetTextureIndex(textureManager_->GetSrvIndex(model_->GetTextureFilePath()));
 }
 
 void ParticleEmitter::Update() {
@@ -343,15 +344,15 @@ void ParticleEmitter::Draw(LayerType layer) {
 		//パーティクルの描画前処理
 		ParticleCommon::GetInstance()->CommonDrawSetting();
 
-		primitive_->Draw();
+		model_->DrawPrimitive();
 
-		directXCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
+		model_->DrawMaterial();
+
+		model_->DrawTexture();
 
 		directXCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(1, srvManager_->GetGPUDescriptorHandle(srvIndex_));
 
-		directXCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(2, srvManager_->GetGPUDescriptorHandle(material_.textureIndex));
-
-		directXCommon_->GetCommandList()->DrawIndexedInstanced(primitive_->GetIndexCount(), numInstance_, 0, 0, 0);
+		directXCommon_->GetCommandList()->DrawIndexedInstanced(model_->GetPrimitive()->GetIndexCount(), numInstance_, 0, 0, 0);
 		};
 
 	Renderer::GetInstance()->AddDraw(layer, true, command);
@@ -375,20 +376,32 @@ void ParticleEmitter::ImGui() {
 			ImGui::NextColumn();
 			ImGui::NextColumn();
 
-			const char* primitiveItems[] = { "Plane","Ring","Cylinder","Ball" };
+			std::vector<const char*> modelItems;
 
-			int currentPrimitive = static_cast<int>(primitiveType_);
+			int currentModel = 0;
 
-			ImGui::Text("プリミティブ");
-			if (ImGui::Combo("##Primitive", &currentPrimitive, primitiveItems, IM_ARRAYSIZE(primitiveItems))) {
+			modelItems.push_back("モデルを選択");
+			modelItems.push_back("PlanePrimitive");
+			modelItems.push_back("RingPrimitive");
+			modelItems.push_back("CylinderPrimitive");
+			modelItems.push_back("SpherePrimitive");
 
-				primitiveType_ = static_cast<PrimitiveType>(currentPrimitive);
+			ImGui::Text("モデル");
+			if (ImGui::Combo("##Model", &currentModel, modelItems.data(), static_cast<int>(modelItems.size()))) {
 
-				primitive_.reset();
+				modelName_ = modelItems[currentModel];
 
-				primitive_ = CreatePrimitive(primitiveType_);
+				modelFileName_ = "";
 
-				primitive_->Initialize();
+				if (modelFileName_.find(".obj")) {
+
+					//モデルの読み込み
+					ModelManager::GetInstance()->LoadModel(modelName_, modelFileName_);
+				}
+
+				model_.reset();
+
+				model_ = ModelManager::GetInstance()->FindModel(modelName_);
 			}
 			ImGui::NextColumn();
 
@@ -408,9 +421,9 @@ void ParticleEmitter::ImGui() {
 
 				textureFileName_ = textureItems[currentTexture];
 
-				material_.textureFilePath = "Resource/Sprite/Particle/" + textureFileName_;
+				model_->SetTextureFilePath("Resource/Sprite/Particle/" + textureFileName_);
 
-				material_.textureIndex = textureManager_->GetSrvIndex(material_.textureFilePath);
+				model_->SetTextureIndex(textureManager_->GetSrvIndex(model_->GetTextureFilePath()));
 			}
 			ImGui::NextColumn();
 
@@ -666,9 +679,11 @@ void ParticleEmitter::ExportEmitterData(const std::string& groupName) {
 
 	jsonData["name"] = name_;
 
-	jsonData["textureFileName"] = textureFileName_;
+	jsonData["modelName"] = modelName_;
 
-	jsonData["primitiveType"] = primitiveType_;
+	jsonData["modelFileName"] = modelFileName_;
+
+	jsonData["textureFileName"] = textureFileName_;
 
 	jsonData["lifeTime"] = particleLifeTime_;
 	jsonData["lifeTimeRandomRange"] = particleLifeTimeRandomRange_;
@@ -779,9 +794,11 @@ void ParticleEmitter::ImportEmitterData(const std::string& groupName, const std:
 
 	name_ = jsonData["name"];
 
-	textureFileName_ = jsonData["textureFileName"];
+	modelName_ = jsonData["modelName"];
 
-	primitiveType_ = static_cast<PrimitiveType>(jsonData["primitiveType"]);
+	modelFileName_ = jsonData["modelFileName"];
+
+	textureFileName_ = jsonData["textureFileName"];
 
 	particleLifeTime_ = jsonData["lifeTime"];
 	particleLifeTimeRandomRange_ = jsonData["lifeTimeRandomRange"];
@@ -871,26 +888,6 @@ void ParticleEmitter::SetAccelerationField(const Vector3& acceleration, const AA
 	accelerationField_.area = area;
 
 	useAccelerationField_ = true;
-}
-
-std::unique_ptr<PrimitiveBase> ParticleEmitter::CreatePrimitive(PrimitiveType primitiveType) {
-
-	switch (primitiveType) {
-	case ParticleEmitter::PLANE:
-		return std::move(std::make_unique<Plane>());
-		break;
-	case ParticleEmitter::RING:
-		return std::move(std::make_unique<Ring>());
-		break;
-	case ParticleEmitter::CYLINDER:
-		return std::move(std::make_unique<Cylinder>());
-		break;
-	case ParticleEmitter::BALL:
-		return std::move(std::make_unique<Ball>());
-		break;
-	}
-
-	return std::move(std::make_unique<Plane>());
 }
 
 ParticleEmitter::Particle ParticleEmitter::MakeNewParticle() {

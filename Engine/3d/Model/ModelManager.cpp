@@ -18,6 +18,14 @@ void ModelManager::Initialize() {
 	//モデル基底のインスタンスを取得
 	modelCommon_ = ModelCommon::GetInstance();
 
+	CreatePrimitiveModel("PlanePrimitive", PrimitiveType::PLANE, "Resource/Texture/white_128x128.png");
+
+	CreatePrimitiveModel("RingPrimitive", PrimitiveType::RING, "Resource/Texture/white_128x128.png");
+
+	CreatePrimitiveModel("CylinderPrimitive", PrimitiveType::CYLINDER, "Resource/Texture/white_128x128.png");
+
+	CreatePrimitiveModel("SpherePrimitive", PrimitiveType::BALL, "Resource/Texture/white_128x128.png");
+
 	//球体モデルの読み込み
 	LoadModel("Sphere", "sphere");
 

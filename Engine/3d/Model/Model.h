@@ -47,6 +47,12 @@ public:
 	/// </summary>
 	void Draw();
 
+	void DrawPrimitive();
+
+	void DrawMaterial();
+
+	void DrawTexture();
+
 	void Copy(Model* model);
 
 	///-------------------------------------------/// 
@@ -102,6 +108,10 @@ public:
 	ModelData GetModelData() { return modelData_; }
 
 	std::string GetTextureFilePath() const { return textureFilePath_; }
+
+	void SetTextureFilePath(const std::string filePath) { textureFilePath_ = filePath; }
+
+	void SetTextureIndex(const uint32_t index) { textureIndex_ = index; }
 
 	///-------------------------------------------/// 
 	/// メンバ変数

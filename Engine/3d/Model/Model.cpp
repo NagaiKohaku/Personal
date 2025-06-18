@@ -141,6 +141,24 @@ void Model::Draw() {
 
 }
 
+void Model::DrawPrimitive() {
+
+	//プリミティブの設定
+	primitive_->Draw();
+}
+
+void Model::DrawMaterial() {
+
+	//マテリアルデータの設定
+	modelCommon_->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource_.Get()->GetGPUVirtualAddress());
+}
+
+void Model::DrawTexture() {
+
+	//テクスチャデータの設定
+	modelCommon_->GetDxCommon()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSrvHandleGPU(textureFilePath_));
+}
+
 void Model::Copy(Model* model) {
 
 	modelData_ = model->modelData_;

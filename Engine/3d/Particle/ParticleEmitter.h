@@ -8,6 +8,8 @@
 #include "Math/WorldTransform.h"
 #include "Math/AABB.h"
 #include "3d/Primitive/PrimitiveBase.h"
+#include "3d/Model/Model.h"
+
 
 #include "d3d12.h"
 
@@ -203,8 +205,6 @@ public:
 
 	std::string GetName() { return name_; }
 
-	std::unique_ptr<PrimitiveBase> CreatePrimitive(PrimitiveType primitiveType);
-
 	void SetTextureList(std::vector<std::string> list) { textureList_ = list; }
 
 	///-------------------------------------------/// 
@@ -263,11 +263,8 @@ private:
 
 	/// === パーティクル情報 === ///
 
-	//プリミティブ
-	std::unique_ptr<PrimitiveBase> primitive_;
-
-	//マテリアルデータ
-	MaterialData material_;
+	//モデル
+	std::unique_ptr<Model> model_;
 
 	//インスタンス数
 	uint32_t numInstance_;
@@ -284,11 +281,14 @@ private:
 	//エミッター名
 	std::string name_;
 
+	//モデル名
+	std::string modelName_;
+
+	//モデルファイル名
+	std::string modelFileName_;
+
 	//テクスチャ名
 	std::string textureFileName_;
-
-	//プリミティブタイプ
-	PrimitiveType primitiveType_;
 
 	//ワールドトランスフォーム
 	WorldTransform emitterWorldTransform_;

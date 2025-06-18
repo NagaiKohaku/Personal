@@ -220,5 +220,7 @@
             0.0
         ]
     },
-    "textureFileName": "circle.png"
+    "textureFileName": "white_128x128.png",
+    "modelName": "PlanePrimitive",
+    "modelFileName": ""
 }
