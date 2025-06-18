@@ -69,14 +69,22 @@ bool ColliderManager::IsCollisionAABBWithAABB(Collider* first, Collider* second)
 	AABBCollider* firstAABBCol = dynamic_cast<AABBCollider*>(first);
 	AABBCollider* secondAABBCol = dynamic_cast<AABBCollider*>(second);
 
-	AABB firstAABB = {
-		firstAABBCol->GetAABB().min + first->GetWorldTransform().GetWorldTranslate(),
-		firstAABBCol->GetAABB().max + first->GetWorldTransform().GetWorldTranslate()
+	AABB firstAABB = firstAABBCol->GetAABB();
+
+	AABB secondAABB = secondAABBCol->GetAABB();
+
+	Vector3 firstWorldTranslate = firstAABBCol->GetWorldTransform().GetWorldTranslate();
+
+	Vector3 secondWorldTranslate = secondAABBCol->GetWorldTransform().GetWorldTranslate();
+
+	firstAABB = {
+		firstAABB.min + firstWorldTranslate,
+		firstAABB.max + firstWorldTranslate
 	};
 
-	AABB secondAABB = {
-		secondAABBCol->GetAABB().min + second->GetWorldTransform().GetWorldTranslate(),
-		secondAABBCol->GetAABB().max + second->GetWorldTransform().GetWorldTranslate()
+	secondAABB = {
+		secondAABB.min + secondWorldTranslate,
+		secondAABB.max + secondWorldTranslate
 	};
 
 	if (firstAABB.min.x <= secondAABB.max.x && firstAABB.max.x >= secondAABB.min.x &&
@@ -120,15 +128,20 @@ bool ColliderManager::IsCollisionAABBWithSphere(Collider* aabb, Collider* sphere
 	AABBCollider* aabbCol = dynamic_cast<AABBCollider*>(aabb);
 	SphereCollider* sphereCol = dynamic_cast<SphereCollider*>(sphere);
 
-	AABB firstAABB = {
-		aabbCol->GetAABB().min + aabb->GetWorldTransform().GetWorldTranslate(),
-		aabbCol->GetAABB().max + aabb->GetWorldTransform().GetWorldTranslate()
+	AABB firstAABB = aabbCol->GetAABB();
+
+	Sphere secondSphere = sphereCol->GetSphere();
+
+	Vector3 firstWorldTranslate = aabbCol->GetWorldTransform().GetWorldTranslate();
+
+	Vector3 secondWorldTranslate = sphereCol->GetWorldTransform().GetWorldTranslate();
+
+	firstAABB = {
+		firstAABB.min + firstWorldTranslate,
+		firstAABB.max + firstWorldTranslate
 	};
 
-	Sphere secondSphere = {
-		sphereCol->GetSphere().center + sphereCol->GetWorldTransform().GetWorldTranslate(),
-		sphereCol->GetSphere().radius
-	};
+	secondSphere.center += secondWorldTranslate;
 
 	Vector3 closestPoint = {
 		std::clamp(secondSphere.center.x, firstAABB.min.x, firstAABB.max.x),

@@ -28,7 +28,7 @@ void Collider::Update() {
 
 	Matrix4x4 parentTransform = parentTransform_->ExtractTranslateMatrix();
 
-	Matrix4x4 parentRotate = parentTransform_->ExtractRotateMatrix();
+	Matrix4x4 parentRotate = MakeIdentity4x4();
 
 	Matrix4x4 parentScale = MakeIdentity4x4();
 

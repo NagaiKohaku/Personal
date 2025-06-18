@@ -50,6 +50,8 @@ public:
 	/// </summary>
 	void ImGui() override;
 
+	void EnemySpawn();
+
 	///-------------------------------------------/// 
 	/// メンバ変数
 	///-------------------------------------------///
@@ -61,8 +63,15 @@ private:
 	//プレイヤー
 	std::unique_ptr<Player> player_;
 
-	//敵
-	std::unique_ptr<Enemy> enemy_;
+	std::vector<std::unique_ptr<Enemy>> enemies_;
 
 	std::unique_ptr<BulletManager> bulletManager_;
+
+	float spawnTime_;
+
+	float spawnTimer_;
+
+	uint32_t spawnMaxSize_;
+
+	Vector3 spawnPos_[4];
 };

@@ -41,20 +41,20 @@ void GameScene::Initialize() {
 	//プレイヤーの生成
 	player_ = std::make_unique<Player>();
 
+	//カメラをセット
 	player_->SetCamera(camera_.get());
 
 	//プレイヤーの初期化
 	player_->Initialize();
 
+	//バレットマネージャーをセット
 	player_->SetBulletManager(bulletManager_.get());
 
-	//敵の生成
-	enemy_ = std::make_unique<Enemy>();
+	spawnTime_ = 3.0f;
 
-	enemy_->SetCamera(camera_.get());
+	spawnTimer_ = 0.0f;
 
-	//敵の初期化
-	enemy_->Initialize();
+	spawnMaxSize_ = 4;
 
 }
 
@@ -71,9 +71,6 @@ void GameScene::Update() {
 
 	//プレイヤーの更新
 	player_->Update();
-
-	//敵の更新
-	enemy_->Update();
 
 	//弾の更新
 	bulletManager_->Update();
@@ -102,12 +99,31 @@ void GameScene::Draw() {
 	//プレイヤーの描画
 	player_->Draw();
 
-	//敵の描画
-	enemy_->Draw();
-
 	//弾の描画
 	bulletManager_->Draw();
 }
 
 void GameScene::ImGui() {
+}
+
+void GameScene::EnemySpawn() {
+
+	if (enemies_.size() >= spawnMaxSize_) {
+		return;
+	}
+
+	spawnTimer_ += 1.0f / 60.0f;
+
+	if (spawnTimer_ >= spawnTime_) {
+
+		std::unique_ptr<Enemy> newEnemy = std::make_unique<Enemy>();
+
+		newEnemy->SetCamera(camera_.get());
+
+		newEnemy->Initialize();
+
+		enemies_.push_back(std::move(newEnemy));
+
+		spawnTimer_ = 0.0f;
+	}
 }
