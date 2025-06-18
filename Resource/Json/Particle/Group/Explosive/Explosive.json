@@ -1,0 +1,14 @@
+[
+    {
+        "name": "Explosive"
+    },
+    {
+        "emitter": "Core"
+    },
+    {
+        "emitter": "Smoke"
+    },
+    {
+        "emitter": "Flame"
+    }
+]

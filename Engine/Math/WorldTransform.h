@@ -61,7 +61,7 @@ public:
 	/// ワールド座標のゲッター
 	/// </summary>
 	/// <returns>ワールド座標</returns>
-	const Vector3& GetWorldTranslate() const;
+	Vector3 GetWorldTranslate();
 
 	/// <summary>
 	/// ワールド行列のセッター

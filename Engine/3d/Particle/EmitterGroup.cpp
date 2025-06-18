@@ -28,7 +28,7 @@ void EmitterGroup::Update() {
 	//すべてのパーティクルグループの処理をする
 	for (auto& emitter : particleEmitters_) {
 
-		emitter->SetWorldTransform(transform_);
+		//emitter->SetWorldTransform(transform_);
 
 		emitter->Update();
 	}

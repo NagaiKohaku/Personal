@@ -168,7 +168,7 @@ const Matrix4x4& WorldTransform::ExtractScaleMatrix() const {
 	return result;
 }
 
-const Vector3& WorldTransform::GetWorldTranslate() const {
+Vector3 WorldTransform::GetWorldTranslate(){
 
 	Vector3 result;
 

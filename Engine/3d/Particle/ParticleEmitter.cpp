@@ -163,18 +163,18 @@ void ParticleEmitter::Update() {
 		particles_.splice(particles_.end(), particles);
 	}
 
-	//ビルボード行列の計算
-	Matrix4x4 billboardMatrix = defaultCamera_->GetViewMatrix();
-
-	billboardMatrix.m[3][0] = 0.0f;
-	billboardMatrix.m[3][1] = 0.0f;
-	billboardMatrix.m[3][2] = 0.0f;
-	billboardMatrix.m[3][3] = 1.0f;
-
-	billboardMatrix = Inverse4x4(billboardMatrix);
-
 	//カメラからビュープロジェクション行列を取得
 	Matrix4x4 viewProjectionMatrix = defaultCamera_->GetViewProjectionMatrix();
+
+	//ビルボード行列の計算
+	Matrix4x4 viewMatrix = defaultCamera_->GetViewMatrix();
+
+	viewMatrix.m[3][0] = 0.0f;
+	viewMatrix.m[3][1] = 0.0f;
+	viewMatrix.m[3][2] = 0.0f;
+	viewMatrix.m[3][3] = 1.0f;
+
+	Matrix4x4 billboardMatrix = Inverse4x4(viewMatrix);
 
 	numInstance_ = 0;
 
@@ -302,13 +302,15 @@ void ParticleEmitter::Update() {
 			Matrix4x4 rotateMatrix = particle->transform.GetRotateMatrix();
 			Matrix4x4 scaleMatrix = particle->transform.GetScaleMatrix();
 
-			translateMatrix = translateMatrix * translateEMatrix;
-			rotateMatrix = rotateMatrix * rotateEMatrix;
-			scaleMatrix = scaleMatrix * scaleEMatrix;
+			translateMatrix = translateMatrix/* * translateEMatrix*/;
+			rotateMatrix = rotateMatrix/* * rotateEMatrix*/;
+			scaleMatrix = scaleMatrix/* * scaleEMatrix*/;
 
 			if (isBillboard_) {
 
-				rotateMatrix = billboardMatrix;
+				Matrix4x4 zRot = MakeRotateZMatrix(particle->transform.rotate_.z);
+
+				rotateMatrix = zRot * billboardMatrix;
 			}
 
 			//ワールド行列の計算
@@ -316,6 +318,8 @@ void ParticleEmitter::Update() {
 
 			//ワールドビュープロジェクション行列の合成
 			Matrix4x4 worldViewProjectionMatrix = worldMatrix * viewProjectionMatrix;
+
+			particle->transform.SetWorldMatrix(worldMatrix);
 
 			//インスタンシングデータに書き込む
 			instancingData_[numInstance_].WVP = worldViewProjectionMatrix;
@@ -922,6 +926,10 @@ ParticleEmitter::Particle ParticleEmitter::MakeNewParticle() {
 		RandomRangeVector4(colorParameter_.velocity, colorParameter_.velocityRandomRange),
 		RandomRangeVector4(colorParameter_.acceleration, colorParameter_.accelerationRandomRange)
 	};
+
+	particle.positionPara.startNum += emitterWorldTransform_.GetWorldTranslate();
+
+	particle.positionPara.endNum += emitterWorldTransform_.GetWorldTranslate();
 
 	particle.transform.Initialize();
 

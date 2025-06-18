@@ -360,6 +360,8 @@ private:
 
 	bool isActive_;
 
+	bool isFollowEmitter_;
+
 	//加速場のフラグ
 	bool useAccelerationField_;
 
