@@ -9,9 +9,7 @@
 
 #include "memory"
 
-class BulletManager;
-
-class Player {
+class Enemy {
 
 public:
 
@@ -23,19 +21,11 @@ public:
 
 public:
 
-	void SetBulletManager(BulletManager* bulletManager) {
-		bulletManager_ = bulletManager;
-	}
-
 	void SetCamera(Camera* ptr) {
 		camera_ = ptr;
 	}
 
 private:
-
-	void Move();
-
-	void Attack();
 
 	void IsCollision();
 
@@ -43,15 +33,8 @@ private:
 
 	Camera* camera_;
 
-	BulletManager* bulletManager_ = nullptr;
-
-	std::unique_ptr<Object3D> player_ = nullptr;
+	std::unique_ptr<Object3D> enemy_ = nullptr;
 
 	std::unique_ptr<SphereCollider> collider_ = nullptr;
 
-	float moveSpeed_ = 0.1f;
-
-	float attackInterval_ = 0.5f;
-
-	float attackTimer_ = 0.0f;
 };

@@ -11,6 +11,7 @@
 #include "3d/Primitive/Plane.h"
 #include "3d/Primitive/Ring.h"
 #include "3d/Primitive/Cylinder.h"
+#include "3d/Primitive/Ball.h"
 
 #include "Math/MakeMatrixMath.h"
 #include "Math/Easing.h"
@@ -93,7 +94,7 @@ void ParticleEmitter::Initialize(const std::string& groupName, const std::string
 	//ワールドトランスフォームの初期化
 	emitterWorldTransform_.Initialize();
 
-	ImportEmitterData(groupName,fileName);
+	ImportEmitterData(groupName, fileName);
 
 	emitTimer_ = 0.0f;
 
@@ -374,7 +375,7 @@ void ParticleEmitter::ImGui() {
 			ImGui::NextColumn();
 			ImGui::NextColumn();
 
-			const char* primitiveItems[] = { "Plane","Ring","Cylinder" };
+			const char* primitiveItems[] = { "Plane","Ring","Cylinder","Ball" };
 
 			int currentPrimitive = static_cast<int>(primitiveType_);
 
@@ -883,6 +884,9 @@ std::unique_ptr<PrimitiveBase> ParticleEmitter::CreatePrimitive(PrimitiveType pr
 		break;
 	case ParticleEmitter::CYLINDER:
 		return std::move(std::make_unique<Cylinder>());
+		break;
+	case ParticleEmitter::BALL:
+		return std::move(std::make_unique<Ball>());
 		break;
 	}
 

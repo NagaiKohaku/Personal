@@ -96,7 +96,8 @@ private:
 	enum PrimitiveType {
 		PLANE,
 		RING,
-		CYLINDER
+		CYLINDER,
+		BALL
 	};
 
 	//パーティクル

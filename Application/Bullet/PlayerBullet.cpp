@@ -21,7 +21,11 @@ void PlayerBullet::Initialize(Vector3 pos) {
 	collider_ = std::make_unique<SphereCollider>();
 
 	//弾のコライダーの初期化
-	collider_->Initialize(bullet_->GetWorldTransform());
+	collider_->Initialize(&bullet_->GetWorldTransform());
+
+	collider_->SetTag(Collider::Tag::PLAYERBULLET);
+
+	collider_->SetRadius(0.5f);
 
 	//弾の移動速度
 	speed_ = 0.5f;

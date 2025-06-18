@@ -17,6 +17,8 @@ public:
 	/// </summary>
 	void Draw() override;
 
+	void CopyMeshData(std::vector<uint32_t> indices, std::vector<VertexData> vertices) override;
+
 private:
 
 	const uint32_t kRingDivide = 32;

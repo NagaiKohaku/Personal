@@ -39,6 +39,8 @@ void ColliderManager::CheckAllCollision() {
 			}
 			if (CheckPair(*it1, *it2)) {
 
+				(*it1)->SetHitTag((*it2)->GetTag());
+				(*it2)->SetHitTag((*it1)->GetTag());
 			}
 		}
 	}
@@ -92,15 +94,17 @@ bool ColliderManager::IsCollisionSphereWithSphere(Collider* first, Collider* sec
 	SphereCollider* firstSphereCol = dynamic_cast<SphereCollider*>(first);
 	SphereCollider* secondSphereCol = dynamic_cast<SphereCollider*>(second);
 
-	Sphere firstSphere = {
-		firstSphereCol->GetSphere().center + firstSphereCol->GetWorldTransform().GetWorldTranslate(),
-		firstSphereCol->GetSphere().radius
-	};
+	Sphere firstSphere = firstSphereCol->GetSphere();
 
-	Sphere secondSphere = {
-		secondSphereCol->GetSphere().center + secondSphereCol->GetWorldTransform().GetWorldTranslate(),
-		secondSphereCol->GetSphere().radius
-	};
+	Sphere secondSphere = secondSphereCol->GetSphere();
+
+	Vector3 firstWorldTranslate = firstSphereCol->GetWorldTransform().GetWorldTranslate();
+
+	Vector3 secondWorldTranslate = secondSphereCol->GetWorldTransform().GetWorldTranslate();
+
+	firstSphere.center += firstWorldTranslate;
+
+	secondSphere.center += secondWorldTranslate;
 
 	float distance = Length(firstSphere.center - secondSphere.center);
 

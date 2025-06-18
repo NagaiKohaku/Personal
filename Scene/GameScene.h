@@ -10,6 +10,7 @@
 #include "3d/Particle/EmitterGroup.h"
 
 #include "Player/Player.h"
+#include "Enemy/Enemy.h"
 #include "Bullet/BulletManager.h"
 
 #include "memory"
@@ -59,6 +60,9 @@ private:
 
 	//プレイヤー
 	std::unique_ptr<Player> player_;
+
+	//敵
+	std::unique_ptr<Enemy> enemy_;
 
 	std::unique_ptr<BulletManager> bulletManager_;
 };

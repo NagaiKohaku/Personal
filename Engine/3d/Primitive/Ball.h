@@ -2,7 +2,7 @@
 
 #include "3d/Primitive/PrimitiveBase.h"
 
-class Plane : public PrimitiveBase {
+class Ball : public PrimitiveBase {
 
 public:
 
@@ -19,6 +19,13 @@ public:
 
 private:
 
-	Vector3 anchorPoint_ = { 0.5f,0.5f,0.0f };
+	// 緯度の分割数
+	const uint32_t kLatitudeCount = 16;
 
+	// 経度の分割数
+	const uint32_t kLongitudeCount = 16;
+
+	Vector3 center_ = { 0.0f, 0.0f, 0.0f };
+
+	float radius_ = 1.0f; // 半径1の球
 };

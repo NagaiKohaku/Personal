@@ -17,6 +17,7 @@
 #include "3d/Model/ModelManager.h"
 #include "3d/Particle/ParticleCommon.h"
 #include "3d/Particle/ParticleManager.h"
+#include "Application/Collider/ColliderManager.h"
 
 #include "Scene/SceneManager.h"
 
@@ -102,6 +103,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Renderer* renderer = Renderer::GetInstance();
 	renderer->Initialize();
 
+	//コライダーマネージャー
+	ColliderManager* colliderManager = ColliderManager::GetInstance();
+	colliderManager->Initialize();
+
 	//テクスチャマネージャー
 	TextureManager::GetInstance()->Initialize();
 
@@ -151,6 +156,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//パーティクルの更新
 		particleManager->Update();
 
+		//コライダーマネージャーの更新
+		colliderManager->Update();
+
 		//音声の更新
 		audio->Update();
 
@@ -172,11 +180,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//シーンの描画
 		sceneManager->Draw();
 
-		//OffScreen用のレンダラーの描画
-		renderer->OffScreenDraw();
-
 		//パーティクルの描画
 		particleManager->Draw();
+
+		//OffScreen用のレンダラーの描画
+		renderer->OffScreenDraw();
 
 		//OffScreenの描画後処理
 		offScreen->PostDraw();

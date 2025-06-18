@@ -1,31 +1,18 @@
 #pragma once
 
-#include "Base/LayerType.h"
-#include "3d/Object/DebugLine.h"
+#include "3d/Model/Model.h"
 
-#include "Math/Vector3.h"
-#include "Math/Vector4.h"
+
 #include "Math/Matrix4x4.h"
 #include "Math/WorldTransform.h"
 
-#include "DirectXTex.h"
-#include "d3d12.h"
-
 #include "wrl.h"
-#include "string"
-#include "vector"
-#include "memory"
 
-class Object3DCommon;
-
-class Model;
+class DebugObjectCommon;
 
 class Camera;
 
-///=====================================================/// 
-/// 3Dオブジェクト
-///=====================================================///
-class Object3D {
+class DebugObject3D {
 
 	///-------------------------------------------/// 
 	/// メンバ関数
@@ -45,17 +32,19 @@ public:
 	/// <summary>
 	/// 描画処理
 	/// </summary>
-	void Draw(LayerType layer);
+	void Draw();
 
-	/// <summary>
-	/// デバッグの描画処理
-	/// </summary>
-	void DebugDraw();
+	///-------------------------------------------/// 
+	/// メンバ構造体
+	///-------------------------------------------///
+private:
 
-	/// <summary>
-	/// ImGuiの表示
-	/// </summary>
-	void DisplayImGui();
+	//座標変換行列データ
+	struct TransformationMatrix {
+		Matrix4x4 WVP;
+		Matrix4x4 World;
+		Matrix4x4 WorldInverseTranspose;
+	};
 
 	///-------------------------------------------/// 
 	/// ゲッター・セッター
@@ -72,7 +61,7 @@ public:
 	/// モデルのゲッター
 	/// </summary>
 	/// <returns>モデル</returns>
-	Model* GetModel() const { return model_.get();}
+	Model* GetModel() const { return model_.get(); }
 
 	/// <summary>
 	/// カメラのセッター
@@ -87,24 +76,12 @@ public:
 	void SetModel(const std::string& modelName);
 
 	///-------------------------------------------/// 
-	/// メンバ構造体
-	///-------------------------------------------///
-private:
-
-	//座標変換行列データ
-	struct TransformationMatrix {
-		Matrix4x4 WVP;
-		Matrix4x4 World;
-		Matrix4x4 WorldInverseTranspose;
-	};
-
-	///-------------------------------------------/// 
 	/// メンバ変数
 	///-------------------------------------------///
 private:
 
-	//3Dオブジェクト基底
-	Object3DCommon* object3DCommon_;
+	//デバッグオブジェクト基底
+	DebugObjectCommon* debugCommon_;
 
 	//カメラ
 	Camera* camera_;
@@ -120,9 +97,4 @@ private:
 
 	//モデル情報
 	std::unique_ptr<Model> model_;
-
-	//軸方向ライン
-	std::vector<std::unique_ptr<DebugLine>> axisLines_;
-
-	bool isDebug_;
 };

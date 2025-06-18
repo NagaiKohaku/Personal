@@ -2,6 +2,8 @@
 
 #include "Collider.h"
 
+#include "3d/Primitive/Ball.h"
+
 #include "Math/Sphere.h"
 
 class SphereCollider : public Collider{
@@ -10,7 +12,7 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize(WorldTransform& parent) override;
+	void Initialize(WorldTransform* parent) override;
 	/// <summary>
 	/// 更新処理
 	/// </summary>
@@ -24,14 +26,12 @@ public:
 
 	Sphere GetSphere() const { return sphere_; }
 
-private:
+	void SetCenter(Vector3 center) { sphere_.center = center; }
 
-	/// <summary>
-	/// デバッグラインの生成
-	/// </summary>
-	void CreateDebugLines() override;
+	void SetRadius(float radius) { sphere_.radius = radius; }
 
 private:
 
 	Sphere sphere_;
+
 };

@@ -48,6 +48,14 @@ void GameScene::Initialize() {
 
 	player_->SetBulletManager(bulletManager_.get());
 
+	//敵の生成
+	enemy_ = std::make_unique<Enemy>();
+
+	enemy_->SetCamera(camera_.get());
+
+	//敵の初期化
+	enemy_->Initialize();
+
 }
 
 void GameScene::Finalize() {
@@ -63,6 +71,9 @@ void GameScene::Update() {
 
 	//プレイヤーの更新
 	player_->Update();
+
+	//敵の更新
+	enemy_->Update();
 
 	//弾の更新
 	bulletManager_->Update();
@@ -90,6 +101,9 @@ void GameScene::Draw() {
 
 	//プレイヤーの描画
 	player_->Draw();
+
+	//敵の描画
+	enemy_->Draw();
 
 	//弾の描画
 	bulletManager_->Draw();

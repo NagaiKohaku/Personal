@@ -13,14 +13,18 @@ void Player::Initialize() {
 	player_->Initialize();
 
 	//座標の設定
-	player_->GetWorldTransform().translate_ = { 0.0f,1.0f,0.0f };
+	player_->GetWorldTransform().translate_ = { -1.0f,1.0f,0.0f };
 
 	//モデルの設定
 	player_->SetModel("Cube");
 
-	collider_ = std::make_unique<AABBCollider>();
+	collider_ = std::make_unique<SphereCollider>();
 
-	collider_->Initialize(player_->GetWorldTransform());
+	collider_->Initialize(&player_->GetWorldTransform());
+
+	collider_->SetTag(Collider::Tag::PLAYER);
+
+	collider_->SetRadius(1.5f);
 
 	//移動速度の設定
 	moveSpeed_ = 0.1f;
@@ -40,6 +44,9 @@ void Player::Update() {
 
 	//攻撃
 	Attack();
+
+	//衝突判定
+	IsCollision();
 
 	//プレイヤーの更新
 	player_->Update();
@@ -95,5 +102,9 @@ void Player::Attack() {
 			attackTimer_ = 0.0f;
 		}
 	}
+
+}
+
+void Player::IsCollision() {
 
 }

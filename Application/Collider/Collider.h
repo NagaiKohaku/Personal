@@ -1,6 +1,7 @@
 #pragma once
 
 #include "3d/Object/Object3D.h"
+#include "3d/Object/DebugObject3D.h"
 #include "3d/Object/DebugLine.h"
 
 #include "Math/WorldTransform.h"
@@ -17,7 +18,8 @@ public:
 	enum Tag {
 		PLAYER,
 		ENEMY,
-		BULLET,
+		PLAYERBULLET,
+		ENEMYBULLET,
 		WALL,
 		ITEM,
 		NONE
@@ -25,7 +27,7 @@ public:
 
 public:
 
-	virtual void Initialize(WorldTransform& parent);
+	virtual void Initialize(WorldTransform* parent);
 
 	virtual void Update();
 
@@ -41,6 +43,10 @@ public:
 
 	bool GetIsActive() const { return isActive_; }
 
+	bool GetIsCollision() const { return isCollision_; }
+
+	bool GetIsTrigger() const { return isTrigger_; }
+
 	void SetTag(Tag tag) { tag_ = tag; }
 
 	void SetHitTag(Tag hitTag) { hitTag_ = hitTag; }
@@ -51,17 +57,17 @@ public:
 
 protected:
 
-	virtual void CreateDebugLines();
-
-protected:
-
 	Tag tag_ = NONE;
 
 	Tag hitTag_ = NONE;
 
+	Tag hitTagBefore_ = NONE;
+
 	WorldTransform worldTransform_;
 
-	std::vector<std::unique_ptr<DebugLine>> debugLines_;
+	WorldTransform* parentTransform_;
+
+	std::unique_ptr<DebugObject3D> debugObject_;
 
 	Vector4 defaultColor_;
 
@@ -70,4 +76,8 @@ protected:
 	bool isDraw_ = false;
 
 	bool isActive_ = true;
+
+	bool isCollision_ = false;
+
+	bool isTrigger_ = false;
 };

@@ -11,7 +11,7 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize(WorldTransform& parent) override;
+	void Initialize(WorldTransform* parent) override;
 	/// <summary>
 	/// 更新処理
 	/// </summary>
@@ -24,13 +24,6 @@ public:
 public:
 
 	AABB GetAABB() const { return aabb_; }
-
-private:
-
-	/// <summary>
-	/// デバッグラインの生成
-	/// </summary>
-	void CreateDebugLines() override;
 
 private:
 

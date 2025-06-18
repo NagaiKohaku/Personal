@@ -37,11 +37,19 @@ public:
 	void LoadModel(const std::string& modelName, const std::string& modelFileName);
 
 	/// <summary>
+	/// プリミティブモデルの生成
+	/// </summary>
+	/// <param name="type"></param>
+	/// <param name="modelName"></param>
+	/// <param name="textureFilePath"></param>
+	void CreatePrimitiveModel(const std::string& modelName, PrimitiveType type, const std::string& textureFilePath);
+
+	/// <summary>
 	/// モデルの検索
 	/// </summary>
 	/// <param name="modelName">モデル名</param>
 	/// <returns>モデルデータ</returns>
-	Model* FindModel(const std::string& modelName);
+	std::unique_ptr<Model> FindModel(const std::string& modelName);
 
 	///-------------------------------------------/// 
 	/// メンバ変数

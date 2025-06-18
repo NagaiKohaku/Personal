@@ -45,17 +45,28 @@ void Object3D::Initialize() {
 
 	//X軸ラインの初期化
 	axisLines_[0] = std::make_unique<DebugLine>();
-	axisLines_[0]->Initialize(transform_.GetRight(), { 1.0f,0.0f,0.0f,1.0f });
+	axisLines_[0]->Initialize(
+		{0.0f,0.0f,0.0f},
+		transform_.GetRight(),
+		{ 1.0f,0.0f,0.0f,1.0f }
+	);
 	axisLines_[0]->SetParent(&transform_);
 
 	//Y軸ラインの初期化
 	axisLines_[1] = std::make_unique<DebugLine>();
-	axisLines_[1]->Initialize(transform_.GetUp(), { 0.0f,1.0f,0.0f,1.0f });
+	axisLines_[1]->Initialize(
+		{ 0.0f,0.0f,0.0f },
+		transform_.GetUp(),
+		{ 0.0f,1.0f,0.0f,1.0f });
 	axisLines_[1]->SetParent(&transform_);
 
 	//Z軸ラインの初期化
 	axisLines_[2] = std::make_unique<DebugLine>();
-	axisLines_[2]->Initialize(transform_.GetForward(), { 0.0f,0.0f,1.0f,1.0f });
+	axisLines_[2]->Initialize(
+		{ 0.0f,0.0f,0.0f },
+		transform_.GetForward(),
+		{ 0.0f,0.0f,1.0f,1.0f }
+	);
 	axisLines_[2]->SetParent(&transform_);
 
 	isDebug_ = true;

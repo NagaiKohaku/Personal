@@ -14,6 +14,8 @@ void WorldTransform::Initialize() {
 
 	offset_ = { 0.0f,0.0f,0.0f };
 
+	parent_ = nullptr;
+
 	UpdateMatrix();
 }
 
