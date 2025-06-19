@@ -1,9 +1,17 @@
 #include "PlayerBullet.h"
 
+PlayerBullet::~PlayerBullet() {
+
+	collider_->Remove();
+}
+
 void PlayerBullet::Initialize(Vector3 pos) {
 
 	//弾の生成
 	bullet_ = std::make_unique<Object3D>();
+
+	//弾の初期化
+	bullet_->Initialize();
 
 	//座標の設定
 	bullet_->GetWorldTransform().translate_ = pos;
@@ -13,6 +21,16 @@ void PlayerBullet::Initialize(Vector3 pos) {
 
 	//モデルの設定
 	bullet_->SetModel("Sphere");
+
+	//弾のコライダーを生成
+	collider_ = std::make_unique<SphereCollider>();
+
+	//弾のコライダーの初期化
+	collider_->Initialize(&bullet_->GetWorldTransform());
+
+	collider_->SetTag(Collider::Tag::PLAYERBULLET);
+
+	collider_->SetRadius(0.5f);
 
 	//弾の移動速度
 	speed_ = 0.5f;
@@ -37,12 +55,18 @@ void PlayerBullet::Update() {
 
 	//弾の更新
 	bullet_->Update();
+
+	//弾のコライダーの更新
+	collider_->Update();
 }
 
 void PlayerBullet::Draw() {
 
 	//弾の描画
 	bullet_->Draw(LayerType::Object);
+
+	//弾のコライダーの描画
+	collider_->Draw();
 }
 
 void PlayerBullet::Move() {

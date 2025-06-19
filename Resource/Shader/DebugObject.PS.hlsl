@@ -17,11 +17,14 @@ struct Material
 //マテリアル : CBV0
 ConstantBuffer<Material> gMaterial : register(b0);
 
+//テクスチャ
+Texture2D<float4> gTexture : register(t0);
+
 PixelShaderOutPut main(VertexShaderOutput input)
 {
     //出力データ
     PixelShaderOutPut output;
-
+    
     //出力データにマテリアルの色を設定する
     output.color = gMaterial.color;
 

@@ -9,27 +9,27 @@ struct Vector3 final {
 	float z;
 
 	/// ===加法=== ///
-	Vector3 operator+(const Vector3& v);
+	Vector3 operator+(const Vector3& v) const;
 	Vector3& operator+=(const Vector3& v);
-	Vector3 operator+(const float& v);
+	Vector3 operator+(float v) const;
 	Vector3& operator+=(const float& v);
 
 	/// ===減法=== ///
-	Vector3 operator-(const Vector3& v);
+	Vector3 operator-(const Vector3& v) const;
 	Vector3& operator-=(const Vector3& v);
-	Vector3 operator-(const float& v);
+	Vector3 operator-(float v) const;
 	Vector3& operator-=(const float& v);
 
 	/// ===積=== ///
-	Vector3 operator*(const Vector3& v);
+	Vector3 operator*(const Vector3& v) const;
 	Vector3& operator*=(const Vector3& v);
-	Vector3 operator*(const float& v);
+	Vector3 operator*(float v) const;
 	Vector3& operator*=(const float& v);
 
 	/// ===除法=== ///
-	Vector3 operator/(const Vector3& v);
+	Vector3 operator/(const Vector3& v) const;
 	Vector3& operator/=(const Vector3& v);
-	Vector3 operator/(const float& v);
+	Vector3 operator/(float v) const;
 	Vector3& operator/=(const float& v);
 };
 
@@ -43,3 +43,5 @@ float Length(const Vector3& v1, const Vector3& v2);
 
 /// ===正規化=== ///
 Vector3 Normalize(const Vector3& v);
+
+Vector3 Cross(const Vector3& v1, const Vector3& v2);

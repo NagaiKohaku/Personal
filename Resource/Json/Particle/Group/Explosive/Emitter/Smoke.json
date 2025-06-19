@@ -13,16 +13,16 @@
             0.0
         ],
         "easingState": [
-            2
+            0
         ],
         "easingStrength": [
-            4.0
+            1.0
         ],
         "endColor": [
             1.0,
             1.0,
             1.0,
-            0.0
+            1.0
         ],
         "endRandomRange": [
             0.0,
@@ -43,7 +43,7 @@
             0.0
         ],
         "updateState": [
-            2
+            0
         ],
         "velocity": [
             0.0,
@@ -58,14 +58,16 @@
             0.0
         ]
     },
-    "frequency": 0.0,
+    "frequency": 0.10000000149011612,
     "isBillboard": true,
-    "isInfinity": false,
+    "isInfinity": true,
     "isLoop": false,
     "lifeTime": 1.0,
     "lifeTimeRandomRange": 0.0,
-    "maxCount": 12,
-    "name": "Spark02",
+    "maxCount": 1,
+    "modelFileName": "",
+    "modelName": "PlanePrimitive",
+    "name": "Smoke",
     "position": {
         "acceleration": [
             0.0,
@@ -78,10 +80,10 @@
             0.0
         ],
         "easingState": [
-            2
+            0
         ],
         "easingStrength": [
-            4.0
+            1.0
         ],
         "endNum": [
             0.0,
@@ -89,8 +91,8 @@
             0.0
         ],
         "endRandomRange": [
-            5.0,
-            5.0,
+            0.0,
+            0.0,
             0.0
         ],
         "startNum": [
@@ -104,7 +106,7 @@
             0.0
         ],
         "updateState": [
-            2
+            0
         ],
         "velocity": [
             0.0,
@@ -117,7 +119,6 @@
             0.0
         ]
     },
-    "primitiveType": 0,
     "rotation": {
         "acceleration": [
             0.0,
@@ -184,7 +185,7 @@
             2
         ],
         "easingStrength": [
-            13.0
+            4.0
         ],
         "endNum": [
             0.0,

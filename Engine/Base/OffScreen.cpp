@@ -145,6 +145,9 @@ void OffScreen::DrawToSwapChain() {
 	//PSOの設定
 	dxCommon_->GetCommandList()->SetPipelineState(offScreenGraphicsPipelineState_[0].Get());
 
+	//プリミティブトポロジーを設定
+	dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
 	//SRVの設定
 	dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(0, srvManager_->GetGPUDescriptorHandle(srvIndex_));
 

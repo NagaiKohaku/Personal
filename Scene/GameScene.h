@@ -10,9 +10,11 @@
 #include "3d/Particle/EmitterGroup.h"
 
 #include "Player/Player.h"
+#include "Enemy/Enemy.h"
 #include "Bullet/BulletManager.h"
 
 #include "memory"
+#include "list"
 
 ///=====================================================/// 
 /// ゲームシーン
@@ -49,6 +51,8 @@ public:
 	/// </summary>
 	void ImGui() override;
 
+	void EnemySpawn();
+
 	///-------------------------------------------/// 
 	/// メンバ変数
 	///-------------------------------------------///
@@ -60,5 +64,15 @@ private:
 	//プレイヤー
 	std::unique_ptr<Player> player_;
 
+	std::list<std::unique_ptr<Enemy>> enemies_;
+
 	std::unique_ptr<BulletManager> bulletManager_;
+
+	float spawnTime_;
+
+	float spawnTimer_;
+
+	uint32_t spawnMaxSize_;
+
+	Vector3 spawnPos_[4];
 };

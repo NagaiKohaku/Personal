@@ -1,6 +1,6 @@
 #include "Matrix4x4.h"
 
-Matrix4x4 Matrix4x4::operator+(const Matrix4x4& matrix) {
+Matrix4x4 Matrix4x4::operator+(const Matrix4x4& matrix) const {
 
 	Matrix4x4 result;
 
@@ -46,7 +46,7 @@ Matrix4x4 Matrix4x4::operator+=(const Matrix4x4& matrix) {
 	return *this;
 }
 
-Matrix4x4 Matrix4x4::operator-(const Matrix4x4& matrix) {
+Matrix4x4 Matrix4x4::operator-(const Matrix4x4& matrix) const {
 
 	Matrix4x4 result;
 
@@ -92,7 +92,7 @@ Matrix4x4 Matrix4x4::operator-=(const Matrix4x4& matrix) {
 	return *this;
 }
 
-Matrix4x4 Matrix4x4::operator*(const Matrix4x4& matrix) {
+Matrix4x4 Matrix4x4::operator*(const Matrix4x4& matrix) const {
 
 	Matrix4x4 result;
 

@@ -16,6 +16,15 @@ class PrimitiveBase {
 
 public:
 
+	//頂点データ
+	struct VertexData {
+		Vector4 position;
+		Vector2 texcoord;
+		Vector3 normal;
+	};
+
+public:
+
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
@@ -31,22 +40,27 @@ public:
 	/// </summary>
 	virtual void Draw() = 0;
 
+	virtual void CopyMeshData(std::vector<uint32_t> indices, std::vector<VertexData> vertices);
+
 public:
+
+	uint32_t GetVertexCount() const { return vertexCount_; }
 
 	uint32_t GetIndexCount() const { return indexCount_; }
 
-protected:
+	VertexData* GetVertexData() const { return vertexData_; }
 
-	//頂点データ
-	struct VertexData {
-		Vector4 position;
-		Vector2 texcoord;
-		Vector3 normal;
-	};
+	uint32_t* GetIndexData() const { return indexData_; }
+
+	void SetVertexCount(uint32_t count) { vertexCount_ = count; }
+
+	void SetIndexCount(uint32_t count) { indexCount_ = count; }
 
 protected:
 
 	DirectXCommon* directXCommon_ = nullptr;
+
+	uint32_t vertexCount_ = 0;
 
 	uint32_t indexCount_ = 0;
 

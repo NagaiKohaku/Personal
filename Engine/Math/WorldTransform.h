@@ -51,11 +51,17 @@ public:
 
 	const Matrix4x4& GetScaleMatrix();
 
+	const Matrix4x4& ExtractTranslateMatrix() const;
+
+	const Matrix4x4& ExtractRotateMatrix() const;
+
+	const Matrix4x4& ExtractScaleMatrix() const;
+
 	/// <summary>
 	/// ワールド座標のゲッター
 	/// </summary>
 	/// <returns>ワールド座標</returns>
-	const Vector3& GetWorldTranslate() const;
+	Vector3 GetWorldTranslate();
 
 	/// <summary>
 	/// ワールド行列のセッター

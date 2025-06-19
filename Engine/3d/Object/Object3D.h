@@ -33,10 +33,9 @@ class Object3D {
 public:
 
 	/// <summary>
-	/// コンストラクタ
+	/// 初期化処理
 	/// </summary>
-	Object3D();
-
+	void Initialize();
 
 	/// <summary>
 	/// 更新処理
@@ -73,7 +72,7 @@ public:
 	/// モデルのゲッター
 	/// </summary>
 	/// <returns>モデル</returns>
-	Model* GetModel() const { return model_;}
+	Model* GetModel() const { return model_.get();}
 
 	/// <summary>
 	/// カメラのセッター
@@ -120,7 +119,7 @@ private:
 	TransformationMatrix* WVPData_ = nullptr;
 
 	//モデル情報
-	Model* model_;
+	std::unique_ptr<Model> model_;
 
 	//軸方向ライン
 	std::vector<std::unique_ptr<DebugLine>> axisLines_;

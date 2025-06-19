@@ -2,6 +2,7 @@
 
 #include "Base/DirectXCommon.h"
 #include "Base/WinApp.h"
+#include "Base/Renderer.h"
 
 #include "3d/Object/DebugObjectCommon.h"
 #include "3d/Camera/Camera.h"
@@ -190,23 +191,31 @@ void DebugLine::Update() {
 
 void DebugLine::Draw() {
 
-	//デバッグオブジェクトの描画前処理
-	DebugObjectCommon::GetInstance()->CommonDrawSetting();
+	//Renderクラスに渡す
+	std::function<void()> command;
 
-	//頂点データをGPUに送信
-	debugCommon_->GetDxCommon()->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView_);
+	command = [this]() {
 
-	//頂点番号データをGPUに送信
-	debugCommon_->GetDxCommon()->GetCommandList()->IASetIndexBuffer(&indexBufferView_);
+		//デバッグオブジェクトの描画前処理
+		debugCommon_->CommonDrawSetting();
 
-	//マテリアルデータをGPUに送信 : RootParameter0
-	debugCommon_->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource_.Get()->GetGPUVirtualAddress());
+		//頂点データをGPUに送信
+		debugCommon_->GetDxCommon()->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView_);
 
-	//座標変換行列データをGPUに送信 : RootParameter1
-	debugCommon_->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(1, wvpResource_.Get()->GetGPUVirtualAddress());
+		//頂点番号データをGPUに送信
+		debugCommon_->GetDxCommon()->GetCommandList()->IASetIndexBuffer(&indexBufferView_);
 
-	//描画コマンドを送信 : 頂点数2
-	debugCommon_->GetDxCommon()->GetCommandList()->DrawIndexedInstanced(UINT(modelData_.vertices.size()), 1, 0, 0, 0);
+		//マテリアルデータをGPUに送信 : RootParameter0
+		debugCommon_->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource_.Get()->GetGPUVirtualAddress());
+
+		//座標変換行列データをGPUに送信 : RootParameter1
+		debugCommon_->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(1, wvpResource_.Get()->GetGPUVirtualAddress());
+
+		//描画コマンドを送信 : 頂点数2
+		debugCommon_->GetDxCommon()->GetCommandList()->DrawIndexedInstanced(UINT(modelData_.vertices.size()), 1, 0, 0, 0);
+		};
+
+	Renderer::GetInstance()->AddDraw(LayerType::Debug, true, command);
 }
 
 void DebugLine::SetParent(WorldTransform* parent) {

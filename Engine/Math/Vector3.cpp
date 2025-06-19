@@ -9,7 +9,7 @@
 ///=====================================================///
 
 // ベクトル同士の加法
-Vector3 Vector3::operator+(const Vector3& v) {
+Vector3 Vector3::operator+(const Vector3& v) const {
 	return { x + v.x, y + v.y, z + v.z };
 }
 
@@ -22,7 +22,7 @@ Vector3& Vector3::operator+=(const Vector3& v) {
 }
 
 // ベクトルと float の加法
-Vector3 Vector3::operator+(const float& v) {
+Vector3 Vector3::operator+(float v) const {
 	return { x + v, y + v, z + v };
 }
 
@@ -39,7 +39,7 @@ Vector3& Vector3::operator+=(const float& v) {
 ///=====================================================///
 
 // ベクトル同士の減法
-Vector3 Vector3::operator-(const Vector3& v) {
+Vector3 Vector3::operator-(const Vector3& v) const {
 	return { x - v.x, y - v.y, z - v.z };
 }
 
@@ -52,7 +52,7 @@ Vector3& Vector3::operator-=(const Vector3& v) {
 }
 
 // ベクトルと float の減法
-Vector3 Vector3::operator-(const float& v) {
+Vector3 Vector3::operator-(float v) const {
 	return { x - v, y - v, z - v };
 }
 
@@ -69,7 +69,7 @@ Vector3& Vector3::operator-=(const float& v) {
 ///=====================================================///
 
 // ベクトル同士の積（要素ごとの積）
-Vector3 Vector3::operator*(const Vector3& v) {
+Vector3 Vector3::operator*(const Vector3& v) const {
 	return { x * v.x, y * v.y, z * v.z };
 }
 
@@ -82,7 +82,7 @@ Vector3& Vector3::operator*=(const Vector3& v) {
 }
 
 // ベクトルと float の積
-Vector3 Vector3::operator*(const float& v) {
+Vector3 Vector3::operator*(float v) const {
 	return { x * v, y * v, z * v };
 }
 
@@ -99,7 +99,7 @@ Vector3& Vector3::operator*=(const float& v) {
 ///=====================================================///
 
 // ベクトル同士の除法（要素ごとの除法）
-Vector3 Vector3::operator/(const Vector3& v) {
+Vector3 Vector3::operator/(const Vector3& v) const {
 	return { x / v.x, y / v.y, z / v.z };
 }
 
@@ -112,7 +112,7 @@ Vector3& Vector3::operator/=(const Vector3& v) {
 }
 
 // ベクトルと float の除法
-Vector3 Vector3::operator/(const float& v) {
+Vector3 Vector3::operator/(float v) const {
 	return { x / v, y / v, z / v };
 }
 
@@ -162,4 +162,12 @@ Vector3 Normalize(const Vector3& v) {
 	}
 	// ゼロベクトルの場合はそのまま返す
 	return v;
+}
+
+Vector3 Cross(const Vector3& v1, const Vector3& v2) {
+	return {
+		v1.y * v2.z - v1.z * v2.y,
+		v1.z * v2.x - v1.x * v2.z,
+		v1.x * v2.y - v1.y * v2.x
+	};
 }

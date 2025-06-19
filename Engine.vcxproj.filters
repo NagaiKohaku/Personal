@@ -73,6 +73,15 @@
     <ClCompile Include="Engine\2d\Sprite\SpriteManager.cpp" />
     <ClCompile Include="Engine\Math\WorldTransform.cpp" />
     <ClCompile Include="Engine\3d\Light\SpotLight.cpp" />
+    <ClCompile Include="Application\Collider\Collider.cpp" />
+    <ClCompile Include="Application\Collider\ColliderManager.cpp" />
+    <ClCompile Include="Application\Collider\AABBCollider.cpp" />
+    <ClCompile Include="Application\Collider\SphereCollider.cpp" />
+    <ClCompile Include="Engine\3d\Primitive\Ball.cpp" />
+    <ClCompile Include="Engine\3d\Primitive\ModelMesh.cpp" />
+    <ClCompile Include="Engine\3d\Primitive\PrimitiveType.cpp" />
+    <ClCompile Include="Engine\3d\Object\DebugObject3D.cpp" />
+    <ClCompile Include="Application\Enemy\Enemy.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DSVManager.h" />
@@ -130,6 +139,16 @@
     <ClInclude Include="Engine\2d\Sprite\SpriteManager.h" />
     <ClInclude Include="Engine\Math\WorldTransform.h" />
     <ClInclude Include="Engine\3d\Light\SpotLight.h" />
+    <ClInclude Include="Application\Collider\Collider.h" />
+    <ClInclude Include="Application\Collider\ColliderManager.h" />
+    <ClInclude Include="Engine\Math\Sphere.h" />
+    <ClInclude Include="Application\Collider\AABBCollider.h" />
+    <ClInclude Include="Application\Collider\SphereCollider.h" />
+    <ClInclude Include="Engine\3d\Primitive\Ball.h" />
+    <ClInclude Include="Engine\3d\Primitive\ModelMesh.h" />
+    <ClInclude Include="Engine\3d\Primitive\PrimitiveType.h" />
+    <ClInclude Include="Engine\3d\Object\DebugObject3D.h" />
+    <ClInclude Include="Application\Enemy\Enemy.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resource\Shaders\Object3d.hlsli" />

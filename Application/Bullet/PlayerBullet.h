@@ -2,16 +2,28 @@
 
 #include "Bullet/BulletBase.h"
 
+#include "Collider/SphereCollider.h"
+
+#include "memory"
+
 class PlayerBullet : public BulletBase {
 
 public:
+
+	~PlayerBullet();
+
 	void Initialize(Vector3 pos) override;
 
 	void Update() override;
 
-	void Draw();
+	void Draw() override;
 
 private:
 
 	void Move();
+
+private:
+
+	std::unique_ptr<SphereCollider> collider_;
+
 };

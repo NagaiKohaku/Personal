@@ -16,12 +16,12 @@
             2
         ],
         "easingStrength": [
-            8.0
+            4.0
         ],
         "endColor": [
             1.0,
-            1.0,
-            1.0,
+            0.250980406999588,
+            0.0,
             0.0
         ],
         "endRandomRange": [
@@ -32,9 +32,9 @@
         ],
         "startColor": [
             1.0,
-            1.0,
-            1.0,
-            0.501960813999176
+            0.25882354378700256,
+            0.0,
+            1.0
         ],
         "startRandomRange": [
             0.0,
@@ -62,10 +62,12 @@
     "isBillboard": true,
     "isInfinity": false,
     "isLoop": false,
-    "lifeTime": 1.0,
-    "lifeTimeRandomRange": 0.0,
-    "maxCount": 24,
-    "name": "Spark01",
+    "lifeTime": 2.0,
+    "lifeTimeRandomRange": 2.0,
+    "maxCount": 64,
+    "modelFileName": "",
+    "modelName": "PlanePrimitive",
+    "name": "Flear",
     "position": {
         "acceleration": [
             0.0,
@@ -86,7 +88,7 @@
         "endNum": [
             0.0,
             0.0,
-            -5.0
+            0.0
         ],
         "endRandomRange": [
             5.0,
@@ -117,7 +119,6 @@
             0.0
         ]
     },
-    "primitiveType": 0,
     "rotation": {
         "acceleration": [
             0.0,
@@ -184,12 +185,12 @@
             2
         ],
         "easingStrength": [
-            20.0
+            4.0
         ],
         "endNum": [
-            0.10000000149011612,
-            0.10000000149011612,
-            0.10000000149011612
+            0.0,
+            0.0,
+            0.0
         ],
         "endRandomRange": [
             0.0,
@@ -197,9 +198,9 @@
             0.0
         ],
         "startNum": [
-            1.0,
-            1.0,
-            1.0
+            0.5,
+            0.5,
+            0.5
         ],
         "startRandomRange": [
             0.0,
@@ -220,5 +221,5 @@
             0.0
         ]
     },
-    "textureFileName": "circle.png"
+    "textureFileName": "white_128x128.png"
 }

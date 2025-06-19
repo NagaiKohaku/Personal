@@ -16,7 +16,7 @@
             2
         ],
         "easingStrength": [
-            8.0
+            13.0
         ],
         "endColor": [
             1.0,
@@ -34,7 +34,7 @@
             1.0,
             1.0,
             1.0,
-            1.0
+            0.125490203499794
         ],
         "startRandomRange": [
             0.0,
@@ -58,14 +58,16 @@
             0.0
         ]
     },
-    "frequency": 0.0,
-    "isBillboard": false,
+    "frequency": 0.10000000149011612,
+    "isBillboard": true,
     "isInfinity": false,
     "isLoop": false,
-    "lifeTime": 0.5,
+    "lifeTime": 1.0,
     "lifeTimeRandomRange": 0.0,
     "maxCount": 1,
-    "name": "Wave",
+    "modelFileName": "",
+    "modelName": "PlanePrimitive",
+    "name": "Core",
     "position": {
         "acceleration": [
             0.0,
@@ -117,7 +119,6 @@
             0.0
         ]
     },
-    "primitiveType": 1,
     "rotation": {
         "acceleration": [
             0.0,
@@ -187,9 +188,9 @@
             13.0
         ],
         "endNum": [
-            2.0,
-            2.0,
-            2.0
+            12.0,
+            12.0,
+            12.0
         ],
         "endRandomRange": [
             0.0,
@@ -220,5 +221,5 @@
             0.0
         ]
     },
-    "textureFileName": "gradationLine.png"
+    "textureFileName": "circle.png"
 }

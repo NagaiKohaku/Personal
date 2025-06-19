@@ -15,6 +15,8 @@ public:
 	/// </summary>
 	void Draw() override;
 
+	void CopyMeshData(std::vector<uint32_t> indices, std::vector<VertexData> vertices) override;
+
 private:
 
 	Vector3 anchorPoint_ = { 0.5f,0.5f,0.0f };
