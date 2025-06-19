@@ -22,6 +22,8 @@ public:
 	/// </summary>
 	void Draw() override;
 
+	void Remove();
+
 public:
 
 	Sphere GetSphere() const { return sphere_; }

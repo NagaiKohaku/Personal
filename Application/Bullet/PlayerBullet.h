@@ -9,6 +9,9 @@
 class PlayerBullet : public BulletBase {
 
 public:
+
+	~PlayerBullet();
+
 	void Initialize(Vector3 pos) override;
 
 	void Update() override;

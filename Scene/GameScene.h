@@ -14,6 +14,7 @@
 #include "Bullet/BulletManager.h"
 
 #include "memory"
+#include "list"
 
 ///=====================================================/// 
 /// ゲームシーン
@@ -63,7 +64,7 @@ private:
 	//プレイヤー
 	std::unique_ptr<Player> player_;
 
-	std::vector<std::unique_ptr<Enemy>> enemies_;
+	std::list<std::unique_ptr<Enemy>> enemies_;
 
 	std::unique_ptr<BulletManager> bulletManager_;
 

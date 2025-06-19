@@ -19,6 +19,8 @@ public:
 
 	void AddCollider(Collider* collider);
 
+	void RemoveCollider(Collider* collider);
+
 private:
 
 	void CheckAllCollision();

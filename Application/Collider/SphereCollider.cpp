@@ -37,3 +37,8 @@ void SphereCollider::Draw() {
 
 	Collider::Draw();
 }
+
+void SphereCollider::Remove() {
+
+	ColliderManager::GetInstance()->RemoveCollider(this);
+}

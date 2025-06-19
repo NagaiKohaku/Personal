@@ -95,10 +95,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Audio* audio = Audio::GetInstance();
 	audio->Initialize();
 
-	//シーンマネージャー
-	SceneManager* sceneManager = SceneManager::GetInstance();
-	sceneManager->Initialize();
-
 	//レンダラー
 	Renderer* renderer = Renderer::GetInstance();
 	renderer->Initialize();
@@ -107,6 +103,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	ColliderManager* colliderManager = ColliderManager::GetInstance();
 	colliderManager->Initialize();
 
+	//シーンマネージャー
+	SceneManager* sceneManager = SceneManager::GetInstance();
+	sceneManager->Initialize();
+
 	//テクスチャマネージャー
 	TextureManager::GetInstance()->Initialize();
 
@@ -114,7 +114,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	ModelManager::GetInstance()->Initialize();
 
 	//シーンを設定
-	sceneManager->ChangeScene(SceneManager::kParticleEditor);
+	sceneManager->ChangeScene(SceneManager::kGame);
 
 	///-------------------------------------------/// 
 	/// メインループ

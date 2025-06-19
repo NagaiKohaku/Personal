@@ -25,9 +25,15 @@ public:
 		camera_ = ptr;
 	}
 
+	void SetPosition(Vector3 pos) { enemy_->GetWorldTransform().translate_ = pos; }
+
+	bool GetCanRemove() { return canRemove_; }
+
 private:
 
 	void IsCollision();
+
+	void Dead();
 
 private:
 
@@ -36,5 +42,15 @@ private:
 	std::unique_ptr<Object3D> enemy_ = nullptr;
 
 	std::unique_ptr<SphereCollider> collider_ = nullptr;
+
+	std::unique_ptr<EmitterGroup> explosiveEmitter_;
+
+	bool isDead_;
+
+	bool canRemove_;
+
+	float animTimer_;
+
+	float animMaxTimer_;
 
 };

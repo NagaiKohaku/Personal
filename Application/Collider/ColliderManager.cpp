@@ -27,6 +27,15 @@ void ColliderManager::AddCollider(Collider* collider) {
 	colliders_.push_back(collider);
 }
 
+void ColliderManager::RemoveCollider(Collider* collider) {
+
+	auto it = std::find(colliders_.begin(), colliders_.end(), collider);
+
+	if (it != colliders_.end()) {
+		colliders_.erase(it);
+	}
+}
+
 void ColliderManager::CheckAllCollision() {
 
 	for (auto it1 = colliders_.begin(); it1 != colliders_.end(); ++it1) {

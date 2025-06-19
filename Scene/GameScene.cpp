@@ -56,6 +56,13 @@ void GameScene::Initialize() {
 
 	spawnMaxSize_ = 4;
 
+	spawnPos_[0] = { 4.0f,6.0f,30.0f };
+
+	spawnPos_[1] = { -4.0f,6.0f,30.0f };
+
+	spawnPos_[2] = { 4.0f,-2.0f,30.0f };
+
+	spawnPos_[3] = { -4.0f,-2.0f,30.0f };
 }
 
 void GameScene::Finalize() {
@@ -66,11 +73,25 @@ void GameScene::Finalize() {
 
 void GameScene::Update() {
 
+	EnemySpawn();
+
+	enemies_.remove_if([](const std::unique_ptr<Enemy>& enemy) {
+		if (enemy->GetCanRemove()) {
+			return true;
+		}
+		return false;
+		});
+
 	//カメラをデバッグ状態で更新
 	camera_->Update();
 
 	//プレイヤーの更新
 	player_->Update();
+
+	for (auto& enemy : enemies_) {
+
+		enemy->Update();
+	}
 
 	//弾の更新
 	bulletManager_->Update();
@@ -99,6 +120,11 @@ void GameScene::Draw() {
 	//プレイヤーの描画
 	player_->Draw();
 
+	for (auto& enemy : enemies_) {
+
+		enemy->Draw();
+	}
+
 	//弾の描画
 	bulletManager_->Draw();
 }
@@ -121,6 +147,8 @@ void GameScene::EnemySpawn() {
 		newEnemy->SetCamera(camera_.get());
 
 		newEnemy->Initialize();
+
+		newEnemy->SetPosition(spawnPos_[enemies_.size()]);
 
 		enemies_.push_back(std::move(newEnemy));
 

@@ -1,5 +1,10 @@
 #include "PlayerBullet.h"
 
+PlayerBullet::~PlayerBullet() {
+
+	collider_->Remove();
+}
+
 void PlayerBullet::Initialize(Vector3 pos) {
 
 	//弾の生成

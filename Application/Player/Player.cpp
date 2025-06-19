@@ -13,7 +13,7 @@ void Player::Initialize() {
 	player_->Initialize();
 
 	//座標の設定
-	player_->GetWorldTransform().translate_ = { -1.0f,1.0f,0.0f };
+	player_->GetWorldTransform().translate_ = { 0.0f,1.0f,0.0f };
 
 	//モデルの設定
 	player_->SetModel("Cube");
