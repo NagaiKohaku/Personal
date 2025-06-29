@@ -13,9 +13,9 @@
 #include "cassert"
 
 ///=====================================================/// 
-/// コンストラクタ
+/// 初期化
 ///=====================================================///
-Object2D::Object2D() {
+void Object2D::Initialize() {
 
 	//2Dオブジェクト基底のインスタンスを取得
 	object2DCommon_ = Object2DCommon::GetInstance();

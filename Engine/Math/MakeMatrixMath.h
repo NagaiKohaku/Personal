@@ -115,3 +115,11 @@ Matrix4x4 Inverse4x4(const Matrix4x4& m);
 /// <param name="m"></param>
 /// <returns></returns>
 Vector3 TransformNormal(const Vector3& v, const Matrix4x4& m);
+
+/// <summary>
+/// ベクトル変換(w除算)
+/// </summary>
+/// <param name="v"></param>
+/// <param name="m"></param>
+/// <returns></returns>
+Vector3 Transform(const Vector3& v, const Matrix4x4& m);

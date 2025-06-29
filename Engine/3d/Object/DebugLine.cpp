@@ -189,7 +189,7 @@ void DebugLine::Update() {
 	wvpData_->WVP = worldViewProjectionMatrix;
 }
 
-void DebugLine::Draw() {
+void DebugLine::Draw(LayerType layerType) {
 
 	//Renderクラスに渡す
 	std::function<void()> command;
@@ -215,7 +215,7 @@ void DebugLine::Draw() {
 		debugCommon_->GetDxCommon()->GetCommandList()->DrawIndexedInstanced(UINT(modelData_.vertices.size()), 1, 0, 0, 0);
 		};
 
-	Renderer::GetInstance()->AddDraw(LayerType::Debug, true, command);
+	Renderer::GetInstance()->AddDraw(layerType, true, command);
 }
 
 void DebugLine::SetParent(WorldTransform* parent) {

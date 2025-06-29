@@ -3,12 +3,15 @@
         "name": "Explosive"
     },
     {
-        "emitter": "Core"
+        "emitter": "Wave"
     },
     {
         "emitter": "Smoke"
     },
     {
         "emitter": "Flame"
+    },
+    {
+        "emitter": "Spark"
     }
 ]

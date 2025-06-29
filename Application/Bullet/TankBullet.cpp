@@ -1,0 +1,152 @@
+#include "TankBullet.h"
+
+///=====================================================/// 
+/// デストラクタ
+///=====================================================///
+TankBullet::~TankBullet() {
+
+	//コライダーを削除
+	collider_->Remove();
+}
+
+///=====================================================/// 
+/// 初期化
+///=====================================================///
+void TankBullet::Initialize(Vector3 pos, Vector3 direction) {
+
+	/// === オブジェクトの生成 === ///
+
+	//生成
+	object_ = std::make_unique<Object3D>();
+
+	//初期化
+	object_->Initialize();
+
+	//座標の設定
+	object_->GetWorldTransform().translate_ = pos;
+
+	//サイズの設定
+	object_->GetWorldTransform().scale_ = { 0.5f,0.5f,0.5f };
+
+	//モデルの設定
+	object_->SetModel("Sphere");
+
+	/// === コライダーの生成 === ///
+
+	//生成
+	collider_ = std::make_unique<SphereCollider>();
+
+	//初期化
+	collider_->Initialize(&object_->GetWorldTransform());
+
+	//タグの設定
+	collider_->SetTag(Collider::Tag::PLAYERBULLET);
+
+	//大きさの設定
+	collider_->SetRadius(1.0f);
+
+	/// === 他変数の設定 === ///
+
+	//移動速度の設定
+	speed_ = 1.5f;
+
+	//移動量の設定
+	velocity_ = direction * speed_;
+
+	//最大寿命の設定
+	lifeTimeMax_ = 2.0f;
+
+	//爆発時の最大寿命の設定
+	lifeTimeMaxExplosive_ = 0.5f;
+
+	//爆発範囲の設定
+	explosiveSize_ = 4.0f;
+
+	//爆発フラグの設定
+	isExplosive_ = false;
+}
+
+///=====================================================/// 
+/// 更新
+///=====================================================///
+void TankBullet::Update() {
+
+	//弾の寿命を更新
+	lifeTimer_ += 1.0f / 60.0f;
+
+	//爆発していれば
+	if (isExplosive_) {
+
+		//タイマーが爆発時の最大寿命を越えていたら
+		if (lifeTimer_ >= lifeTimeMaxExplosive_) {
+
+			isDead_ = true;
+		}
+	} else {
+
+		//タイマーが最大寿命を越えていたら
+		if (lifeTimer_ >= lifeTimeMax_) {
+
+			isDead_ = true;
+		}
+	}
+
+	//弾の移動
+	Move();
+
+	//接触時判定
+	IsCollision();
+
+	//オブジェクトの更新
+	object_->Update();
+
+	//コライダーの更新
+	collider_->Update();
+}
+
+///=====================================================/// 
+/// 描画
+///=====================================================///
+void TankBullet::Draw() {
+
+	//オブジェクトの描画
+	object_->Draw(LayerType::Object);
+
+	//コライダーの描画
+	collider_->Draw();
+}
+
+///=====================================================/// 
+/// 移動
+///=====================================================///
+void TankBullet::Move() {
+
+	//オブジェクトの移動
+	object_->GetWorldTransform().translate_ += velocity_;
+}
+
+///=====================================================/// 
+/// 接触時判定
+///=====================================================///
+void TankBullet::IsCollision() {
+
+	//接触状態であれば
+	if (collider_->GetIsTrigger()) {
+
+		//接触相手のタグがENEMYであれば
+		if (collider_->GetHitTag() == Collider::Tag::ENEMY) {
+
+			//移動量を0にする
+			velocity_ = { 0.0f,0.0f,0.0f };
+
+			//コライダーを大きくする
+			collider_->SetRadius(explosiveSize_);
+
+			//爆発フラグをtrueにする
+			isExplosive_ = true;
+
+			//タイマーをリセットする
+			lifeTimer_ = 0.0f;
+		}
+	}
+}
