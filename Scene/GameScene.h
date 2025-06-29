@@ -10,8 +10,9 @@
 #include "3d/Particle/EmitterGroup.h"
 
 #include "Player/Player.h"
-#include "Enemy/Enemy.h"
+#include "Enemy/EnemyManager.h"
 #include "Bullet/BulletManager.h"
+#include "Camera/FollowCamera.h"
 
 #include "memory"
 #include "list"
@@ -51,8 +52,6 @@ public:
 	/// </summary>
 	void ImGui() override;
 
-	void EnemySpawn();
-
 	///-------------------------------------------/// 
 	/// メンバ変数
 	///-------------------------------------------///
@@ -61,18 +60,18 @@ private:
 	//カメラ
 	std::unique_ptr<Camera> camera_;
 
+	//追従カメラ
+	std::unique_ptr<FollowCamera> followCamera_;
+
+	//ライン
+	std::vector<std::unique_ptr<DebugLine>> lines_;
+
 	//プレイヤー
 	std::unique_ptr<Player> player_;
 
-	std::list<std::unique_ptr<Enemy>> enemies_;
+	//エネミーマネージャー
+	std::unique_ptr<EnemyManager> enemyManager_;
 
+	//バレットマネージャー
 	std::unique_ptr<BulletManager> bulletManager_;
-
-	float spawnTime_;
-
-	float spawnTimer_;
-
-	uint32_t spawnMaxSize_;
-
-	Vector3 spawnPos_[4];
 };

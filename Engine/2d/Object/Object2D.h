@@ -28,9 +28,9 @@ class Object2D {
 public:
 
 	/// <summary>
-	/// コンストラクタ	
+	/// 初期化
 	/// </summary>
-	Object2D();
+	void Initialize();
 
 	/// <summary>
 	/// 更新

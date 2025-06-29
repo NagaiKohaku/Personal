@@ -7,51 +7,153 @@
 #include "Collider/AABBCollider.h"
 #include "Collider/SphereCollider.h"
 
+#include "Reticle.h"
+
 #include "memory"
+
+/// === 前方宣言 === ///
 
 class BulletManager;
 
+///=====================================================/// 
+/// プレイヤークラス
+///=====================================================///
 class Player {
 
 public:
 
-	void Initialize();
+	//移動状態
+	enum MOVESTATE {
+		TANK,
+		JET
+	};
 
+public:
+
+	/// <summary>
+	/// 初期化
+	/// </summary>
+	/// <param name="cameraPtr">カメラポインタ</param>
+	/// <param name="bulletPtr">バレットマネージャーポインタ</param>
+	void Initialize(Camera* cameraPtr, BulletManager* bulletPtr);
+
+	/// <summary>
+	/// 更新
+	/// </summary>
 	void Update();
 
+	/// <summary>
+	/// 描画
+	/// </summary>
 	void Draw();
 
 public:
 
-	void SetBulletManager(BulletManager* bulletManager) {
-		bulletManager_ = bulletManager;
-	}
+	/// <summary>
+	/// ワールド座標のゲッター
+	/// </summary>
+	/// <returns>ワールド座標</returns>
+	Vector3 GetWorldPos() { return object_->GetWorldTransform().GetWorldTranslate(); }
 
-	void SetCamera(Camera* ptr) {
-		camera_ = ptr;
-	}
+	/// <summary>
+	/// 移動量のゲッター
+	/// </summary>
+	/// <returns>移動量</returns>
+	Vector3 GetVelocity() { return velocity_; }
+
+	/// <summary>
+	/// 移動状態のゲッター
+	/// </summary>
+	/// <returns>移動状態</returns>
+	MOVESTATE GetMoveState() { return moveState_; }
 
 private:
 
+	/// <summary>
+	/// 移動
+	/// </summary>
 	void Move();
 
+	/// <summary>
+	/// 戦車状態の移動
+	/// </summary>
+	void TankMove();
+
+	/// <summary>
+	/// 飛行機状態の移動
+	/// </summary>
+	void JetMove();
+
+	/// <summary>
+	/// 攻撃
+	/// </summary>
 	void Attack();
 
+	/// <summary>
+	/// 戦車状態の攻撃
+	/// </summary>
+	void TankAttack();
+
+	/// <summary>
+	/// 飛行機状態の攻撃
+	/// </summary>
+	void JetAttack();
+
+	/// <summary>
+	/// 接触時処理
+	/// </summary>
 	void IsCollision();
 
 private:
 
+	//カメラ
 	Camera* camera_;
 
+	//バレットマネージャー
 	BulletManager* bulletManager_ = nullptr;
 
-	std::unique_ptr<Object3D> player_ = nullptr;
+	//オブジェクト
+	std::unique_ptr<Object3D> object_ = nullptr;
 
+	//コライダー
 	std::unique_ptr<SphereCollider> collider_ = nullptr;
 
-	float moveSpeed_ = 0.1f;
+	//レティクル
+	std::unique_ptr<Reticle> reticle_ = nullptr;
 
-	float attackInterval_ = 0.5f;
+	//移動状態
+	MOVESTATE moveState_;
 
-	float attackTimer_ = 0.0f;
+	//攻撃タイマー
+	float attackTimer_;
+
+	//戦車状態の攻撃間隔
+	float tankAttackInterval_;
+
+	//飛行機状態の攻撃間隔
+	float jetAttackInterval_;
+
+	//移動速度
+	float moveSpeed_;
+
+	//移動強度
+	float moveStrength_;
+
+	//回転強度
+	float rotStrength_;
+
+	//移動範囲
+	Vector3 moveRange_;
+
+	//戦車状態の回転範囲
+	Vector3 driveRotRange_;
+
+	//飛行機状態の回転範囲
+	Vector3 flightRotRange_;
+
+	//初期座標
+	Vector3 initialPos_;
+
+	//移動量
+	Vector3 velocity_;
 };

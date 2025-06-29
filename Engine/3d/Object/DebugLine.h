@@ -5,6 +5,7 @@
 #include "Math/Vector4.h"
 #include "Math/Matrix4x4.h"
 #include "Math/WorldTransform.h"
+#include "Base/LayerType.h"
 
 #include "d3d12.h"
 
@@ -54,7 +55,7 @@ public:
 	/// <summary>
 	/// 描画処理
 	/// </summary>
-	void Draw();
+	void Draw(LayerType layerType = Debug);
 
 	/// <summary>
 	/// 親オブジェクトのセット

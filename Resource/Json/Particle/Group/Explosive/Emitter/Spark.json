@@ -13,16 +13,16 @@
             0.0
         ],
         "easingState": [
-            2
+            0
         ],
         "easingStrength": [
-            13.0
+            1.0
         ],
         "endColor": [
             1.0,
             1.0,
             1.0,
-            0.0
+            1.0
         ],
         "endRandomRange": [
             0.0,
@@ -32,9 +32,9 @@
         ],
         "startColor": [
             1.0,
-            1.0,
-            1.0,
-            0.125490203499794
+            0.1411764770746231,
+            0.0,
+            1.0
         ],
         "startRandomRange": [
             0.0,
@@ -43,7 +43,7 @@
             0.0
         ],
         "updateState": [
-            2
+            0
         ],
         "velocity": [
             0.0,
@@ -58,16 +58,16 @@
             0.0
         ]
     },
-    "frequency": 0.10000000149011612,
+    "frequency": 0.0,
     "isBillboard": true,
     "isInfinity": false,
     "isLoop": false,
     "lifeTime": 1.0,
     "lifeTimeRandomRange": 0.0,
-    "maxCount": 1,
+    "maxCount": 24,
     "modelFileName": "",
     "modelName": "PlanePrimitive",
-    "name": "Core",
+    "name": "Spark",
     "position": {
         "acceleration": [
             0.0,
@@ -80,10 +80,10 @@
             0.0
         ],
         "easingState": [
-            0
+            2
         ],
         "easingStrength": [
-            1.0
+            13.0
         ],
         "endNum": [
             0.0,
@@ -91,9 +91,9 @@
             0.0
         ],
         "endRandomRange": [
-            0.0,
-            0.0,
-            0.0
+            5.0,
+            5.0,
+            5.0
         ],
         "startNum": [
             0.0,
@@ -106,7 +106,7 @@
             0.0
         ],
         "updateState": [
-            0
+            2
         ],
         "velocity": [
             0.0,
@@ -185,12 +185,12 @@
             2
         ],
         "easingStrength": [
-            13.0
+            4.0
         ],
         "endNum": [
-            12.0,
-            12.0,
-            12.0
+            0.0,
+            0.0,
+            0.0
         ],
         "endRandomRange": [
             0.0,
@@ -198,9 +198,9 @@
             0.0
         ],
         "startNum": [
-            0.0,
-            0.0,
-            0.0
+            0.5,
+            0.5,
+            0.5
         ],
         "startRandomRange": [
             0.0,

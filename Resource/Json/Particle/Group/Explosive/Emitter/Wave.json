@@ -13,16 +13,16 @@
             0.0
         ],
         "easingState": [
-            0
+            2
         ],
         "easingStrength": [
-            1.0
+            13.0
         ],
         "endColor": [
-            1.0,
-            1.0,
-            1.0,
-            1.0
+            0.8438818454742432,
+            0.37295013666152954,
+            0.29553666710853577,
+            0.0
         ],
         "endRandomRange": [
             0.0,
@@ -32,7 +32,7 @@
         ],
         "startColor": [
             1.0,
-            0.1411764770746231,
+            0.14117646217346191,
             0.0,
             1.0
         ],
@@ -43,7 +43,7 @@
             0.0
         ],
         "updateState": [
-            0
+            2
         ],
         "velocity": [
             0.0,
@@ -60,14 +60,14 @@
     },
     "frequency": 0.10000000149011612,
     "isBillboard": true,
-    "isInfinity": true,
+    "isInfinity": false,
     "isLoop": false,
     "lifeTime": 1.0,
     "lifeTimeRandomRange": 0.0,
     "maxCount": 1,
     "modelFileName": "",
-    "modelName": "PlanePrimitive",
-    "name": "Flame",
+    "modelName": "RingPrimitive",
+    "name": "Wave",
     "position": {
         "acceleration": [
             0.0,
@@ -185,12 +185,12 @@
             2
         ],
         "easingStrength": [
-            4.0
+            13.0
         ],
         "endNum": [
-            0.0,
-            0.0,
-            0.0
+            5.0,
+            5.0,
+            5.0
         ],
         "endRandomRange": [
             0.0,
@@ -198,9 +198,9 @@
             0.0
         ],
         "startNum": [
-            2.0,
-            2.0,
-            1.0
+            0.0,
+            0.0,
+            0.0
         ],
         "startRandomRange": [
             0.0,
@@ -221,5 +221,5 @@
             0.0
         ]
     },
-    "textureFileName": "circle.png"
+    "textureFileName": "gradationLine.png"
 }

@@ -11,6 +11,9 @@
 
 #include "numbers"
 
+///=====================================================/// 
+/// 初期化
+///=====================================================///
 void GameScene::Initialize() {
 
 	/// === カメラの設定 === ///
@@ -18,7 +21,8 @@ void GameScene::Initialize() {
 	//カメラを生成
 	camera_ = std::make_unique<Camera>();
 
-	camera_->SetDebugCameraFlag(true);
+	//デバッグカメラを使用しない
+	camera_->SetDebugCameraFlag(false);
 
 	//カメラの座標
 	camera_->GetWorldTransform().translate_ = { 0.0f,3.0f,0.0f };
@@ -32,37 +36,71 @@ void GameScene::Initialize() {
 
 	/// === リソースの読み込み === ///
 
-	/// === オブジェクトの生成 === ///
+	/// === オブジェクトマネージャーの生成 === ///
 
+	//バレットマネージャーの生成
 	bulletManager_ = std::make_unique<BulletManager>();
 
+	//バレットマネージャーの初期化
 	bulletManager_->Initialize();
+
+	//エネミーマネージャーの生成
+	enemyManager_ = std::make_unique<EnemyManager>();
+
+	//エネミーマネージャーの初期化
+	enemyManager_->Initialize(camera_.get());
+
+	/// === オブジェクトの生成 === ///
 
 	//プレイヤーの生成
 	player_ = std::make_unique<Player>();
 
-	//カメラをセット
-	player_->SetCamera(camera_.get());
-
 	//プレイヤーの初期化
-	player_->Initialize();
+	player_->Initialize(camera_.get(), bulletManager_.get());
 
-	//バレットマネージャーをセット
-	player_->SetBulletManager(bulletManager_.get());
+	//追尾カメラの生成
+	followCamera_ = std::make_unique<FollowCamera>();
 
-	spawnTime_ = 3.0f;
+	//追尾カメラの初期化
+	followCamera_->Initialize(camera_.get(), player_.get());
 
-	spawnTimer_ = 0.0f;
+	const float lineDivide = 30.0f;
 
-	spawnMaxSize_ = 4;
+	const float lineDistance = 5.0f;
 
-	spawnPos_[0] = { 4.0f,6.0f,30.0f };
+	for (size_t i = 0; i < lineDivide + 1; i++) {
 
-	spawnPos_[1] = { -4.0f,6.0f,30.0f };
+		std::unique_ptr<DebugLine> newLine = std::make_unique<DebugLine>();
 
-	spawnPos_[2] = { 4.0f,-2.0f,30.0f };
+		newLine->Initialize(
+			{ (i - lineDivide / 2.0f) * lineDistance, 0.0f, (-lineDivide / 2.0f) * lineDistance },
+			{ (i - lineDivide / 2.0f) * lineDistance, 0.0f, (lineDivide / 2.0f) * lineDistance },
+			{ 1.0f,1.0f,1.0f,1.0f }
+		);
 
-	spawnPos_[3] = { -4.0f,-2.0f,30.0f };
+		if (i == static_cast<int>(lineDivide / 2.0f)) {
+			newLine->SetColor({ 1.0f,0.0f,0.0f,1.0f });
+		}
+
+		lines_.push_back(std::move(newLine));
+	}
+
+	for (size_t i = 0; i < lineDivide + 1; i++) {
+
+		std::unique_ptr<DebugLine> newLine = std::make_unique<DebugLine>();
+
+		newLine->Initialize(
+			{ (-lineDivide / 2.0f) * lineDistance, 0.0f, (i - lineDivide / 2.0f) * lineDistance },
+			{ (lineDivide / 2.0f) * lineDistance, 0.0f, (i - lineDivide / 2.0f) * lineDistance },
+			{ 1.0f,1.0f,1.0f,1.0f }
+		);
+
+		if (i == static_cast<int>(lineDivide / 2.0f)) {
+			newLine->SetColor({ 0.0f,1.0f,0.0f,1.0f });
+		}
+
+		lines_.push_back(std::move(newLine));
+	}
 }
 
 void GameScene::Finalize() {
@@ -73,14 +111,8 @@ void GameScene::Finalize() {
 
 void GameScene::Update() {
 
-	EnemySpawn();
-
-	enemies_.remove_if([](const std::unique_ptr<Enemy>& enemy) {
-		if (enemy->GetCanRemove()) {
-			return true;
-		}
-		return false;
-		});
+	//追尾カメラの更新
+	followCamera_->Update();
 
 	//カメラをデバッグ状態で更新
 	camera_->Update();
@@ -88,13 +120,37 @@ void GameScene::Update() {
 	//プレイヤーの更新
 	player_->Update();
 
-	for (auto& enemy : enemies_) {
-
-		enemy->Update();
-	}
+	//エネミーの更新
+	enemyManager_->Update();
 
 	//弾の更新
 	bulletManager_->Update();
+
+	for (auto& line : lines_) {
+
+		line->Update();
+	}
+
+}
+
+void GameScene::Draw() {
+
+	//プレイヤーの描画
+	player_->Draw();
+
+	//エネミーの描画
+	enemyManager_->Draw();
+
+	//弾の描画
+	bulletManager_->Draw();
+
+	for (auto& line : lines_) {
+
+		line->Draw(LayerType::Object);
+	}
+}
+
+void GameScene::ImGui() {
 
 	//ImGuiを起動
 	ImGui::Begin("Scene");
@@ -112,46 +168,4 @@ void GameScene::Update() {
 
 	//ImGuiの終了
 	ImGui::End();
-
-}
-
-void GameScene::Draw() {
-
-	//プレイヤーの描画
-	player_->Draw();
-
-	for (auto& enemy : enemies_) {
-
-		enemy->Draw();
-	}
-
-	//弾の描画
-	bulletManager_->Draw();
-}
-
-void GameScene::ImGui() {
-}
-
-void GameScene::EnemySpawn() {
-
-	if (enemies_.size() >= spawnMaxSize_) {
-		return;
-	}
-
-	spawnTimer_ += 1.0f / 60.0f;
-
-	if (spawnTimer_ >= spawnTime_) {
-
-		std::unique_ptr<Enemy> newEnemy = std::make_unique<Enemy>();
-
-		newEnemy->SetCamera(camera_.get());
-
-		newEnemy->Initialize();
-
-		newEnemy->SetPosition(spawnPos_[enemies_.size()]);
-
-		enemies_.push_back(std::move(newEnemy));
-
-		spawnTimer_ = 0.0f;
-	}
 }
