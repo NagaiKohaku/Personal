@@ -9,6 +9,8 @@
 #include "3d/Particle/ParticleEmitter.h"
 #include "3d/Particle/EmitterGroup.h"
 
+#include "3d/Object/SkyBox.h"
+
 #include "Player/Player.h"
 #include "Enemy/EnemyManager.h"
 #include "Bullet/BulletManager.h"
@@ -74,4 +76,6 @@ private:
 
 	//バレットマネージャー
 	std::unique_ptr<BulletManager> bulletManager_;
+
+	std::unique_ptr<SkyBox> skyBox_;
 };

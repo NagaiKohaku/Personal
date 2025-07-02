@@ -49,6 +49,12 @@
     <FxCompile Include="Resource\Shader\Vignette.VS.hlsl">
       <Filter>Resource\Shader</Filter>
     </FxCompile>
+    <FxCompile Include="Resource\Shader\SkyBox.PS.hlsl">
+      <Filter>Resource\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Resource\Shader\SkyBox.VS.hlsl">
+      <Filter>Resource\Shader</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -249,6 +255,12 @@
     </ClCompile>
     <ClCompile Include="Scene\SceneManager.cpp">
       <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\3d\Object\SkyBox.cpp">
+      <Filter>Engine\3d\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\3d\Object\SkyBoxCommon.cpp">
+      <Filter>Engine\3d\Object</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -459,6 +471,12 @@
     <ClInclude Include="Scene\SceneManager.h">
       <Filter>Scene</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\3d\Object\SkyBoxCommon.h">
+      <Filter>Engine\3d\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\3d\Object\SkyBox.h">
+      <Filter>Engine\3d\Object</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Application\level_editor.py">
@@ -486,6 +504,9 @@
       <Filter>Resource\Shader</Filter>
     </None>
     <None Include="Resource\Shader\GrayScale.hlsli">
+      <Filter>Resource\Shader</Filter>
+    </None>
+    <None Include="Resource\Shader\SkyBox.hlsli">
       <Filter>Resource\Shader</Filter>
     </None>
   </ItemGroup>

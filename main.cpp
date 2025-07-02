@@ -13,6 +13,7 @@
 #include "2d/Sprite/TextureManager.h"
 #include "3d/Object/Object3DCommon.h"
 #include "3d/Object/DebugObjectCommon.h"
+#include "3d/Object/SkyBoxCommon.h"
 #include "3d/Model/ModelCommon.h"
 #include "3d/Model/ModelManager.h"
 #include "3d/Particle/ParticleCommon.h"
@@ -78,6 +79,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//デバッグオブジェクト基底
 	DebugObjectCommon* debugObjectCommon = DebugObjectCommon::GetInstance();
 	debugObjectCommon->Initialize();
+
+	//スカイボックス基底
+	SkyBoxCommon* skyBoxCommon = SkyBoxCommon::GetInstance();
+	skyBoxCommon->Initialize();
 
 	//パーティクル基底
 	ParticleCommon* particleCommon = ParticleCommon::GetInstance();

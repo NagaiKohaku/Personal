@@ -47,15 +47,37 @@ void TextureManager::LoadTexture(const std::string& filePath) {
 	//テクスチャ枚数上限チェック
 	assert(srvManager_->AllocateCheck());
 
-	//テクスチャファイルを読み込んで、プログラムで扱えるようにする
+	/// === テクスチャファイルを読み込んで、プログラムで扱えるようにする === ///
+
 	DirectX::ScratchImage image{};
+
+	//ファイルパスをワイド文字列に変換
 	std::wstring filePathW = ConvertString(filePath);
-	HRESULT hr = DirectX::LoadFromWICFile(filePathW.c_str(), DirectX::WIC_FLAGS_FORCE_SRGB, nullptr, image);
+
+	HRESULT hr;
+
+	if (filePathW.ends_with(L".dds")) {
+
+		//DDSファイルの読み込み
+		hr = DirectX::LoadFromDDSFile(filePathW.c_str(), DirectX::DDS_FLAGS_NONE, nullptr, image);
+	} else {
+
+		//PNGファイルの読み込み
+		hr = DirectX::LoadFromWICFile(filePathW.c_str(), DirectX::WIC_FLAGS_FORCE_SRGB, nullptr, image);
+	}
 	assert(SUCCEEDED(hr));
 
 	//ミップマップの生成
 	DirectX::ScratchImage mipImages{};
-	hr = DirectX::GenerateMipMaps(image.GetImages(), image.GetImageCount(), image.GetMetadata(), DirectX::TEX_FILTER_SRGB, 0, mipImages);
+	if (DirectX::IsCompressed(image.GetMetadata().format)) {
+
+		//圧縮テクスチャの場合は、ミップマップを生成せずにそのまま使用
+		mipImages = std::move(image);
+	} else {
+
+		//非圧縮テクスチャの場合は、ミップマップを生成
+		hr = DirectX::GenerateMipMaps(image.GetImages(), image.GetImageCount(), image.GetMetadata(), DirectX::TEX_FILTER_SRGB, 0, mipImages);
+	}
 	assert(SUCCEEDED(hr));
 
 	//テクスチャデータのメモリの場所を取得
@@ -74,10 +96,23 @@ void TextureManager::LoadTexture(const std::string& filePath) {
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
 	srvDesc.Format = textureData.metaData.format;
 	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
-	srvDesc.Texture2D.MipLevels = UINT(textureData.metaData.mipLevels);
+	if (textureData.metaData.IsCubemap()) {
+		srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURECUBE;
+		srvDesc.TextureCube.MostDetailedMip = 0;
+		srvDesc.TextureCube.MipLevels = UINT_MAX;
+		srvDesc.TextureCube.ResourceMinLODClamp = 0.0f;
+	} else {
+		srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+		srvDesc.Texture2D.MipLevels = UINT(textureData.metaData.mipLevels);
+	}
 
 	directXCommon_->GetDevice()->CreateShaderResourceView(textureData.resource.Get(), &srvDesc, textureData.srvHandleCPU);
+}
+
+void TextureManager::LoadPngData(const std::string& filePath) {
+}
+
+void TextureManager::LoadDDSData(const std::string& filePath) {
 }
 
 ///=====================================================/// 

@@ -3,9 +3,11 @@
 #include "2d/Sprite/SpriteManager.h"
 #include "3d/Model/ModelManager.h"
 #include "3d/Particle/ParticleManager.h"
+#include "2d/Sprite/TextureManager.h"
 
 #include "3d/Object/Object3DCommon.h"
 #include "3d/Object/DebugObjectCommon.h"
+#include "3d/Object/SkyBoxCommon.h"
 
 #include "imgui.h"
 
@@ -32,9 +34,13 @@ void GameScene::Initialize() {
 
 	DebugObjectCommon::GetInstance()->SetDefaultCamera(camera_.get());
 
+	SkyBoxCommon::GetInstance()->SetDefaultCamera(camera_.get());
+
 	ParticleManager::GetInstance()->SetDefaultCamera(camera_.get());
 
 	/// === リソースの読み込み === ///
+
+	TextureManager::GetInstance()->LoadTexture("Resource/Texture/rostock_laage_airport_4k.dds");
 
 	/// === オブジェクトマネージャーの生成 === ///
 
@@ -63,6 +69,17 @@ void GameScene::Initialize() {
 
 	//追尾カメラの初期化
 	followCamera_->Initialize(camera_.get(), player_.get());
+
+	/// === スカイボックスの生成 === ///
+
+	//生成
+	skyBox_ = std::make_unique<SkyBox>();
+
+	//初期化
+	skyBox_->Initialize("Resource/Texture/rostock_laage_airport_4k.dds");
+
+	//スケールの設定
+	skyBox_->GetWorldTransform().scale_ = { 1000.0f,1000.0f,1000.0f };
 
 	const float lineDivide = 30.0f;
 
@@ -111,6 +128,8 @@ void GameScene::Finalize() {
 
 void GameScene::Update() {
 
+	skyBox_->Update();
+
 	//追尾カメラの更新
 	followCamera_->Update();
 
@@ -143,6 +162,8 @@ void GameScene::Draw() {
 
 	//弾の描画
 	bulletManager_->Draw();
+
+	skyBox_->Draw();
 
 	for (auto& line : lines_) {
 
