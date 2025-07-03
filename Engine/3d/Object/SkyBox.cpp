@@ -156,7 +156,7 @@ void SkyBox::Initialize(std::string filePath) {
 	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));
 
 	//マテリアルデータの設定
-	materialData_->color = Vector4(0.1f,0.2f,0.5f,1.0f);
+	materialData_->color = Vector4(1.0f,1.0f,1.0f,1.0f);
 	materialData_->enableLighting = true;
 	materialData_->uvTransform = MakeIdentity4x4();
 	materialData_->shininess = 50.0f;
