@@ -28,6 +28,22 @@ public:
 	static uint32_t kSRVIndexTop;
 
 	///-------------------------------------------/// 
+	/// メンバ構造体
+	///-------------------------------------------///
+private:
+
+	//テクスチャデータ
+	struct TextureData {
+		std::string modelName;
+		DirectX::TexMetadata metaData;
+		Microsoft::WRL::ComPtr<ID3D12Resource> resource;
+		Microsoft::WRL::ComPtr<ID3D12Resource> intermediateResource;
+		uint32_t srvIndex;
+		D3D12_CPU_DESCRIPTOR_HANDLE srvHandleCPU;
+		D3D12_GPU_DESCRIPTOR_HANDLE srvHandleGPU;
+	};
+
+	///-------------------------------------------/// 
 	/// メンバ関数
 	///-------------------------------------------///
 public:
@@ -99,21 +115,9 @@ private:
 		const DirectX::ScratchImage& mipImages
 	);
 
-	///-------------------------------------------/// 
-	/// メンバ構造体
-	///-------------------------------------------///
-private:
+	void LoadPngData(const std::string& filePath);
 
-	//テクスチャデータ
-	struct TextureData {
-		std::string modelName;
-		DirectX::TexMetadata metaData;
-		Microsoft::WRL::ComPtr<ID3D12Resource> resource;
-		Microsoft::WRL::ComPtr<ID3D12Resource> intermediateResource;
-		uint32_t srvIndex;
-		D3D12_CPU_DESCRIPTOR_HANDLE srvHandleCPU;
-		D3D12_GPU_DESCRIPTOR_HANDLE srvHandleGPU;
-	};
+	void LoadDDSData(const std::string& filePath);
 
 	///-------------------------------------------/// 
 	/// メンバ変数

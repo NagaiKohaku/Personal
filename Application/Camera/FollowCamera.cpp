@@ -31,6 +31,10 @@ void FollowCamera::Initialize(Camera* camera, Player* player) {
 ///=====================================================///
 void FollowCamera::Update() {
 
+	if (camera_->IsDebugCamera()) {
+		return;
+	}
+
 	//カメラの現在座標
 	Vector3 cameraPos = camera_->GetWorldTransform().GetWorldTranslate();
 
@@ -62,6 +66,9 @@ void FollowCamera::Update() {
 
 		playerSlope = { 0.0f,0.0f,0.0f };
 	}
+
+	//カメラの座標を設定
+	camera_->GetWorldTransform().translate_ = offset_;
 
 	//カメラの角度を線形補間で計算
 	camera_->GetWorldTransform().rotate_ = Lerp(

@@ -3,9 +3,11 @@
 #include "2d/Sprite/SpriteManager.h"
 #include "3d/Model/ModelManager.h"
 #include "3d/Particle/ParticleManager.h"
+#include "2d/Sprite/TextureManager.h"
 
 #include "3d/Object/Object3DCommon.h"
 #include "3d/Object/DebugObjectCommon.h"
+#include "3d/Object/SkyBoxCommon.h"
 
 #include "imgui.h"
 
@@ -22,7 +24,7 @@ void GameScene::Initialize() {
 	camera_ = std::make_unique<Camera>();
 
 	//デバッグカメラを使用しない
-	camera_->SetDebugCameraFlag(false);
+	camera_->SetDebugCameraFlag(true);
 
 	//カメラの座標
 	camera_->GetWorldTransform().translate_ = { 0.0f,3.0f,0.0f };
@@ -31,6 +33,8 @@ void GameScene::Initialize() {
 	Object3DCommon::GetInstance()->SetDefaultCamera(camera_.get());
 
 	DebugObjectCommon::GetInstance()->SetDefaultCamera(camera_.get());
+
+	SkyBoxCommon::GetInstance()->SetDefaultCamera(camera_.get());
 
 	ParticleManager::GetInstance()->SetDefaultCamera(camera_.get());
 
@@ -63,6 +67,17 @@ void GameScene::Initialize() {
 
 	//追尾カメラの初期化
 	followCamera_->Initialize(camera_.get(), player_.get());
+
+	/// === スカイボックスの生成 === ///
+
+	//生成
+	skyBox_ = std::make_unique<SkyBox>();
+
+	//初期化
+	skyBox_->Initialize("Resource/Texture/skyBox.dds");
+
+	//スケールの設定
+	skyBox_->GetWorldTransform().scale_ = { 10000.0f,10000.0f,10000.0f };
 
 	const float lineDivide = 30.0f;
 
@@ -111,6 +126,8 @@ void GameScene::Finalize() {
 
 void GameScene::Update() {
 
+	skyBox_->Update();
+
 	//追尾カメラの更新
 	followCamera_->Update();
 
@@ -143,6 +160,8 @@ void GameScene::Draw() {
 
 	//弾の描画
 	bulletManager_->Draw();
+
+	skyBox_->Draw();
 
 	for (auto& line : lines_) {
 
