@@ -118,6 +118,12 @@ public:
 	/// <returns>ビュープロジェクション行列</returns>
 	const Matrix4x4& GetViewProjectionMatrix() const { return viewProjectionMatrix_; }
 
+	/// <summary>
+	/// デバッグカメラフラグのゲッター
+	/// </summary>
+	/// <returns></returns>
+	bool IsDebugCamera() const { return isDebugCamera_; }
+
 	///-------------------------------------------/// 
 	/// メンバ構造体
 	///-------------------------------------------///

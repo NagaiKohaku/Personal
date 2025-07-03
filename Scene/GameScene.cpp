@@ -24,7 +24,7 @@ void GameScene::Initialize() {
 	camera_ = std::make_unique<Camera>();
 
 	//デバッグカメラを使用しない
-	camera_->SetDebugCameraFlag(false);
+	camera_->SetDebugCameraFlag(true);
 
 	//カメラの座標
 	camera_->GetWorldTransform().translate_ = { 0.0f,3.0f,0.0f };
@@ -39,8 +39,6 @@ void GameScene::Initialize() {
 	ParticleManager::GetInstance()->SetDefaultCamera(camera_.get());
 
 	/// === リソースの読み込み === ///
-
-	TextureManager::GetInstance()->LoadTexture("Resource/Texture/rostock_laage_airport_4k.dds");
 
 	/// === オブジェクトマネージャーの生成 === ///
 
@@ -76,10 +74,10 @@ void GameScene::Initialize() {
 	skyBox_ = std::make_unique<SkyBox>();
 
 	//初期化
-	skyBox_->Initialize("Resource/Texture/rostock_laage_airport_4k.dds");
+	skyBox_->Initialize("Resource/Texture/skyBox.dds");
 
 	//スケールの設定
-	skyBox_->GetWorldTransform().scale_ = { 1000.0f,1000.0f,1000.0f };
+	skyBox_->GetWorldTransform().scale_ = { 10000.0f,10000.0f,10000.0f };
 
 	const float lineDivide = 30.0f;
 
