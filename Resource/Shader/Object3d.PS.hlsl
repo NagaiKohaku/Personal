@@ -62,6 +62,9 @@ ConstantBuffer<Material> gMaterial : register(b0);
 //テクスチャ
 Texture2D<float4> gTexture : register(t0);
 
+//キューブテクスチャ
+TextureCube<float4> gCubeTexture : register(t1);
+
 //サンプラー
 SamplerState gSampler : register(t0);
 
@@ -90,6 +93,9 @@ float3 PointLightReflection(VertexShaderOutput input, float4 textureColor);
 
 //スポットライトの計算
 float3 SpotLightReflection(VertexShaderOutput input, float4 textureColor);
+
+//環境マップの計算
+float3 EnvironmentMapReflection(VertexShaderOutput input);
 
 PixelShaderOutPut main(VertexShaderOutput input)
 {
@@ -124,7 +130,8 @@ PixelShaderOutPut main(VertexShaderOutput input)
         output.color.rgb =
         DirectionalLightReflection(input, textureColor) + 
         PointLightReflection(input, textureColor) + 
-        SpotLightReflection(input, textureColor);
+        SpotLightReflection(input, textureColor) +
+        EnvironmentMapReflection(input);
 
         output.color.a = gMaterial.color.a * textureColor.a;
     }
@@ -252,6 +259,18 @@ float3 SpotLightReflection(VertexShaderOutput input, float4 textureColor)
         gSpotLight.color.rgb * gSpotLight.intensity * attenuationFactor * falloffFactor * specularPow * float3(1.0f, 1.0f, 1.0f);
 
     return diffuse + specular;
+}
+
+//環境マップの計算
+float3 EnvironmentMapReflection(VertexShaderOutput input)
+{
+    float3 cameraToPosition = normalize(input.worldPosition - gCamera.worldPosition);
+
+    float3 reflectionVector = reflect(cameraToPosition, normalize(input.normal));
+
+    float4 environmentColor = gCubeTexture.Sample(gSampler, reflectionVector);
+
+    return environmentColor.rgb;
 }
 
 //内積

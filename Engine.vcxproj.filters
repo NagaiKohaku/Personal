@@ -25,18 +25,6 @@
     <FxCompile Include="Resource\Shader\Object2d.VS.hlsl">
       <Filter>Resource\Shader</Filter>
     </FxCompile>
-    <FxCompile Include="Resource\Shaders\Object3d.PS.hlsl">
-      <Filter>Resource\Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="Resource\Shaders\Object3d.VS.hlsl">
-      <Filter>Resource\Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="Resource\Shaders\Particle.PS.hlsl">
-      <Filter>Resource\Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="Resource\Shaders\Particle.VS.hlsl">
-      <Filter>Resource\Shader</Filter>
-    </FxCompile>
     <FxCompile Include="Resource\Shader\Smooth.PS.hlsl">
       <Filter>Resource\Shader</Filter>
     </FxCompile>
@@ -53,6 +41,18 @@
       <Filter>Resource\Shader</Filter>
     </FxCompile>
     <FxCompile Include="Resource\Shader\SkyBox.VS.hlsl">
+      <Filter>Resource\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Resource\Shader\Object3d.PS.hlsl">
+      <Filter>Resource\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Resource\Shader\Object3d.VS.hlsl">
+      <Filter>Resource\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Resource\Shader\Particle.PS.hlsl">
+      <Filter>Resource\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Resource\Shader\Particle.VS.hlsl">
       <Filter>Resource\Shader</Filter>
     </FxCompile>
   </ItemGroup>
@@ -491,12 +491,6 @@
     <None Include="Resource\Shader\Object2d.hlsli">
       <Filter>Resource\Shader</Filter>
     </None>
-    <None Include="Resource\Shaders\Object3d.hlsli">
-      <Filter>Resource\Shader</Filter>
-    </None>
-    <None Include="Resource\Shaders\Particle.hlsli">
-      <Filter>Resource\Shader</Filter>
-    </None>
     <None Include="Resource\Shader\Smooth.hlsli">
       <Filter>Resource\Shader</Filter>
     </None>
@@ -507,6 +501,12 @@
       <Filter>Resource\Shader</Filter>
     </None>
     <None Include="Resource\Shader\SkyBox.hlsli">
+      <Filter>Resource\Shader</Filter>
+    </None>
+    <None Include="Resource\Shader\Object3d.hlsli">
+      <Filter>Resource\Shader</Filter>
+    </None>
+    <None Include="Resource\Shader\Particle.hlsli">
       <Filter>Resource\Shader</Filter>
     </None>
   </ItemGroup>

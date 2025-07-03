@@ -2,6 +2,7 @@
 
 #include "Base/DirectXCommon.h"
 #include "3d/Camera/Camera.h"
+#include "2d/Sprite/TextureManager.h"
 
 #include "Other/Log.h"
 
@@ -90,6 +91,7 @@ void Object3DCommon::Update() {
 
 	//スポットライトの更新
 	spotLight_->Update();
+
 }
 
 ///=====================================================/// 
@@ -117,6 +119,9 @@ void Object3DCommon::CommonDrawSetting() {
 
 	//スポットライトのデータをGPUに送信
 	spotLight_->SendDataForGPU();
+
+	//テクスチャデータの設定
+	dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(7, TextureManager::GetInstance()->GetSrvHandleGPU(textureCubeFilePath));
 }
 
 ///=====================================================/// 
@@ -132,14 +137,20 @@ void Object3DCommon::CreateRootSignature() {
 	descriptionRootSignature.Flags =
 		D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 
-	D3D12_DESCRIPTOR_RANGE descriptorRange[1] = {};
-	descriptorRange[0].BaseShaderRegister = 0; //0から始まる
-	descriptorRange[0].NumDescriptors = 1; //数は1つ
-	descriptorRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV; //SRVを使う
-	descriptorRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND; //Offsetを自動計算
+	D3D12_DESCRIPTOR_RANGE textureRange[1] = {};
+	textureRange[0].BaseShaderRegister = 0; //0から始まる
+	textureRange[0].NumDescriptors = 1; //数は1つ
+	textureRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV; //SRVを使う
+	textureRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND; //Offsetを自動計算
+
+	D3D12_DESCRIPTOR_RANGE textureCubeRange[1] = {};
+	textureCubeRange[0].BaseShaderRegister = 1; //1から始まる
+	textureCubeRange[0].NumDescriptors = 1; //数は1つ
+	textureCubeRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV; //SRVを使う
+	textureCubeRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND; //Offsetを自動計算
 
 	//RootParameterを作成
-	D3D12_ROOT_PARAMETER rootParameters[7] = {};
+	D3D12_ROOT_PARAMETER rootParameters[8] = {};
 
 	//マテリアル
 	rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;                   //CBVを使う
@@ -154,8 +165,9 @@ void Object3DCommon::CreateRootSignature() {
 	//テクスチャ
 	rootParameters[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;      //DesctiptorTableを使う
 	rootParameters[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;                //PixelShaderを使う
-	rootParameters[2].DescriptorTable.pDescriptorRanges = descriptorRange;             //Tableの中身の配列を指定
-	rootParameters[2].DescriptorTable.NumDescriptorRanges = _countof(descriptorRange); //Tableで利用する数
+	rootParameters[2].DescriptorTable.pDescriptorRanges = textureRange;             //Tableの中身の配列を指定
+	rootParameters[2].DescriptorTable.NumDescriptorRanges = _countof(textureRange); //Tableで利用する数
+	rootParameters[2].Descriptor.RegisterSpace = 0;                                    //レジスタ番号0を使う
 
 	//カメラ
 	rootParameters[3].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;                   //CBVを使う
@@ -176,6 +188,13 @@ void Object3DCommon::CreateRootSignature() {
 	rootParameters[6].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;                   //CBVを使う
 	rootParameters[6].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;                //PixelShaderを使う
 	rootParameters[6].Descriptor.ShaderRegister = 4;                                   //レジスタ番号4を使う
+
+	//テクスチャ
+	rootParameters[7].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;      //DesctiptorTableを使う
+	rootParameters[7].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;                //PixelShaderを使う
+	rootParameters[7].DescriptorTable.pDescriptorRanges = textureCubeRange;             //Tableの中身の配列を指定
+	rootParameters[7].DescriptorTable.NumDescriptorRanges = _countof(textureCubeRange); //Tableで利用する数
+	rootParameters[7].Descriptor.RegisterSpace = 1;                                    //レジスタ番号1を使う
 
 	descriptionRootSignature.pParameters = rootParameters;               //ルートパラメータ配列へのポインタ
 	descriptionRootSignature.NumParameters = _countof(rootParameters);   //配列の長さ

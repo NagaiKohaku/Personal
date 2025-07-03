@@ -11,6 +11,7 @@
 
 #include "wrl.h"
 #include "vector"
+#include "string"
 
 /// === 前方宣言 === //
 class DirectXCommon;
@@ -100,6 +101,12 @@ public:
 	/// <param name="blendType">ブレンドタイプ</param>
 	void SetBlendMode(BlendType blendType) { blendMode_ = blendType; }
 
+	/// <summary>
+	/// キューブテクスチャのファイルパスのセッター
+	/// </summary>
+	/// <param name="filePath">ファイルパス</param>
+	void SetTextureCubeFilePath(const std::string& filePath) { textureCubeFilePath = filePath; }
+
 	///-------------------------------------------/// 
 	/// クラス内処理関数
 	///-------------------------------------------///
@@ -149,4 +156,7 @@ private:
 
 	//グラフィックパイプラインステート
 	std::vector<Microsoft::WRL::ComPtr<ID3D12PipelineState>> graphicsPipelineState_;
+
+	//キューブテクスチャのファイルパス
+	std::string textureCubeFilePath;
 };

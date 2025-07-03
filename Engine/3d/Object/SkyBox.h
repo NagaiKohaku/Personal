@@ -84,6 +84,12 @@ public:
 	/// <param name="camera">カメラ</param>
 	void SetCamera(Camera* camera) { camera_ = camera; }
 
+	/// <summary>
+	/// テクスチャファイルパスのセッター
+	/// </summary>
+	/// <returns>ファイルパス</returns>
+	std::string GetTextureFilePath() const { return textureFilePath_; }
+
 	///-------------------------------------------/// 
 	/// メンバ変数
 	///-------------------------------------------///

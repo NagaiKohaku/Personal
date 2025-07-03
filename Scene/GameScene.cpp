@@ -79,6 +79,9 @@ void GameScene::Initialize() {
 	//スケールの設定
 	skyBox_->GetWorldTransform().scale_ = { 10000.0f,10000.0f,10000.0f };
 
+	//スカイボックスのテクスチャファイルパスを設定
+	Object3DCommon::GetInstance()->SetTextureCubeFilePath(skyBox_->GetTextureFilePath());
+
 	const float lineDivide = 30.0f;
 
 	const float lineDistance = 5.0f;
