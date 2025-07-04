@@ -228,6 +228,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Application\Camera\FollowCamera.h" />
     <ClInclude Include="Application\Player\Reticle.h" />
     <ClInclude Include="Application\Bullet\JetBullet.h" />
+    <ClInclude Include="Engine\Math\KeyFrameQuaternion.h" />
+    <ClInclude Include="Engine\Math\KeyFrameVector3.h" />
+    <ClInclude Include="Engine\Math\Quaternion.h" />
     <ClInclude Include="Scene\ParticleEditorScene.h" />
     <ClInclude Include="Application\Player\Player.h" />
     <ClInclude Include="Scene\BaseScene.h" />

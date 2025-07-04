@@ -477,6 +477,15 @@
     <ClInclude Include="Engine\3d\Object\SkyBox.h">
       <Filter>Engine\3d\Object</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\Math\KeyFrameVector3.h">
+      <Filter>Engine\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Math\KeyFrameQuaternion.h">
+      <Filter>Engine\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Math\Quaternion.h">
+      <Filter>Engine\Math</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Application\level_editor.py">
