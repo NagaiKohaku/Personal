@@ -479,9 +479,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Application\level_editor.py">
-      <Filter>Application</Filter>
-    </None>
     <None Include="Resource\Shader\CopyImage.hlsli">
       <Filter>Resource\Shader</Filter>
     </None>
@@ -508,6 +505,36 @@
     </None>
     <None Include="Resource\Shader\Particle.hlsli">
       <Filter>Resource\Shader</Filter>
+    </None>
+    <None Include="Application\level_editor\__init__.py">
+      <Filter>Application\level_editor</Filter>
+    </None>
+    <None Include="Application\level_editor\add_collider.py">
+      <Filter>Application\level_editor</Filter>
+    </None>
+    <None Include="Application\level_editor\add_filename.py">
+      <Filter>Application\level_editor</Filter>
+    </None>
+    <None Include="Application\level_editor\collider.py">
+      <Filter>Application\level_editor</Filter>
+    </None>
+    <None Include="Application\level_editor\create_ico_sphere.py">
+      <Filter>Application\level_editor</Filter>
+    </None>
+    <None Include="Application\level_editor\draw_collider.py">
+      <Filter>Application\level_editor</Filter>
+    </None>
+    <None Include="Application\level_editor\export_scene.py">
+      <Filter>Application\level_editor</Filter>
+    </None>
+    <None Include="Application\level_editor\file_name.py">
+      <Filter>Application\level_editor</Filter>
+    </None>
+    <None Include="Application\level_editor\my_menu.py">
+      <Filter>Application\level_editor</Filter>
+    </None>
+    <None Include="Application\level_editor\stretch_vertex.py">
+      <Filter>Application\level_editor</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -579,6 +606,9 @@
     </Filter>
     <Filter Include="Resource\Shader">
       <UniqueIdentifier>{023dcf07-239e-4fc2-945a-d5fb591adbb2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Application\level_editor">
+      <UniqueIdentifier>{8fb021de-c74c-4fa7-88e6-89c1b836ef4f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
