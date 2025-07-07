@@ -18,7 +18,7 @@
 #include "3d/Model/ModelManager.h"
 #include "3d/Particle/ParticleCommon.h"
 #include "3d/Particle/ParticleManager.h"
-#include "Application/Collider/ColliderManager.h"
+#include "3d/Collider/ColliderManager.h"
 
 #include "Scene/SceneManager.h"
 

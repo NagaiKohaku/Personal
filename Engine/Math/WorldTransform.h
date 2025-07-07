@@ -101,19 +101,19 @@ public:
 	/// ローカル座標変換行列を取得
 	/// </summary>
 	/// <returns>行列</returns>
-	const Matrix4x4 GetLocalTranslateMatrix();
+	const Matrix4x4 GetLocalTranslateMatrix() const;
 
 	/// <summary>
 	/// ローカル回転行列を取得
 	/// </summary>
 	/// <returns>行列</returns>
-	const Matrix4x4 GetLocalRotateMatrix();
+	const Matrix4x4 GetLocalRotateMatrix() const;
 
 	/// <summary>
 	/// ローカル拡大縮小行列を取得
 	/// </summary>
 	/// <returns></returns>
-	const Matrix4x4 GetLocalScaleMatrix();
+	const Matrix4x4 GetLocalScaleMatrix() const;
 
 	/// <summary>
 	/// ワールド行列のセッター

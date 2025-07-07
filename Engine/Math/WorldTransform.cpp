@@ -136,17 +136,17 @@ const Vector3 WorldTransform::GetWorldScale() const {
 	return result;
 }
 
-const Matrix4x4 WorldTransform::GetLocalTranslateMatrix() {
+const Matrix4x4 WorldTransform::GetLocalTranslateMatrix() const {
 
 	return MakeTranslateMatrix(translate_ + offset_);
 }
 
-const Matrix4x4 WorldTransform::GetLocalRotateMatrix() {
+const Matrix4x4 WorldTransform::GetLocalRotateMatrix() const {
 
 	return MakeRotateMatrix(rotate_);
 }
 
-const Matrix4x4 WorldTransform::GetLocalScaleMatrix() {
+const Matrix4x4 WorldTransform::GetLocalScaleMatrix() const {
 
 	return MakeScaleMatrix(scale_);
 }

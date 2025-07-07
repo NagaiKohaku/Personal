@@ -73,16 +73,16 @@
     <ClCompile Include="Application\Camera\FollowCamera.cpp">
       <Filter>Application\Camera</Filter>
     </ClCompile>
-    <ClCompile Include="Application\Collider\AABBCollider.cpp">
+    <ClCompile Include="Engine\3d\Collider\AABBCollider.cpp">
       <Filter>Application\Collider</Filter>
     </ClCompile>
-    <ClCompile Include="Application\Collider\Collider.cpp">
+    <ClCompile Include="Engine\3d\Collider\Collider.cpp">
       <Filter>Application\Collider</Filter>
     </ClCompile>
-    <ClCompile Include="Application\Collider\ColliderManager.cpp">
+    <ClCompile Include="Engine\3d\Collider\ColliderManager.cpp">
       <Filter>Application\Collider</Filter>
     </ClCompile>
-    <ClCompile Include="Application\Collider\SphereCollider.cpp">
+    <ClCompile Include="Engine\3d\Collider\SphereCollider.cpp">
       <Filter>Application\Collider</Filter>
     </ClCompile>
     <ClCompile Include="Application\Enemy\Enemy.cpp">
@@ -244,23 +244,23 @@
     <ClCompile Include="Engine\Other\Log.cpp">
       <Filter>Engine\Other</Filter>
     </ClCompile>
-    <ClCompile Include="Scene\BaseScene.cpp">
-      <Filter>Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="Scene\GameScene.cpp">
-      <Filter>Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="Scene\ParticleEditorScene.cpp">
-      <Filter>Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="Scene\SceneManager.cpp">
-      <Filter>Scene</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\3d\Object\SkyBox.cpp">
       <Filter>Engine\3d\Object</Filter>
     </ClCompile>
     <ClCompile Include="Engine\3d\Object\SkyBoxCommon.cpp">
       <Filter>Engine\3d\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Scene\BaseScene.cpp">
+      <Filter>Engine\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Scene\SceneManager.cpp">
+      <Filter>Engine\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\Scene\GameScene.cpp">
+      <Filter>Application\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\Scene\ParticleEditorScene.cpp">
+      <Filter>Application\Scene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -279,16 +279,16 @@
     <ClInclude Include="Application\Camera\FollowCamera.h">
       <Filter>Application\Camera</Filter>
     </ClInclude>
-    <ClInclude Include="Application\Collider\AABBCollider.h">
+    <ClInclude Include="Engine\3d\Collider\AABBCollider.h">
       <Filter>Application\Collider</Filter>
     </ClInclude>
-    <ClInclude Include="Application\Collider\Collider.h">
+    <ClInclude Include="Engine\3d\Collider\Collider.h">
       <Filter>Application\Collider</Filter>
     </ClInclude>
-    <ClInclude Include="Application\Collider\ColliderManager.h">
+    <ClInclude Include="Engine\3d\Collider\ColliderManager.h">
       <Filter>Application\Collider</Filter>
     </ClInclude>
-    <ClInclude Include="Application\Collider\SphereCollider.h">
+    <ClInclude Include="Engine\3d\Collider\SphereCollider.h">
       <Filter>Application\Collider</Filter>
     </ClInclude>
     <ClInclude Include="Application\Enemy\Enemy.h">
@@ -459,18 +459,6 @@
     <ClInclude Include="Engine\Other\Log.h">
       <Filter>Engine\Other</Filter>
     </ClInclude>
-    <ClInclude Include="Scene\BaseScene.h">
-      <Filter>Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="Scene\GameScene.h">
-      <Filter>Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="Scene\ParticleEditorScene.h">
-      <Filter>Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="Scene\SceneManager.h">
-      <Filter>Scene</Filter>
-    </ClInclude>
     <ClInclude Include="Engine\3d\Object\SkyBoxCommon.h">
       <Filter>Engine\3d\Object</Filter>
     </ClInclude>
@@ -485,6 +473,18 @@
     </ClInclude>
     <ClInclude Include="Engine\Math\Quaternion.h">
       <Filter>Engine\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Scene\BaseScene.h">
+      <Filter>Engine\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Scene\SceneManager.h">
+      <Filter>Engine\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Scene\GameScene.h">
+      <Filter>Application\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Scene\ParticleEditorScene.h">
+      <Filter>Application\Scene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -588,6 +588,12 @@
     </Filter>
     <Filter Include="Resource\Shader">
       <UniqueIdentifier>{023dcf07-239e-4fc2-945a-d5fb591adbb2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Application\Scene">
+      <UniqueIdentifier>{b9fcfa0e-d519-43be-822e-98656a33663b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Scene">
+      <UniqueIdentifier>{431be695-e6d4-48ba-bca0-9cebffb1c700}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
