@@ -16,6 +16,16 @@ void WorldTransform::Initialize() {
 
 	parent_ = nullptr;
 
+	translateMatrix_ = MakeTranslateMatrix(translate_ + offset_);
+
+	rotateMatrix_ = MakeRotateMatrix(rotate_);
+
+	scaleMatrix_ = MakeScaleMatrix(scale_);
+
+	localMatrix_ = (scaleMatrix_ * rotateMatrix_) * translateMatrix_;
+
+	worldMatrix_ = localMatrix_;
+
 	UpdateMatrix();
 }
 
@@ -27,20 +37,20 @@ void WorldTransform::UpdateMatrix() {
 
 	scaleMatrix_ = MakeScaleMatrix(scale_);
 
+	localMatrix_ = (scaleMatrix_ * rotateMatrix_) * translateMatrix_;
+
+	Matrix4x4 parentMatrix = MakeIdentity4x4();
+
 	if (parent_) {
 
-		Matrix4x4 pTranslateMatrix = parent_->ExtractTranslateMatrix();
-		Matrix4x4 pRotateMatrix = parent_->ExtractRotateMatrix();
-		Matrix4x4 pScaleMatrix = parent_->ExtractScaleMatrix();
+		Matrix4x4 pTranslateMatrix = parent_->GetWorldTranslateMatrix();
+		Matrix4x4 pRotateMatrix = parent_->GetWorldRotateMatrix();
+		Matrix4x4 pScaleMatrix = parent_->GetWorldScaleMatrix();
 
-		translateMatrix_ *= pTranslateMatrix;
-
-		rotateMatrix_ *= pRotateMatrix;
-
-		scaleMatrix_ *= pScaleMatrix;
+		parentMatrix = (pScaleMatrix * pRotateMatrix) * pTranslateMatrix;
 	}
 
-	worldMatrix_ = (scaleMatrix_ * rotateMatrix_) * translateMatrix_;
+	worldMatrix_ = localMatrix_ * parentMatrix;
 }
 
 void WorldTransform::DisplayImGui() {
@@ -60,43 +70,88 @@ void WorldTransform::DisplayImGui() {
 
 }
 
-const Vector3& WorldTransform::GetForward() const {
+const Vector3 WorldTransform::GetForward() const {
 
 	Vector3 result = { worldMatrix_.m[2][0],worldMatrix_.m[2][1],worldMatrix_.m[2][2] };
 
 	return result;
 }
 
-const Vector3& WorldTransform::GetUp() const {
+const Vector3 WorldTransform::GetUp() const {
 
 	Vector3 result = { worldMatrix_.m[1][0],worldMatrix_.m[1][1],worldMatrix_.m[1][2] };
 
 	return result;
 }
 
-const Vector3& WorldTransform::GetRight() const {
+const Vector3 WorldTransform::GetRight() const {
 
 	Vector3 result = { worldMatrix_.m[0][0],worldMatrix_.m[0][1],worldMatrix_.m[0][2] };
 
 	return result;
 }
 
-const Matrix4x4& WorldTransform::GetTranslateMatrix() {
+const Vector3 WorldTransform::GetWorldTranslate() const {
+
+	Vector3 result;
+
+	result.x = worldMatrix_.m[3][0];
+	result.y = worldMatrix_.m[3][1];
+	result.z = worldMatrix_.m[3][2];
+
+	return result;
+}
+
+const Vector3 WorldTransform::GetWorldRotate() const {
+
+	Vector3 result;
+
+	result.x = std::atan2f(worldMatrix_.m[2][1], worldMatrix_.m[2][2]);
+	result.y = std::atan2f(-worldMatrix_.m[2][0], std::sqrtf(worldMatrix_.m[2][1] * worldMatrix_.m[2][1] + worldMatrix_.m[2][2] * worldMatrix_.m[2][2]));
+	result.z = std::atan2f(worldMatrix_.m[1][0], worldMatrix_.m[0][0]);
+
+	return result;
+}
+
+const Vector3 WorldTransform::GetWorldScale() const {
+
+	Vector3 result;
+
+	result.x = std::sqrtf(
+		worldMatrix_.m[0][0] * worldMatrix_.m[0][0] +
+		worldMatrix_.m[1][0] * worldMatrix_.m[1][0] +
+		worldMatrix_.m[2][0] * worldMatrix_.m[2][0]
+	);
+	result.y = std::sqrtf(
+		worldMatrix_.m[0][1] * worldMatrix_.m[0][1] +
+		worldMatrix_.m[1][1] * worldMatrix_.m[1][1] +
+		worldMatrix_.m[2][1] * worldMatrix_.m[2][1]
+	);
+	result.z = std::sqrtf(
+		worldMatrix_.m[0][2] * worldMatrix_.m[0][2] +
+		worldMatrix_.m[1][2] * worldMatrix_.m[1][2] +
+		worldMatrix_.m[2][2] * worldMatrix_.m[2][2]
+	);
+
+	return result;
+}
+
+const Matrix4x4 WorldTransform::GetLocalTranslateMatrix() const {
 
 	return MakeTranslateMatrix(translate_ + offset_);
 }
 
-const Matrix4x4& WorldTransform::GetRotateMatrix() {
+const Matrix4x4 WorldTransform::GetLocalRotateMatrix() const {
 
 	return MakeRotateMatrix(rotate_);
 }
 
-const Matrix4x4& WorldTransform::GetScaleMatrix() {
+const Matrix4x4 WorldTransform::GetLocalScaleMatrix() const {
 
 	return MakeScaleMatrix(scale_);
 }
 
-const Matrix4x4& WorldTransform::ExtractTranslateMatrix() const {
+const Matrix4x4 WorldTransform::GetWorldTranslateMatrix() const {
 
 	Matrix4x4 result = MakeIdentity4x4();
 
@@ -107,7 +162,7 @@ const Matrix4x4& WorldTransform::ExtractTranslateMatrix() const {
 	return result;
 }
 
-const Matrix4x4& WorldTransform::ExtractRotateMatrix() const {
+const Matrix4x4 WorldTransform::GetWorldRotateMatrix() const {
 
 	Matrix4x4 result = MakeIdentity4x4();
 
@@ -143,7 +198,7 @@ const Matrix4x4& WorldTransform::ExtractRotateMatrix() const {
 	return result;
 }
 
-const Matrix4x4& WorldTransform::ExtractScaleMatrix() const {
+const Matrix4x4 WorldTransform::GetWorldScaleMatrix() const {
 
 	Matrix4x4 result = MakeIdentity4x4();
 
@@ -164,17 +219,6 @@ const Matrix4x4& WorldTransform::ExtractScaleMatrix() const {
 		worldMatrix_.m[1][2] * worldMatrix_.m[1][2] +
 		worldMatrix_.m[2][2] * worldMatrix_.m[2][2]
 	);
-
-	return result;
-}
-
-Vector3 WorldTransform::GetWorldTranslate(){
-
-	Vector3 result;
-
-	result.x = worldMatrix_.m[3][0];
-	result.y = worldMatrix_.m[3][1];
-	result.z = worldMatrix_.m[3][2];
 
 	return result;
 }

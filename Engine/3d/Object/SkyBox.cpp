@@ -236,5 +236,5 @@ void SkyBox::Draw() {
 
 		};
 
-	Renderer::GetInstance()->AddDraw(LayerType::Object, true, command);
+	Renderer::GetInstance()->AddDraw(LayerType::BackGround, true, command);
 }

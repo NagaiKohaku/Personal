@@ -4,8 +4,8 @@
 #include "3d/Particle/EmitterGroup.h"
 #include "3d/Camera/Camera.h"
 
-#include "Collider/AABBCollider.h"
-#include "Collider/SphereCollider.h"
+#include "3d/Collider/AABBCollider.h"
+#include "3d/Collider/SphereCollider.h"
 
 #include "Reticle.h"
 

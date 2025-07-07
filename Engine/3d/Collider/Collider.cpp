@@ -42,7 +42,7 @@ void Collider::Update() {
 	worldTransform_.UpdateMatrix();
 
 	//親オブジェクトのワールド行列からワールド座標を取得
-	Matrix4x4 parentTransform = parentTransform_->ExtractTranslateMatrix();
+	Matrix4x4 parentTransform = parentTransform_->GetWorldTranslateMatrix();
 
 	Matrix4x4 parentRotate = MakeIdentity4x4();
 
