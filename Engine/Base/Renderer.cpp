@@ -23,7 +23,7 @@ void Renderer::Initialize() {
 ///=====================================================/// 
 /// 描画
 ///=====================================================///
-void Renderer::Draw() {
+void Renderer::SwapChainDraw() {
 
 	//下位レイヤーから描画コマンドを実行
 	for (const auto& [layer, func] : drawQueue_) {
@@ -34,9 +34,6 @@ void Renderer::Draw() {
 			//描画コマンドを実行
 			func[i]();
 		}
-
-		//深度情報をクリア
-		DirectXCommon::GetInstance()->ClearDepthBuffer();
 	}
 
 	//キューの初期化
@@ -54,9 +51,6 @@ void Renderer::OffScreenDraw() {
 			//描画コマンドを実行
 			func[i]();
 		}
-
-		//深度情報をクリア
-		OffScreen::GetInstance()->ClearOffScreenDepthBuffer();
 	}
 
 	//キューの初期化

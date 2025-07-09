@@ -105,7 +105,7 @@ public:
 	/// キューブテクスチャのファイルパスのセッター
 	/// </summary>
 	/// <param name="filePath">ファイルパス</param>
-	void SetTextureCubeFilePath(const std::string& filePath) { textureCubeFilePath = filePath; }
+	void SetTextureCubeFilePath(const std::string& filePath) { textureCubeFilePath_ = filePath; }
 
 	///-------------------------------------------/// 
 	/// クラス内処理関数
@@ -158,5 +158,5 @@ private:
 	std::vector<Microsoft::WRL::ComPtr<ID3D12PipelineState>> graphicsPipelineState_;
 
 	//キューブテクスチャのファイルパス
-	std::string textureCubeFilePath;
+	std::string textureCubeFilePath_;
 };

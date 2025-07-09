@@ -206,7 +206,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		offScreen->DrawToSwapChain();
 
 		//レンダラーの描画
-		renderer->Draw();
+		renderer->SwapChainDraw();
 
 #ifdef _DEBUG
 

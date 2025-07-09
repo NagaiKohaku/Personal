@@ -5,18 +5,28 @@
 #include "Base/RTVManager.h"
 #include "Base/DSVManager.h"
 #include "Base/SrvManager.h"
+#include "3d/Camera/Camera.h"
+#include "Math/MakeMatrixMath.h"
 #include "Other/Log.h"
 
 #include "imgui.h"
 
 #include "cassert"
 
+///=====================================================/// 
+/// シングルトンインスタンスの取得
+///=====================================================///
 OffScreen* OffScreen::GetInstance() {
 	static OffScreen instance;
 	return &instance;
 }
 
+///=====================================================/// 
+/// 初期化
+///=====================================================///
 void OffScreen::Initialize() {
+
+	/// === インスタンスの取得 === ///
 
 	//DirectX基底のインスタンスを取得
 	dxCommon_ = DirectXCommon::GetInstance();
@@ -28,7 +38,9 @@ void OffScreen::Initialize() {
 	srvManager_ = SrvManager::GetInstance();
 
 	//CopyImageシェーダーを初期値に設定
-	currentShaderName_ = L"CopyImage";
+	currentShaderName_ = L"OutLine";
+
+	/// === テクスチャの生成 === ///
 
 	//レンダーテクスチャの生成
 	renderTextureResrouce_ = CreateRenderTexture(
@@ -39,43 +51,85 @@ void OffScreen::Initialize() {
 		offScreenClearColor_
 	);
 
+	//深度テクスチャの生成
+	depthTextureResource_ = CreateDepthTexture(
+		dxCommon_->GetDevice(),
+		WinApp::kClientWidth,
+		WinApp::kClientHeight,
+		DXGI_FORMAT_D24_UNORM_S8_UINT
+	);
+
+	/// === マテリアルの生成 === ///
+
+	//マテリアルリソースを作成
+	materialResource_ = dxCommon_->CreateBufferResource(sizeof(Material));
+
+	//書き込むためのアドレスを取得する
+	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));
+
+	/// === Viewの生成 === ///
+
 	//RTVの生成
 	CreateRenderTargetView();
 
 	//DSVの生成
 	CreateDepthStencilView();
 
-	//SRVの生成
-	CreateShaderResourceView();
+	//RenderTextureのSRVを生成
+	CreateRenderTextureSRV();
+
+	//DepthTextureのSRVを生成
+	CreateDepthTextureSRV();
+
+	/// === パイプライン === ///
 
 	//パイプラインの生成
 	CreatePipeline();
 }
 
+///=====================================================/// 
+/// 描画前処理
+///=====================================================///
 void OffScreen::PreDraw() {
 
-	/// === 現在のバッファをコマンドが詰めるようにする === ///
+	D3D12_RESOURCE_BARRIER barriers[2]{};
 
-	//TransitionBarrierの設定
-	D3D12_RESOURCE_BARRIER barrier{};
+	/// === RenderTextureのバリア === ///
 
 	//バリアはTransitionタイプ
-	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+	barriers[0].Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
 
 	//フラグはNone
-	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+	barriers[0].Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
 
 	//バリアを張る対象のリソース。現在のバックバッファに対して行う
-	barrier.Transition.pResource = renderTextureResrouce_.Get();
+	barriers[0].Transition.pResource = renderTextureResrouce_.Get();
 
 	//現在のバッファの状態を設定
-	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+	barriers[0].Transition.StateBefore = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
 
 	//バッファの次の命令を描画状態に設定
-	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
+	barriers[0].Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
+
+	/// === DepthTextureのバリア === ///
+
+	//バリアはTransitionタイプ
+	barriers[1].Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+
+	//フラグはNone
+	barriers[1].Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+
+	//バリアを張る対象のリソース。現在のバックバッファに対して行う
+	barriers[1].Transition.pResource = depthTextureResource_.Get();
+
+	//現在のバッファの状態を設定
+	barriers[1].Transition.StateBefore = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+
+	//バッファの次の命令を描画状態に設定
+	barriers[1].Transition.StateAfter = D3D12_RESOURCE_STATE_DEPTH_WRITE;
 
 	//TransitionBarrierを張る
-	dxCommon_->GetCommandList()->ResourceBarrier(1, &barrier);
+	dxCommon_->GetCommandList()->ResourceBarrier(2, barriers);
 
 	/// === 画面をクリアする === ///
 
@@ -110,33 +164,54 @@ void OffScreen::PreDraw() {
 
 }
 
+///=====================================================/// 
+/// 描画後処理
+///=====================================================///
 void OffScreen::PostDraw() {
 
-	/// === 現在のバッファを描画ができるようにする=== ///
+	D3D12_RESOURCE_BARRIER barriers[2]{};
 
-	//TransitionBarrierの設定
-	D3D12_RESOURCE_BARRIER barrier{};
+	/// === RenderTextureのバリア === ///
 
 	//バリアのタイプはTransition
-	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+	barriers[0].Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
 
 	//フラグはNone
-	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+	barriers[0].Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
 
 	//バリアを張る対象のリソース。現在のバックバッファに対して行う
-	barrier.Transition.pResource = renderTextureResrouce_.Get();
+	barriers[0].Transition.pResource = renderTextureResrouce_.Get();
 
 	//現在のバッファの状態を設定
-	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
+	barriers[0].Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
 
 	//テクスチャとして使える状態に設定
-	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+	barriers[0].Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+
+	/// === DepthTextureのバリア === ///
+
+	//バリアはTransitionタイプ
+	barriers[1].Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+
+	//フラグはNone
+	barriers[1].Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+
+	//バリアを張る対象のリソース。現在のバックバッファに対して行う
+	barriers[1].Transition.pResource = depthTextureResource_.Get();
+
+	//現在のバッファの状態を設定
+	barriers[1].Transition.StateBefore = D3D12_RESOURCE_STATE_DEPTH_WRITE;
+
+	//バッファの次の命令を描画状態に設定
+	barriers[1].Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
 
 	//TransitionBarrierを張る
-	dxCommon_->GetCommandList()->ResourceBarrier(1, &barrier);
-
+	dxCommon_->GetCommandList()->ResourceBarrier(2, barriers);
 }
 
+///=====================================================/// 
+/// 描画結果をSwapChainにコピー
+///=====================================================///
 void OffScreen::DrawToSwapChain() {
 
 	//ルートシグネチャの設定
@@ -148,13 +223,22 @@ void OffScreen::DrawToSwapChain() {
 	//プリミティブトポロジーを設定
 	dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	//SRVの設定
-	dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(0, srvManager_->GetGPUDescriptorHandle(srvIndex_));
+	//RenderTextureのSRVの設定
+	dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(0, srvManager_->GetGPUDescriptorHandle(renderTextureSRVIndex_));
+
+	//DepthTextureのSRVの設定
+	dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(1, srvManager_->GetGPUDescriptorHandle(depthTextureSRVIndex_));
+
+	//マテリアルデータの設定
+	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(2, materialResource_->GetGPUVirtualAddress());
 
 	//描画命令
 	dxCommon_->GetCommandList()->DrawInstanced(3, 1, 0, 0);
 }
 
+///=====================================================/// 
+/// ImGui
+///=====================================================///
 void OffScreen::ImGui() {
 
 	ImGui::Begin("OffScreen");
@@ -195,18 +279,30 @@ void OffScreen::ImGui() {
 		CreatePipeline();
 	}
 
+	if (ImGui::Button("OutLine")) {
+
+		//現在のシェーダーをOutLineに設定
+		currentShaderName_ = L"OutLine";
+
+		//パイプラインを再生成
+		CreatePipeline();
+	}
+
 	ImGui::End();
 }
 
-void OffScreen::ClearOffScreenDepthBuffer() {
+///=====================================================/// 
+/// デフォルトカメラの設定
+///=====================================================///
+void OffScreen::SetDefaultCamera(Camera* ptr) {
+	camera_ = ptr;
 
-	//DSVのメモリを確保
-	offScreenDSVHandle_ = dsvManager_->GetCPUDescriptorHandle(dsvIndex_);
-
-	//指定した深度で画面全体をクリアする
-	dxCommon_->GetCommandList()->ClearDepthStencilView(offScreenDSVHandle_, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
+	materialData_->projectionInverse = Inverse4x4(camera_->GetProjectionMatrix());
 }
 
+///=====================================================/// 
+/// ルートシグネチャの生成
+///=====================================================///
 void OffScreen::CreateRootSignature() {
 
 	HRESULT hr;
@@ -216,27 +312,49 @@ void OffScreen::CreateRootSignature() {
 	descriptionRootSignature.Flags =
 		D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 
-	//DescriptorRangeを作成
-	D3D12_DESCRIPTOR_RANGE descriptorRange[1] = {};
-	descriptorRange[0].BaseShaderRegister = 0; //0から始まる
-	descriptorRange[0].NumDescriptors = 1; //数は1つ
-	descriptorRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV; //SRVを使う
-	descriptorRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND; //Offsetを自動計算
+	/// === DescriptorRangeを作成 === ///
 
-	//RootParameterを作成
-	D3D12_ROOT_PARAMETER rootParameters[1] = {};
+	D3D12_DESCRIPTOR_RANGE textureRange[1] = {};
+	textureRange[0].BaseShaderRegister = 0; //0から始まる
+	textureRange[0].NumDescriptors = 1; //数は1つ
+	textureRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV; //SRVを使う
+	textureRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND; //Offsetを自動計算
+
+	D3D12_DESCRIPTOR_RANGE depthTextureRange[1] = {};
+	depthTextureRange[0].BaseShaderRegister = 1; //1から始まる
+	depthTextureRange[0].NumDescriptors = 1; //数は1つ
+	depthTextureRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV; //SRVを使う
+	depthTextureRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND; //Offsetを自動計算
+
+	/// === RootParameterを作成 === ///
+
+	D3D12_ROOT_PARAMETER rootParameters[3] = {};
 
 	//テクスチャ
-	rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;      //DesctiptorTableを使う
-	rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;                //PixelShaderを使う
-	rootParameters[0].DescriptorTable.pDescriptorRanges = descriptorRange;             //Tableの中身の配列を指定
-	rootParameters[0].DescriptorTable.NumDescriptorRanges = _countof(descriptorRange); //Tableで利用する数
+	rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;   //DesctiptorTableを使う
+	rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;             //PixelShaderを使う
+	rootParameters[0].DescriptorTable.pDescriptorRanges = textureRange;             //Tableの中身の配列を指定
+	rootParameters[0].DescriptorTable.NumDescriptorRanges = _countof(textureRange); //Tableで利用する数
+	rootParameters[0].Descriptor.RegisterSpace = 0;                                 //レジスタ番号0を使う
+
+	//Depthテクスチャ
+	rootParameters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;        //DesctiptorTableを使う
+	rootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;                  //PixelShaderを使う
+	rootParameters[1].DescriptorTable.pDescriptorRanges = depthTextureRange;             //Tableの中身の配列を指定
+	rootParameters[1].DescriptorTable.NumDescriptorRanges = _countof(depthTextureRange); //Tableで利用する数
+	rootParameters[1].Descriptor.RegisterSpace = 1;                                      //レジスタ番号1を使う
+
+	//マテリアル
+	rootParameters[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;    //CBVを使う
+	rootParameters[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; //PixelShaderを使う
+	rootParameters[2].Descriptor.ShaderRegister = 0;                    //レジスタ番号0とバインド
 
 	descriptionRootSignature.pParameters = rootParameters;                             //ルートパラメータ配列へのポインタ
 	descriptionRootSignature.NumParameters = _countof(rootParameters);                 //配列の長さ
 
-	//サンプラー
-	D3D12_STATIC_SAMPLER_DESC staticSamplers[1] = {};
+	/// === Samplerを作成 === ///
+
+	D3D12_STATIC_SAMPLER_DESC staticSamplers[2] = {};
 	staticSamplers[0].Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR;         //バイリニアフィルタ
 	staticSamplers[0].AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP;       //0~1の範囲外をリピート
 	staticSamplers[0].AddressV = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
@@ -246,8 +364,19 @@ void OffScreen::CreateRootSignature() {
 	staticSamplers[0].ShaderRegister = 0;                               //レジスタ番号0を使う
 	staticSamplers[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; //PixelShaderで使う
 
+	staticSamplers[1].Filter = D3D12_FILTER_MIN_MAG_MIP_POINT;          //ポイントフィルタ
+	staticSamplers[1].AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP;       //0~1の範囲外をリピート
+	staticSamplers[1].AddressV = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
+	staticSamplers[1].AddressW = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
+	staticSamplers[1].ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER;     //比較しない
+	staticSamplers[1].MaxLOD = D3D12_FLOAT32_MAX;                       //ありったけのMinMapを使う
+	staticSamplers[1].ShaderRegister = 1;                               //レジスタ番号1を使う
+	staticSamplers[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; //PixelShaderで使う
+
 	descriptionRootSignature.pStaticSamplers = staticSamplers;
 	descriptionRootSignature.NumStaticSamplers = _countof(staticSamplers);
+
+	/// === RootSignatureを作成 === ///
 
 	//シリアライズしてバイナリにする
 	Microsoft::WRL::ComPtr<ID3DBlob> signatureBlob = nullptr;
@@ -271,6 +400,9 @@ void OffScreen::CreateRootSignature() {
 	assert(SUCCEEDED(hr));
 }
 
+///=====================================================/// 
+/// パイプラインの生成
+///=====================================================///
 void OffScreen::CreatePipeline() {
 
 	HRESULT hr;
@@ -313,7 +445,7 @@ void OffScreen::CreatePipeline() {
 	/// === Shaderのコンパイル === ///
 
 	//シェーダーのディレクトリ
-	const std::wstring shaderDirectory = L"Resource/Shader/";
+	const std::wstring shaderDirectory = L"Resource/Shader/OffScreen/";
 
 	//現在のシェーダー名を元にファイル名を生成
 	const std::wstring shaderFileName = shaderDirectory + currentShaderName_;
@@ -466,6 +598,9 @@ void OffScreen::CreatePipeline() {
 
 }
 
+///=====================================================/// 
+/// RTVの生成
+///=====================================================///
 void OffScreen::CreateRenderTargetView() {
 
 	//RTVのメモリを確保
@@ -478,14 +613,10 @@ void OffScreen::CreateRenderTargetView() {
 	rtvManager_->CreateRenderTargetView(rtvIndex_, renderTextureResrouce_.Get());
 }
 
+///=====================================================/// 
+/// DSVの生成
+///=====================================================///
 void OffScreen::CreateDepthStencilView() {
-
-	//DSVリソースを生成
-	offScreenDSVResrouce_ = CreateDepthStencilBuffer(
-		dxCommon_->GetDevice(),
-		WinApp::kClientWidth,
-		WinApp::kClientHeight
-	);
 
 	//DSVのメモリを確保
 	dsvIndex_ = dsvManager_->Allocate();
@@ -494,21 +625,42 @@ void OffScreen::CreateDepthStencilView() {
 	offScreenDSVHandle_ = dsvManager_->GetCPUDescriptorHandle(dsvIndex_);
 
 	//DSVを生成
-	dsvManager_->CreateDepthStencilView(dsvIndex_, offScreenDSVResrouce_.Get());
+	dsvManager_->CreateDepthStencilView(dsvIndex_, depthTextureResource_.Get());
 }
 
-void OffScreen::CreateShaderResourceView() {
+///=====================================================/// 
+/// RenderTextureのSRVを生成
+///=====================================================///
+void OffScreen::CreateRenderTextureSRV() {
 
 	//SRVのメモリを確保
-	srvIndex_ = srvManager_->Allocate();
+	renderTextureSRVIndex_ = srvManager_->Allocate();
 
 	//SRVのハンドルを取得
-	offScreenSRVHandle_ = srvManager_->GetCPUDescriptorHandle(srvIndex_);
+	renderTextureSRVHandle_ = srvManager_->GetCPUDescriptorHandle(renderTextureSRVIndex_);
 
 	//SRVを生成
-	srvManager_->CreateRenderTargetSRV(srvIndex_, renderTextureResrouce_.Get());
+	srvManager_->CreateRenderTargetSRV(renderTextureSRVIndex_, renderTextureResrouce_.Get());
 }
 
+///=====================================================/// 
+/// DepthTextureのSRVを生成
+///=====================================================///
+void OffScreen::CreateDepthTextureSRV() {
+
+	//SRVのメモリを確保
+	depthTextureSRVIndex_ = srvManager_->Allocate();
+
+	//SRVのハンドルを取得
+	depthTextureSRVHandle_ = srvManager_->GetCPUDescriptorHandle(depthTextureSRVIndex_);
+
+	//SRVを生成
+	srvManager_->CreateDepthTextureSRV(depthTextureSRVIndex_, depthTextureResource_.Get());
+}
+
+///=====================================================/// 
+/// RenderTextureの生成
+///=====================================================///
 Microsoft::WRL::ComPtr<ID3D12Resource> OffScreen::CreateRenderTexture(Microsoft::WRL::ComPtr<ID3D12Device> device, uint32_t width, uint32_t height, DXGI_FORMAT format, const Vector4& clearColor) {
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> resource;
@@ -521,7 +673,7 @@ Microsoft::WRL::ComPtr<ID3D12Resource> OffScreen::CreateRenderTexture(Microsoft:
 	resourceDesc.Height = height;									//ウィンドウの高さ
 	resourceDesc.MipLevels = 1;										//mipmapの数
 	resourceDesc.DepthOrArraySize = 1;								//奥行き or 配列Textureの配列数
-	resourceDesc.Format = format;									//DepthSthncilとして利用可能なフォーマット
+	resourceDesc.Format = format;									//フォーマット
 	resourceDesc.SampleDesc.Count = 1;								//サンプリングカウント。1固定
 	resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;	//2次元
 	resourceDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET;	//RenderTargetとして使う通知
@@ -540,11 +692,11 @@ Microsoft::WRL::ComPtr<ID3D12Resource> OffScreen::CreateRenderTexture(Microsoft:
 
 	//RenderTargetの初期化
 	HRESULT hr = device->CreateCommittedResource(
-		&heapProperties,					//Heapの設定
-		D3D12_HEAP_FLAG_NONE,				//Heapの特殊な設定。特になし
-		&resourceDesc,						//Resourceの設定
-		D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE,		//Present状態にしておく
-		&renderTargetClearValue,			//Clear最適値
+		&heapProperties,							//Heapの設定
+		D3D12_HEAP_FLAG_NONE,						//Heapの特殊な設定。特になし
+		&resourceDesc,								//Resourceの設定
+		D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE,	//ShaderResource状態にしておく
+		&renderTargetClearValue,					//Clear最適値
 		IID_PPV_ARGS(&resource)
 	);
 
@@ -553,7 +705,10 @@ Microsoft::WRL::ComPtr<ID3D12Resource> OffScreen::CreateRenderTexture(Microsoft:
 	return resource;
 }
 
-Microsoft::WRL::ComPtr<ID3D12Resource> OffScreen::CreateDepthStencilBuffer(Microsoft::WRL::ComPtr<ID3D12Device> device, uint32_t width, uint32_t height) {
+///=====================================================/// 
+/// 深度テクスチャの生成
+///=====================================================///
+Microsoft::WRL::ComPtr<ID3D12Resource> OffScreen::CreateDepthTexture(Microsoft::WRL::ComPtr<ID3D12Device> device, uint32_t width, uint32_t height, DXGI_FORMAT format) {
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> resource;
 
@@ -561,31 +716,31 @@ Microsoft::WRL::ComPtr<ID3D12Resource> OffScreen::CreateDepthStencilBuffer(Micro
 	D3D12_RESOURCE_DESC resourceDesc{};
 
 	//リソースの設定
-	resourceDesc.Width = WinApp::kClientWidth;                    //ウィンドウの幅
-	resourceDesc.Height = WinApp::kClientHeight;                  //ウィンドウの高さ
-	resourceDesc.MipLevels = 1;                                   //mipmapの数
-	resourceDesc.DepthOrArraySize = 1;                            //奥行き or 配列Textureの配列数
-	resourceDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;          //DepthSthncilとして利用可能なフォーマット
-	resourceDesc.SampleDesc.Count = 1;                            //サンプリングカウント。1固定
-	resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;  //2次元
-	resourceDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL; //DepthStencilとして使う通知
+	resourceDesc.Width = width;										//ウィンドウの幅
+	resourceDesc.Height = height;									//ウィンドウの高さ
+	resourceDesc.MipLevels = 1;										//mipmapの数
+	resourceDesc.DepthOrArraySize = 1;								//奥行き or 配列Textureの配列数
+	resourceDesc.Format = format;									//フォーマット
+	resourceDesc.SampleDesc.Count = 1;								//サンプリングカウント。1固定
+	resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;	//2次元
+	resourceDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;	//DepthStencilとして使う通知
 
 	//利用するHeapの設定
 	D3D12_HEAP_PROPERTIES heapProperties{};
 	heapProperties.Type = D3D12_HEAP_TYPE_DEFAULT; //VRAM上に作る
 
-	//深度値のクリア設定
+	//DepthStencilのクリア設定
 	D3D12_CLEAR_VALUE depthClearValue{};
-	depthClearValue.DepthStencil.Depth = 1.0f;              //1.0f(最大値)でクリア
-	depthClearValue.Format = DXGI_FORMAT_D24_UNORM_S8_UINT; //フォーマット。Resourceと合わせる
+	depthClearValue.DepthStencil.Depth = 1.0f;
+	depthClearValue.Format = format; //フォーマット。Resourceと合わせる
 
-	//深度バッファの初期化
+	//RenderTargetの初期化
 	HRESULT hr = device->CreateCommittedResource(
-		&heapProperties,                  //Heapの設定
-		D3D12_HEAP_FLAG_NONE,             //Heapの特殊な設定。特になし
-		&resourceDesc,                    //Resourceの設定
-		D3D12_RESOURCE_STATE_DEPTH_WRITE, //深度値を書き込む状態にしておく
-		&depthClearValue,                 //Clear最適値
+		&heapProperties,							//Heapの設定
+		D3D12_HEAP_FLAG_NONE,						//Heapの特殊な設定。特になし
+		&resourceDesc,								//Resourceの設定
+		D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE,	//ShaderResource状態にしておく
+		&depthClearValue,							//Clear最適値
 		IID_PPV_ARGS(&resource)
 	);
 

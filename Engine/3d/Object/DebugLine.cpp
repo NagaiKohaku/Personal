@@ -215,7 +215,13 @@ void DebugLine::Draw(LayerType layerType) {
 		debugCommon_->GetDxCommon()->GetCommandList()->DrawIndexedInstanced(UINT(modelData_.vertices.size()), 1, 0, 0, 0);
 		};
 
-	Renderer::GetInstance()->AddDraw(layerType, true, command);
+	if (layerType == Debug) {
+
+		Renderer::GetInstance()->AddDraw(layerType, false, command);
+	} else {
+
+		Renderer::GetInstance()->AddDraw(layerType, true, command);
+	}
 }
 
 void DebugLine::SetParent(WorldTransform* parent) {

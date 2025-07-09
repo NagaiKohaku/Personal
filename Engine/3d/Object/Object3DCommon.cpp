@@ -120,8 +120,11 @@ void Object3DCommon::CommonDrawSetting() {
 	//スポットライトのデータをGPUに送信
 	spotLight_->SendDataForGPU();
 
-	//テクスチャデータの設定
-	dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(7, TextureManager::GetInstance()->GetSrvHandleGPU(textureCubeFilePath));
+	if (textureCubeFilePath_ != "") {
+
+		//テクスチャデータの設定
+		dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(7, TextureManager::GetInstance()->GetSrvHandleGPU(textureCubeFilePath_));
+	}
 }
 
 ///=====================================================/// 

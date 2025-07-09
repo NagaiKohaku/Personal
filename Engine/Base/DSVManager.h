@@ -51,6 +51,8 @@ public:
 
 	void CreateDepthStencilView(uint32_t dsvIndex, ID3D12Resource* pResource);
 
+	void CreateDepthTexture(uint32_t dsvIndex, ID3D12Resource* pResource);
+
 	///-------------------------------------------/// 
 	/// ゲッター・セッター
 	///-------------------------------------------///
