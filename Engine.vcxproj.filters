@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <FxCompile Include="Resource\Shader\CopyImage.PS.hlsl">
+    <FxCompile Include="Resource\Shader\OffScreen\CopyImage.PS.hlsl">
       <Filter>Resource\Shader</Filter>
     </FxCompile>
-    <FxCompile Include="Resource\Shader\CopyImage.VS.hlsl">
+    <FxCompile Include="Resource\Shader\OffScreen\CopyImage.VS.hlsl">
       <Filter>Resource\Shader</Filter>
     </FxCompile>
     <FxCompile Include="Resource\Shader\DebugObject.PS.hlsl">
@@ -13,10 +13,10 @@
     <FxCompile Include="Resource\Shader\DebugObject.VS.hlsl">
       <Filter>Resource\Shader</Filter>
     </FxCompile>
-    <FxCompile Include="Resource\Shader\GrayScale.PS.hlsl">
+    <FxCompile Include="Resource\Shader\OffScreen\GrayScale.PS.hlsl">
       <Filter>Resource\Shader</Filter>
     </FxCompile>
-    <FxCompile Include="Resource\Shader\GrayScale.VS.hlsl">
+    <FxCompile Include="Resource\Shader\OffScreen\GrayScale.VS.hlsl">
       <Filter>Resource\Shader</Filter>
     </FxCompile>
     <FxCompile Include="Resource\Shader\Object2d.PS.hlsl">
@@ -25,16 +25,16 @@
     <FxCompile Include="Resource\Shader\Object2d.VS.hlsl">
       <Filter>Resource\Shader</Filter>
     </FxCompile>
-    <FxCompile Include="Resource\Shader\Smooth.PS.hlsl">
+    <FxCompile Include="Resource\Shader\OffScreen\Smooth.PS.hlsl">
       <Filter>Resource\Shader</Filter>
     </FxCompile>
-    <FxCompile Include="Resource\Shader\Smooth.VS.hlsl">
+    <FxCompile Include="Resource\Shader\OffScreen\Smooth.VS.hlsl">
       <Filter>Resource\Shader</Filter>
     </FxCompile>
-    <FxCompile Include="Resource\Shader\Vignette.PS.hlsl">
+    <FxCompile Include="Resource\Shader\OffScreen\Vignette.PS.hlsl">
       <Filter>Resource\Shader</Filter>
     </FxCompile>
-    <FxCompile Include="Resource\Shader\Vignette.VS.hlsl">
+    <FxCompile Include="Resource\Shader\OffScreen\Vignette.VS.hlsl">
       <Filter>Resource\Shader</Filter>
     </FxCompile>
     <FxCompile Include="Resource\Shader\SkyBox.PS.hlsl">
@@ -55,6 +55,8 @@
     <FxCompile Include="Resource\Shader\Particle.VS.hlsl">
       <Filter>Resource\Shader</Filter>
     </FxCompile>
+    <FxCompile Include="Resource\Shader\OffScreen\OutLine.PS.hlsl" />
+    <FxCompile Include="Resource\Shader\OffScreen\OutLine.VS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -491,7 +493,7 @@
     <None Include="Application\level_editor.py">
       <Filter>Application</Filter>
     </None>
-    <None Include="Resource\Shader\CopyImage.hlsli">
+    <None Include="Resource\Shader\OffScreen\CopyImage.hlsli">
       <Filter>Resource\Shader</Filter>
     </None>
     <None Include="Resource\Shader\DebugObject.hlsli">
@@ -500,13 +502,13 @@
     <None Include="Resource\Shader\Object2d.hlsli">
       <Filter>Resource\Shader</Filter>
     </None>
-    <None Include="Resource\Shader\Smooth.hlsli">
+    <None Include="Resource\Shader\OffScreen\Smooth.hlsli">
       <Filter>Resource\Shader</Filter>
     </None>
-    <None Include="Resource\Shader\Vignette.hlsli">
+    <None Include="Resource\Shader\OffScreen\Vignette.hlsli">
       <Filter>Resource\Shader</Filter>
     </None>
-    <None Include="Resource\Shader\GrayScale.hlsli">
+    <None Include="Resource\Shader\OffScreen\GrayScale.hlsli">
       <Filter>Resource\Shader</Filter>
     </None>
     <None Include="Resource\Shader\SkyBox.hlsli">
@@ -518,6 +520,7 @@
     <None Include="Resource\Shader\Particle.hlsli">
       <Filter>Resource\Shader</Filter>
     </None>
+    <None Include="Resource\Shader\OffScreen\OutLine.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Application">

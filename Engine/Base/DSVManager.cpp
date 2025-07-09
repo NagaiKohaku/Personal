@@ -68,6 +68,25 @@ void DSVManager::CreateDepthStencilView(uint32_t dsvIndex, ID3D12Resource* pReso
 
 }
 
+void DSVManager::CreateDepthTexture(uint32_t dsvIndex, ID3D12Resource* pResource) {
+
+	//DSVの情報
+	D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc{};
+
+	//DSVの設定
+	dsvDesc.Format = DXGI_FORMAT_D32_FLOAT;     //Format。基本的にはResourceに合わせる
+	dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D; //2DTexture
+
+	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = GetCPUDescriptorHandle(dsvIndex);
+
+	//DSVHeapの先頭にDSVを作る
+	directXCommon->GetDevice()->CreateDepthStencilView(
+		pResource,
+		&dsvDesc,
+		dsvHandle
+	);
+}
+
 D3D12_CPU_DESCRIPTOR_HANDLE DSVManager::GetCPUDescriptorHandle(uint32_t index) {
 
 	//デスクリプタの最初のメモリを取得

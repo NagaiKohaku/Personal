@@ -130,8 +130,7 @@ PixelShaderOutPut main(VertexShaderOutput input)
         output.color.rgb =
         DirectionalLightReflection(input, textureColor) + 
         PointLightReflection(input, textureColor) + 
-        SpotLightReflection(input, textureColor) +
-        EnvironmentMapReflection(input);
+        SpotLightReflection(input, textureColor);
 
         output.color.a = gMaterial.color.a * textureColor.a;
     }

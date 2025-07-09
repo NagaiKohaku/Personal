@@ -79,6 +79,13 @@ public:
 	/// <param name="pResource"></param>
 	void CreateRenderTargetSRV(uint32_t srvIndex, ID3D12Resource* pResource);
 
+	/// <summary>
+	/// SRV生成(DepthTexture用)
+	/// </summary>
+	/// <param name="srvIndex"></param>
+	/// <param name="pResource"></param>
+	void CreateDepthTextureSRV(uint32_t srvIndex, ID3D12Resource* pResource);
+
 	///-------------------------------------------/// 
 	/// ゲッター・セッター
 	///-------------------------------------------///
