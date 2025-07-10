@@ -3,7 +3,7 @@
 #include "3d/Model/ModelCommon.h"
 
 ///=====================================================/// 
-/// シングルトンインスタンス
+/// シングルトンインスタンスを取得
 ///=====================================================///
 ModelManager* ModelManager::GetInstance() {
 	static ModelManager instance;
@@ -18,12 +18,18 @@ void ModelManager::Initialize() {
 	//モデル基底のインスタンスを取得
 	modelCommon_ = ModelCommon::GetInstance();
 
+	/// === 初期モデルの生成 === ///
+
+	//Planeモデルの生成
 	CreatePrimitiveModel("PlanePrimitive", PrimitiveType::PLANE, "Resource/Texture/white_128x128.png");
 
+	//Ringモデルの生成
 	CreatePrimitiveModel("RingPrimitive", PrimitiveType::RING, "Resource/Texture/white_128x128.png");
 
+	//Cylinderモデルの生成
 	CreatePrimitiveModel("CylinderPrimitive", PrimitiveType::CYLINDER, "Resource/Texture/white_128x128.png");
 
+	//Ballモデルの生成
 	CreatePrimitiveModel("SpherePrimitive", PrimitiveType::BALL, "Resource/Texture/white_128x128.png");
 
 	//球体モデルの読み込み
@@ -55,8 +61,9 @@ void ModelManager::LoadModel(const std::string& modelName, const std::string& mo
 	models_.insert(std::make_pair(modelName, std::move(model)));
 }
 
-
-
+///=====================================================/// 
+/// プリミティブモデルの生成
+///=====================================================///
 void ModelManager::CreatePrimitiveModel(const std::string& modelName, PrimitiveType type, const std::string& textureFilePath) {
 
 	//読み込み済みモデルの検索
@@ -83,15 +90,17 @@ std::unique_ptr<Model> ModelManager::FindModel(const std::string& modelName) {
 	//読み込み済みモデルの検索
 	if (models_.contains(modelName)) {
 
+		//リストからモデルを取得
 		Model* model = models_.at(modelName).get();
 
+		//プリミティブタイプを取得
 		PrimitiveType primitiveType = GetPrimitiveType(model);
 
+		//モデルを生成
 		std::unique_ptr<Model> newModel = std::make_unique<Model>();
 
-		newModel->Copy(model);
-
-		newModel->Initialize(primitiveType);
+		//初期化
+		newModel->Initialize(primitiveType, model);
 
 		//読み込みモデルを戻り値としてreturn
 		return std::move(newModel);

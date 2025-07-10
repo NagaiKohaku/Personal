@@ -3,6 +3,8 @@
 
 #include "wrl.h"
 
+/// === 前方宣言 === ///
+
 class DirectXCommon;
 
 ///=====================================================/// 
@@ -16,15 +18,23 @@ class SpriteCommon {
 public:
 
 	/// <summary>
-	/// シングルトンインスタンス
+	/// シングルトンインスタンスを取得
 	/// </summary>
 	/// <returns>インスタンス</returns>
 	static SpriteCommon* GetInstance();
 
 	/// <summary>
-	/// 初期化処理
+	/// 初期化
 	/// </summary>
 	void Initialize();
+
+	///-------------------------------------------/// 
+	/// メンバ変数
+	///-------------------------------------------///
+private:
+
+	//DirectX基底
+	DirectXCommon* dxCommon_;
 
 	///-------------------------------------------/// 
 	/// セッター・ゲッター
@@ -36,12 +46,4 @@ public:
 	/// </summary>
 	/// <returns>DirectX基底</returns>
 	DirectXCommon* GetDxCommon() const { return dxCommon_; }
-
-	///-------------------------------------------/// 
-	/// メンバ変数
-	///-------------------------------------------///
-private:
-
-	//DirectX基底
-	DirectXCommon* dxCommon_;
 };

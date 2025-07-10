@@ -16,6 +16,9 @@
 ///=====================================================///
 class Collider {
 
+	///-------------------------------------------/// 
+	/// 列挙型
+	///-------------------------------------------///
 public:
 
 	//識別タグ
@@ -29,6 +32,10 @@ public:
 		NONE
 	};
 
+
+	///-------------------------------------------/// 
+	/// メンバ関数
+	///-------------------------------------------///
 public:
 
 	/// <summary>
@@ -47,6 +54,50 @@ public:
 	/// </summary>
 	virtual void Draw();
 
+	///-------------------------------------------/// 
+	/// メンバ変数
+	///-------------------------------------------///
+protected:
+
+	//識別タグ
+	Tag tag_;
+
+	//衝突相手の識別タグ
+	Tag hitTag_;
+
+	//1フレーム前の衝突相手の識別タグ
+	Tag hitTagBefore_;
+
+	//ワールドトランスフォーム
+	WorldTransform worldTransform_;
+
+	//親オブジェクトのワールドトランスフォーム
+	WorldTransform* parentTransform_;
+
+	//デバッグオブジェクト
+	std::unique_ptr<DebugObject3D> debugObject_;
+
+	//通常カラー
+	Vector4 defaultColor_;
+
+	//衝突時カラー
+	Vector4 hitColor_;
+
+	//描画フラグ
+	bool isDraw_;
+
+	//アクティブフラグ
+	bool isActive_;
+
+	//接触フラグ
+	bool isCollision_;
+
+	//トリガーフラグ
+	bool isTrigger_;
+
+	///-------------------------------------------/// 
+	/// ゲッター・セッター
+	///-------------------------------------------///
 public:
 
 	/// <summary>
@@ -109,41 +160,4 @@ public:
 	/// <param name="isActive">フラグ</param>
 	void SetIsActive(bool isActive) { isActive_ = isActive; }
 
-protected:
-
-	//識別タグ
-	Tag tag_ = NONE;
-
-	//衝突相手の識別タグ
-	Tag hitTag_ = NONE;
-
-	//1フレーム前の衝突相手の識別タグ
-	Tag hitTagBefore_ = NONE;
-
-	//ワールドトランスフォーム
-	WorldTransform worldTransform_;
-
-	//親オブジェクトのワールドトランスフォーム
-	WorldTransform* parentTransform_;
-
-	//デバッグオブジェクト
-	std::unique_ptr<DebugObject3D> debugObject_;
-
-	//通常カラー
-	Vector4 defaultColor_;
-
-	//衝突時カラー
-	Vector4 hitColor_;
-
-	//描画フラグ
-	bool isDraw_ = false;
-
-	//アクティブフラグ
-	bool isActive_ = true;
-
-	//接触フラグ
-	bool isCollision_ = false;
-
-	//トリガーフラグ
-	bool isTrigger_ = false;
 };

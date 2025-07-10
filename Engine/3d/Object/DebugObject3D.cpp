@@ -9,12 +9,17 @@
 
 #include "Math/MakeMatrixMath.h"
 
+///=====================================================///
+/// 初期化
+///=====================================================///
 void DebugObject3D::Initialize() {
 
 	//3Dオブジェクト基底のインスタンスを取得
 	debugCommon_ = DebugObjectCommon::GetInstance();
 
-	//座標変換行列リソースを作成
+	/// === 座標変換行列リソースを作成 === ///
+
+	//リソースを作成
 	WVPResource_ = debugCommon_->GetDxCommon()->CreateBufferResource(sizeof(TransformationMatrix));
 
 	//書き込むためのアドレスを取得する
@@ -25,14 +30,20 @@ void DebugObject3D::Initialize() {
 	WVPData_->World = MakeIdentity4x4();
 	WVPData_->WorldInverseTranspose = MakeIdentity4x4();
 
+	/// === その他変数の初期化 === ///
+
 	transform_.Initialize();
 
 	//今持っているカメラをデフォルトカメラに設定
 	camera_ = debugCommon_->GetCamera();
 }
 
+///=====================================================/// 
+/// 更新
+///=====================================================///
 void DebugObject3D::Update() {
 
+	//トランスフォームの更新
 	transform_.UpdateMatrix();
 
 	//ワールドビュープロジェクション行列
@@ -54,6 +65,9 @@ void DebugObject3D::Update() {
 
 }
 
+///=====================================================/// 
+/// 描画
+///=====================================================///
 void DebugObject3D::Draw() {
 
 	//Renderクラスに渡す
@@ -72,9 +86,13 @@ void DebugObject3D::Draw() {
 		}
 		};
 
+	//レンダラーに描画コマンドを追加
 	Renderer::GetInstance()->AddDraw(LayerType::Debug, true, command);
 }
 
+///=====================================================/// 
+/// モデルの設定
+///=====================================================///
 void DebugObject3D::SetModel(const std::string& modelName) {
 
 	model_ = ModelManager::GetInstance()->FindModel(modelName);

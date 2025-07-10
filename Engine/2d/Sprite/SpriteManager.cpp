@@ -3,7 +3,7 @@
 #include "2d/Sprite/SpriteCommon.h"
 
 ///=====================================================/// 
-/// 静的インスタンスの生成
+/// シングルトンインスタンスの取得
 ///=====================================================///
 SpriteManager* SpriteManager::GetInstance() {
 	static SpriteManager instance;
@@ -32,13 +32,13 @@ void SpriteManager::LoadSprite(const std::string& spriteName,const std::string& 
 	}
 
 	//登録するためのスプライトを宣言
-	std::unique_ptr<Sprite> sprite = std::make_unique<Sprite>();
+	std::unique_ptr<Sprite> newSprite = std::make_unique<Sprite>();
 
 	//スプライトを読み込む
-	sprite->Initialize("Resource/Sprite/" + spriteFileName + ".png");
+	newSprite->Initialize("Resource/Sprite/" + spriteFileName + ".png");
 
 	//リストに登録
-	sprites_.insert(std::make_pair(spriteName, std::move(sprite)));
+	sprites_.insert(std::make_pair(spriteName, std::move(newSprite)));
 }
 
 ///=====================================================///

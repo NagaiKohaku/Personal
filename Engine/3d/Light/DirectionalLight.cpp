@@ -61,7 +61,5 @@ void DirectionalLight::DisplayImGui() {
 
 	ImGui::DragFloat("Intensity", &lightData_->intensity, 0.01f);
 
-
-
 	ImGui::End();
 }

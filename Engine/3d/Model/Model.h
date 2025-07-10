@@ -14,46 +14,14 @@
 #include "vector"
 #include "wrl.h"
 
+/// === 前方宣言 === ///
+
 class ModelCommon;
 
 ///=====================================================/// 
-/// モデル
+/// モデルクラス
 ///=====================================================///
 class Model {
-
-	///-------------------------------------------/// 
-	/// メンバ関数
-	///-------------------------------------------///
-public:
-
-	/// <summary>
-	/// 初期化処理(モデル)
-	/// </summary>
-	/// <param name="directoryPath">ディレクトリパス</param>
-	/// <param name="filename">ファイル名</param>
-	void Initialize(const std::string& directoryPath, const std::string& filename);
-
-	/// <summary>
-	/// 初期化処理(プリミティブ)
-	/// </summary>
-	/// <param name="type"></param>
-	/// <param name="textureFilePath"></param>
-	void Initialize(PrimitiveType type,const std::string& textureFilePath);
-
-	void Initialize(PrimitiveType type);
-
-	/// <summary>
-	/// 描画処理
-	/// </summary>
-	void Draw();
-
-	void DrawPrimitive();
-
-	void DrawMaterial();
-
-	void DrawTexture();
-
-	void Copy(Model* model);
 
 	///-------------------------------------------/// 
 	/// メンバ構造体
@@ -75,66 +43,56 @@ private:
 	};
 
 	///-------------------------------------------/// 
-	/// ゲッター・セッター
+	/// メンバ関数
 	///-------------------------------------------///
 public:
 
 	/// <summary>
-	/// 色のゲッター
+	/// 初期化処理(モデル)
 	/// </summary>
-	/// <returns></returns>
-	const Vector4& GetColor() { return materialData_->color; }
+	/// <param name="directoryPath">ディレクトリパス</param>
+	/// <param name="filename">ファイル名</param>
+	void Initialize(const std::string& directoryPath, const std::string& filename);
 
 	/// <summary>
-	/// 光沢度のゲッター
+	/// 初期化処理(プリミティブ)
 	/// </summary>
-	/// <returns>光沢度</returns>
-	const float GetShininess() { return materialData_->shininess; }
+	/// <param name="type">プリミティブタイプ</param>
+	/// <param name="textureFilePath">テクスチャファイルパス</param>
+	void Initialize(PrimitiveType type, const std::string& textureFilePath);
 
 	/// <summary>
-	/// 色のセッター
+	/// 初期化処理(コピー)
 	/// </summary>
-	/// <param name="color">色</param>
-	void SetColor(const Vector4& color) { materialData_->color = color; }
+	/// <param name="type">プリミティブタイプ</param>
+	/// <param name="model">モデル</param>
+	void Initialize(PrimitiveType type, Model* model);
 
 	/// <summary>
-	/// 光沢度のセッター
+	/// 描画
 	/// </summary>
-	/// <param name="shininess">光沢度</param>
-	void SetShininess(const float& shininess) { materialData_->shininess = shininess; }
+	void Draw();
 
-	PrimitiveBase* GetPrimitive() { return primitive_.get(); }
+	/// <summary>
+	/// プリミティブの描画
+	/// </summary>
+	void DrawPrimitive();
 
-	ModelData GetModelData() { return modelData_; }
+	/// <summary>
+	/// マテリアルの描画
+	/// </summary>
+	void DrawMaterial();
 
-	std::string GetTextureFilePath() const { return textureFilePath_; }
+	/// <summary>
+	/// テクスチャの描画
+	/// </summary>
+	void DrawTexture();
 
-	void SetTextureFilePath(const std::string filePath) { textureFilePath_ = filePath; }
-
-	void SetTextureIndex(const uint32_t index) { textureIndex_ = index; }
-
-	///-------------------------------------------/// 
-	/// メンバ変数
-	///-------------------------------------------///
-private:
-
-	//モデル基底
-	ModelCommon* modelCommon_;
-
-	//プリミティブ
-	std::unique_ptr<PrimitiveBase> primitive_;
-
-	//バッファリソース
-	Microsoft::WRL::ComPtr<ID3D12Resource> materialResource_ = nullptr;
-
-	//バッファリソース内のデータを指すポインタ
-	Material* materialData_ = nullptr;
-
-	ModelData modelData_;
-
-	std::string textureFilePath_;
-
-	uint32_t textureIndex_;
+	/// <summary>
+	/// モデルデータのコピー
+	/// </summary>
+	/// <param name="model">モデル</param>
+	void Copy(Model* model);
 
 	///-------------------------------------------/// 
 	/// クラス内処理関数
@@ -147,11 +105,95 @@ private:
 	/// <param name="directoryPath">ディレクトリパス</param>
 	/// <param name="filename">ファイル名</param>
 	/// <returns>モデルデータ</returns>
-	void LoadObjFile (const std::string& directoryPath, const std::string& filename);
+	void LoadObjFile(const std::string& directoryPath, const std::string& filename);
 
 	/// <summary>
 	/// マテリアルデータの読み込み
 	/// </summary>
 	void LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename);
 
+	///-------------------------------------------/// 
+	/// メンバ変数
+	///-------------------------------------------///
+private:
+
+	//モデル基底
+	ModelCommon* modelCommon_;
+
+	//プリミティブ
+	std::unique_ptr<PrimitiveBase> primitive_;
+
+	//マテリアルリソース
+	Microsoft::WRL::ComPtr<ID3D12Resource> materialResource_ = nullptr;
+
+	//マテリアルデータ
+	Material* materialData_ = nullptr;
+
+	//モデルデータ
+	ModelData modelData_;
+
+	//テクスチャファイルパス
+	std::string textureFilePath_;
+
+	//テクスチャ番号
+	uint32_t textureIndex_;
+
+	///-------------------------------------------/// 
+	/// ゲッター・セッター
+	///-------------------------------------------///
+public:
+
+	/// <summary>
+	/// プリミティブを取得
+	/// </summary>
+	/// <returns>プリミティブ</returns>
+	PrimitiveBase* GetPrimitive() { return primitive_.get(); }
+
+	/// <summary>
+	/// モデルデータの取得
+	/// </summary>
+	/// <returns>モデルデータ</returns>
+	ModelData GetModelData() { return modelData_; }
+
+	/// <summary>
+	/// テクスチャファイルパスを取得
+	/// </summary>
+	/// <returns>テクスチャファイルパス</returns>
+	std::string GetTextureFilePath() const { return textureFilePath_; }
+
+	/// <summary>
+	/// 色を取得
+	/// </summary>
+	/// <returns>色</returns>
+	const Vector4& GetColor() { return materialData_->color; }
+
+	/// <summary>
+	/// 光沢度を取得
+	/// </summary>
+	/// <returns>光沢度</returns>
+	const float GetShininess() { return materialData_->shininess; }
+
+	/// <summary>
+	/// 色の設定
+	/// </summary>
+	/// <param name="color">色</param>
+	void SetColor(const Vector4& color) { materialData_->color = color; }
+
+	/// <summary>
+	/// 光沢度の設定
+	/// </summary>
+	/// <param name="shininess">光沢度</param>
+	void SetShininess(const float& shininess) { materialData_->shininess = shininess; }
+
+	/// <summary>
+	/// テクスチャファイルパスの設定
+	/// </summary>
+	/// <param name="filePath">テクスチャファイルパス</param>
+	void SetTextureFilePath(const std::string filePath) { textureFilePath_ = filePath; }
+
+	/// <summary>
+	/// テクスチャ番号の設定
+	/// </summary>
+	/// <param name="index">テクスチャ番号</param>
+	void SetTextureIndex(const uint32_t index) { textureIndex_ = index; }
 };

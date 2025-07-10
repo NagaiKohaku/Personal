@@ -5,8 +5,13 @@
 #include "wrl.h"
 #include "vector"
 
+/// === 前方宣言 === ///
+
 class DirectXCommon;
 
+///=====================================================/// 
+/// 2Dオブジェクト基底クラス
+///=====================================================///
 class Object2DCommon {
 
 	///-------------------------------------------/// 
@@ -29,13 +34,13 @@ public:
 public:
 
 	/// <summary>
-	/// シングルトンインスタンス
+	/// シングルトンインスタンスの取得
 	/// </summary>
 	/// <returns>インスタンス</returns>
 	static Object2DCommon* GetInstance();
 
 	/// <summary>
-	/// 初期化処理
+	/// 初期化
 	/// </summary>
 	void Initialize();
 
@@ -43,23 +48,6 @@ public:
 	/// 描画前処理
 	/// </summary>
 	void CommonDrawSetting();
-
-	///-------------------------------------------/// 
-	/// セッター・ゲッター
-	///-------------------------------------------///
-public:
-
-	/// <summary>
-	/// DirectX基底のゲッター
-	/// </summary>
-	/// <returns></returns>
-	DirectXCommon* GetDxCommon() const { return dxCommon_; }
-
-	/// <summary>
-	/// ブレンドモードのセッター
-	/// </summary>
-	/// <param name="blendType">ブレンドタイプ</param>
-	void SetBlendMode(BlendType blendType) { blendMode_ = blendType; }
 
 	///-------------------------------------------/// 
 	/// クラス内処理関数
@@ -92,4 +80,22 @@ private:
 
 	//グラフィックパイプラインステート
 	std::vector<Microsoft::WRL::ComPtr<ID3D12PipelineState>> graphicsPipelineState_;
+
+	///-------------------------------------------/// 
+	/// セッター・ゲッター
+	///-------------------------------------------///
+public:
+
+	/// <summary>
+	/// DirectX基底の取得
+	/// </summary>
+	/// <returns>DirectX基底</returns>
+	DirectXCommon* GetDxCommon() const { return dxCommon_; }
+
+	/// <summary>
+	/// ブレンドモードの設定
+	/// </summary>
+	/// <param name="blendType">ブレンドタイプ</param>
+	void SetBlendMode(BlendType blendType) { blendMode_ = blendType; }
+
 };

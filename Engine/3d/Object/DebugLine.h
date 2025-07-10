@@ -13,72 +13,15 @@
 #include "wrl.h"
 
 /// === 前方宣言 === ///
+
 class DebugObjectCommon;
 
 class Camera;
 
 ///=====================================================/// 
-/// デバッグライン
+/// デバッグラインクラス
 ///=====================================================///
 class DebugLine {
-
-	///-------------------------------------------/// 
-	/// メンバ関数
-	///-------------------------------------------///
-public:
-
-	/// <summary>
-	/// コンストラクタ
-	/// </summary>
-	DebugLine();
-
-	/// <summary>
-	/// 初期化処理(方向)
-	/// </summary>
-	/// <param name="direction">ラインの方向</param>
-	/// <param name="color">ラインの色</param>
-	void Initialize(Vector3 direction,Vector4 color);
-
-	/// <summary>
-	/// 初期化処理(始点・終点)
-	/// </summary>
-	/// <param name="start">始点</param>
-	/// <param name="end">終点</param>
-	/// <param name="color">色</param>
-	void Initialize(Vector3 start, Vector3 end, Vector4 color);
-
-	/// <summary>
-	/// 更新処理
-	/// </summary>
-	void Update();
-
-	/// <summary>
-	/// 描画処理
-	/// </summary>
-	void Draw(LayerType layerType = Debug);
-
-	/// <summary>
-	/// 親オブジェクトのセット
-	/// </summary>
-	void SetParent(WorldTransform* parent);
-
-	/// <summary>
-	/// 大きさのセット
-	/// </summary>
-	/// <param name="scale">大きさ</param>
-	void SetScale(Vector3 scale);
-
-	/// <summary>
-	/// 回転角の設置
-	/// </summary>
-	/// <param name="rotate">回転角</param>
-	void SetRotate(Vector3 rotate);
-
-	/// <summary>
-	/// 色のセット
-	/// </summary>
-	/// <param name="color">色</param>
-	void SetColor(Vector4 color);
 
 	///-------------------------------------------/// 
 	/// メンバ構造体
@@ -104,6 +47,36 @@ private:
 		std::vector<VertexData> vertices;
 		std::vector<uint32_t> indexes;
 	};
+
+	///-------------------------------------------/// 
+	/// メンバ関数
+	///-------------------------------------------///
+public:
+
+	/// <summary>
+	/// 初期化(方向)
+	/// </summary>
+	/// <param name="direction">ラインの方向</param>
+	/// <param name="color">ラインの色</param>
+	void Initialize(Vector3 direction,Vector4 color);
+
+	/// <summary>
+	/// 初期化処理(始点・終点)
+	/// </summary>
+	/// <param name="start">始点</param>
+	/// <param name="end">終点</param>
+	/// <param name="color">色</param>
+	void Initialize(Vector3 start, Vector3 end, Vector4 color);
+
+	/// <summary>
+	/// 更新処理
+	/// </summary>
+	void Update();
+
+	/// <summary>
+	/// 描画処理
+	/// </summary>
+	void Draw(LayerType layerType = Debug);
 
 	///-------------------------------------------/// 
 	/// メンバ変数
@@ -137,4 +110,34 @@ private:
 
 	//モデルデータ
 	ModelData modelData_;
+
+	///-------------------------------------------/// 
+	/// ゲッター・セッター
+	///-------------------------------------------///
+public:
+
+	/// <summary>
+	/// 親オブジェクトの設定
+	/// </summary>
+	/// <param name="parent">親オブジェクトのトランスフォーム</param>
+	void SetParent(WorldTransform* parent);
+
+	/// <summary>
+	/// 大きさの設定
+	/// </summary>
+	/// <param name="scale">大きさ</param>
+	void SetScale(Vector3 scale);
+
+	/// <summary>
+	/// 回転角の設定
+	/// </summary>
+	/// <param name="rotate">回転角</param>
+	void SetRotate(Vector3 rotate);
+
+	/// <summary>
+	/// 色の設定
+	/// </summary>
+	/// <param name="color">色</param>
+	void SetColor(Vector4 color);
+
 };

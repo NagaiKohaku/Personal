@@ -9,6 +9,9 @@
 ///=====================================================///
 class AABBCollider : public Collider {
 
+	///-------------------------------------------/// 
+	/// メンバ関数
+	///-------------------------------------------///
 public:
 
 	/// <summary>
@@ -18,25 +21,32 @@ public:
 	void Initialize(WorldTransform* parent) override;
 
 	/// <summary>
-	/// 更新処理
+	/// 更新
 	/// </summary>
 	void Update() override;
 
 	/// <summary>
-	/// 描画処理
+	/// 描画
 	/// </summary>
 	void Draw() override;
 
-public:
-
-	/// <summary>
-	/// AABBのゲッター
-	/// </summary>
-	/// <returns>AABB</returns>
-	AABB GetAABB() const { return aabb_; }
-
+	///-------------------------------------------/// 
+	/// メンバ変数
+	///-------------------------------------------///
 private:
 
 	//AABB情報
 	AABB aabb_;
+
+	///-------------------------------------------/// 
+	/// ゲッター・セッター
+	///-------------------------------------------///
+public:
+
+	/// <summary>
+	/// AABBを取得
+	/// </summary>
+	/// <returns>AABB</returns>
+	AABB GetAABB() const { return aabb_; }
+
 };

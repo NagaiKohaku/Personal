@@ -13,11 +13,26 @@ void Collider::Initialize(WorldTransform* parent) {
 	//親オブジェクトのワールドトランスフォームを取得
 	parentTransform_ = parent;
 
+	//識別タグの初期化
+	tag_ = NONE;
+
+	//衝突相手の識別タグの初期化
+	hitTag_ = NONE;
+
+	//1フレーム前の接触相手の識別タグの初期化
+	hitTagBefore_ = NONE;
+
 	//描画フラグの設定
 	isDraw_ = false;
 
 	//アクティブフラグの設定
 	isActive_ = true;
+
+	//接触フラグの設定
+	isCollision_ = false;
+
+	//トリガーフラグの設定
+	isTrigger_ = false;
 
 	//通常カラーの設定
 	defaultColor_ = { 1.0f,1.0f,1.0f,1.0f };
@@ -38,6 +53,8 @@ void Collider::Initialize(WorldTransform* parent) {
 ///=====================================================///
 void Collider::Update() {
 
+	/// === トランスフォームの更新 === ///
+
 	//ワールドトランスフォームの更新
 	worldTransform_.UpdateMatrix();
 
@@ -55,6 +72,8 @@ void Collider::Update() {
 
 	//デバッグオブジェクトの更新
 	debugObject_->Update();
+
+	/// === 接触判定の更新 === ///
 
 	//タグが更新されていなければ
 	if (hitTag_ != NONE) {

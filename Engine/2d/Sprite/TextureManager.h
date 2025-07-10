@@ -12,10 +12,11 @@
 #include "wrl.h"
 
 /// === 前方宣言 === ///
+
 class SrvManager;
 
 ///=====================================================/// 
-/// テクスチャマネージャー
+/// テクスチャマネージャークラス
 ///=====================================================///
 class TextureManager {
 
@@ -49,13 +50,13 @@ private:
 public:
 
 	/// <summary>
-	/// シングルトンインスタンス
+	/// シングルトンインスタンスを取得
 	/// </summary>
 	/// <returns>インスタンス</returns>
 	static TextureManager* GetInstance();
 
 	/// <summary>
-	/// 初期化処理
+	/// 初期化
 	/// </summary>
 	void Initialize();
 
@@ -64,32 +65,6 @@ public:
 	/// </summary>
 	/// <param name="modelName">ファイルパス</param>
 	void LoadTexture(const std::string& filePath);
-
-	///-------------------------------------------/// 
-	/// ゲッター・セッター
-	///-------------------------------------------///
-public:
-
-	/// <summary>
-	/// メタデータのゲッター
-	/// </summary>
-	/// <param name="modelName">ファイルパス</param>
-	/// <returns>メタデータ</returns>
-	const DirectX::TexMetadata& GetMetaData(const std::string& filePath);
-
-	/// <summary>
-	/// SRV番号のゲッター
-	/// </summary>
-	/// <param name="modelName">ファイルパス</param>
-	/// <returns>SRV番号</returns>
-	uint32_t GetSrvIndex(const std::string& filePath);
-
-	/// <summary>
-	/// GPUデスクリプタのゲッター
-	/// </summary>
-	/// <param name="modelName">ファイルパス</param>
-	/// <returns>GPUデスクリプタ</returns>
-	D3D12_GPU_DESCRIPTOR_HANDLE GetSrvHandleGPU(const std::string& filePath);
 
 	///-------------------------------------------/// 
 	/// クラス内処理関数
@@ -115,10 +90,6 @@ private:
 		const DirectX::ScratchImage& mipImages
 	);
 
-	void LoadPngData(const std::string& filePath);
-
-	void LoadDDSData(const std::string& filePath);
-
 	///-------------------------------------------/// 
 	/// メンバ変数
 	///-------------------------------------------///
@@ -131,6 +102,32 @@ private:
 	SrvManager* srvManager_ = nullptr;
 
 	//テクスチャデータリスト
-	std::unordered_map<std::string, TextureData> textureDatas;
+	std::unordered_map<std::string, TextureData> textureData_;
+
+	///-------------------------------------------/// 
+	/// ゲッター・セッター
+	///-------------------------------------------///
+public:
+
+	/// <summary>
+	/// メタデータを取得
+	/// </summary>
+	/// <param name="modelName">ファイルパス</param>
+	/// <returns>メタデータ</returns>
+	const DirectX::TexMetadata& GetMetaData(const std::string& filePath);
+
+	/// <summary>
+	/// SRV番号を取得
+	/// </summary>
+	/// <param name="modelName">ファイルパス</param>
+	/// <returns>SRV番号</returns>
+	uint32_t GetSrvIndex(const std::string& filePath);
+
+	/// <summary>
+	/// GPUデスクリプタを取得
+	/// </summary>
+	/// <param name="modelName">ファイルパス</param>
+	/// <returns>GPUデスクリプタ</returns>
+	D3D12_GPU_DESCRIPTOR_HANDLE GetSrvHandleGPU(const std::string& filePath);
 
 };

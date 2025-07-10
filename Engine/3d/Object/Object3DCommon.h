@@ -14,12 +14,13 @@
 #include "string"
 
 /// === 前方宣言 === //
+
 class DirectXCommon;
 
 class Camera;
 
 ///=====================================================/// 
-/// 3Dオブジェクト基底
+/// 3Dオブジェクト基底クラス
 ///=====================================================///
 class Object3DCommon {
 
@@ -73,41 +74,6 @@ public:
 	void CommonDrawSetting();
 
 	///-------------------------------------------/// 
-	/// セッター・ゲッター
-	///-------------------------------------------///
-public:
-
-	/// <summary>
-	/// DirectX基底のゲッター
-	/// </summary>
-	/// <returns></returns>
-	DirectXCommon* GetDxCommon() const { return dxCommon_; }
-
-	/// <summary>
-	/// デフォルトカメラのゲッター
-	/// </summary>
-	/// <returns></returns>
-	Camera* GetDefaultCamera() const { return defaultCamera_; }
-
-	/// <summary>
-	/// デフォルトカメラのセッター
-	/// </summary>
-	/// <param name="camera">カメラ</param>
-	void SetDefaultCamera(Camera* camera) { defaultCamera_ = camera; }
-
-	/// <summary>
-	/// ブレンドモードのセッター
-	/// </summary>
-	/// <param name="blendType">ブレンドタイプ</param>
-	void SetBlendMode(BlendType blendType) { blendMode_ = blendType; }
-
-	/// <summary>
-	/// キューブテクスチャのファイルパスのセッター
-	/// </summary>
-	/// <param name="filePath">ファイルパス</param>
-	void SetTextureCubeFilePath(const std::string& filePath) { textureCubeFilePath_ = filePath; }
-
-	///-------------------------------------------/// 
 	/// クラス内処理関数
 	///-------------------------------------------///
 private:
@@ -159,4 +125,40 @@ private:
 
 	//キューブテクスチャのファイルパス
 	std::string textureCubeFilePath_;
+
+	///-------------------------------------------/// 
+	/// セッター・ゲッター
+	///-------------------------------------------///
+public:
+
+	/// <summary>
+	/// DirectX基底を取得
+	/// </summary>
+	/// <returns></returns>
+	DirectXCommon* GetDxCommon() const { return dxCommon_; }
+
+	/// <summary>
+	/// デフォルトカメラを取得
+	/// </summary>
+	/// <returns></returns>
+	Camera* GetDefaultCamera() const { return defaultCamera_; }
+
+	/// <summary>
+	/// デフォルトカメラの設定
+	/// </summary>
+	/// <param name="camera">カメラ</param>
+	void SetDefaultCamera(Camera* camera) { defaultCamera_ = camera; }
+
+	/// <summary>
+	/// ブレンドモードの設定
+	/// </summary>
+	/// <param name="blendType">ブレンドタイプ</param>
+	void SetBlendMode(BlendType blendType) { blendMode_ = blendType; }
+
+	/// <summary>
+	/// キューブテクスチャのファイルパスの設定
+	/// </summary>
+	/// <param name="filePath">ファイルパス</param>
+	void SetTextureCubeFilePath(const std::string& filePath) { textureCubeFilePath_ = filePath; }
+
 };

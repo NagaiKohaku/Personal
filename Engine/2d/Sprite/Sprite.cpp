@@ -10,42 +10,63 @@
 #include "imgui.h"
 
 ///=====================================================/// 
-/// 初期化処理
+/// 初期化
 ///=====================================================///
 void Sprite::Initialize(const std::string& fileName) {
+
+	/// === インスタンスの取得 === ///
 
 	//スプライト基底のインスタンスを取得
 	spriteCommon_ = SpriteCommon::GetInstance();
 
-	//テクスチャパスの設定
-	texturePath_ = fileName;
+	/// === 頂点リソースの作成 === ///
 
-	//頂点リソースを作成
+	//リソースを作成
 	vertexResource_ = spriteCommon_->GetDxCommon()->CreateBufferResource(sizeof(VertexData) * 4);
-
-	//頂点インデックスリソースを作成
-	IndexResource_ = spriteCommon_->GetDxCommon()->CreateBufferResource(sizeof(uint32_t) * 6);
-
-	//マテリアルリソースを作成
-	materialResource_ = spriteCommon_->GetDxCommon()->CreateBufferResource(sizeof(Material));
 
 	//リソースの先頭のアドレスを取得する
 	vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
-	indexBufferView_.BufferLocation = IndexResource_->GetGPUVirtualAddress();
 
 	//使用するリソースのサイズを設定
 	vertexBufferView_.SizeInBytes = sizeof(VertexData) * 4;
-	indexBufferView_.SizeInBytes = sizeof(uint32_t) * 6;
 
 	//1頂点当たりのサイズを設定
 	vertexBufferView_.StrideInBytes = sizeof(VertexData);
+
+	//書き込むためのアドレスを取得する
+	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData_));
+
+	/// === 頂点インデックスリソースの作成 === ///
+
+	//リソースを作成
+	IndexResource_ = spriteCommon_->GetDxCommon()->CreateBufferResource(sizeof(uint32_t) * 6);
+
+	//リソースの先頭のアドレスを取得する
+	indexBufferView_.BufferLocation = IndexResource_->GetGPUVirtualAddress();
+
+	//使用するリソースのサイズを設定
+	indexBufferView_.SizeInBytes = sizeof(uint32_t) * 6;
 
 	//フォーマットを設定
 	indexBufferView_.Format = DXGI_FORMAT_R32_UINT;
 
 	//書き込むためのアドレスを取得する
-	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData_));
 	IndexResource_->Map(0, nullptr, reinterpret_cast<void**>(&indexData_));
+
+	//頂点インデックスのデータを書き込む
+	indexData_[0] = 0;
+	indexData_[1] = 1;
+	indexData_[2] = 2;
+	indexData_[3] = 1;
+	indexData_[4] = 3;
+	indexData_[5] = 2;
+
+	/// === マテリアルリソースの作成 === ///
+
+	//リソースを作成
+	materialResource_ = spriteCommon_->GetDxCommon()->CreateBufferResource(sizeof(Material));
+
+	//書き込むためのアドレスを取得する
 	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));
 
 	//マテリアルデータの設定
@@ -53,15 +74,41 @@ void Sprite::Initialize(const std::string& fileName) {
 	materialData_->enableLighting = false;
 	materialData_->uvTransform = MakeIdentity4x4();
 
+	/// === テクスチャの読み込み === ///
+
+	//テクスチャパスの設定
+	texturePath_ = fileName;
+
 	//テクスチャをロードしてテクスチャ番号を取得
 	TextureManager::GetInstance()->LoadTexture(texturePath_);
 
 	//サイズをテクスチャの解像度に合わせる
 	AdjustTextureSize();
+
+	/// === その他変数の初期化 === ///
+
+	//座標の初期化
+	translation_ = Vector2(0.0f, 0.0f);
+
+	//角度の初期化
+	rotation_ = 0.0f;
+
+	//アンカーポイントの初期化
+	anchorPoint_ = Vector2(0.5f, 0.5f);
+
+	//X軸の反転フラグの初期化
+	isFlipX_ = false;
+
+	//Y軸の反転フラグの初期化
+	isFlipY_ = false;
+
+	//テクスチャの左上座標の初期化
+	textureLeftTop_ = Vector2(0.0f, 0.0f);
+
 }
 
 ///=====================================================/// 
-/// 更新処理
+/// 更新
 ///=====================================================///
 void Sprite::Update() {
 
@@ -105,18 +152,10 @@ void Sprite::Update() {
 	//右上
 	vertexData_[3].position = { right,top,0.0f,1.0f };
 	vertexData_[3].texcoord = { texRight,texTop };
-
-	//頂点インデックスのデータを書き込む
-	indexData_[0] = 0;
-	indexData_[1] = 1;
-	indexData_[2] = 2;
-	indexData_[3] = 1;
-	indexData_[4] = 3;
-	indexData_[5] = 2;
 }
 
 ///=====================================================/// 
-/// 描画処理
+/// 描画
 ///=====================================================///
 void Sprite::Draw() {
 
@@ -141,7 +180,7 @@ void Sprite::Draw() {
 ///=====================================================///
 void Sprite::DisplayImGui() {
 
-	ImGui::DragFloat2("Position", &position_.x, 1.0f);
+	ImGui::DragFloat2("Position", &translation_.x, 1.0f);
 	ImGui::SliderAngle("Rotation", &rotation_);
 	ImGui::DragFloat2("Size", &size_.x, 0.1f);
 	ImGui::ColorEdit4("Color", &materialData_->color.x);

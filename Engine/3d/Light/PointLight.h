@@ -6,10 +6,12 @@
 #include "d3dx12.h"
 #include "wrl.h"
 
+/// === 前方宣言 === ///
+
 class DirectXCommon;
 
 ///=====================================================/// 
-/// 点光源ライト
+/// 点光源ライトクラス
 ///=====================================================///
 class PointLight {
 
@@ -54,21 +56,6 @@ public:
 	void DisplayImGui();
 
 	///-------------------------------------------/// 
-	/// ゲッター・セッター
-	///-------------------------------------------///
-public:
-
-	void SetPosition(const Vector3& position) { lightData_->position = position; }
-
-	void SetColor(const Vector4& color) { lightData_->color = color; }
-
-	void SetIntensity(float intensity) { lightData_->intensity = intensity; }
-
-	void SetRadius(float radius) { lightData_->radius = radius; }
-
-	void SetDecay(float decay) { lightData_->decay = decay; }
-
-	///-------------------------------------------/// 
 	/// メンバ変数
 	///-------------------------------------------///
 private:
@@ -81,4 +68,39 @@ private:
 
 	//光源データ
 	LightData* lightData_ = nullptr;
+
+	///-------------------------------------------/// 
+	/// ゲッター・セッター
+	///-------------------------------------------///
+public:
+
+	/// <summary>
+	/// 座標の設定
+	/// </summary>
+	/// <param name="position">座標</param>
+	void SetPosition(const Vector3& position) { lightData_->position = position; }
+
+	/// <summary>
+	/// 色の設定
+	/// </summary>
+	/// <param name="color">色</param>
+	void SetColor(const Vector4& color) { lightData_->color = color; }
+
+	/// <summary>
+	/// 照度の設定
+	/// </summary>
+	/// <param name="intensity">照度</param>
+	void SetIntensity(float intensity) { lightData_->intensity = intensity; }
+
+	/// <summary>
+	/// 半径の設定
+	/// </summary>
+	/// <param name="radius">半径</param>
+	void SetRadius(float radius) { lightData_->radius = radius; }
+
+	/// <summary>
+	/// 減衰率の設定
+	/// </summary>
+	/// <param name="decay">減衰率</param>
+	void SetDecay(float decay) { lightData_->decay = decay; }
 };

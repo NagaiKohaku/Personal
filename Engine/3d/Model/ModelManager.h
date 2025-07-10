@@ -9,7 +9,7 @@
 class ModelCommon;
 
 ///=====================================================/// 
-/// モデルマネージャ
+/// モデルマネージャクラス
 ///=====================================================///
 class ModelManager {
 
@@ -19,13 +19,13 @@ class ModelManager {
 public:
 
 	/// <summary>
-	/// シングルトンインスタンス
+	/// シングルトンインスタンスを取得
 	/// </summary>
 	/// <returns>インスタンス</returns>
 	static ModelManager* GetInstance();
 
 	/// <summary>
-	/// 初期化処理
+	/// 初期化
 	/// </summary>
 	void Initialize();
 

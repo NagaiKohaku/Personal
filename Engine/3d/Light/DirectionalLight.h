@@ -6,10 +6,12 @@
 #include "d3dx12.h"
 #include "wrl.h"
 
+/// === 前方宣言 === ///
+
 class DirectXCommon;
 
 ///=====================================================/// 
-/// 平行光源ライト
+/// 平行光源ライトクラス
 ///=====================================================///
 class DirectionalLight {
 
@@ -51,17 +53,6 @@ public:
 	void DisplayImGui();
 
 	///-------------------------------------------/// 
-	/// ゲッター・セッター
-	///-------------------------------------------///
-public:
-
-	void SetColor(const Vector4& color) { lightData_->color = color; }
-
-	void SetDirection(const Vector3& direction) { lightData_->direction = direction; }
-
-	void SetIntensity(float intensity) { lightData_->intensity = intensity; }
-
-	///-------------------------------------------/// 
 	/// メンバ変数
 	///-------------------------------------------///
 private:
@@ -74,4 +65,28 @@ private:
 
 	//光源データ
 	LightData* lightData_ = nullptr;
+
+	///-------------------------------------------/// 
+	/// ゲッター・セッター
+	///-------------------------------------------///
+public:
+
+	/// <summary>
+	/// 色の設定
+	/// </summary>
+	/// <param name="color">色</param>
+	void SetColor(const Vector4& color) { lightData_->color = color; }
+
+	/// <summary>
+	/// 方向の設定
+	/// </summary>
+	/// <param name="direction">方向</param>
+	void SetDirection(const Vector3& direction) { lightData_->direction = direction; }
+
+	/// <summary>
+	/// 照度の設定
+	/// </summary>
+	/// <param name="intensity">照度</param>
+	void SetIntensity(float intensity) { lightData_->intensity = intensity; }
+
 };

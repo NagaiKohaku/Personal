@@ -7,10 +7,13 @@
 #include "Math/Sphere.h"
 
 ///=====================================================/// 
-/// 球体コライダー
+/// 球体コライダークラス
 ///=====================================================///
 class SphereCollider : public Collider{
 
+	///-------------------------------------------/// 
+	/// メンバ関数
+	///-------------------------------------------///
 public:
 
 	/// <summary>
@@ -34,29 +37,34 @@ public:
 	/// </summary>
 	void Remove();
 
-public:
-
-	/// <summary>
-	/// Sphereのゲッター
-	/// </summary>
-	/// <returns>Sphere</returns>
-	Sphere GetSphere() const { return sphere_; }
-
-	/// <summary>
-	/// Sphereの中心のセッター
-	/// </summary>
-	/// <param name="center">座標</param>
-	void SetCenter(Vector3 center) { sphere_.center = center; }
-
-	/// <summary>
-	/// Sphereの大きさのセッター
-	/// </summary>
-	/// <param name="radius">半径</param>
-	void SetRadius(float radius) { sphere_.radius = radius; }
-
+	///-------------------------------------------/// 
+	/// メンバ変数
+	///-------------------------------------------///
 private:
 
 	//Sphere情報
 	Sphere sphere_;
 
+	///-------------------------------------------/// 
+	/// ゲッター・セッター
+	///-------------------------------------------///
+public:
+
+	/// <summary>
+	/// Sphereを取得
+	/// </summary>
+	/// <returns>Sphere</returns>
+	Sphere GetSphere() const { return sphere_; }
+
+	/// <summary>
+	/// Sphereの中心の設定
+	/// </summary>
+	/// <param name="center">座標</param>
+	void SetCenter(Vector3 center) { sphere_.center = center; }
+
+	/// <summary>
+	/// Sphereの大きさの設定
+	/// </summary>
+	/// <param name="radius">半径</param>
+	void SetRadius(float radius) { sphere_.radius = radius; }
 };

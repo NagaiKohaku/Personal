@@ -9,9 +9,9 @@
 
 #include "string"
 
-DebugLine::DebugLine() {
-}
-
+///=====================================================/// 
+/// 初期化(方向)
+///=====================================================///
 void DebugLine::Initialize(Vector3 direction, Vector4 color) {
 
 	//デバッグオブジェクト基底のインスタンスを取得
@@ -90,6 +90,9 @@ void DebugLine::Initialize(Vector3 direction, Vector4 color) {
 	transform_.Initialize();
 }
 
+///=====================================================/// 
+/// 初期化処理(始点・終点)
+///=====================================================///
 void DebugLine::Initialize(Vector3 start, Vector3 end, Vector4 color) {
 
 	//デバッグオブジェクト基底のインスタンスを取得
@@ -168,6 +171,9 @@ void DebugLine::Initialize(Vector3 start, Vector3 end, Vector4 color) {
 	transform_.Initialize();
 }
 
+///=====================================================/// 
+/// 更新
+///=====================================================///
 void DebugLine::Update() {
 
 	//ワールドトランスフォームの更新
@@ -189,6 +195,9 @@ void DebugLine::Update() {
 	wvpData_->WVP = worldViewProjectionMatrix;
 }
 
+///=====================================================/// 
+/// 描画
+///=====================================================///
 void DebugLine::Draw(LayerType layerType) {
 
 	//Renderクラスに渡す
@@ -217,28 +226,42 @@ void DebugLine::Draw(LayerType layerType) {
 
 	if (layerType == Debug) {
 
+		//DebugであればSwapChainの描画を行う
 		Renderer::GetInstance()->AddDraw(layerType, false, command);
 	} else {
 
+		//それ以外のレイヤーであればオフスクリーンの描画を行う
 		Renderer::GetInstance()->AddDraw(layerType, true, command);
 	}
 }
 
+///=====================================================/// 
+/// 親オブジェクトの設定
+///=====================================================///
 void DebugLine::SetParent(WorldTransform* parent) {
 
 	transform_.SetParent(parent);
 }
 
+///=====================================================/// 
+/// 大きさの設定
+///=====================================================///
 void DebugLine::SetScale(Vector3 scale) {
 
 	transform_.scale_ = scale;
 }
 
+///=====================================================/// 
+/// 回転角の設定
+///=====================================================///
 void DebugLine::SetRotate(Vector3 rotate) {
 
 	transform_.rotate_ = rotate;
 }
 
+///=====================================================/// 
+/// 色の設定
+///=====================================================///
 void DebugLine::SetColor(Vector4 color) {
 
 	materialData_->color = color;

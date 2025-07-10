@@ -25,58 +25,22 @@ void Model::Initialize(const std::string& directoryPath, const std::string& file
 
 	/// === プリミティブの生成 === ///
 
+	//生成
 	primitive_ = std::make_unique<ModelMesh>();
 
+	//頂点数の設定
 	primitive_->SetVertexCount(uint32_t(modelData_.vertices.size()));
+
+	//インデックス数の設定
 	primitive_->SetIndexCount(uint32_t(modelData_.indices.size()));
 
+	//初期化
 	primitive_->Initialize();
 
+	//頂点データとインデックスデータのコピー
 	primitive_->CopyMeshData(modelData_.indices, modelData_.vertices);
 
-	/// === マテリアルリソース === ///
-
-	//マテリアルリソースを作成
-	materialResource_ = modelCommon_->GetDxCommon()->CreateBufferResource(sizeof(Material));
-
-	//書き込むためのアドレスを取得する
-	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));
-
-	//マテリアルデータの設定
-	materialData_->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-	materialData_->enableLighting = true;
-	materialData_->uvTransform = MakeIdentity4x4();
-	materialData_->shininess = 50.0f;
-
-	//マテリアルの読み込み
-	TextureManager::GetInstance()->LoadTexture(textureFilePath_);
-}
-
-///=====================================================///
-/// 初期化処理(プリミティブ)
-/// =====================================================///
-void Model::Initialize(PrimitiveType type, const std::string& textureFilePath) {
-
-	//モデル基底のインスタンスを取得
-	modelCommon_ = ModelCommon::GetInstance();
-
-	//プリミティブの生成
-	primitive_ = CreatePrimitive(type);
-
-	//プリミティブの初期化
-	primitive_->Initialize();
-
-	for (int i = 0; i < primitive_->GetVertexCount(); i++) {
-
-		modelData_.vertices.push_back(primitive_->GetVertexData()[i]);
-	}
-
-	for (int i = 0; i < primitive_->GetIndexCount(); i++) {
-		modelData_.indices.push_back(primitive_->GetIndexData()[i]);
-	}
-
-	//テクスチャファイルパスの設定
-	textureFilePath_ = textureFilePath;
+	/// === マテリアルリソースの生成 === ///
 
 	//マテリアルリソースを作成
 	materialResource_ = modelCommon_->GetDxCommon()->CreateBufferResource(sizeof(Material));
@@ -94,20 +58,85 @@ void Model::Initialize(PrimitiveType type, const std::string& textureFilePath) {
 	TextureManager::GetInstance()->LoadTexture(textureFilePath_);
 }
 
-void Model::Initialize(PrimitiveType type) {
+///=====================================================///
+/// 初期化処理(プリミティブ)
+/// =====================================================///
+void Model::Initialize(PrimitiveType type, const std::string& textureFilePath) {
 
 	//モデル基底のインスタンスを取得
 	modelCommon_ = ModelCommon::GetInstance();
 
-	//プリミティブの生成
+	/// === プリミティブの生成 === ///
+
+	//生成
 	primitive_ = CreatePrimitive(type);
 
-	primitive_->SetVertexCount(uint32_t(modelData_.vertices.size()));
-	primitive_->SetIndexCount(uint32_t(modelData_.indices.size()));
-
+	//初期化
 	primitive_->Initialize();
 
+	//頂点データの設定
+	for (uint32_t i = 0; i < primitive_->GetVertexCount(); i++) {
+
+		modelData_.vertices.push_back(primitive_->GetVertexData()[i]);
+	}
+
+	//インデックスデータの設定
+	for (uint32_t i = 0; i < primitive_->GetIndexCount(); i++) {
+
+		modelData_.indices.push_back(primitive_->GetIndexData()[i]);
+	}
+
+	/// === マテリアルデータの生成 === ///
+
+	//マテリアルリソースを作成
+	materialResource_ = modelCommon_->GetDxCommon()->CreateBufferResource(sizeof(Material));
+
+	//書き込むためのアドレスを取得する
+	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));
+
+	//マテリアルデータの設定
+	materialData_->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+	materialData_->enableLighting = true;
+	materialData_->uvTransform = MakeIdentity4x4();
+	materialData_->shininess = 50.0f;
+
+	//テクスチャファイルパスの設定
+	textureFilePath_ = textureFilePath;
+
+	//テクスチャの読み込み
+	TextureManager::GetInstance()->LoadTexture(textureFilePath_);
+}
+
+///=====================================================/// 
+/// 初期化処理(コピー)
+///=====================================================///
+void Model::Initialize(PrimitiveType type, Model* model) {
+
+	//モデル基底のインスタンスを取得
+	modelCommon_ = ModelCommon::GetInstance();
+
+	/// === モデルデータのコピー === ///
+
+	Copy(model);
+
+	/// === プリミティブの生成 === ///
+
+	//生成
+	primitive_ = CreatePrimitive(type);
+
+	//頂点数を設定
+	primitive_->SetVertexCount(uint32_t(modelData_.vertices.size()));
+
+	//インデックス数を設定
+	primitive_->SetIndexCount(uint32_t(modelData_.indices.size()));
+
+	//初期化
+	primitive_->Initialize();
+
+	//頂点データとインデックスデータのコピー
 	primitive_->CopyMeshData(modelData_.indices, modelData_.vertices);
+
+	/// === マテリアルリソースの生成 === ///
 
 	//マテリアルリソースを作成
 	materialResource_ = modelCommon_->GetDxCommon()->CreateBufferResource(sizeof(Material));
@@ -123,7 +152,7 @@ void Model::Initialize(PrimitiveType type) {
 }
 
 ///=====================================================/// 
-/// 描画処理
+/// 描画
 ///=====================================================///
 void Model::Draw() {
 
@@ -141,24 +170,36 @@ void Model::Draw() {
 
 }
 
+///=====================================================/// 
+/// プリミティブの描画
+///=====================================================///
 void Model::DrawPrimitive() {
 
 	//プリミティブの設定
 	primitive_->Draw();
 }
 
+///=====================================================/// 
+/// マテリアルの描画
+///=====================================================///
 void Model::DrawMaterial() {
 
 	//マテリアルデータの設定
 	modelCommon_->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource_.Get()->GetGPUVirtualAddress());
 }
 
+///=====================================================/// 
+/// テクスチャの描画
+///=====================================================///
 void Model::DrawTexture() {
 
 	//テクスチャデータの設定
 	modelCommon_->GetDxCommon()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSrvHandleGPU(textureFilePath_));
 }
 
+///=====================================================/// 
+/// モデルデータのコピー
+///=====================================================///
 void Model::Copy(Model* model) {
 
 	modelData_ = model->modelData_;
@@ -171,9 +212,7 @@ void Model::Copy(Model* model) {
 ///=====================================================///
 void Model::LoadObjFile(const std::string& directoryPath, const std::string& filename) {
 
-	///-------------------------------------------/// 
-	/// ローカル変数
-	///-------------------------------------------///
+	/// === ローカル変数 === ///
 
 	//三角面の頂点データ
 	PrimitiveBase::VertexData triangle[3];
@@ -190,9 +229,7 @@ void Model::LoadObjFile(const std::string& directoryPath, const std::string& fil
 	//ファイルから読んだ1行を格納するもの
 	std::string line;
 
-	///-------------------------------------------/// 
-	/// objファイルからデータを読み込む
-	///-------------------------------------------///
+	/// === objファイルからデータを読み込む === ///
 
 	//ファイルを開く
 	std::ifstream file(directoryPath + "/" + filename);

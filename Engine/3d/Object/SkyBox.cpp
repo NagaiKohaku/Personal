@@ -10,7 +10,12 @@
 
 #include "imgui.h"
 
+///=====================================================/// 
+/// 初期化
+///=====================================================///
 void SkyBox::Initialize(std::string filePath) {
+
+	/// === シングルトンインスタンスの取得 === ///
 
 	skyBoxCommon_ = SkyBoxCommon::GetInstance();
 
@@ -184,6 +189,9 @@ void SkyBox::Initialize(std::string filePath) {
 	camera_ = skyBoxCommon_->GetCamera();
 }
 
+///=====================================================/// 
+/// 更新
+///=====================================================///
 void SkyBox::Update() {
 
 	transform_.UpdateMatrix();
@@ -206,6 +214,9 @@ void SkyBox::Update() {
 	WVPData_->WorldInverseTranspose = Inverse4x4(transform_.GetWorldMatrix());
 }
 
+///=====================================================/// 
+/// 描画
+///=====================================================///
 void SkyBox::Draw() {
 
 	//Renderクラスに渡す

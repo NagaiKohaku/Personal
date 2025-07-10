@@ -11,12 +11,20 @@
 #include "stdint.h"
 #include "string"
 
+/// === 前方宣言 === ///
+
 class SkyBoxCommon;
 
 class Camera;
 
+///=====================================================/// 
+/// SkyBoxクラス
+///=====================================================///
 class SkyBox {
 
+	///-------------------------------------------/// 
+	/// メンバ構造体
+	///-------------------------------------------///
 private:
 
 	//頂点データ
@@ -24,6 +32,22 @@ private:
 		Vector4 position;
 		Vector2 texcoord;
 		Vector3 normal;
+	};
+
+	//座標変換行列データ
+	struct TransformationMatrix {
+		Matrix4x4 WVP;
+		Matrix4x4 World;
+		Matrix4x4 WorldInverseTranspose;
+	};
+
+	//マテリアル
+	struct Material {
+		Vector4 color;
+		int32_t enableLighting;
+		float padding[3];
+		Matrix4x4 uvTransform;
+		float shininess;
 	};
 
 	///-------------------------------------------/// 
@@ -45,50 +69,6 @@ public:
 	/// 描画処理
 	/// </summary>
 	void Draw();
-
-	///-------------------------------------------/// 
-	/// メンバ構造体
-	///-------------------------------------------///
-private:
-
-	//座標変換行列データ
-	struct TransformationMatrix {
-		Matrix4x4 WVP;
-		Matrix4x4 World;
-		Matrix4x4 WorldInverseTranspose;
-	};
-
-	//マテリアル
-	struct Material {
-		Vector4 color;
-		int32_t enableLighting;
-		float padding[3];
-		Matrix4x4 uvTransform;
-		float shininess;
-	};
-
-	///-------------------------------------------/// 
-	/// ゲッター・セッター
-	///-------------------------------------------///
-public:
-
-	/// <summary>
-	/// ワールドトランスフォームのゲッター
-	/// </summary>
-	/// <returns>ワールドトランスフォーム</returns>
-	WorldTransform& GetWorldTransform() { return transform_; }
-
-	/// <summary>
-	/// カメラのセッター
-	/// </summary>
-	/// <param name="camera">カメラ</param>
-	void SetCamera(Camera* camera) { camera_ = camera; }
-
-	/// <summary>
-	/// テクスチャファイルパスのセッター
-	/// </summary>
-	/// <returns>ファイルパス</returns>
-	std::string GetTextureFilePath() const { return textureFilePath_; }
 
 	///-------------------------------------------/// 
 	/// メンバ変数
@@ -147,5 +127,28 @@ private:
 
 	//頂点番号バッファビュー
 	D3D12_INDEX_BUFFER_VIEW indexBufferView_;
+
+	///-------------------------------------------/// 
+	/// ゲッター・セッター
+	///-------------------------------------------///
+public:
+
+	/// <summary>
+	/// ワールドトランスフォームを取得
+	/// </summary>
+	/// <returns>ワールドトランスフォーム</returns>
+	WorldTransform& GetWorldTransform() { return transform_; }
+
+	/// <summary>
+	/// カメラの設定
+	/// </summary>
+	/// <param name="camera">カメラ</param>
+	void SetCamera(Camera* camera) { camera_ = camera; }
+
+	/// <summary>
+	/// テクスチャファイルパスの設定
+	/// </summary>
+	/// <returns>ファイルパス</returns>
+	std::string GetTextureFilePath() const { return textureFilePath_; }
 
 };
