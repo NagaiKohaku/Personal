@@ -59,7 +59,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)Engine;$(ProjectDir)Scene;$(ProjectDir)Externals\DirectXTex;$(ProjectDir)Externals\imgui;$(ProjectDir)Externals\nlohmann;$(ProjectDir)Application;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Engine;$(ProjectDir)Scene;$(ProjectDir)Externals\DirectXTex;$(ProjectDir)Externals\imgui;$(ProjectDir)Externals\assimp\include;$(ProjectDir)Externals\nlohmann;$(ProjectDir)Application;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalOptions>/source-charset:utf-8 /execution-charset:utf-8 %(AdditionalOptions)</AdditionalOptions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -67,6 +67,8 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(ProjectDir)Externals\assimp\lib\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>assimp-vc143-mtb.llib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxcompiler.dll" "$(TargetDir)dxcompiler.dll"
@@ -81,7 +83,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)Engine;$(ProjectDir)Scene;$(ProjectDir)Externals\DirectXTex;$(ProjectDir)Externals\imgui;$(ProjectDir)Externals\nlohmann;$(ProjectDir)Application;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Engine;$(ProjectDir)Scene;$(ProjectDir)Externals\DirectXTex;$(ProjectDir)Externals\imgui;$(ProjectDir)Externals\assimp\include;$(ProjectDir)Externals\nlohmann;$(ProjectDir)Application;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalOptions>/source-charset:utf-8 /execution-charset:utf-8 %(AdditionalOptions)</AdditionalOptions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -91,6 +93,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(ProjectDir)Externals\assimp\lib\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>assimp-vc143-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxcompiler.dll" "$(TargetDir)dxcompiler.dll"
@@ -167,6 +171,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Application\Bullet\TankBullet.cpp" />
     <ClCompile Include="Engine\3d\Object\SkyBox.cpp" />
     <ClCompile Include="Engine\3d\Object\SkyBoxCommon.cpp" />
+    <ClCompile Include="ModelAnimation.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\3d\Collider\AABBCollider.h" />
@@ -202,10 +207,13 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\3d\Object\DebugLine.h" />
     <ClInclude Include="Engine\3d\Object\DebugObjectCommon.h" />
     <ClInclude Include="Engine\Math\AABB.h" />
+    <ClInclude Include="Engine\Math\Animation.h" />
     <ClInclude Include="Engine\Math\Clamp.h" />
     <ClInclude Include="Engine\Math\Easing.h" />
+    <ClInclude Include="Engine\Math\KeyFrame.h" />
     <ClInclude Include="Engine\Math\MakeMatrixMath.h" />
     <ClInclude Include="Engine\Math\Matrix4x4.h" />
+    <ClInclude Include="Engine\Math\NodeAnimation.h" />
     <ClInclude Include="Engine\Math\Random.h" />
     <ClInclude Include="Engine\Math\Sphere.h" />
     <ClInclude Include="Engine\Math\Vector2.h" />
@@ -228,8 +236,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Application\Camera\FollowCamera.h" />
     <ClInclude Include="Application\Player\Reticle.h" />
     <ClInclude Include="Application\Bullet\JetBullet.h" />
-    <ClInclude Include="Engine\Math\KeyFrameQuaternion.h" />
-    <ClInclude Include="Engine\Math\KeyFrameVector3.h" />
     <ClInclude Include="Engine\Math\Quaternion.h" />
     <ClInclude Include="Application\Scene\ParticleEditorScene.h" />
     <ClInclude Include="Application\Player\Player.h" />
@@ -243,6 +249,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Application\Bullet\TankBullet.h" />
     <ClInclude Include="Engine\3d\Object\SkyBox.h" />
     <ClInclude Include="Engine\3d\Object\SkyBoxCommon.h" />
+    <ClInclude Include="Externals\assimp\include\assimp\Compiler\poppack1.h" />
+    <ClInclude Include="Externals\assimp\include\assimp\Compiler\pstdint.h" />
+    <ClInclude Include="Externals\assimp\include\assimp\Compiler\pushpack1.h" />
+    <ClInclude Include="ModelAnimation.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Application\level_editor.py" />

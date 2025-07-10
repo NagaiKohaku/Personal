@@ -262,6 +262,7 @@
     <ClCompile Include="Application\Scene\ParticleEditorScene.cpp">
       <Filter>Application\Scene</Filter>
     </ClCompile>
+    <ClCompile Include="ModelAnimation.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application\Bullet\BulletBase.h">
@@ -465,12 +466,6 @@
     <ClInclude Include="Engine\3d\Object\SkyBox.h">
       <Filter>Engine\3d\Object</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Math\KeyFrameVector3.h">
-      <Filter>Engine\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Math\KeyFrameQuaternion.h">
-      <Filter>Engine\Math</Filter>
-    </ClInclude>
     <ClInclude Include="Engine\Math\Quaternion.h">
       <Filter>Engine\Math</Filter>
     </ClInclude>
@@ -486,6 +481,13 @@
     <ClInclude Include="Application\Scene\ParticleEditorScene.h">
       <Filter>Application\Scene</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\Math\KeyFrame.h" />
+    <ClInclude Include="Engine\Math\NodeAnimation.h" />
+    <ClInclude Include="Engine\Math\Animation.h" />
+    <ClInclude Include="ModelAnimation.h" />
+    <ClInclude Include="Externals\assimp\include\assimp\Compiler\poppack1.h" />
+    <ClInclude Include="Externals\assimp\include\assimp\Compiler\pstdint.h" />
+    <ClInclude Include="Externals\assimp\include\assimp\Compiler\pushpack1.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Application\level_editor.py">
