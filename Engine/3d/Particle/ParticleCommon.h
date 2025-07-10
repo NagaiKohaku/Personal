@@ -6,10 +6,11 @@
 #include "vector"
 
 /// === 前方宣言 === ///
+
 class DirectXCommon;
 
 ///=====================================================/// 
-/// パーティクル基底
+/// パーティクル基底クラス
 ///=====================================================///
 class ParticleCommon {
 
@@ -33,9 +34,9 @@ public:
 public:
 
 	/// <summary>
-	/// 静的インスタンスの生成
+	/// シングルトンインスタンスの取得
 	/// </summary>
-	/// <returns>静的インスタンス</returns>
+	/// <returns>シングルトンインスタンス</returns>
 	static ParticleCommon* GetInstance();
 
 	/// <summary>
@@ -47,23 +48,6 @@ public:
 	/// 描画前処理
 	/// </summary>
 	void CommonDrawSetting();
-
-	///-------------------------------------------/// 
-	/// セッター・ゲッター
-	///-------------------------------------------///
-public:
-
-	/// <summary>
-	/// DirectX基底のゲッター
-	/// </summary>
-	/// <returns></returns>
-	DirectXCommon* GetDxCommon() const { return dxCommon_; }
-
-	/// <summary>
-	/// ブレンドモードのセッター
-	/// </summary>
-	/// <param name="blendType">ブレンドタイプ</param>
-	void SetBlendMode(BlendType blendType) { blendMode_ = blendType; }
 
 	///-------------------------------------------/// 
 	/// クラス内処理関数
@@ -96,4 +80,22 @@ private:
 
 	//グラフィックパイプラインステート
 	std::vector<Microsoft::WRL::ComPtr<ID3D12PipelineState>> graphicsPipelineState_;
+
+	///-------------------------------------------/// 
+	/// セッター・ゲッター
+	///-------------------------------------------///
+public:
+
+	/// <summary>
+	/// DirectX基底のゲッター
+	/// </summary>
+	/// <returns></returns>
+	DirectXCommon* GetDxCommon() const { return dxCommon_; }
+
+	/// <summary>
+	/// ブレンドモードのセッター
+	/// </summary>
+	/// <param name="blendType">ブレンドタイプ</param>
+	void SetBlendMode(BlendType blendType) { blendMode_ = blendType; }
+
 };

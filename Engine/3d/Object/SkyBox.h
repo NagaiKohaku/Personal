@@ -56,17 +56,17 @@ private:
 public:
 
 	/// <summary>
-	/// 初期化処理
+	/// 初期化
 	/// </summary>
 	void Initialize(std::string filePath);
 
 	/// <summary>
-	/// 更新処理
+	/// 更新
 	/// </summary>
 	void Update();
 
 	/// <summary>
-	/// 描画処理
+	/// 描画
 	/// </summary>
 	void Draw();
 
@@ -84,12 +84,16 @@ private:
 	//座標データ
 	WorldTransform transform_;
 
-	uint32_t vertexCount_ = 0;
+	//頂点数
+	uint32_t vertexCount_;
 
-	uint32_t indexCount_ = 0;
+	//頂点番号数
+	uint32_t indexCount_;
 
-	uint32_t surfaceCount_ = 6; // SkyBoxは6面体
+	//面数
+	uint32_t surfaceCount_;
 
+	//テクスチャファイルパス
 	std::string textureFilePath_;
 
 	/// === バッファリソース === ///
@@ -106,7 +110,7 @@ private:
 	//座標変換行列リソース
 	Microsoft::WRL::ComPtr<ID3D12Resource> WVPResource_ = nullptr;
 
-	/// === バッファリソース内のデータを指すポインタ === ///
+	/// === リソースデータ === ///
 
 	//頂点データ
 	VertexData* vertexData_ = nullptr;

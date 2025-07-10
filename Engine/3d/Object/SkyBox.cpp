@@ -19,8 +19,11 @@ void SkyBox::Initialize(std::string filePath) {
 
 	skyBoxCommon_ = SkyBoxCommon::GetInstance();
 
+	surfaceCount_ = 6; //スカイボックスは6面体なので、面数は6
+
 	/// === 頂点リソースの生成 === ///
 
+	//頂点数の設定
 	vertexCount_ = 4 * surfaceCount_;
 
 	//頂点リソースの生成
@@ -44,12 +47,15 @@ void SkyBox::Initialize(std::string filePath) {
 	vertexData_[0].position = { 1.0f, 1.0f, 1.0f, 1.0f };
 	vertexData_[0].texcoord = { 1.0f, 1.0f };
 	vertexData_[0].normal = { 0.0f, 0.0f, 1.0f };
+
 	vertexData_[1].position = { 1.0f, 1.0f,-1.0f, 1.0f };
 	vertexData_[1].texcoord = { 1.0f, 0.0f };
 	vertexData_[1].normal = { 0.0f, 0.0f, 1.0f };
+
 	vertexData_[2].position = { 1.0f,-1.0f, 1.0f, 1.0f };
 	vertexData_[2].texcoord = { 0.0f, 1.0f };
 	vertexData_[2].normal = { 0.0f, 0.0f, 1.0f };
+
 	vertexData_[3].position = { 1.0f,-1.0f,-1.0f, 1.0f };
 	vertexData_[3].texcoord = { 0.0f, 0.0f };
 	vertexData_[3].normal = { 0.0f, 0.0f, 1.0f };
@@ -58,12 +64,15 @@ void SkyBox::Initialize(std::string filePath) {
 	vertexData_[4].position = { -1.0f, 1.0f,-1.0f, 1.0f };
 	vertexData_[4].texcoord = { 1.0f, 1.0f };
 	vertexData_[4].normal = { 0.0f, 0.0f,-1.0f };
+
 	vertexData_[5].position = { -1.0f, 1.0f, 1.0f, 1.0f };
 	vertexData_[5].texcoord = { 1.0f, 0.0f };
 	vertexData_[5].normal = { 0.0f, 0.0f,-1.0f };
+
 	vertexData_[6].position = { -1.0f,-1.0f,-1.0f, 1.0f };
 	vertexData_[6].texcoord = { 0.0f, 1.0f };
 	vertexData_[6].normal = { 0.0f, 0.0f,-1.0f };
+
 	vertexData_[7].position = { -1.0f,-1.0f, 1.0f, 1.0f };
 	vertexData_[7].texcoord = { 0.0f, 0.0f };
 	vertexData_[7].normal = { 0.0f, 0.0f,-1.0f };
@@ -72,12 +81,15 @@ void SkyBox::Initialize(std::string filePath) {
 	vertexData_[8].position = { -1.0f, 1.0f, 1.0f, 1.0f };
 	vertexData_[8].texcoord = { 1.0f, 1.0f };
 	vertexData_[8].normal = { 0.0f, 1.0f, 0.0f };
+
 	vertexData_[9].position = { 1.0f, 1.0f, 1.0f, 1.0f };
 	vertexData_[9].texcoord = { 1.0f, 0.0f };
 	vertexData_[9].normal = { 0.0f, 1.0f, 0.0f };
+
 	vertexData_[10].position = { -1.0f,-1.0f, 1.0f, 1.0f };
 	vertexData_[10].texcoord = { 0.0f, 1.0f };
 	vertexData_[10].normal = { 0.0f, 1.0f, 0.0f };
+
 	vertexData_[11].position = { 1.0f,-1.0f, 1.0f, 1.0f };
 	vertexData_[11].texcoord = { 0.0f, 0.0f };
 	vertexData_[11].normal = { 0.0f, 1.0f, 0.0f };
@@ -86,12 +98,15 @@ void SkyBox::Initialize(std::string filePath) {
 	vertexData_[12].position = { 1.0f, 1.0f,-1.0f, 1.0f };
 	vertexData_[12].texcoord = { 1.0f, 1.0f };
 	vertexData_[12].normal = { 0.0f,-1.0f, 0.0f };
+
 	vertexData_[13].position = { -1.0f, 1.0f,-1.0f, 1.0f };
 	vertexData_[13].texcoord = { 1.0f, 0.0f };
 	vertexData_[13].normal = { 0.0f,-1.0f, 0.0f };
+
 	vertexData_[14].position = { 1.0f,-1.0f,-1.0f, 1.0f };
 	vertexData_[14].texcoord = { 0.0f, 1.0f };
 	vertexData_[14].normal = { 0.0f,-1.0f, 0.0f };
+
 	vertexData_[15].position = { -1.0f,-1.0f,-1.0f, 1.0f };
 	vertexData_[15].texcoord = { 0.0f, 0.0f };
 	vertexData_[15].normal = { 0.0f,-1.0f, 0.0f };
@@ -100,12 +115,15 @@ void SkyBox::Initialize(std::string filePath) {
 	vertexData_[16].position = { -1.0f, 1.0f, -1.0f, 1.0f };
 	vertexData_[16].texcoord = { 1.0f, 1.0f };
 	vertexData_[16].normal = { 0.0f, 0.0f, 1.0f };
+
 	vertexData_[17].position = { 1.0f, 1.0f, -1.0f, 1.0f };
 	vertexData_[17].texcoord = { 1.0f, 0.0f };
 	vertexData_[17].normal = { 0.0f, 0.0f, 1.0f };
+
 	vertexData_[18].position = { -1.0f, 1.0f,1.0f, 1.0f };
 	vertexData_[18].texcoord = { 0.0f, 1.0f };
 	vertexData_[18].normal = { 0.0f, 0.0f, 1.0f };
+
 	vertexData_[19].position = { 1.0f, 1.0f,1.0f, 1.0f };
 	vertexData_[19].texcoord = { 0.0f, 0.0f };
 	vertexData_[19].normal = { 0.0f, 0.0f, 1.0f };
@@ -114,18 +132,22 @@ void SkyBox::Initialize(std::string filePath) {
 	vertexData_[20].position = { -1.0f,-1.0f,1.0f, 1.0f };
 	vertexData_[20].texcoord = { 1.0f, 1.0f };
 	vertexData_[20].normal = { 0.0f, 0.0f,-1.0f };
+
 	vertexData_[21].position = { 1.0f,-1.0f,1.0f, 1.0f };
 	vertexData_[21].texcoord = { 1.0f, 0.0f };
 	vertexData_[21].normal = { 0.0f, 0.0f,-1.0f };
+
 	vertexData_[22].position = { -1.0f,-1.0f, -1.0f, 1.0f };
 	vertexData_[22].texcoord = { 0.0f, 1.0f };
 	vertexData_[22].normal = { 0.0f, 0.0f,-1.0f };
+
 	vertexData_[23].position = { 1.0f,-1.0f, -1.0f, 1.0f };
 	vertexData_[23].texcoord = { 0.0f, 0.0f };
 	vertexData_[23].normal = { 0.0f, 0.0f,-1.0f };
 
 	/// === 頂点インデックスリソースの生成 === ///
 
+	//頂点インデックス数の設定
 	indexCount_ = 6 * surfaceCount_;
 
 	//頂点インデックスリソースの生成
@@ -143,6 +165,7 @@ void SkyBox::Initialize(std::string filePath) {
 	//リソースにデータを書き込めるようにする
 	IndexResource_->Map(0, nullptr, reinterpret_cast<void**>(&indexData_));
 
+	//頂点インデックスデータの設定
 	for (uint32_t index = 0; index < surfaceCount_; ++index) {
 		indexData_[index * 6 + 0] = index * 4 + 0;
 		indexData_[index * 6 + 1] = index * 4 + 1;
@@ -166,8 +189,10 @@ void SkyBox::Initialize(std::string filePath) {
 	materialData_->uvTransform = MakeIdentity4x4();
 	materialData_->shininess = 50.0f;
 
+	//テクスチャファイルパスの設定
 	textureFilePath_ = filePath;
 
+	//テクスチャの読み込み
 	TextureManager::GetInstance()->LoadTexture(textureFilePath_);
 
 	/// === 座標変換行列リソースの生成 === ///
@@ -183,6 +208,7 @@ void SkyBox::Initialize(std::string filePath) {
 	WVPData_->World = MakeIdentity4x4();
 	WVPData_->WorldInverseTranspose = MakeIdentity4x4();
 
+	//トランスフォームの初期化
 	transform_.Initialize();
 
 	//今持っているカメラをデフォルトカメラに設定
@@ -194,6 +220,7 @@ void SkyBox::Initialize(std::string filePath) {
 ///=====================================================///
 void SkyBox::Update() {
 
+	//トランスフォームの更新
 	transform_.UpdateMatrix();
 
 	//ワールドビュープロジェクション行列
@@ -247,5 +274,6 @@ void SkyBox::Draw() {
 
 		};
 
+	//コマンドをレンダラーに登録
 	Renderer::GetInstance()->AddDraw(LayerType::BackGround, true, command);
 }

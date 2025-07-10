@@ -6,6 +6,7 @@
 #include "vector"
 
 /// === 前方宣言 === ///
+
 class DirectXCommon;
 
 class Camera;
@@ -21,7 +22,7 @@ class SkyBoxCommon {
 public:
 
 	/// <summary>
-	/// シングルトンインスタンス
+	/// シングルトンインスタンスを取得
 	/// </summary>
 	/// <returns>インスタンス</returns>
 	static SkyBoxCommon* GetInstance();
@@ -81,19 +82,19 @@ public:
 	/// <summary>
 	/// DirectX基底を取得
 	/// </summary>
-	/// <returns></returns>
+	/// <returns>DirectX基底</returns>
 	DirectXCommon* GetDxCommon() const { return dxCommon_; }
 
 	/// <summary>
 	/// カメラを取得
 	/// </summary>
-	/// <returns></returns>
+	/// <returns>カメラ</returns>
 	Camera* GetCamera() const { return camera_; }
 
 	/// <summary>
 	/// カメラの設定
 	/// </summary>
-	/// <param name="ptr"></param>
+	/// <param name="ptr">カメラ</param>
 	void SetDefaultCamera(Camera* ptr) { camera_ = ptr; }
 
 };
