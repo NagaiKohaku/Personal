@@ -1,5 +1,7 @@
 #include "GameScene.h"
 
+#include "Base/OffScreen.h"
+
 #include "2d/Sprite/SpriteManager.h"
 #include "3d/Model/ModelManager.h"
 #include "3d/Particle/ParticleManager.h"
@@ -30,6 +32,8 @@ void GameScene::Initialize() {
 	camera_->GetWorldTransform().translate_ = { 0.0f,3.0f,0.0f };
 
 	//デフォルトカメラを設定
+	OffScreen::GetInstance()->SetDefaultCamera(camera_.get());
+
 	Object3DCommon::GetInstance()->SetDefaultCamera(camera_.get());
 
 	DebugObjectCommon::GetInstance()->SetDefaultCamera(camera_.get());

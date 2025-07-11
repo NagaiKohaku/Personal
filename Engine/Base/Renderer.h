@@ -30,7 +30,7 @@ public:
 	/// <summary>
 	/// 描画
 	/// </summary>
-	void Draw();
+	void SwapChainDraw();
 
 	void OffScreenDraw();
 

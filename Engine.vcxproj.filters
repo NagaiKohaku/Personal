@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <FxCompile Include="Resource\Shader\CopyImage.PS.hlsl">
+    <FxCompile Include="Resource\Shader\OffScreen\CopyImage.PS.hlsl">
       <Filter>Resource\Shader</Filter>
     </FxCompile>
-    <FxCompile Include="Resource\Shader\CopyImage.VS.hlsl">
+    <FxCompile Include="Resource\Shader\OffScreen\CopyImage.VS.hlsl">
       <Filter>Resource\Shader</Filter>
     </FxCompile>
     <FxCompile Include="Resource\Shader\DebugObject.PS.hlsl">
@@ -13,10 +13,10 @@
     <FxCompile Include="Resource\Shader\DebugObject.VS.hlsl">
       <Filter>Resource\Shader</Filter>
     </FxCompile>
-    <FxCompile Include="Resource\Shader\GrayScale.PS.hlsl">
+    <FxCompile Include="Resource\Shader\OffScreen\GrayScale.PS.hlsl">
       <Filter>Resource\Shader</Filter>
     </FxCompile>
-    <FxCompile Include="Resource\Shader\GrayScale.VS.hlsl">
+    <FxCompile Include="Resource\Shader\OffScreen\GrayScale.VS.hlsl">
       <Filter>Resource\Shader</Filter>
     </FxCompile>
     <FxCompile Include="Resource\Shader\Object2d.PS.hlsl">
@@ -25,16 +25,16 @@
     <FxCompile Include="Resource\Shader\Object2d.VS.hlsl">
       <Filter>Resource\Shader</Filter>
     </FxCompile>
-    <FxCompile Include="Resource\Shader\Smooth.PS.hlsl">
+    <FxCompile Include="Resource\Shader\OffScreen\Smooth.PS.hlsl">
       <Filter>Resource\Shader</Filter>
     </FxCompile>
-    <FxCompile Include="Resource\Shader\Smooth.VS.hlsl">
+    <FxCompile Include="Resource\Shader\OffScreen\Smooth.VS.hlsl">
       <Filter>Resource\Shader</Filter>
     </FxCompile>
-    <FxCompile Include="Resource\Shader\Vignette.PS.hlsl">
+    <FxCompile Include="Resource\Shader\OffScreen\Vignette.PS.hlsl">
       <Filter>Resource\Shader</Filter>
     </FxCompile>
-    <FxCompile Include="Resource\Shader\Vignette.VS.hlsl">
+    <FxCompile Include="Resource\Shader\OffScreen\Vignette.VS.hlsl">
       <Filter>Resource\Shader</Filter>
     </FxCompile>
     <FxCompile Include="Resource\Shader\SkyBox.PS.hlsl">
@@ -55,6 +55,8 @@
     <FxCompile Include="Resource\Shader\Particle.VS.hlsl">
       <Filter>Resource\Shader</Filter>
     </FxCompile>
+    <FxCompile Include="Resource\Shader\OffScreen\OutLine.PS.hlsl" />
+    <FxCompile Include="Resource\Shader\OffScreen\OutLine.VS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -73,16 +75,16 @@
     <ClCompile Include="Application\Camera\FollowCamera.cpp">
       <Filter>Application\Camera</Filter>
     </ClCompile>
-    <ClCompile Include="Application\Collider\AABBCollider.cpp">
+    <ClCompile Include="Engine\3d\Collider\AABBCollider.cpp">
       <Filter>Application\Collider</Filter>
     </ClCompile>
-    <ClCompile Include="Application\Collider\Collider.cpp">
+    <ClCompile Include="Engine\3d\Collider\Collider.cpp">
       <Filter>Application\Collider</Filter>
     </ClCompile>
-    <ClCompile Include="Application\Collider\ColliderManager.cpp">
+    <ClCompile Include="Engine\3d\Collider\ColliderManager.cpp">
       <Filter>Application\Collider</Filter>
     </ClCompile>
-    <ClCompile Include="Application\Collider\SphereCollider.cpp">
+    <ClCompile Include="Engine\3d\Collider\SphereCollider.cpp">
       <Filter>Application\Collider</Filter>
     </ClCompile>
     <ClCompile Include="Application\Enemy\Enemy.cpp">
@@ -244,23 +246,23 @@
     <ClCompile Include="Engine\Other\Log.cpp">
       <Filter>Engine\Other</Filter>
     </ClCompile>
-    <ClCompile Include="Scene\BaseScene.cpp">
-      <Filter>Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="Scene\GameScene.cpp">
-      <Filter>Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="Scene\ParticleEditorScene.cpp">
-      <Filter>Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="Scene\SceneManager.cpp">
-      <Filter>Scene</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\3d\Object\SkyBox.cpp">
       <Filter>Engine\3d\Object</Filter>
     </ClCompile>
     <ClCompile Include="Engine\3d\Object\SkyBoxCommon.cpp">
       <Filter>Engine\3d\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Scene\BaseScene.cpp">
+      <Filter>Engine\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Scene\SceneManager.cpp">
+      <Filter>Engine\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\Scene\GameScene.cpp">
+      <Filter>Application\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\Scene\ParticleEditorScene.cpp">
+      <Filter>Application\Scene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -279,16 +281,16 @@
     <ClInclude Include="Application\Camera\FollowCamera.h">
       <Filter>Application\Camera</Filter>
     </ClInclude>
-    <ClInclude Include="Application\Collider\AABBCollider.h">
+    <ClInclude Include="Engine\3d\Collider\AABBCollider.h">
       <Filter>Application\Collider</Filter>
     </ClInclude>
-    <ClInclude Include="Application\Collider\Collider.h">
+    <ClInclude Include="Engine\3d\Collider\Collider.h">
       <Filter>Application\Collider</Filter>
     </ClInclude>
-    <ClInclude Include="Application\Collider\ColliderManager.h">
+    <ClInclude Include="Engine\3d\Collider\ColliderManager.h">
       <Filter>Application\Collider</Filter>
     </ClInclude>
-    <ClInclude Include="Application\Collider\SphereCollider.h">
+    <ClInclude Include="Engine\3d\Collider\SphereCollider.h">
       <Filter>Application\Collider</Filter>
     </ClInclude>
     <ClInclude Include="Application\Enemy\Enemy.h">
@@ -459,27 +461,36 @@
     <ClInclude Include="Engine\Other\Log.h">
       <Filter>Engine\Other</Filter>
     </ClInclude>
-    <ClInclude Include="Scene\BaseScene.h">
-      <Filter>Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="Scene\GameScene.h">
-      <Filter>Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="Scene\ParticleEditorScene.h">
-      <Filter>Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="Scene\SceneManager.h">
-      <Filter>Scene</Filter>
-    </ClInclude>
     <ClInclude Include="Engine\3d\Object\SkyBoxCommon.h">
       <Filter>Engine\3d\Object</Filter>
     </ClInclude>
     <ClInclude Include="Engine\3d\Object\SkyBox.h">
       <Filter>Engine\3d\Object</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\Math\KeyFrameVector3.h">
+      <Filter>Engine\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Math\KeyFrameQuaternion.h">
+      <Filter>Engine\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Math\Quaternion.h">
+      <Filter>Engine\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Scene\BaseScene.h">
+      <Filter>Engine\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Scene\SceneManager.h">
+      <Filter>Engine\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Scene\GameScene.h">
+      <Filter>Application\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Scene\ParticleEditorScene.h">
+      <Filter>Application\Scene</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resource\Shader\CopyImage.hlsli">
+    <None Include="Resource\Shader\OffScreen\CopyImage.hlsli">
       <Filter>Resource\Shader</Filter>
     </None>
     <None Include="Resource\Shader\DebugObject.hlsli">
@@ -488,13 +499,13 @@
     <None Include="Resource\Shader\Object2d.hlsli">
       <Filter>Resource\Shader</Filter>
     </None>
-    <None Include="Resource\Shader\Smooth.hlsli">
+    <None Include="Resource\Shader\OffScreen\Smooth.hlsli">
       <Filter>Resource\Shader</Filter>
     </None>
-    <None Include="Resource\Shader\Vignette.hlsli">
+    <None Include="Resource\Shader\OffScreen\Vignette.hlsli">
       <Filter>Resource\Shader</Filter>
     </None>
-    <None Include="Resource\Shader\GrayScale.hlsli">
+    <None Include="Resource\Shader\OffScreen\GrayScale.hlsli">
       <Filter>Resource\Shader</Filter>
     </None>
     <None Include="Resource\Shader\SkyBox.hlsli">
@@ -535,6 +546,9 @@
     </None>
     <None Include="Application\level_editor\stretch_vertex.py">
       <Filter>Application\level_editor</Filter>
+    </None>
+    <None Include="Resource\Shader\OffScreen\OutLine.hlsli" />
+     <Filter>Application\level_editor</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -609,6 +623,12 @@
     </Filter>
     <Filter Include="Application\level_editor">
       <UniqueIdentifier>{8fb021de-c74c-4fa7-88e6-89c1b836ef4f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Application\Scene">
+      <UniqueIdentifier>{b9fcfa0e-d519-43be-822e-98656a33663b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Scene">
+      <UniqueIdentifier>{431be695-e6d4-48ba-bca0-9cebffb1c700}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

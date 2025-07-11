@@ -294,13 +294,13 @@ void ParticleEmitter::Update() {
 
 			particle->transform.UpdateMatrix();
 
-			Matrix4x4 translateEMatrix = emitterWorldTransform_.GetTranslateMatrix();
-			Matrix4x4 rotateEMatrix = emitterWorldTransform_.GetRotateMatrix();
-			Matrix4x4 scaleEMatrix = emitterWorldTransform_.GetScaleMatrix();
+			Matrix4x4 translateEMatrix = emitterWorldTransform_.GetLocalTranslateMatrix();
+			Matrix4x4 rotateEMatrix = emitterWorldTransform_.GetLocalRotateMatrix();
+			Matrix4x4 scaleEMatrix = emitterWorldTransform_.GetLocalScaleMatrix();
 
-			Matrix4x4 translateMatrix = particle->transform.GetTranslateMatrix();
-			Matrix4x4 rotateMatrix = particle->transform.GetRotateMatrix();
-			Matrix4x4 scaleMatrix = particle->transform.GetScaleMatrix();
+			Matrix4x4 translateMatrix = particle->transform.GetLocalTranslateMatrix();
+			Matrix4x4 rotateMatrix = particle->transform.GetLocalRotateMatrix();
+			Matrix4x4 scaleMatrix = particle->transform.GetLocalScaleMatrix();
 
 			translateMatrix = translateMatrix/* * translateEMatrix*/;
 			rotateMatrix = rotateMatrix/* * rotateEMatrix*/;

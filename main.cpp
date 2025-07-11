@@ -18,7 +18,7 @@
 #include "3d/Model/ModelManager.h"
 #include "3d/Particle/ParticleCommon.h"
 #include "3d/Particle/ParticleManager.h"
-#include "Application/Collider/ColliderManager.h"
+#include "3d/Collider/ColliderManager.h"
 
 #include "Scene/SceneManager.h"
 
@@ -206,7 +206,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		offScreen->DrawToSwapChain();
 
 		//レンダラーの描画
-		renderer->Draw();
+		renderer->SwapChainDraw();
 
 #ifdef _DEBUG
 

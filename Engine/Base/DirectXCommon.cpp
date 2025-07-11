@@ -866,11 +866,3 @@ Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> DirectXCommon::CreateDescriptorHeap
 
 	return result;
 }
-
-void DirectXCommon::ClearDepthBuffer() {
-
-	dsvHandle_ = dsvManager_->GetCPUDescriptorHandle(dsvIndex_);
-
-	//指定した深度で画面全体をクリアする
-	commandList_->ClearDepthStencilView(dsvHandle_, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
-}
