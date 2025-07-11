@@ -45,19 +45,19 @@ public:
 public:
 
 	/// <summary>
-	/// 座標のセッター
+	/// 座標の設定
 	/// </summary>
 	/// <param name="pos">座標</param>
 	void SetPosition(Vector3 pos) { object_->GetWorldTransform().translate_ = pos; }
 
 	/// <summary>
-	/// スタンバイ状態の座標のセッター
+	/// スタンバイ状態の座標の設定
 	/// </summary>
 	/// <param name="pos">座標</param>
 	void SetStandbyPos(Vector3 pos) { standbyPos_ = pos; }
 
 	/// <summary>
-	/// 削除可能フラグのゲッター
+	/// 削除可能フラグを取得
 	/// </summary>
 	/// <returns>フラグ</returns>
 	bool GetCanRemove() { return canRemove_; }

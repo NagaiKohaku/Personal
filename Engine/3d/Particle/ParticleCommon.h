@@ -87,13 +87,13 @@ private:
 public:
 
 	/// <summary>
-	/// DirectX基底のゲッター
+	/// DirectX基底を取得
 	/// </summary>
-	/// <returns></returns>
+	/// <returns>DirectX基底</returns>
 	DirectXCommon* GetDxCommon() const { return dxCommon_; }
 
 	/// <summary>
-	/// ブレンドモードのセッター
+	/// ブレンドモードの設定
 	/// </summary>
 	/// <param name="blendType">ブレンドタイプ</param>
 	void SetBlendMode(BlendType blendType) { blendMode_ = blendType; }

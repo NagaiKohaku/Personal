@@ -104,7 +104,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Application\Enemy\Enemy.cpp" />
     <ClCompile Include="Application\Enemy\EnemyManager.cpp" />
     <ClCompile Include="Engine\3d\Object\DebugObject3D.cpp" />
-    <ClCompile Include="Engine\3d\Primitive\Ball.cpp" />
     <ClCompile Include="Engine\Base\DSVManager.cpp" />
     <ClCompile Include="Engine\3d\Primitive\Cylinder.cpp" />
     <ClCompile Include="Engine\3d\Particle\EmitterGroup.cpp" />
@@ -122,7 +121,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Base\ImGuiManager.cpp" />
     <ClCompile Include="Engine\Base\Input.cpp" />
     <ClCompile Include="Engine\3d\Model\ModelManager.cpp" />
-    <ClCompile Include="Engine\3d\Particle\ParticleManager.cpp" />
     <ClCompile Include="Engine\Base\SrvManager.cpp" />
     <ClCompile Include="Engine\2d\Sprite\TextureManager.cpp" />
     <ClCompile Include="Engine\Base\WinApp.cpp" />
@@ -167,6 +165,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Application\Bullet\TankBullet.cpp" />
     <ClCompile Include="Engine\3d\Object\SkyBox.cpp" />
     <ClCompile Include="Engine\3d\Object\SkyBoxCommon.cpp" />
+    <ClCompile Include="Engine\3d\Primitive\SphereMesh.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\3d\Collider\AABBCollider.h" />
@@ -175,7 +174,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Application\Enemy\Enemy.h" />
     <ClInclude Include="Application\Enemy\EnemyManager.h" />
     <ClInclude Include="Engine\3d\Object\DebugObject3D.h" />
-    <ClInclude Include="Engine\3d\Primitive\Ball.h" />
     <ClInclude Include="Engine\Base\DSVManager.h" />
     <ClInclude Include="Engine\3d\Primitive\Cylinder.h" />
     <ClInclude Include="Engine\3d\Particle\EmitterGroup.h" />
@@ -194,7 +192,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Base\ImGuiManager.h" />
     <ClInclude Include="Engine\Base\Input.h" />
     <ClInclude Include="Engine\3d\Model\ModelManager.h" />
-    <ClInclude Include="Engine\3d\Particle\ParticleManager.h" />
     <ClInclude Include="Engine\Base\SrvManager.h" />
     <ClInclude Include="Engine\2d\Sprite\TextureManager.h" />
     <ClInclude Include="Engine\Base\WinApp.h" />
@@ -243,6 +240,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Application\Bullet\TankBullet.h" />
     <ClInclude Include="Engine\3d\Object\SkyBox.h" />
     <ClInclude Include="Engine\3d\Object\SkyBoxCommon.h" />
+    <ClInclude Include="Engine\3d\Primitive\SphereMesh.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Application\level_editor.py" />

@@ -42,7 +42,7 @@ private:
 public:
 
 	/// <summary>
-	/// DirectX基底のゲッター
+	/// DirectX基底を取得
 	/// </summary>
 	/// <returns>DirectX基底</returns>
 	DirectXCommon* GetDxCommon() const { return dxCommon_; }

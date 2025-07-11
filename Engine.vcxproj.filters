@@ -138,9 +138,6 @@
     <ClCompile Include="Engine\3d\Model\ModelManager.cpp">
       <Filter>Engine\3d\Model</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\3d\Primitive\Ball.cpp">
-      <Filter>Engine\3d\Primitive</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\3d\Primitive\Cylinder.cpp">
       <Filter>Engine\3d\Primitive</Filter>
     </ClCompile>
@@ -166,9 +163,6 @@
       <Filter>Engine\3d\Particle</Filter>
     </ClCompile>
     <ClCompile Include="Engine\3d\Particle\ParticleEmitter.cpp">
-      <Filter>Engine\3d\Particle</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\3d\Particle\ParticleManager.cpp">
       <Filter>Engine\3d\Particle</Filter>
     </ClCompile>
     <ClCompile Include="Engine\3d\Object\DebugObject3D.cpp">
@@ -264,6 +258,7 @@
     <ClCompile Include="Application\Scene\ParticleEditorScene.cpp">
       <Filter>Application\Scene</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\3d\Primitive\SphereMesh.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application\Bullet\BulletBase.h">
@@ -344,9 +339,6 @@
     <ClInclude Include="Engine\3d\Model\ModelCommon.h">
       <Filter>Engine\3d\Model</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\3d\Primitive\Ball.h">
-      <Filter>Engine\3d\Primitive</Filter>
-    </ClInclude>
     <ClInclude Include="Engine\3d\Primitive\Cylinder.h">
       <Filter>Engine\3d\Primitive</Filter>
     </ClInclude>
@@ -372,9 +364,6 @@
       <Filter>Engine\3d\Particle</Filter>
     </ClInclude>
     <ClInclude Include="Engine\3d\Particle\ParticleEmitter.h">
-      <Filter>Engine\3d\Particle</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\3d\Particle\ParticleManager.h">
       <Filter>Engine\3d\Particle</Filter>
     </ClInclude>
     <ClInclude Include="Engine\3d\Object\DebugObject3D.h">
@@ -488,6 +477,7 @@
     <ClInclude Include="Application\Scene\ParticleEditorScene.h">
       <Filter>Application\Scene</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\3d\Primitive\SphereMesh.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Application\level_editor.py">

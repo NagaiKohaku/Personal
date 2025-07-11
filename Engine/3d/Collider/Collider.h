@@ -101,61 +101,61 @@ protected:
 public:
 
 	/// <summary>
-	/// ワールドトランスフォームのゲッター
+	/// ワールドトランスフォームを取得
 	/// </summary>
 	/// <returns>ワールドトランスフォーム</returns>
 	WorldTransform& GetWorldTransform() { return worldTransform_; }
 
 	/// <summary>
-	/// 識別タグのゲッター
+	/// 識別タグを取得
 	/// </summary>
 	/// <returns>タグ</returns>
 	Tag GetTag() const { return tag_; }
 
 	/// <summary>
-	/// 衝突相手の識別タグのゲッター
+	/// 衝突相手の識別タグを取得
 	/// </summary>
 	/// <returns>タグ</returns>
 	Tag GetHitTag() const { return hitTag_; }
 
 	/// <summary>
-	/// アクティブフラグのゲッター
+	/// アクティブフラグを取得
 	/// </summary>
 	/// <returns>フラグ</returns>
 	bool GetIsActive() const { return isActive_; }
 
 	/// <summary>
-	/// 接触フラグのゲッター
+	/// 接触フラグを取得
 	/// </summary>
 	/// <returns>フラグ</returns>
 	bool GetIsCollision() const { return isCollision_; }
 
 	/// <summary>
-	/// トリガーフラグのゲッター
+	/// トリガーフラグを取得
 	/// </summary>
 	/// <returns>フラグ</returns>
 	bool GetIsTrigger() const { return isTrigger_; }
 
 	/// <summary>
-	/// 識別タグのセッター
+	/// 識別タグの設定
 	/// </summary>
 	/// <param name="tag">タグ</param>
 	void SetTag(Tag tag) { tag_ = tag; }
 
 	/// <summary>
-	/// 接触相手の識別タグのセッター
+	/// 接触相手の識別タグの設定
 	/// </summary>
 	/// <param name="hitTag">タグ</param>
 	void SetHitTag(Tag hitTag) { hitTag_ = hitTag; }
 
 	/// <summary>
-	/// 描画フラグのセッター
+	/// 描画フラグの設定
 	/// </summary>
 	/// <param name="isDraw">フラグ</param>
 	void SetIsDraw(bool isDraw) { isDraw_ = isDraw; }
 
 	/// <summary>
-	/// アクティブフラグのセッター
+	/// アクティブフラグの設定
 	/// </summary>
 	/// <param name="isActive">フラグ</param>
 	void SetIsActive(bool isActive) { isActive_ = isActive; }

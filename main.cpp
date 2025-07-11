@@ -17,7 +17,6 @@
 #include "3d/Model/ModelCommon.h"
 #include "3d/Model/ModelManager.h"
 #include "3d/Particle/ParticleCommon.h"
-#include "3d/Particle/ParticleManager.h"
 #include "3d/Collider/ColliderManager.h"
 
 #include "Scene/SceneManager.h"
@@ -88,10 +87,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	ParticleCommon* particleCommon = ParticleCommon::GetInstance();
 	particleCommon->Initialize();
 
-	//パーティクルマネージャー
-	ParticleManager* particleManager = ParticleManager::GetInstance();
-	particleManager->Initialize();
-
 	//入力
 	Input* input = Input::GetInstance();
 	input->Initialize();
@@ -158,9 +153,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//シーンの更新
 		sceneManager->Update();
 
-		//パーティクルの更新
-		particleManager->Update();
-
 		//コライダーマネージャーの更新
 		colliderManager->Update();
 
@@ -184,9 +176,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		//シーンの描画
 		sceneManager->Draw();
-
-		//パーティクルの描画
-		particleManager->Draw();
 
 		//OffScreen用のレンダラーの描画
 		renderer->OffScreenDraw();

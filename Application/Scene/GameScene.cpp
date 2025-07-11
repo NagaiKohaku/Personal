@@ -4,7 +4,6 @@
 
 #include "2d/Sprite/SpriteManager.h"
 #include "3d/Model/ModelManager.h"
-#include "3d/Particle/ParticleManager.h"
 #include "2d/Sprite/TextureManager.h"
 
 #include "3d/Object/Object3DCommon.h"
@@ -42,8 +41,6 @@ void GameScene::Initialize() {
 	DebugObjectCommon::GetInstance()->SetDefaultCamera(camera_.get());
 
 	SkyBoxCommon::GetInstance()->SetDefaultCamera(camera_.get());
-
-	ParticleManager::GetInstance()->SetDefaultCamera(camera_.get());
 
 	/// === リソースの読み込み === ///
 

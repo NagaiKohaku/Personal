@@ -142,7 +142,7 @@ public:
 	void SetRotate(const float& rotate) { rotate_ = rotate; }
 
 	/// <summary>
-	/// スプライトのセッター
+	/// スプライトの設定
 	/// </summary>
 	/// <param name="modelName">スプライト名</param>
 	void SetSprite(const std::string& spriteName);

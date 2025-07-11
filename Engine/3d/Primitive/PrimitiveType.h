@@ -8,7 +8,7 @@ enum PrimitiveType {
 	PLANE,
 	RING,
 	CYLINDER,
-	BALL,
+	SPHERE,
 	MODEL,
 	END
 };

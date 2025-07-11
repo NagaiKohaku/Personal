@@ -34,7 +34,7 @@ public:
 public:
 
 	/// <summary>
-	/// 消滅フラグのゲッター
+	/// 消滅フラグを取得
 	/// </summary>
 	/// <returns>フラグ</returns>
 	bool IsDead() const { return isDead_; }

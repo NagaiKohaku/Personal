@@ -30,7 +30,7 @@ void ModelManager::Initialize() {
 	CreatePrimitiveModel("CylinderPrimitive", PrimitiveType::CYLINDER, "Resource/Texture/white_128x128.png");
 
 	//Ballモデルの生成
-	CreatePrimitiveModel("SpherePrimitive", PrimitiveType::BALL, "Resource/Texture/white_128x128.png");
+	CreatePrimitiveModel("SpherePrimitive", PrimitiveType::SPHERE, "Resource/Texture/white_128x128.png");
 
 	//球体モデルの読み込み
 	LoadModel("Sphere", "sphere");

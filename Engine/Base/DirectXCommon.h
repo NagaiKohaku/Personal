@@ -125,19 +125,19 @@ public:
 public:
 
 	/// <summary>
-	/// デバイスのゲッター
+	/// デバイスを取得
 	/// </summary>
 	/// <returns>デバイス</returns>
 	ID3D12Device* GetDevice() { return device_.Get(); }
 
 	/// <summary>
-	/// コマンドリストのゲッター
+	/// コマンドリストを取得
 	/// </summary>
 	/// <returns>コマンドリスト</returns>
 	ID3D12GraphicsCommandList* GetCommandList() { return commandList_.Get(); }
 
 	/// <summary>
-	/// バックバッファのゲッター
+	/// バックバッファを取得
 	/// </summary>
 	/// <returns>バックバッファ</returns>
 	size_t GetBackBufferCount() const { return backBuffers_.size(); }

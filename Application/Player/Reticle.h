@@ -38,7 +38,7 @@ public:
 public:
 
 	/// <summary>
-	/// ワールド座標のゲッター
+	/// ワールド座標を取得
 	/// </summary>
 	/// <returns>座標</returns>
 	Vector3 GetWorldPos() const { return object3D_->GetWorldTransform().GetWorldTranslate(); }

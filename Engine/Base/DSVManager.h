@@ -59,14 +59,14 @@ public:
 public:
 
 	/// <summary>
-	/// CPUデスクリプターのゲッター
+	/// CPUデスクリプターを取得
 	/// </summary>
 	/// <param name="index">デスクリプタの番号</param>
 	/// <returns>CPUデスクリプタ</returns>
 	D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(uint32_t index);
 
 	/// <summary>
-	/// GPUデスクリプターのゲッター
+	/// GPUデスクリプターを取得
 	/// </summary>
 	/// <param name="index">デスクリプタ番号</param>
 	/// <returns>GPUデスクリプタ</returns>

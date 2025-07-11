@@ -3,7 +3,6 @@
 #include "2d/Sprite/SpriteManager.h"
 #include "2d/Sprite/TextureManager.h"
 #include "3d/Model/ModelManager.h"
-#include "3d/Particle/ParticleManager.h"
 
 #include "3d/Object/Object3DCommon.h"
 #include "3d/Object/DebugObjectCommon.h"
@@ -29,8 +28,6 @@ void ParticleEditorScene::Initialize() {
 	Object3DCommon::GetInstance()->SetDefaultCamera(camera_.get());
 
 	DebugObjectCommon::GetInstance()->SetDefaultCamera(camera_.get());
-
-	ParticleManager::GetInstance()->SetDefaultCamera(camera_.get());
 
 	for (const auto& entry : std::filesystem::directory_iterator("Resource/Sprite/Particle/")) {
 		if (entry.path().extension() == ".png") {

@@ -5,7 +5,7 @@
 #include "3d/Primitive/Plane.h"
 #include "3d/Primitive/Ring.h"
 #include "3d/Primitive/Cylinder.h"
-#include "3d/Primitive/Ball.h"
+#include "3d/Primitive/SphereMesh.h"
 #include "3d/Primitive/ModelMesh.h"
 
 std::unique_ptr<PrimitiveBase> CreatePrimitive(PrimitiveType type) {
@@ -17,8 +17,8 @@ std::unique_ptr<PrimitiveBase> CreatePrimitive(PrimitiveType type) {
 		return std::make_unique<Ring>();
 	case PrimitiveType::CYLINDER:
 		return std::make_unique<Cylinder>();
-	case PrimitiveType::BALL:
-		return std::make_unique<Ball>();
+	case PrimitiveType::SPHERE:
+		return std::make_unique<SphereMesh>();
 	case PrimitiveType::MODEL:
 		return std::make_unique<ModelMesh>();
 	default:
@@ -40,8 +40,8 @@ PrimitiveType GetPrimitiveType(Model* model) {
 	if (dynamic_cast<Cylinder*>(model->GetPrimitive())) {
 		return PrimitiveType::CYLINDER;
 	}
-	if (dynamic_cast<Ball*>(model->GetPrimitive())) {
-		return PrimitiveType::BALL;
+	if (dynamic_cast<SphereMesh*>(model->GetPrimitive())) {
+		return PrimitiveType::SPHERE;
 	}
 	return PrimitiveType::END;
 }

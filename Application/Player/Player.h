@@ -50,19 +50,19 @@ public:
 public:
 
 	/// <summary>
-	/// ワールド座標のゲッター
+	/// ワールド座標を取得
 	/// </summary>
 	/// <returns>ワールド座標</returns>
 	Vector3 GetWorldPos() { return object_->GetWorldTransform().GetWorldTranslate(); }
 
 	/// <summary>
-	/// 移動量のゲッター
+	/// 移動量を取得
 	/// </summary>
 	/// <returns>移動量</returns>
 	Vector3 GetVelocity() { return velocity_; }
 
 	/// <summary>
-	/// 移動状態のゲッター
+	/// 移動状態を取得
 	/// </summary>
 	/// <returns>移動状態</returns>
 	MOVESTATE GetMoveState() { return moveState_; }

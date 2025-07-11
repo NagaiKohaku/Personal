@@ -53,13 +53,13 @@ public:
 public:
 
 	/// <summary>
-	/// インスタンスハンドルのゲッター
+	/// インスタンスハンドルを取得
 	/// </summary>
 	/// <returns>インスタンスハンドル</returns>
 	HINSTANCE GetHInstance() const { return wc_.hInstance; }
 
 	/// <summary>
-	/// ウィンドウハンドルのゲッター
+	/// ウィンドウハンドルを取得
 	/// </summary>
 	/// <returns>ウィンドウハンドル</returns>
 	HWND GetHwnd() const { return hwnd_; }
