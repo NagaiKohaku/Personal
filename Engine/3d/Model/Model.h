@@ -4,8 +4,8 @@
 #include "Math/Vector3.h"
 #include "Math/Vector4.h"
 #include "Math/Matrix4x4.h"
-#include "3d/Primitive/MeshBase.h"
-#include "3d/Primitive/MeshType.h"
+#include "3d/Mesh/MeshBase.h"
+#include "3d/Mesh/MeshType.h"
 
 #include "DirectXTex.h"
 #include "d3d12.h"
@@ -55,16 +55,16 @@ public:
 	void Initialize(const std::string& directoryPath, const std::string& filename);
 
 	/// <summary>
-	/// 初期化処理(プリミティブ)
+	/// 初期化処理(メッシュ)
 	/// </summary>
-	/// <param name="type">プリミティブタイプ</param>
+	/// <param name="type">メッシュタイプ</param>
 	/// <param name="textureFilePath">テクスチャファイルパス</param>
 	void Initialize(MeshType type, const std::string& textureFilePath);
 
 	/// <summary>
 	/// 初期化処理(コピー)
 	/// </summary>
-	/// <param name="type">プリミティブタイプ</param>
+	/// <param name="type">メッシュタイプ</param>
 	/// <param name="model">モデル</param>
 	void Initialize(MeshType type, Model* model);
 
@@ -74,9 +74,9 @@ public:
 	void Draw();
 
 	/// <summary>
-	/// プリミティブの描画
+	/// メッシュの描画
 	/// </summary>
-	void DrawPrimitive();
+	void DrawMesh();
 
 	/// <summary>
 	/// マテリアルの描画
@@ -120,8 +120,8 @@ private:
 	//モデル基底
 	ModelCommon* modelCommon_;
 
-	//プリミティブ
-	std::unique_ptr<MeshBase> primitive_;
+	//メッシュ
+	std::unique_ptr<MeshBase> mesh_;
 
 	//マテリアルリソース
 	Microsoft::WRL::ComPtr<ID3D12Resource> materialResource_ = nullptr;
@@ -144,10 +144,10 @@ private:
 public:
 
 	/// <summary>
-	/// プリミティブを取得
+	/// メッシュを取得
 	/// </summary>
-	/// <returns>プリミティブ</returns>
-	MeshBase* GetPrimitive() { return primitive_.get(); }
+	/// <returns>メッシュ</returns>
+	MeshBase* GetMesh() { return mesh_.get(); }
 
 	/// <summary>
 	/// モデルデータの取得

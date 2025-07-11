@@ -7,7 +7,7 @@
 #include "Math/Matrix4x4.h"
 #include "Math/WorldTransform.h"
 #include "Math/AABB.h"
-#include "3d/Primitive/MeshBase.h"
+#include "3d/Mesh/MeshBase.h"
 #include "3d/Model/Model.h"
 
 
@@ -112,7 +112,7 @@ private:
 		EASE_INOUT,
 	};
 
-	//プリミティブの種類
+	//メッシュの種類
 	enum MeshType {
 		PLANE,
 		RING,

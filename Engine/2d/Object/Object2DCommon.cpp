@@ -39,7 +39,7 @@ void Object2DCommon::CommonDrawSetting() {
 	//PSOを設定
 	dxCommon_->GetCommandList()->SetPipelineState(graphicsPipelineState_[blendMode_].Get());
 
-	//プリミティブトポロジーを設定
+	//メッシュトポロジーを設定
 	dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 

@@ -2,7 +2,7 @@
 
 #include "Collider.h"
 
-#include "3d/Primitive/SphereMesh.h"
+#include "3d/Mesh/SphereMesh.h"
 
 #include "Math/Sphere.h"
 

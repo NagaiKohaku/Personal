@@ -108,7 +108,7 @@ void ParticleEmitter::Initialize(const std::string& groupName, const std::string
 
 	/// === パーティクル情報の初期化 === ///
 
-	if (modelFileName_.find(".obj")) {
+	if (modelFileName_.find(".obj") != std::string::npos) {
 
 		//モデルの読み込み
 		ModelManager::GetInstance()->LoadModel(modelName_, modelFileName_);
@@ -389,7 +389,7 @@ void ParticleEmitter::Draw(LayerType layer) {
 		//パーティクルの描画前処理
 		ParticleCommon::GetInstance()->CommonDrawSetting();
 
-		model_->DrawPrimitive();
+		model_->DrawMesh();
 
 		model_->DrawMaterial();
 
@@ -397,7 +397,7 @@ void ParticleEmitter::Draw(LayerType layer) {
 
 		directXCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(1, srvManager_->GetGPUDescriptorHandle(srvIndex_));
 
-		directXCommon_->GetCommandList()->DrawIndexedInstanced(model_->GetPrimitive()->GetIndexCount(), numInstance_, 0, 0, 0);
+		directXCommon_->GetCommandList()->DrawIndexedInstanced(model_->GetMesh()->GetIndexCount(), numInstance_, 0, 0, 0);
 		};
 
 	//レンダラーにコマンドを登録
@@ -430,10 +430,10 @@ void ParticleEmitter::ImGui() {
 			int currentModel = 0;
 
 			modelItems.push_back("モデルを選択");
-			modelItems.push_back("PlanePrimitive");
-			modelItems.push_back("RingPrimitive");
-			modelItems.push_back("CylinderPrimitive");
-			modelItems.push_back("SpherePrimitive");
+			modelItems.push_back("PlaneMesh");
+			modelItems.push_back("RingMesh");
+			modelItems.push_back("CylinderMesh");
+			modelItems.push_back("SphereMesh");
 
 			ImGui::Text("モデル");
 			if (ImGui::Combo("##Model", &currentModel, modelItems.data(), static_cast<int>(modelItems.size()))) {

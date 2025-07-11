@@ -2,13 +2,13 @@
 
 #include "3d/Model/Model.h"
 
-#include "3d/Primitive/PlaneMesh.h"
-#include "3d/Primitive/RingMesh.h"
-#include "3d/Primitive/CylinderMesh.h"
-#include "3d/Primitive/SphereMesh.h"
-#include "3d/Primitive/ModelMesh.h"
+#include "3d/Mesh/PlaneMesh.h"
+#include "3d/Mesh/RingMesh.h"
+#include "3d/Mesh/CylinderMesh.h"
+#include "3d/Mesh/SphereMesh.h"
+#include "3d/Mesh/ModelMesh.h"
 
-std::unique_ptr<MeshBase> CreatePrimitive(MeshType type) {
+std::unique_ptr<MeshBase> CreateMesh(MeshType type) {
 
 	switch (type) {
 	case MeshType::PLANE:
@@ -26,21 +26,21 @@ std::unique_ptr<MeshBase> CreatePrimitive(MeshType type) {
 	}
 }
 
-MeshType GetPrimitiveType(Model* model) {
+MeshType GetMeshType(Model* model) {
 
-	if (dynamic_cast<ModelMesh*>(model->GetPrimitive())) {
+	if (dynamic_cast<ModelMesh*>(model->GetMesh())) {
 		return MeshType::MODEL;
 	}
-	if (dynamic_cast<PlaneMesh*>(model->GetPrimitive())) {
+	if (dynamic_cast<PlaneMesh*>(model->GetMesh())) {
 		return MeshType::PLANE;
 	}
-	if (dynamic_cast<RingMesh*>(model->GetPrimitive())) {
+	if (dynamic_cast<RingMesh*>(model->GetMesh())) {
 		return MeshType::RING;
 	}
-	if (dynamic_cast<CylinderMesh*>(model->GetPrimitive())) {
+	if (dynamic_cast<CylinderMesh*>(model->GetMesh())) {
 		return MeshType::CYLINDER;
 	}
-	if (dynamic_cast<SphereMesh*>(model->GetPrimitive())) {
+	if (dynamic_cast<SphereMesh*>(model->GetMesh())) {
 		return MeshType::SPHERE;
 	}
 	return MeshType::END;

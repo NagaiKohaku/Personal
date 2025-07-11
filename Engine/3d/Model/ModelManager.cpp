@@ -21,16 +21,16 @@ void ModelManager::Initialize() {
 	/// === 初期モデルの生成 === ///
 
 	//PlaneMeshモデルの生成
-	CreatePrimitiveModel("PlanePrimitive", MeshType::PLANE, "Resource/Texture/white_128x128.png");
+	CreateMeshModel("PlaneMesh", MeshType::PLANE, "Resource/Texture/white_128x128.png");
 
 	//RingMeshモデルの生成
-	CreatePrimitiveModel("RingPrimitive", MeshType::RING, "Resource/Texture/white_128x128.png");
+	CreateMeshModel("RingMesh", MeshType::RING, "Resource/Texture/white_128x128.png");
 
 	//CylinderMeshモデルの生成
-	CreatePrimitiveModel("CylinderPrimitive", MeshType::CYLINDER, "Resource/Texture/white_128x128.png");
+	CreateMeshModel("CylinderMesh", MeshType::CYLINDER, "Resource/Texture/white_128x128.png");
 
 	//Ballモデルの生成
-	CreatePrimitiveModel("SpherePrimitive", MeshType::SPHERE, "Resource/Texture/white_128x128.png");
+	CreateMeshModel("SphereMesh", MeshType::SPHERE, "Resource/Texture/white_128x128.png");
 
 	//球体モデルの読み込み
 	LoadModel("Sphere", "sphere");
@@ -62,9 +62,9 @@ void ModelManager::LoadModel(const std::string& modelName, const std::string& mo
 }
 
 ///=====================================================/// 
-/// プリミティブモデルの生成
+/// メッシュモデルの生成
 ///=====================================================///
-void ModelManager::CreatePrimitiveModel(const std::string& modelName, MeshType type, const std::string& textureFilePath) {
+void ModelManager::CreateMeshModel(const std::string& modelName, MeshType type, const std::string& textureFilePath) {
 
 	//読み込み済みモデルの検索
 	if (models_.contains(modelName)) {
@@ -72,10 +72,10 @@ void ModelManager::CreatePrimitiveModel(const std::string& modelName, MeshType t
 		return;
 	}
 
-	//プリミティブモデルの生成
+	//メッシュモデルの生成
 	std::unique_ptr<Model> model = std::make_unique<Model>();
 
-	//プリミティブモデルの初期化
+	//メッシュモデルの初期化
 	model->Initialize(type, textureFilePath);
 
 	//モデル名とモデルデータをコンテナに登録
@@ -93,14 +93,14 @@ std::unique_ptr<Model> ModelManager::FindModel(const std::string& modelName) {
 		//リストからモデルを取得
 		Model* model = models_.at(modelName).get();
 
-		//プリミティブタイプを取得
-		MeshType primitiveType = GetPrimitiveType(model);
+		//メッシュタイプを取得
+		MeshType meshType = GetMeshType(model);
 
 		//モデルを生成
 		std::unique_ptr<Model> newModel = std::make_unique<Model>();
 
 		//初期化
-		newModel->Initialize(primitiveType, model);
+		newModel->Initialize(meshType, model);
 
 		//読み込みモデルを戻り値としてreturn
 		return std::move(newModel);

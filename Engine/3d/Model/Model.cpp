@@ -10,7 +10,7 @@
 #include "sstream"
 #include "numbers"
 
-#include "3d/Primitive/ModelMesh.h"
+#include "3d/Mesh/ModelMesh.h"
 
 ///=====================================================/// 
 /// 初期化処理(モデル)
@@ -23,22 +23,22 @@ void Model::Initialize(const std::string& directoryPath, const std::string& file
 	//モデルデータの読み込み
 	LoadObjFile(directoryPath, filename);
 
-	/// === プリミティブの生成 === ///
+	/// === メッシュの生成 === ///
 
 	//生成
-	primitive_ = std::make_unique<ModelMesh>();
+	mesh_ = std::make_unique<ModelMesh>();
 
 	//頂点数の設定
-	primitive_->SetVertexCount(uint32_t(modelData_.vertices.size()));
+	mesh_->SetVertexCount(uint32_t(modelData_.vertices.size()));
 
 	//インデックス数の設定
-	primitive_->SetIndexCount(uint32_t(modelData_.indices.size()));
+	mesh_->SetIndexCount(uint32_t(modelData_.indices.size()));
 
 	//初期化
-	primitive_->Initialize();
+	mesh_->Initialize();
 
 	//頂点データとインデックスデータのコピー
-	primitive_->CopyMeshData(modelData_.indices, modelData_.vertices);
+	mesh_->CopyMeshData(modelData_.indices, modelData_.vertices);
 
 	/// === マテリアルリソースの生成 === ///
 
@@ -59,31 +59,31 @@ void Model::Initialize(const std::string& directoryPath, const std::string& file
 }
 
 ///=====================================================///
-/// 初期化処理(プリミティブ)
+/// 初期化処理(メッシュ)
 /// =====================================================///
 void Model::Initialize(MeshType type, const std::string& textureFilePath) {
 
 	//モデル基底のインスタンスを取得
 	modelCommon_ = ModelCommon::GetInstance();
 
-	/// === プリミティブの生成 === ///
+	/// === メッシュの生成 === ///
 
 	//生成
-	primitive_ = CreatePrimitive(type);
+	mesh_ = CreateMesh(type);
 
 	//初期化
-	primitive_->Initialize();
+	mesh_->Initialize();
 
 	//頂点データの設定
-	for (uint32_t i = 0; i < primitive_->GetVertexCount(); i++) {
+	for (uint32_t i = 0; i < mesh_->GetVertexCount(); i++) {
 
-		modelData_.vertices.push_back(primitive_->GetVertexData()[i]);
+		modelData_.vertices.push_back(mesh_->GetVertexData()[i]);
 	}
 
 	//インデックスデータの設定
-	for (uint32_t i = 0; i < primitive_->GetIndexCount(); i++) {
+	for (uint32_t i = 0; i < mesh_->GetIndexCount(); i++) {
 
-		modelData_.indices.push_back(primitive_->GetIndexData()[i]);
+		modelData_.indices.push_back(mesh_->GetIndexData()[i]);
 	}
 
 	/// === マテリアルデータの生成 === ///
@@ -119,22 +119,22 @@ void Model::Initialize(MeshType type, Model* model) {
 
 	Copy(model);
 
-	/// === プリミティブの生成 === ///
+	/// === メッシュの生成 === ///
 
 	//生成
-	primitive_ = CreatePrimitive(type);
+	mesh_ = CreateMesh(type);
 
 	//頂点数を設定
-	primitive_->SetVertexCount(uint32_t(modelData_.vertices.size()));
+	mesh_->SetVertexCount(uint32_t(modelData_.vertices.size()));
 
 	//インデックス数を設定
-	primitive_->SetIndexCount(uint32_t(modelData_.indices.size()));
+	mesh_->SetIndexCount(uint32_t(modelData_.indices.size()));
 
 	//初期化
-	primitive_->Initialize();
+	mesh_->Initialize();
 
 	//頂点データとインデックスデータのコピー
-	primitive_->CopyMeshData(modelData_.indices, modelData_.vertices);
+	mesh_->CopyMeshData(modelData_.indices, modelData_.vertices);
 
 	/// === マテリアルリソースの生成 === ///
 
@@ -156,8 +156,8 @@ void Model::Initialize(MeshType type, Model* model) {
 ///=====================================================///
 void Model::Draw() {
 
-	//プリミティブの設定
-	primitive_->Draw();
+	//メッシュの設定
+	mesh_->Draw();
 
 	//マテリアルデータの設定
 	modelCommon_->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource_.Get()->GetGPUVirtualAddress());
@@ -166,17 +166,17 @@ void Model::Draw() {
 	modelCommon_->GetDxCommon()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSrvHandleGPU(textureFilePath_));
 
 	//描画コマンド発行
-	modelCommon_->GetDxCommon()->GetCommandList()->DrawIndexedInstanced(UINT(primitive_->GetIndexCount()), 1, 0, 0, 0);
+	modelCommon_->GetDxCommon()->GetCommandList()->DrawIndexedInstanced(UINT(mesh_->GetIndexCount()), 1, 0, 0, 0);
 
 }
 
 ///=====================================================/// 
-/// プリミティブの描画
+/// メッシュの描画
 ///=====================================================///
-void Model::DrawPrimitive() {
+void Model::DrawMesh() {
 
-	//プリミティブの設定
-	primitive_->Draw();
+	//メッシュの設定
+	mesh_->Draw();
 }
 
 ///=====================================================/// 

@@ -138,19 +138,19 @@
     <ClCompile Include="Engine\3d\Model\ModelManager.cpp">
       <Filter>Engine\3d\Model</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\3d\Primitive\CylinderMesh.cpp">
+    <ClCompile Include="Engine\3d\Mesh\CylinderMesh.cpp">
       <Filter>Engine\3d\Primitive</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\3d\Primitive\ModelMesh.cpp">
+    <ClCompile Include="Engine\3d\Mesh\ModelMesh.cpp">
       <Filter>Engine\3d\Primitive</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\3d\Primitive\PlaneMesh.cpp">
+    <ClCompile Include="Engine\3d\Mesh\PlaneMesh.cpp">
       <Filter>Engine\3d\Primitive</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\3d\Primitive\MeshType.cpp">
+    <ClCompile Include="Engine\3d\Mesh\MeshType.cpp">
       <Filter>Engine\3d\Primitive</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\3d\Primitive\RingMesh.cpp">
+    <ClCompile Include="Engine\3d\Mesh\RingMesh.cpp">
       <Filter>Engine\3d\Primitive</Filter>
     </ClCompile>
     <ClCompile Include="Engine\3d\Particle\EmitterGroup.cpp">
@@ -255,8 +255,8 @@
     <ClCompile Include="Application\Scene\ParticleEditorScene.cpp">
       <Filter>Application\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\3d\Primitive\SphereMesh.cpp" />
-    <ClCompile Include="Engine\3d\Primitive\MeshBase.cpp" />
+    <ClCompile Include="Engine\3d\Mesh\SphereMesh.cpp" />
+    <ClCompile Include="Engine\3d\Mesh\MeshBase.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application\Bullet\BulletBase.h">
@@ -337,19 +337,19 @@
     <ClInclude Include="Engine\3d\Model\ModelCommon.h">
       <Filter>Engine\3d\Model</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\3d\Primitive\CylinderMesh.h">
+    <ClInclude Include="Engine\3d\Mesh\CylinderMesh.h">
       <Filter>Engine\3d\Primitive</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\3d\Primitive\ModelMesh.h">
+    <ClInclude Include="Engine\3d\Mesh\ModelMesh.h">
       <Filter>Engine\3d\Primitive</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\3d\Primitive\PlaneMesh.h">
+    <ClInclude Include="Engine\3d\Mesh\PlaneMesh.h">
       <Filter>Engine\3d\Primitive</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\3d\Primitive\MeshType.h">
+    <ClInclude Include="Engine\3d\Mesh\MeshType.h">
       <Filter>Engine\3d\Primitive</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\3d\Primitive\RingMesh.h">
+    <ClInclude Include="Engine\3d\Mesh\RingMesh.h">
       <Filter>Engine\3d\Primitive</Filter>
     </ClInclude>
     <ClInclude Include="Engine\3d\Particle\EmitterGroup.h">
@@ -472,8 +472,8 @@
     <ClInclude Include="Application\Scene\ParticleEditorScene.h">
       <Filter>Application\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\3d\Primitive\SphereMesh.h" />
-    <ClInclude Include="Engine\3d\Primitive\MeshBase.h" />
+    <ClInclude Include="Engine\3d\Mesh\SphereMesh.h" />
+    <ClInclude Include="Engine\3d\Mesh\MeshBase.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Application\level_editor.py">

@@ -40,7 +40,7 @@ void ParticleCommon::CommonDrawSetting() {
 	//PSOの設定
 	dxCommon_->GetCommandList()->SetPipelineState(graphicsPipelineState_[blendMode_].Get());
 
-	//プリミティブトポロジーの設定
+	//メッシュトポロジーの設定
 	dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 }

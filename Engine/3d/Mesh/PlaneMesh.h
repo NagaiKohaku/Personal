@@ -1,6 +1,6 @@
 #pragma once
 
-#include "3d/Primitive/MeshBase.h"
+#include "3d/Mesh/MeshBase.h"
 
 class PlaneMesh : public MeshBase {
 

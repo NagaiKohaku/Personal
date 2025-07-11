@@ -37,12 +37,12 @@ public:
 	void LoadModel(const std::string& modelName, const std::string& modelFileName);
 
 	/// <summary>
-	/// プリミティブモデルの生成
+	/// メッシュモデルの生成
 	/// </summary>
 	/// <param name="type"></param>
 	/// <param name="modelName"></param>
 	/// <param name="textureFilePath"></param>
-	void CreatePrimitiveModel(const std::string& modelName, MeshType type, const std::string& textureFilePath);
+	void CreateMeshModel(const std::string& modelName, MeshType type, const std::string& textureFilePath);
 
 	/// <summary>
 	/// モデルの検索
