@@ -1,6 +1,6 @@
-#include "Cylinder.h"
+#include "CylinderMesh.h"
 
-void Cylinder::Initialize() {
+void CylinderMesh::Initialize() {
 
 	directXCommon_ = DirectXCommon::GetInstance();
 
@@ -76,7 +76,7 @@ void Cylinder::Initialize() {
 	}
 }
 
-void Cylinder::Draw() {
+void CylinderMesh::Draw() {
 
 	//VBVを設定
 	directXCommon_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView_);
@@ -84,7 +84,7 @@ void Cylinder::Draw() {
 	directXCommon_->GetCommandList()->IASetIndexBuffer(&indexBufferView_);
 }
 
-void Cylinder::CopyMeshData(std::vector<uint32_t> indices, std::vector<VertexData> vertices) {
+void CylinderMesh::CopyMeshData(std::vector<uint32_t> indices, std::vector<VertexData> vertices) {
 
 	std::memcpy(vertexData_, vertices.data(), sizeof(VertexData) * vertices.size());
 	std::memcpy(indexData_, indices.data(), sizeof(uint32_t) * indices.size());

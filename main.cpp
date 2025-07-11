@@ -114,7 +114,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	ModelManager::GetInstance()->Initialize();
 
 	//シーンを設定
-	sceneManager->ChangeScene(SceneManager::kGame);
+	sceneManager->ChangeScene(SceneManager::kParticleEditor);
 
 	///-------------------------------------------/// 
 	/// メインループ

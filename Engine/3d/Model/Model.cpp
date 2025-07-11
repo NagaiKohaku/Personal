@@ -61,7 +61,7 @@ void Model::Initialize(const std::string& directoryPath, const std::string& file
 ///=====================================================///
 /// 初期化処理(プリミティブ)
 /// =====================================================///
-void Model::Initialize(PrimitiveType type, const std::string& textureFilePath) {
+void Model::Initialize(MeshType type, const std::string& textureFilePath) {
 
 	//モデル基底のインスタンスを取得
 	modelCommon_ = ModelCommon::GetInstance();
@@ -110,7 +110,7 @@ void Model::Initialize(PrimitiveType type, const std::string& textureFilePath) {
 ///=====================================================/// 
 /// 初期化処理(コピー)
 ///=====================================================///
-void Model::Initialize(PrimitiveType type, Model* model) {
+void Model::Initialize(MeshType type, Model* model) {
 
 	//モデル基底のインスタンスを取得
 	modelCommon_ = ModelCommon::GetInstance();
@@ -215,7 +215,7 @@ void Model::LoadObjFile(const std::string& directoryPath, const std::string& fil
 	/// === ローカル変数 === ///
 
 	//三角面の頂点データ
-	PrimitiveBase::VertexData triangle[3];
+	MeshBase::VertexData triangle[3];
 
 	//位置
 	std::vector<Vector4> positions;

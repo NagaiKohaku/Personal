@@ -1,6 +1,6 @@
-#include "Ring.h"
+#include "RingMesh.h"
 
-void Ring::Initialize() {
+void RingMesh::Initialize() {
 
 	directXCommon_ = DirectXCommon::GetInstance();
 
@@ -78,7 +78,7 @@ void Ring::Initialize() {
 	}
 }
 
-void Ring::Draw() {
+void RingMesh::Draw() {
 
 	//VBVを設定
 	directXCommon_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView_);
@@ -86,7 +86,7 @@ void Ring::Draw() {
 	directXCommon_->GetCommandList()->IASetIndexBuffer(&indexBufferView_);
 }
 
-void Ring::CopyMeshData(std::vector<uint32_t> indices, std::vector<VertexData> vertices) {
+void RingMesh::CopyMeshData(std::vector<uint32_t> indices, std::vector<VertexData> vertices) {
 
 	std::memcpy(vertexData_, vertices.data(), sizeof(VertexData) * vertices.size());
 	std::memcpy(indexData_, indices.data(), sizeof(uint32_t) * indices.size());

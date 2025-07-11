@@ -1,10 +1,10 @@
 #pragma once
 
-#include "3d/Primitive/PrimitiveBase.h"
+#include "3d/Primitive/MeshBase.h"
 
 #include "numbers"
 
-class Cylinder : public PrimitiveBase {
+class CylinderMesh : public MeshBase {
 
 public:
 

@@ -1,8 +1,8 @@
-#include "Plane.h"
+#include "PlaneMesh.h"
 
 #include "Base/DirectXCommon.h"
 
-void Plane::Initialize() {
+void PlaneMesh::Initialize() {
 
 	directXCommon_ = DirectXCommon::GetInstance();
 
@@ -69,7 +69,7 @@ void Plane::Initialize() {
 	indexData_[5] = 2;
 }
 
-void Plane::Draw() {
+void PlaneMesh::Draw() {
 
 	//VBVを設定
 	directXCommon_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView_);
@@ -77,7 +77,7 @@ void Plane::Draw() {
 	directXCommon_->GetCommandList()->IASetIndexBuffer(&indexBufferView_);
 }
 
-void Plane::CopyMeshData(std::vector<uint32_t> indices, std::vector<VertexData> vertices) {
+void PlaneMesh::CopyMeshData(std::vector<uint32_t> indices, std::vector<VertexData> vertices) {
 
 	std::memcpy(vertexData_, vertices.data(), sizeof(VertexData) * vertices.size());
 	std::memcpy(indexData_, indices.data(), sizeof(uint32_t) * indices.size());

@@ -35,6 +35,9 @@ void Object3D::Initialize() {
 	WVPData_->World = MakeIdentity4x4();
 	WVPData_->WorldInverseTranspose = MakeIdentity4x4();
 
+	//トランスフォームの初期化
+	transform_.Initialize();
+
 	/// === 軸方向ラインの初期化 === ///
 
 	//3方向分のサイズを確保
@@ -67,9 +70,6 @@ void Object3D::Initialize() {
 	axisLines_[2]->SetParent(&transform_);
 
 	/// === 他変数の設定 === ///
-
-	//トランスフォームの初期化
-	transform_.Initialize();
 
 	//モデルの設定
 	model_ = ModelManager::GetInstance()->FindModel("Default");

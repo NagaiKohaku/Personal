@@ -1,8 +1,8 @@
 #pragma once
 
-#include "3d/Primitive/PrimitiveBase.h"
+#include "3d/Primitive/MeshBase.h"
 
-class Plane : public PrimitiveBase {
+class PlaneMesh : public MeshBase {
 
 public:
 

@@ -42,7 +42,7 @@ public:
 	/// <param name="type"></param>
 	/// <param name="modelName"></param>
 	/// <param name="textureFilePath"></param>
-	void CreatePrimitiveModel(const std::string& modelName, PrimitiveType type, const std::string& textureFilePath);
+	void CreatePrimitiveModel(const std::string& modelName, MeshType type, const std::string& textureFilePath);
 
 	/// <summary>
 	/// モデルの検索

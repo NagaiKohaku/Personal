@@ -4,8 +4,8 @@
 #include "Math/Vector3.h"
 #include "Math/Vector4.h"
 #include "Math/Matrix4x4.h"
-#include "3d/Primitive/PrimitiveBase.h"
-#include "3d/Primitive/PrimitiveType.h"
+#include "3d/Primitive/MeshBase.h"
+#include "3d/Primitive/MeshType.h"
 
 #include "DirectXTex.h"
 #include "d3d12.h"
@@ -38,7 +38,7 @@ private:
 	};
 
 	struct ModelData {
-		std::vector<PrimitiveBase::VertexData> vertices; // 頂点データ
+		std::vector<MeshBase::VertexData> vertices; // 頂点データ
 		std::vector<uint32_t> indices; // インデックスデータ
 	};
 
@@ -59,14 +59,14 @@ public:
 	/// </summary>
 	/// <param name="type">プリミティブタイプ</param>
 	/// <param name="textureFilePath">テクスチャファイルパス</param>
-	void Initialize(PrimitiveType type, const std::string& textureFilePath);
+	void Initialize(MeshType type, const std::string& textureFilePath);
 
 	/// <summary>
 	/// 初期化処理(コピー)
 	/// </summary>
 	/// <param name="type">プリミティブタイプ</param>
 	/// <param name="model">モデル</param>
-	void Initialize(PrimitiveType type, Model* model);
+	void Initialize(MeshType type, Model* model);
 
 	/// <summary>
 	/// 描画
@@ -121,7 +121,7 @@ private:
 	ModelCommon* modelCommon_;
 
 	//プリミティブ
-	std::unique_ptr<PrimitiveBase> primitive_;
+	std::unique_ptr<MeshBase> primitive_;
 
 	//マテリアルリソース
 	Microsoft::WRL::ComPtr<ID3D12Resource> materialResource_ = nullptr;
@@ -147,7 +147,7 @@ public:
 	/// プリミティブを取得
 	/// </summary>
 	/// <returns>プリミティブ</returns>
-	PrimitiveBase* GetPrimitive() { return primitive_.get(); }
+	MeshBase* GetPrimitive() { return primitive_.get(); }
 
 	/// <summary>
 	/// モデルデータの取得

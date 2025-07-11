@@ -1,10 +1,10 @@
 #pragma once
 
-#include "3d/Primitive/PrimitiveBase.h"
+#include "3d/Primitive/MeshBase.h"
 
 class DirectXCommon;
 
-class ModelMesh : public PrimitiveBase {
+class ModelMesh : public MeshBase {
 
 public:
 	/// <summary>

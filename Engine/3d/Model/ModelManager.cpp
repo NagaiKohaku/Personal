@@ -20,17 +20,17 @@ void ModelManager::Initialize() {
 
 	/// === 初期モデルの生成 === ///
 
-	//Planeモデルの生成
-	CreatePrimitiveModel("PlanePrimitive", PrimitiveType::PLANE, "Resource/Texture/white_128x128.png");
+	//PlaneMeshモデルの生成
+	CreatePrimitiveModel("PlanePrimitive", MeshType::PLANE, "Resource/Texture/white_128x128.png");
 
-	//Ringモデルの生成
-	CreatePrimitiveModel("RingPrimitive", PrimitiveType::RING, "Resource/Texture/white_128x128.png");
+	//RingMeshモデルの生成
+	CreatePrimitiveModel("RingPrimitive", MeshType::RING, "Resource/Texture/white_128x128.png");
 
-	//Cylinderモデルの生成
-	CreatePrimitiveModel("CylinderPrimitive", PrimitiveType::CYLINDER, "Resource/Texture/white_128x128.png");
+	//CylinderMeshモデルの生成
+	CreatePrimitiveModel("CylinderPrimitive", MeshType::CYLINDER, "Resource/Texture/white_128x128.png");
 
 	//Ballモデルの生成
-	CreatePrimitiveModel("SpherePrimitive", PrimitiveType::SPHERE, "Resource/Texture/white_128x128.png");
+	CreatePrimitiveModel("SpherePrimitive", MeshType::SPHERE, "Resource/Texture/white_128x128.png");
 
 	//球体モデルの読み込み
 	LoadModel("Sphere", "sphere");
@@ -64,7 +64,7 @@ void ModelManager::LoadModel(const std::string& modelName, const std::string& mo
 ///=====================================================/// 
 /// プリミティブモデルの生成
 ///=====================================================///
-void ModelManager::CreatePrimitiveModel(const std::string& modelName, PrimitiveType type, const std::string& textureFilePath) {
+void ModelManager::CreatePrimitiveModel(const std::string& modelName, MeshType type, const std::string& textureFilePath) {
 
 	//読み込み済みモデルの検索
 	if (models_.contains(modelName)) {
@@ -94,7 +94,7 @@ std::unique_ptr<Model> ModelManager::FindModel(const std::string& modelName) {
 		Model* model = models_.at(modelName).get();
 
 		//プリミティブタイプを取得
-		PrimitiveType primitiveType = GetPrimitiveType(model);
+		MeshType primitiveType = GetPrimitiveType(model);
 
 		//モデルを生成
 		std::unique_ptr<Model> newModel = std::make_unique<Model>();

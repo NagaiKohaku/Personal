@@ -12,7 +12,7 @@
 #include "string"
 #include "wrl.h"
 
-class PrimitiveBase {
+class MeshBase {
 
 public:
 
@@ -28,7 +28,7 @@ public:
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
-	virtual ~PrimitiveBase() = default;
+	virtual ~MeshBase() = default;
 
 	/// <summary>
 	/// 初期化処理

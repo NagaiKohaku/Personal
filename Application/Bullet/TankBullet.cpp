@@ -109,8 +109,11 @@ void TankBullet::Update() {
 ///=====================================================///
 void TankBullet::Draw() {
 
-	//オブジェクトの描画
-	object_->Draw(LayerType::Object);
+	if (!isExplosive_) {
+
+		//オブジェクトの描画
+		object_->Draw(LayerType::Object);
+	}
 
 	//コライダーの描画
 	collider_->Draw();

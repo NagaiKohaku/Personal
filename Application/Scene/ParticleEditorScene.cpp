@@ -18,6 +18,8 @@ void ParticleEditorScene::Initialize() {
 	//カメラを生成
 	camera_ = std::make_unique<Camera>();
 
+	camera_->Initialize();
+
 	camera_->SetDebugCameraFlag(true);
 
 	camera_->SetOffsetZ(-30.0f);
@@ -112,7 +114,7 @@ void ParticleEditorScene::Draw() {
 
 	for (auto& line : lines_) {
 
-		line->Draw();
+		line->Draw(Object);
 	}
 }
 
