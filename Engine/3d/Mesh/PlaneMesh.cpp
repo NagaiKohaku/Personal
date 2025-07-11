@@ -46,10 +46,10 @@ void PlaneMesh::Initialize() {
 	indexCount_ = 6;
 
 	//頂点インデックスリソースの生成
-	IndexResource_ = directXCommon_->CreateBufferResource(sizeof(uint32_t) * indexCount_);
+	indexResource_ = directXCommon_->CreateBufferResource(sizeof(uint32_t) * indexCount_);
 
 	//リソースの場所を取得
-	indexBufferView_.BufferLocation = IndexResource_->GetGPUVirtualAddress();
+	indexBufferView_.BufferLocation = indexResource_->GetGPUVirtualAddress();
 
 	//使用するリソースのサイズを設定
 	indexBufferView_.SizeInBytes = sizeof(uint32_t) * indexCount_;
@@ -58,7 +58,7 @@ void PlaneMesh::Initialize() {
 	indexBufferView_.Format = DXGI_FORMAT_R32_UINT;
 
 	//リソースにデータを書き込めるようにする
-	IndexResource_->Map(0, nullptr, reinterpret_cast<void**>(&indexData_));
+	indexResource_->Map(0, nullptr, reinterpret_cast<void**>(&indexData_));
 
 	//頂点インデックスデータの初期化
 	indexData_[0] = 0;
@@ -67,18 +67,4 @@ void PlaneMesh::Initialize() {
 	indexData_[3] = 1;
 	indexData_[4] = 3;
 	indexData_[5] = 2;
-}
-
-void PlaneMesh::Draw() {
-
-	//VBVを設定
-	directXCommon_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView_);
-
-	directXCommon_->GetCommandList()->IASetIndexBuffer(&indexBufferView_);
-}
-
-void PlaneMesh::CopyMeshData(std::vector<uint32_t> indices, std::vector<VertexData> vertices) {
-
-	std::memcpy(vertexData_, vertices.data(), sizeof(VertexData) * vertices.size());
-	std::memcpy(indexData_, indices.data(), sizeof(uint32_t) * indices.size());
 }

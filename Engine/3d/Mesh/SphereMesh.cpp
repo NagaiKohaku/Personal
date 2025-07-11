@@ -129,10 +129,10 @@ void SphereMesh::Initialize() {
 	indexCount_ = 6 * kLatitudeCount * kLongitudeCount;
 
 	//リソースの生成
-	IndexResource_ = directXCommon_->CreateBufferResource(sizeof(uint32_t) * indexCount_);
+	indexResource_ = directXCommon_->CreateBufferResource(sizeof(uint32_t) * indexCount_);
 
 	//リソースの場所を取得
-	indexBufferView_.BufferLocation = IndexResource_->GetGPUVirtualAddress();
+	indexBufferView_.BufferLocation = indexResource_->GetGPUVirtualAddress();
 
 	//使用するリソースのサイズを設定
 	indexBufferView_.SizeInBytes = sizeof(uint32_t) * indexCount_;
@@ -141,7 +141,7 @@ void SphereMesh::Initialize() {
 	indexBufferView_.Format = DXGI_FORMAT_R32_UINT;
 
 	//リソースにデータを書き込めるようにする
-	IndexResource_->Map(0, nullptr, reinterpret_cast<void**>(&indexData_));
+	indexResource_->Map(0, nullptr, reinterpret_cast<void**>(&indexData_));
 
 	/// === インデックスデータの生成 === ///
 
@@ -166,22 +166,4 @@ void SphereMesh::Initialize() {
 		//左上
 		indexData_[index * 6 + 5] = index * 4 + 2;
 	}
-}
-
-void SphereMesh::Draw() {
-
-	//頂点データをGPUに転送
-	directXCommon_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView_);
-
-	//インデックスデータをGPUに転送
-	directXCommon_->GetCommandList()->IASetIndexBuffer(&indexBufferView_);
-}
-
-void SphereMesh::CopyMeshData(std::vector<uint32_t> indices, std::vector<VertexData> vertices) {
-
-	//頂点データのコピー
-	std::memcpy(vertexData_, vertices.data(), sizeof(VertexData) * vertices.size());
-
-	//インデックスデータのコピー
-	std::memcpy(indexData_, indices.data(), sizeof(uint32_t) * indices.size());
 }

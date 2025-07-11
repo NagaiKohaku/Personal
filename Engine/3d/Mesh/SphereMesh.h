@@ -14,18 +14,6 @@ public:
 	/// </summary>
 	void Initialize() override;
 
-	/// <summary>
-	/// 描画
-	/// </summary>
-	void Draw() override;
-
-	/// <summary>
-	/// 頂点データ、インデックスデータのコピー
-	/// </summary>
-	/// <param name="indices">コピー先のインデックスデータ</param>
-	/// <param name="vertices">コピー先の頂点データ</param>
-	void CopyMeshData(std::vector<uint32_t> indices, std::vector<VertexData> vertices) override;
-
 private:
 
 	//緯度の分割数

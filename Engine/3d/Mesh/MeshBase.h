@@ -38,9 +38,9 @@ public:
 	/// <summary>
 	/// 描画処理
 	/// </summary>
-	virtual void Draw() = 0;
+	void Draw();
 
-	virtual void CopyMeshData(std::vector<uint32_t> indices, std::vector<VertexData> vertices);
+	void CopyMeshData(std::vector<uint32_t> indices, std::vector<VertexData> vertices);
 
 public:
 
@@ -70,7 +70,7 @@ protected:
 	Microsoft::WRL::ComPtr<ID3D12Resource> vertexResource_ = nullptr;
 
 	//頂点番号リソース
-	Microsoft::WRL::ComPtr<ID3D12Resource> IndexResource_ = nullptr;
+	Microsoft::WRL::ComPtr<ID3D12Resource> indexResource_ = nullptr;
 
 	/// === バッファリソース内のデータを指すポインタ === ///
 

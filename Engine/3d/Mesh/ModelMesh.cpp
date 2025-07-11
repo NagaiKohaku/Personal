@@ -23,6 +23,8 @@ void ModelMesh::Initialize() {
 	//書き込むためのアドレスを取得する
 	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData_));
 
+	vertexData_ = new VertexData[vertexCount_];
+
 	/// === インデックスリソース === ///
 
 	//インデックスリソースを作成
@@ -40,20 +42,6 @@ void ModelMesh::Initialize() {
 	//書き込むためのアドレスを取得する
 	indexResource_->Map(0, nullptr, reinterpret_cast<void**>(&indexData_));
 
-}
+	indexData_ = new uint32_t[indexCount_];
 
-void ModelMesh::Draw() {
-
-	//頂点データの設定
-	directXCommon_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView_);
-
-	//頂点番号の設定
-	directXCommon_->GetCommandList()->IASetIndexBuffer(&indexBufferView_);
-
-}
-
-void ModelMesh::CopyMeshData(std::vector<uint32_t> indices, std::vector<VertexData> vertices) {
-
-	std::memcpy(vertexData_, vertices.data(), sizeof(VertexData) * vertices.size());
-	std::memcpy(indexData_, indices.data(), sizeof(uint32_t) * indices.size());
 }

@@ -1,15 +1,20 @@
 #include "CylinderMesh.h"
 
+///=====================================================/// 
+/// 初期化
+///=====================================================///
 void CylinderMesh::Initialize() {
+
+	/// === シングルトンインスタンスの取得 === ///
 
 	directXCommon_ = DirectXCommon::GetInstance();
 
 	/// === 頂点リソースの生成 === ///
 
-	//頂点リソースの生成
+	//リソースの生成
 	vertexResource_ = directXCommon_->CreateBufferResource(sizeof(VertexData) * 4 * kCylinderDivide);
 
-	//頂点バッファビューの作成
+	//バッファビューの作成
 	vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
 
 	//使用するリソースのサイズを設定
@@ -21,6 +26,8 @@ void CylinderMesh::Initialize() {
 	//リソースにデータを書き込めるようにする
 	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData_));
 
+	/// === 頂点データの設定 === ///
+
 	for (uint32_t index = 0; index < kCylinderDivide; ++index) {
 
 		float sin = std::sinf(index * radianPerDivide);
@@ -30,18 +37,24 @@ void CylinderMesh::Initialize() {
 		float u = static_cast<float>(index) / static_cast<float>(kCylinderDivide);
 		float uNext = static_cast<float>(index + 1) / static_cast<float>(kCylinderDivide);
 
+		//面の4頂点を設定
+
+		//左下
 		vertexData_[index * 4 + 0].position = { -sin * kTopRadius,kHeight,cos * kTopRadius,1.0f };
 		vertexData_[index * 4 + 0].texcoord = { u,0.0f };
 		vertexData_[index * 4 + 0].normal = { -sin,0.0f,cos };
 
+		//右下
 		vertexData_[index * 4 + 1].position = { -sinNext * kTopRadius,kHeight,cosNext * kTopRadius,1.0f };
 		vertexData_[index * 4 + 1].texcoord = { uNext,0.0f };
 		vertexData_[index * 4 + 1].normal = { -sinNext,0.0f,cosNext };
 
+		//左上
 		vertexData_[index * 4 + 2].position = { -sin * kBottomRadius,0.0f,cos * kBottomRadius,1.0f };
 		vertexData_[index * 4 + 2].texcoord = { u,1.0f };
 		vertexData_[index * 4 + 2].normal = { -sin,0.0f,cos };
 
+		//右上
 		vertexData_[index * 4 + 3].position = { -sinNext * kBottomRadius,0.0f,cosNext * kBottomRadius,1.0f };
 		vertexData_[index * 4 + 3].texcoord = { uNext,1.0f };
 		vertexData_[index * 4 + 3].normal = { -sinNext,0.0f,cosNext };
@@ -52,10 +65,10 @@ void CylinderMesh::Initialize() {
 	indexCount_ = 6 * kCylinderDivide;
 
 	//頂点インデックスリソースの生成
-	IndexResource_ = directXCommon_->CreateBufferResource(sizeof(uint32_t) * indexCount_);
+	indexResource_ = directXCommon_->CreateBufferResource(sizeof(uint32_t) * indexCount_);
 
 	//リソースの場所を取得
-	indexBufferView_.BufferLocation = IndexResource_->GetGPUVirtualAddress();
+	indexBufferView_.BufferLocation = indexResource_->GetGPUVirtualAddress();
 
 	//使用するリソースのサイズを設定
 	indexBufferView_.SizeInBytes = sizeof(uint32_t) * indexCount_;
@@ -64,7 +77,7 @@ void CylinderMesh::Initialize() {
 	indexBufferView_.Format = DXGI_FORMAT_R32_UINT;
 
 	//リソースにデータを書き込めるようにする
-	IndexResource_->Map(0, nullptr, reinterpret_cast<void**>(&indexData_));
+	indexResource_->Map(0, nullptr, reinterpret_cast<void**>(&indexData_));
 
 	for (uint32_t index = 0; index < kCylinderDivide; ++index) {
 		indexData_[index * 6 + 0] = index * 4 + 0;
@@ -74,18 +87,4 @@ void CylinderMesh::Initialize() {
 		indexData_[index * 6 + 4] = index * 4 + 3;
 		indexData_[index * 6 + 5] = index * 4 + 2;
 	}
-}
-
-void CylinderMesh::Draw() {
-
-	//VBVを設定
-	directXCommon_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView_);
-
-	directXCommon_->GetCommandList()->IASetIndexBuffer(&indexBufferView_);
-}
-
-void CylinderMesh::CopyMeshData(std::vector<uint32_t> indices, std::vector<VertexData> vertices) {
-
-	std::memcpy(vertexData_, vertices.data(), sizeof(VertexData) * vertices.size());
-	std::memcpy(indexData_, indices.data(), sizeof(uint32_t) * indices.size());
 }
