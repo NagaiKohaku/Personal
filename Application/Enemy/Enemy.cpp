@@ -60,8 +60,14 @@ void Enemy::Initialize(Camera* ptr) {
 	//エントリー時アニメーション終了時間の初期化
 	entryAnimMaxTime_ = 1.0f;
 
+	//離脱時アニメーション終了時間の初期化
+	exitAnimMaxTime_ = 2.0f;
+
 	//死亡時アニメーション終了時間の初期化
 	deadAnimMaxTime_ = 5.0f;
+
+	//離脱座標の初期化
+	exitPos_ = { 0.0f, 0.0f, 20.0f };
 }
 
 ///=====================================================/// 
@@ -83,10 +89,16 @@ void Enemy::Update() {
 	case Enemy::STANDBY:
 
 		break;
-	case Enemy::FORWARD:
+	case Enemy::MOVE:
+
+		//移動処理
+		Move();
 
 		break;
 	case Enemy::EXIT:
+
+		//離脱時の処理
+		Exit();
 
 		break;
 	case Enemy::DEAD:
@@ -184,11 +196,13 @@ void Enemy::Entry() {
 	//アニメーションタイマーが終了時間に達したら
 	if (animTimer_ >= entryAnimMaxTime_) {
 
-		//スタンバイ状態に変更
-		state_ = STANDBY;
+		//前進状態に変更
+		state_ = MOVE;
 
-		//アニメーションタイマーを終了時間に合わせる
-		animTimer_ = entryAnimMaxTime_;
+		//アニメーションタイマーをリセット
+		animTimer_ = 0.0f;
+
+		return;
 	}
 
 	//タイマーの比率
@@ -199,6 +213,54 @@ void Enemy::Entry() {
 
 	//スタンバイ座標までイージングで移動
 	objectPos = EaseOut(objectPos, standbyPos_, animRatio, 0.1f);
+
+	//移動後座標を設定
+	object_->GetWorldTransform().translate_ = objectPos;
+}
+
+void Enemy::Move() {
+
+	if (object_->GetWorldTransform().translate_.z <= exitPos_.z) {
+
+		state_ = EXIT;
+
+		return;
+	}
+
+	object_->GetWorldTransform().translate_.z -= 0.1f;
+
+}
+
+void Enemy::Exit() {
+
+	//アニメーションタイマーを進ませる
+	animTimer_ += 1.0f / 60.0f;
+
+	//アニメーションタイマーが終了時間に達したら
+	if (animTimer_ >= exitAnimMaxTime_) {
+
+		//削除可能にする
+		canRemove_ = true;
+
+		//コライダーを削除
+		collider_->Remove();
+
+		return;
+	}
+
+	//タイマーの比率
+	float animRatio = animTimer_ / exitAnimMaxTime_;
+
+	//オブジェクトの座標
+	Vector3 objectPos = object_->GetWorldTransform().translate_;
+
+	Vector3 exitDirection = Normalize(Vector3(standbyPos_.x, standbyPos_.y, 0.0f));
+
+	//出現座標
+	Vector3 exitPos = exitDirection * 24.0f + exitPos_;
+
+	//スタンバイ座標までイージングで移動
+	objectPos = EaseOut(objectPos, exitPos, animRatio, 0.1f);
 
 	//移動後座標を設定
 	object_->GetWorldTransform().translate_ = objectPos;

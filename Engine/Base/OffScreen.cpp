@@ -38,7 +38,7 @@ void OffScreen::Initialize() {
 	srvManager_ = SrvManager::GetInstance();
 
 	//CopyImageシェーダーを初期値に設定
-	currentShaderName_ = L"OutLine";
+	currentShaderName_ = L"CopyImage";
 
 	/// === テクスチャの生成 === ///
 

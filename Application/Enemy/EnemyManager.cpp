@@ -2,12 +2,17 @@
 
 #include "3d/Collider/ColliderManager.h"
 
+#include "LevelEditor/LevelDataLoader.h"
+
 #include "numbers"
 
 ///=====================================================/// 
 /// 初期化
 ///=====================================================///
 void EnemyManager::Initialize(Camera* ptr) {
+
+	//レベルデータローダーのインスタンスを取得
+	levelDataLoader_ = LevelDataLoader::GetInstance();
 
 	//カメラポインタを取得
 	camera_ = ptr;
@@ -22,13 +27,15 @@ void EnemyManager::Initialize(Camera* ptr) {
 	spawnMaxSize_ = 4;
 
 	//基準方向の設定
-	spawnBaseAngle_ = std::numbers::pi_v<float> * 0.25f;
+	spawnBaseAngle_ = std::numbers::pi_v<float> *0.25f;
 
 	//距離の設定
 	spawnDistance_ = 3.0f;
 
 	//オフセットの設定
 	spawnOffset_ = { 0.0f,4.0f,30.0f };
+
+	levelDataLoader_->Load("EnemyFormation01.json");
 }
 
 ///=====================================================/// 
@@ -77,19 +84,18 @@ void EnemyManager::SpawnUpdate() {
 	//スポーン間隔を越えたら
 	if (spawnTimer_ >= spawnInterval_) {
 
-		for (int i = 0; i < spawnMaxSize_; i++) {
+		std::vector<LevelDataLoader::ObjectData> objectDatas = levelDataLoader_->PickObjectData("EnemyFormation01.json", LevelDataLoader::ENEMY);
 
-			//スポーン角度
-			float spawnAngle = spawnBaseAngle_ + i * ((std::numbers::pi_v<float> * 2.0f) / spawnMaxSize_);
-
-			//スポーン方向
-			Vector3 spawnDirection = { std::cosf(spawnAngle),std::sinf(spawnAngle),0.0f };
+		for (int i = 0; i < objectDatas.size(); i++) {
 
 			//待機座標
-			Vector3 standbyPos = spawnDirection * spawnDistance_ + spawnOffset_;
+			Vector3 standbyPos = objectDatas[i].position;
+
+			//スポーン方向
+			Vector3 spawnDirection = Normalize(Vector3(standbyPos.x,standbyPos.y,0.0f));
 
 			//出現座標
-			Vector3 entryPos = spawnDirection * (spawnDistance_ * 8.0f) + spawnOffset_;
+			Vector3 entryPos = spawnDirection * (spawnDistance_ * 8.0f) + standbyPos;
 
 			//エネミーをスポーンさせる
 			Spawn(entryPos, standbyPos);

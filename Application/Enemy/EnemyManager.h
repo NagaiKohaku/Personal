@@ -7,6 +7,10 @@
 #include "list"
 #include "memory"
 
+/// === 前方宣言 === ///
+
+class LevelDataLoader;
+
 ///=====================================================/// 
 /// エネミーマネージャークラス
 ///=====================================================///
@@ -53,6 +57,9 @@ private:
 
 	//カメラ
 	Camera* camera_;
+
+	//レベルデータローダー
+	LevelDataLoader* levelDataLoader_;
 
 	//エネミーリスト
 	std::list<std::unique_ptr<Enemy>> enemies_;
