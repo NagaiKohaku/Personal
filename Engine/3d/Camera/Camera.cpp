@@ -2,7 +2,11 @@
 
 #include "Base/WinApp.h"
 #include "Base/Input.h"
+#include "Base/OffScreen.h"
 #include "3d/Object/Object3D.h"
+#include "3d/Object/Object3DCommon.h"
+#include "3d/Object/DebugObjectCommon.h"
+#include "3d/Object/SkyBoxCommon.h"
 
 #include "Math/MakeMatrixMath.h"
 
@@ -54,6 +58,14 @@ void Camera::Initialize() {
 
 	//デバッグカメラフラグの設定
 	isDebugCamera_ = false;
+
+	OffScreen::GetInstance()->SetDefaultCamera(this);
+
+	Object3DCommon::GetInstance()->SetDefaultCamera(this);
+
+	DebugObjectCommon::GetInstance()->SetDefaultCamera(this);
+
+	SkyBoxCommon::GetInstance()->SetDefaultCamera(this);
 }
 
 ///=====================================================/// 

@@ -5,16 +5,23 @@
 #include "json.hpp"
 #include "fstream"
 
+///=====================================================/// 
+/// シングルトンインスタンスの取得
+///=====================================================///
 LevelDataLoader* LevelDataLoader::GetInstance() {
 	static LevelDataLoader instance;
 	return &instance;
 }
 
+///=====================================================/// 
+/// データの読み込み
+///=====================================================///
 void LevelDataLoader::Load(const std::string& fileName) {
 
 	//ファイルストリーム
 	std::ifstream file;
 
+	//ファイルパス
 	std::string filePath = directory_ + fileName;
 
 	//ファイルを開く
@@ -91,6 +98,7 @@ void LevelDataLoader::Load(const std::string& fileName) {
 
 			} else {
 
+				//オブジェクトの種別が指定されていない場合はNONEに設定
 				newObject.type = ObjectType::NONE;
 			}
 
@@ -123,22 +131,29 @@ void LevelDataLoader::Load(const std::string& fileName) {
 		}
 	}
 
-	objects_.insert(std::make_pair(fileName, objectDataList));
+	//レベルデータにオブジェクトデータを追加
+	levelData_.insert(std::make_pair(fileName, objectDataList));
 }
 
+///=====================================================/// 
+/// オブジェクトの数を取得
+///=====================================================///
 const int LevelDataLoader::GetObjectCount(const std::string& fileName, const ObjectType type) const {
 
-	if (objects_.count(fileName) == 0) {
+	//ファイル名が存在しない場合は0を返す
+	if (levelData_.count(fileName) == 0) {
 
 		return 0;
 	}
 
 	int count = 0;
 
-	for (const auto& object : objects_.at(fileName)) {
+	//指定されたファイル名のレベルデータ内のオブジェクトを走査
+	for (const auto& object : levelData_.at(fileName)) {
 
 		if (object.type == type) {
 
+			//オブジェクトのタイプが一致した場合はカウントを増やす
 			count++;
 		}
 	}
@@ -146,9 +161,13 @@ const int LevelDataLoader::GetObjectCount(const std::string& fileName, const Obj
 	return count;
 }
 
+///=====================================================/// 
+/// 指定したタイプのオブジェクトデータを取得
+///=====================================================///
 const std::vector<LevelDataLoader::ObjectData>& LevelDataLoader::PickObjectData(const std::string& fileName, const ObjectType type) const {
 
-	if (objects_.count(fileName) == 0) {
+	//ファイル名が存在しない場合は空のデータを返す
+	if (levelData_.count(fileName) == 0) {
 
 		static std::vector<ObjectData> emptyData;
 
@@ -159,10 +178,12 @@ const std::vector<LevelDataLoader::ObjectData>& LevelDataLoader::PickObjectData(
 
 	pickedData.clear();
 
-	for (const auto& object : objects_.at(fileName)) {
+	//指定されたファイル名のレベルデータ内のオブジェクトを走査
+	for (const auto& object : levelData_.at(fileName)) {
 
 		if (object.type == type) {
 
+			//オブジェクトのタイプが一致した場合はデータを追加
 			pickedData.push_back(object);
 		}
 	}

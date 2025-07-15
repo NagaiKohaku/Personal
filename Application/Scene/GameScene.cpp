@@ -33,17 +33,6 @@ void GameScene::Initialize() {
 	//カメラの座標
 	camera_->GetWorldTransform().translate_ = { 0.0f,3.0f,0.0f };
 
-	//デフォルトカメラを設定
-	OffScreen::GetInstance()->SetDefaultCamera(camera_.get());
-
-	Object3DCommon::GetInstance()->SetDefaultCamera(camera_.get());
-
-	DebugObjectCommon::GetInstance()->SetDefaultCamera(camera_.get());
-
-	SkyBoxCommon::GetInstance()->SetDefaultCamera(camera_.get());
-
-	/// === リソースの読み込み === ///
-
 	/// === オブジェクトマネージャーの生成 === ///
 
 	//バレットマネージャーの生成
@@ -86,6 +75,8 @@ void GameScene::Initialize() {
 	//スカイボックスのテクスチャファイルパスを設定
 	Object3DCommon::GetInstance()->SetTextureCubeFilePath(skyBox_->GetTextureFilePath());
 
+	/// === 床のラインを生成 === ///
+
 	const float lineDivide = 30.0f;
 
 	const float lineDistance = 5.0f;
@@ -125,21 +116,28 @@ void GameScene::Initialize() {
 	}
 }
 
+///=====================================================/// 
+/// 終了処理
+///=====================================================///
 void GameScene::Finalize() {
 
 	//音声データの解放
 	Audio::GetInstance()->Finalize();
 }
 
+///=====================================================/// 
+/// 更新
+///=====================================================///
 void GameScene::Update() {
-
-	skyBox_->Update();
 
 	//追尾カメラの更新
 	followCamera_->Update();
 
 	//カメラをデバッグ状態で更新
 	camera_->Update();
+
+	//スカイボックスの更新
+	skyBox_->Update();
 
 	//プレイヤーの更新
 	player_->Update();
@@ -157,6 +155,9 @@ void GameScene::Update() {
 
 }
 
+///=====================================================/// 
+/// 描画
+///=====================================================///
 void GameScene::Draw() {
 
 	//プレイヤーの描画
@@ -168,6 +169,7 @@ void GameScene::Draw() {
 	//弾の描画
 	bulletManager_->Draw();
 
+	//スカイボックスの描画
 	skyBox_->Draw();
 
 	for (auto& line : lines_) {
@@ -176,6 +178,9 @@ void GameScene::Draw() {
 	}
 }
 
+///=====================================================/// 
+/// ImGui
+///=====================================================///
 void GameScene::ImGui() {
 
 	//ImGuiを起動

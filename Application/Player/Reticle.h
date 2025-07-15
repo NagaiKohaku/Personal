@@ -16,6 +16,9 @@ class Player;
 ///=====================================================///
 class Reticle {
 
+	///-------------------------------------------/// 
+	/// メンバ関数
+	///-------------------------------------------///
 public:
 
 	/// <summary>
@@ -35,14 +38,9 @@ public:
 	/// </summary>
 	void Draw();
 
-public:
-
-	/// <summary>
-	/// ワールド座標を取得
-	/// </summary>
-	/// <returns>座標</returns>
-	Vector3 GetWorldPos() const { return object3D_->GetWorldTransform().GetWorldTranslate(); }
-
+	///-------------------------------------------/// 
+	/// メンバ変数
+	///-------------------------------------------///
 private:
 
 	//カメラ
@@ -71,4 +69,16 @@ private:
 
 	//3Dレティクルの描画フラグ
 	bool isDraw3D_;
+
+	///-------------------------------------------///
+	/// ゲッター・セッター
+	///-------------------------------------------///
+public:
+
+	/// <summary>
+	/// ワールド座標を取得
+	/// </summary>
+	/// <returns>座標</returns>
+	Vector3 GetWorldPos() const { return object3D_->GetWorldTransform().GetWorldTranslate(); }
+
 };

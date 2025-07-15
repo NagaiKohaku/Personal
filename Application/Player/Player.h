@@ -20,6 +20,9 @@ class BulletManager;
 ///=====================================================///
 class Player {
 
+	///-------------------------------------------/// 
+	/// 列挙型
+	///-------------------------------------------///
 public:
 
 	//移動状態
@@ -28,6 +31,9 @@ public:
 		JET
 	};
 
+	///-------------------------------------------/// 
+	/// メンバ関数
+	///-------------------------------------------///
 public:
 
 	/// <summary>
@@ -47,26 +53,9 @@ public:
 	/// </summary>
 	void Draw();
 
-public:
-
-	/// <summary>
-	/// ワールド座標を取得
-	/// </summary>
-	/// <returns>ワールド座標</returns>
-	Vector3 GetWorldPos() { return object_->GetWorldTransform().GetWorldTranslate(); }
-
-	/// <summary>
-	/// 移動量を取得
-	/// </summary>
-	/// <returns>移動量</returns>
-	Vector3 GetVelocity() { return velocity_; }
-
-	/// <summary>
-	/// 移動状態を取得
-	/// </summary>
-	/// <returns>移動状態</returns>
-	MOVESTATE GetMoveState() { return moveState_; }
-
+	///-------------------------------------------/// 
+	/// クラス内処理関数
+	///-------------------------------------------///
 private:
 
 	/// <summary>
@@ -104,6 +93,9 @@ private:
 	/// </summary>
 	void IsCollision();
 
+	///-------------------------------------------/// 
+	/// メンバ変数
+	///-------------------------------------------///
 private:
 
 	//カメラ
@@ -156,4 +148,28 @@ private:
 
 	//移動量
 	Vector3 velocity_;
+
+	///-------------------------------------------///
+	/// ゲッター・セッター
+	///-------------------------------------------///
+public:
+
+	/// <summary>
+	/// ワールド座標を取得
+	/// </summary>
+	/// <returns>ワールド座標</returns>
+	Vector3 GetWorldPos() { return object_->GetWorldTransform().GetWorldTranslate(); }
+
+	/// <summary>
+	/// 移動量を取得
+	/// </summary>
+	/// <returns>移動量</returns>
+	Vector3 GetVelocity() { return velocity_; }
+
+	/// <summary>
+	/// 移動状態を取得
+	/// </summary>
+	/// <returns>移動状態</returns>
+	MOVESTATE GetMoveState() { return moveState_; }
+
 };
