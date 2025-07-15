@@ -21,7 +21,7 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	virtual void Initialize();
+	virtual void Initialize() ;
 
 	/// <summary>
 	/// 終了処理
@@ -42,16 +42,5 @@ public:
 	/// デバッグ
 	/// </summary>
 	virtual void ImGui();
-
-	/// <summary>
-	/// シーンマネージャーのセット
-	/// </summary>
-	/// <param name="sceneManager">シーンマネージャー</param>
-	virtual void SetSceneManager(SceneManager* sceneManager) { sceneManager_ = sceneManager; }
-
-	//シーンマネージャー
-	SceneManager* sceneManager_ = nullptr;
-
-private:
 
 };

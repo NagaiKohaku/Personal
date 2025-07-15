@@ -10,6 +10,8 @@
 #include "cstdint"
 #include "string"
 
+/// === 前方宣言 === ///
+
 class DirectXCommon;
 
 class RTVManager;
@@ -20,14 +22,24 @@ class SrvManager;
 
 class Camera;
 
+///=====================================================/// 
+/// オフスクリーン描画クラス
+///=====================================================///
 class OffScreen {
 
+	///-------------------------------------------/// 
+	/// メンバ構造体
+	///-------------------------------------------///
 private:
 
+	//マテリアル
 	struct Material {
 		Matrix4x4 projectionInverse;
 	};
 
+	///-------------------------------------------/// 
+	/// メンバ関数
+	///-------------------------------------------///
 public:
 
 	/// <summary>
@@ -56,12 +68,14 @@ public:
 	/// </summary>
 	void DrawToSwapChain();
 
+	/// <summary>
+	/// ImGuiの表示
+	/// </summary>
 	void ImGui();
 
-public:
-
-	void SetDefaultCamera(Camera* ptr);
-
+	///-------------------------------------------/// 
+	/// クラス内処理関数
+	///-------------------------------------------///
 private:
 
 	/// <summary>
@@ -127,6 +141,9 @@ private:
 		DXGI_FORMAT format
 	);
 
+	///-------------------------------------------/// 
+	/// メンバ変数
+	///-------------------------------------------///
 private:
 
 	//DirectX基底
@@ -141,6 +158,7 @@ private:
 	//SRVマネージャー
 	SrvManager* srvManager_ = nullptr;
 
+	//カメラ
 	Camera* camera_ = nullptr;
 
 	//オフスクリーン用のテクスチャ
@@ -190,5 +208,16 @@ private:
 
 	//オフスクリーンのクリア値
 	Vector4 offScreenClearColor_ = { 0.0f,0.0f,0.0f,1.0f };
-};
 
+	///-------------------------------------------/// 
+	/// ゲッター・セッター
+	///-------------------------------------------///
+public:
+
+	/// <summary>
+	/// デフォルトカメラの設定
+	/// </summary>
+	/// <param name="ptr">カメラポインタ</param>
+	void SetDefaultCamera(Camera* ptr);
+
+};

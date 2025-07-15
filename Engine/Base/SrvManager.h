@@ -9,7 +9,7 @@
 class DirectXCommon;
 
 ///=====================================================/// 
-/// SRVマネージャー
+/// ShaderResourceViewマネージャークラス
 ///=====================================================///
 class SrvManager {
 
@@ -75,16 +75,33 @@ public:
 	/// <summary>
 	/// SRV生成(レンダーターゲット用)
 	/// </summary>
-	/// <param name="srvIndex"></param>
-	/// <param name="pResource"></param>
+	/// <param name="srvIndex">srv番号</param>
+	/// <param name="pResource">リソース</param>
 	void CreateRenderTargetSRV(uint32_t srvIndex, ID3D12Resource* pResource);
 
 	/// <summary>
 	/// SRV生成(DepthTexture用)
 	/// </summary>
-	/// <param name="srvIndex"></param>
-	/// <param name="pResource"></param>
+	/// <param name="srvIndex">srv番号</param>
+	/// <param name="pResource">リソース</param>
 	void CreateDepthTextureSRV(uint32_t srvIndex, ID3D12Resource* pResource);
+
+	///-------------------------------------------/// 
+	/// メンバ変数
+	///-------------------------------------------///
+private:
+
+	//DirectX基底
+	DirectXCommon* directXCommon = nullptr;
+
+	//現在のSRV番号
+	uint32_t useIndex_ = 0;
+
+	//SRV用のデスクリプタサイズ
+	uint32_t srvDescriptorSize_;
+
+	//SRVデスクリプタヒープ
+	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> srvDescriptorHeap_;
 
 	///-------------------------------------------/// 
 	/// ゲッター・セッター
@@ -111,22 +128,4 @@ public:
 	/// <param name="RootParameterIndex">パラメータ番号</param>
 	/// <param name="srvIndex">SRV番号</param>
 	void SetGraphicsRootDescriptorTable(UINT RootParameterIndex, uint32_t srvIndex);
-
-	///-------------------------------------------/// 
-	/// メンバ変数
-	///-------------------------------------------///
-private:
-
-	//DirectX基底
-	DirectXCommon* directXCommon = nullptr;
-
-	//現在のSRV番号
-	uint32_t useIndex_ = 0;
-
-	//SRV用のデスクリプタサイズ
-	uint32_t srvDescriptorSize_;
-
-	//SRVデスクリプタヒープ
-	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> srvDescriptorHeap_;
-
 };

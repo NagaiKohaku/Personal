@@ -98,11 +98,6 @@ public:
 	/// <returns>判定フラグ</returns>
 	bool IsTriggerReleaseMouseButton(int mouseButton);
 
-	///-------------------------------------------/// 
-	/// セッター・ゲッター
-	///-------------------------------------------///
-public:
-
 	/// <summary>
 	/// マウス座標を取得
 	/// </summary>

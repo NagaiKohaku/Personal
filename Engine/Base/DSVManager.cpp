@@ -4,11 +4,17 @@
 
 #include "cassert"
 
+///=====================================================/// 
+/// シングルトンインスタンスの取得
+///=====================================================///
 DSVManager* DSVManager::GetInstance() {
 	static DSVManager instance;
 	return &instance;
 }
 
+///=====================================================/// 
+/// 初期化
+///=====================================================///
 void DSVManager::Initialize() {
 
 	//DirectX基底のインスタンスを取得
@@ -21,9 +27,15 @@ void DSVManager::Initialize() {
 	dsvDescriptorSize_ = directXCommon->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
 }
 
+///=====================================================/// 
+/// 描画前処理
+///=====================================================///
 void DSVManager::PreDraw() {
 }
 
+///=====================================================/// 
+/// メモリ確保
+///=====================================================///
 uint32_t DSVManager::Allocate() {
 
 	//DSV番号が最大数を越えていないかの確認
@@ -38,6 +50,9 @@ uint32_t DSVManager::Allocate() {
 	return index;
 }
 
+///=====================================================///  
+/// メモリ確保可能チェック
+///=====================================================///
 bool DSVManager::AllocateCheck() {
 
 	//DSV番号が最大数を越えていないかの確認
@@ -48,6 +63,9 @@ bool DSVManager::AllocateCheck() {
 	return false;
 }
 
+///=====================================================/// 
+/// DepthStencilViewを作成
+///=====================================================///
 void DSVManager::CreateDepthStencilView(uint32_t dsvIndex, ID3D12Resource* pResource) {
 
 	//DSVの情報
@@ -68,6 +86,9 @@ void DSVManager::CreateDepthStencilView(uint32_t dsvIndex, ID3D12Resource* pReso
 
 }
 
+///=====================================================/// 
+/// DepthTextureを作成
+///=====================================================///
 void DSVManager::CreateDepthTexture(uint32_t dsvIndex, ID3D12Resource* pResource) {
 
 	//DSVの情報
@@ -87,6 +108,9 @@ void DSVManager::CreateDepthTexture(uint32_t dsvIndex, ID3D12Resource* pResource
 	);
 }
 
+///=====================================================/// 
+/// CPUデスクリプターを取得
+///=====================================================///
 D3D12_CPU_DESCRIPTOR_HANDLE DSVManager::GetCPUDescriptorHandle(uint32_t index) {
 
 	//デスクリプタの最初のメモリを取得
@@ -98,6 +122,9 @@ D3D12_CPU_DESCRIPTOR_HANDLE DSVManager::GetCPUDescriptorHandle(uint32_t index) {
 	return handleCPU;
 }
 
+///=====================================================/// 
+/// GPUデスクリプターを取得
+///=====================================================///
 D3D12_GPU_DESCRIPTOR_HANDLE DSVManager::GetGPUDescriptorHandle(uint32_t index) {
 
 	//デスクリプタの最初のメモリを取得

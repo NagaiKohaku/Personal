@@ -23,8 +23,6 @@ void ModelMesh::Initialize() {
 	//書き込むためのアドレスを取得する
 	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData_));
 
-	vertexData_ = new VertexData[vertexCount_];
-
 	/// === インデックスリソース === ///
 
 	//インデックスリソースを作成
@@ -41,7 +39,5 @@ void ModelMesh::Initialize() {
 
 	//書き込むためのアドレスを取得する
 	indexResource_->Map(0, nullptr, reinterpret_cast<void**>(&indexData_));
-
-	indexData_ = new uint32_t[indexCount_];
 
 }

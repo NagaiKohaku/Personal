@@ -6,6 +6,9 @@
 /// === 前方宣言 === ///
 class DirectXCommon;
 
+///=====================================================/// 
+/// DepthStencilViewマネージャー
+///=====================================================///
 class DSVManager {
 
 	///-------------------------------------------/// 
@@ -49,9 +52,36 @@ public:
 	/// <returns>フラグ</returns>
 	bool AllocateCheck();
 
+	/// <summary>
+	/// DepthStencilViewを作成
+	/// </summary>
+	/// <param name="dsvIndex">DSV番号</param>
+	/// <param name="pResource">リソース</param>
 	void CreateDepthStencilView(uint32_t dsvIndex, ID3D12Resource* pResource);
 
+	/// <summary>
+	/// DepthTextureを作成
+	/// </summary>
+	/// <param name="dsvIndex">DSV番号</param>
+	/// <param name="pResource">リソース</param>
 	void CreateDepthTexture(uint32_t dsvIndex, ID3D12Resource* pResource);
+
+	///-------------------------------------------/// 
+	/// メンバ変数
+	///-------------------------------------------///
+private:
+
+	//DirectX基底
+	DirectXCommon* directXCommon = nullptr;
+
+	//現在のSRV番号
+	uint32_t useIndex_ = 0;
+
+	//DSV用のデスクリプタサイズ
+	uint32_t dsvDescriptorSize_;
+
+	//DSVデスクリプタヒープ
+	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> dsvDescriptorHeap_;
 
 	///-------------------------------------------/// 
 	/// ゲッター・セッター
@@ -71,22 +101,5 @@ public:
 	/// <param name="index">デスクリプタ番号</param>
 	/// <returns>GPUデスクリプタ</returns>
 	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(uint32_t index);
-
-	///-------------------------------------------/// 
-	/// メンバ変数
-	///-------------------------------------------///
-private:
-
-	//DirectX基底
-	DirectXCommon* directXCommon = nullptr;
-
-	//現在のSRV番号
-	uint32_t useIndex_ = 0;
-
-	//DSV用のデスクリプタサイズ
-	uint32_t dsvDescriptorSize_;
-
-	//DSVデスクリプタヒープ
-	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> dsvDescriptorHeap_;
 
 };

@@ -8,6 +8,9 @@
 #include "3d/Mesh/SphereMesh.h"
 #include "3d/Mesh/ModelMesh.h"
 
+///=====================================================/// 
+/// メッシュの生成
+///=====================================================///
 std::unique_ptr<MeshBase> CreateMesh(MeshType type) {
 
 	switch (type) {
@@ -26,6 +29,9 @@ std::unique_ptr<MeshBase> CreateMesh(MeshType type) {
 	}
 }
 
+///=====================================================/// 
+/// メッシュの種類を取得
+///=====================================================///
 MeshType GetMeshType(Model* model) {
 
 	if (dynamic_cast<ModelMesh*>(model->GetMesh())) {
