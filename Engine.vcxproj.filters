@@ -1,40 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <FxCompile Include="Resource\Shader\OffScreen\CopyImage.PS.hlsl">
-      <Filter>Resource\Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="Resource\Shader\OffScreen\CopyImage.VS.hlsl">
-      <Filter>Resource\Shader</Filter>
-    </FxCompile>
     <FxCompile Include="Resource\Shader\DebugObject.PS.hlsl">
       <Filter>Resource\Shader</Filter>
     </FxCompile>
     <FxCompile Include="Resource\Shader\DebugObject.VS.hlsl">
       <Filter>Resource\Shader</Filter>
     </FxCompile>
-    <FxCompile Include="Resource\Shader\OffScreen\GrayScale.PS.hlsl">
-      <Filter>Resource\Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="Resource\Shader\OffScreen\GrayScale.VS.hlsl">
-      <Filter>Resource\Shader</Filter>
-    </FxCompile>
     <FxCompile Include="Resource\Shader\Object2d.PS.hlsl">
       <Filter>Resource\Shader</Filter>
     </FxCompile>
     <FxCompile Include="Resource\Shader\Object2d.VS.hlsl">
-      <Filter>Resource\Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="Resource\Shader\OffScreen\Smooth.PS.hlsl">
-      <Filter>Resource\Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="Resource\Shader\OffScreen\Smooth.VS.hlsl">
-      <Filter>Resource\Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="Resource\Shader\OffScreen\Vignette.PS.hlsl">
-      <Filter>Resource\Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="Resource\Shader\OffScreen\Vignette.VS.hlsl">
       <Filter>Resource\Shader</Filter>
     </FxCompile>
     <FxCompile Include="Resource\Shader\SkyBox.PS.hlsl">
@@ -55,8 +31,36 @@
     <FxCompile Include="Resource\Shader\Particle.VS.hlsl">
       <Filter>Resource\Shader</Filter>
     </FxCompile>
-    <FxCompile Include="Resource\Shader\OffScreen\OutLine.PS.hlsl" />
-    <FxCompile Include="Resource\Shader\OffScreen\OutLine.VS.hlsl" />
+    <FxCompile Include="Resource\Shader\OffScreen\CopyImage.PS.hlsl">
+      <Filter>Resource\Shader\OffScreen</Filter>
+    </FxCompile>
+    <FxCompile Include="Resource\Shader\OffScreen\CopyImage.VS.hlsl">
+      <Filter>Resource\Shader\OffScreen</Filter>
+    </FxCompile>
+    <FxCompile Include="Resource\Shader\OffScreen\GrayScale.PS.hlsl">
+      <Filter>Resource\Shader\OffScreen</Filter>
+    </FxCompile>
+    <FxCompile Include="Resource\Shader\OffScreen\GrayScale.VS.hlsl">
+      <Filter>Resource\Shader\OffScreen</Filter>
+    </FxCompile>
+    <FxCompile Include="Resource\Shader\OffScreen\OutLine.PS.hlsl">
+      <Filter>Resource\Shader\OffScreen</Filter>
+    </FxCompile>
+    <FxCompile Include="Resource\Shader\OffScreen\OutLine.VS.hlsl">
+      <Filter>Resource\Shader\OffScreen</Filter>
+    </FxCompile>
+    <FxCompile Include="Resource\Shader\OffScreen\Smooth.VS.hlsl">
+      <Filter>Resource\Shader\OffScreen</Filter>
+    </FxCompile>
+    <FxCompile Include="Resource\Shader\OffScreen\Smooth.PS.hlsl">
+      <Filter>Resource\Shader\OffScreen</Filter>
+    </FxCompile>
+    <FxCompile Include="Resource\Shader\OffScreen\Vignette.PS.hlsl">
+      <Filter>Resource\Shader\OffScreen</Filter>
+    </FxCompile>
+    <FxCompile Include="Resource\Shader\OffScreen\Vignette.VS.hlsl">
+      <Filter>Resource\Shader\OffScreen</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -139,19 +143,19 @@
       <Filter>Engine\3d\Model</Filter>
     </ClCompile>
     <ClCompile Include="Engine\3d\Mesh\CylinderMesh.cpp">
-      <Filter>Engine\3d\Primitive</Filter>
+      <Filter>Engine\3d\Mesh</Filter>
     </ClCompile>
     <ClCompile Include="Engine\3d\Mesh\ModelMesh.cpp">
-      <Filter>Engine\3d\Primitive</Filter>
+      <Filter>Engine\3d\Mesh</Filter>
     </ClCompile>
     <ClCompile Include="Engine\3d\Mesh\PlaneMesh.cpp">
-      <Filter>Engine\3d\Primitive</Filter>
+      <Filter>Engine\3d\Mesh</Filter>
     </ClCompile>
     <ClCompile Include="Engine\3d\Mesh\MeshType.cpp">
-      <Filter>Engine\3d\Primitive</Filter>
+      <Filter>Engine\3d\Mesh</Filter>
     </ClCompile>
     <ClCompile Include="Engine\3d\Mesh\RingMesh.cpp">
-      <Filter>Engine\3d\Primitive</Filter>
+      <Filter>Engine\3d\Mesh</Filter>
     </ClCompile>
     <ClCompile Include="Engine\3d\Particle\EmitterGroup.cpp">
       <Filter>Engine\3d\Particle</Filter>
@@ -255,9 +259,15 @@
     <ClCompile Include="Application\Scene\ParticleEditorScene.cpp">
       <Filter>Application\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\3d\Mesh\SphereMesh.cpp" />
-    <ClCompile Include="Engine\3d\Mesh\MeshBase.cpp" />
-    <ClCompile Include="Application\LevelEditor\LevelDataLoader.cpp" />
+    <ClCompile Include="Application\LevelEditor\LevelDataLoader.cpp">
+      <Filter>Application\LevelEditor</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\3d\Mesh\MeshBase.cpp">
+      <Filter>Engine\3d\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\3d\Mesh\SphereMesh.cpp">
+      <Filter>Engine\3d\Mesh</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application\Bullet\BulletBase.h">
@@ -339,19 +349,19 @@
       <Filter>Engine\3d\Model</Filter>
     </ClInclude>
     <ClInclude Include="Engine\3d\Mesh\CylinderMesh.h">
-      <Filter>Engine\3d\Primitive</Filter>
+      <Filter>Engine\3d\Mesh</Filter>
     </ClInclude>
     <ClInclude Include="Engine\3d\Mesh\ModelMesh.h">
-      <Filter>Engine\3d\Primitive</Filter>
+      <Filter>Engine\3d\Mesh</Filter>
     </ClInclude>
     <ClInclude Include="Engine\3d\Mesh\PlaneMesh.h">
-      <Filter>Engine\3d\Primitive</Filter>
+      <Filter>Engine\3d\Mesh</Filter>
     </ClInclude>
     <ClInclude Include="Engine\3d\Mesh\MeshType.h">
-      <Filter>Engine\3d\Primitive</Filter>
+      <Filter>Engine\3d\Mesh</Filter>
     </ClInclude>
     <ClInclude Include="Engine\3d\Mesh\RingMesh.h">
-      <Filter>Engine\3d\Primitive</Filter>
+      <Filter>Engine\3d\Mesh</Filter>
     </ClInclude>
     <ClInclude Include="Engine\3d\Particle\EmitterGroup.h">
       <Filter>Engine\3d\Particle</Filter>
@@ -473,37 +483,21 @@
     <ClInclude Include="Application\Scene\ParticleEditorScene.h">
       <Filter>Application\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\3d\Mesh\SphereMesh.h" />
-    <ClInclude Include="Engine\3d\Mesh\MeshBase.h" />
-    <ClInclude Include="Application\LevelEditor\LevelDataLoader.h" />
+    <ClInclude Include="Application\LevelEditor\LevelDataLoader.h">
+      <Filter>Application\LevelEditor</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\3d\Mesh\MeshBase.h">
+      <Filter>Engine\3d\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\3d\Mesh\SphereMesh.h">
+      <Filter>Engine\3d\Mesh</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Application\LevelEditor\add_collider.py" />
-    <None Include="Application\LevelEditor\add_filename.py" />
-    <None Include="Application\LevelEditor\collider.py" />
-    <None Include="Application\LevelEditor\create_ico_sphere.py" />
-    <None Include="Application\LevelEditor\draw_collider.py" />
-    <None Include="Application\LevelEditor\export_scene.py" />
-    <None Include="Application\LevelEditor\file_name.py" />
-    <None Include="Application\LevelEditor\my_menu.py" />
-    <None Include="Application\LevelEditor\stretch_vertex.py" />
-    <None Include="Application\LevelEditor\__init__.py" />
-    <None Include="Resource\Shader\OffScreen\CopyImage.hlsli">
-      <Filter>Resource\Shader</Filter>
-    </None>
     <None Include="Resource\Shader\DebugObject.hlsli">
       <Filter>Resource\Shader</Filter>
     </None>
     <None Include="Resource\Shader\Object2d.hlsli">
-      <Filter>Resource\Shader</Filter>
-    </None>
-    <None Include="Resource\Shader\OffScreen\Smooth.hlsli">
-      <Filter>Resource\Shader</Filter>
-    </None>
-    <None Include="Resource\Shader\OffScreen\Vignette.hlsli">
-      <Filter>Resource\Shader</Filter>
-    </None>
-    <None Include="Resource\Shader\OffScreen\GrayScale.hlsli">
       <Filter>Resource\Shader</Filter>
     </None>
     <None Include="Resource\Shader\SkyBox.hlsli">
@@ -515,7 +509,51 @@
     <None Include="Resource\Shader\Particle.hlsli">
       <Filter>Resource\Shader</Filter>
     </None>
-    <None Include="Resource\Shader\OffScreen\OutLine.hlsli" />
+    <None Include="Application\LevelEditor\__init__.py">
+      <Filter>Application\LevelEditor</Filter>
+    </None>
+    <None Include="Application\LevelEditor\add_collider.py">
+      <Filter>Application\LevelEditor</Filter>
+    </None>
+    <None Include="Application\LevelEditor\add_filename.py">
+      <Filter>Application\LevelEditor</Filter>
+    </None>
+    <None Include="Application\LevelEditor\collider.py">
+      <Filter>Application\LevelEditor</Filter>
+    </None>
+    <None Include="Application\LevelEditor\create_ico_sphere.py">
+      <Filter>Application\LevelEditor</Filter>
+    </None>
+    <None Include="Application\LevelEditor\draw_collider.py">
+      <Filter>Application\LevelEditor</Filter>
+    </None>
+    <None Include="Application\LevelEditor\export_scene.py">
+      <Filter>Application\LevelEditor</Filter>
+    </None>
+    <None Include="Application\LevelEditor\file_name.py">
+      <Filter>Application\LevelEditor</Filter>
+    </None>
+    <None Include="Application\LevelEditor\my_menu.py">
+      <Filter>Application\LevelEditor</Filter>
+    </None>
+    <None Include="Application\LevelEditor\stretch_vertex.py">
+      <Filter>Application\LevelEditor</Filter>
+    </None>
+    <None Include="Resource\Shader\OffScreen\GrayScale.hlsli">
+      <Filter>Resource\Shader\OffScreen</Filter>
+    </None>
+    <None Include="Resource\Shader\OffScreen\OutLine.hlsli">
+      <Filter>Resource\Shader\OffScreen</Filter>
+    </None>
+    <None Include="Resource\Shader\OffScreen\Smooth.hlsli">
+      <Filter>Resource\Shader\OffScreen</Filter>
+    </None>
+    <None Include="Resource\Shader\OffScreen\Vignette.hlsli">
+      <Filter>Resource\Shader\OffScreen</Filter>
+    </None>
+    <None Include="Resource\Shader\CopyImage.hlsli">
+      <Filter>Resource\Shader\OffScreen</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Application">
@@ -526,9 +564,6 @@
     </Filter>
     <Filter Include="Resource">
       <UniqueIdentifier>{bf9e9f7c-1bbe-4006-bdcb-74629ab76848}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Scene">
-      <UniqueIdentifier>{97664b2c-26f7-4285-a411-a586fc4d704c}</UniqueIdentifier>
     </Filter>
     <Filter Include="Application\Bullet">
       <UniqueIdentifier>{b2ec3575-95d8-4f6b-9eed-066154c1a346}</UniqueIdentifier>
@@ -581,9 +616,6 @@
     <Filter Include="Engine\3d\Particle">
       <UniqueIdentifier>{be60a85f-cffa-4d81-9411-411f171bddf7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Engine\3d\Primitive">
-      <UniqueIdentifier>{4b1ecc41-f624-4227-910d-ff9e8e6c5d31}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Resource\Shader">
       <UniqueIdentifier>{023dcf07-239e-4fc2-945a-d5fb591adbb2}</UniqueIdentifier>
     </Filter>
@@ -592,6 +624,15 @@
     </Filter>
     <Filter Include="Engine\Scene">
       <UniqueIdentifier>{431be695-e6d4-48ba-bca0-9cebffb1c700}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Application\LevelEditor">
+      <UniqueIdentifier>{36c8042a-cbf9-46f7-9bf6-50a7404d3b09}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource\Shader\OffScreen">
+      <UniqueIdentifier>{445dd1d6-0f0b-41db-a871-5fae2c2ebbd9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\3d\Mesh">
+      <UniqueIdentifier>{4b1ecc41-f624-4227-910d-ff9e8e6c5d31}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
