@@ -257,6 +257,7 @@
     </ClCompile>
     <ClCompile Include="Engine\3d\Mesh\SphereMesh.cpp" />
     <ClCompile Include="Engine\3d\Mesh\MeshBase.cpp" />
+    <ClCompile Include="Application\LevelEditor\LevelDataLoader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application\Bullet\BulletBase.h">
@@ -474,11 +475,19 @@
     </ClInclude>
     <ClInclude Include="Engine\3d\Mesh\SphereMesh.h" />
     <ClInclude Include="Engine\3d\Mesh\MeshBase.h" />
+    <ClInclude Include="Application\LevelEditor\LevelDataLoader.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Application\level_editor.py">
-      <Filter>Application</Filter>
-    </None>
+    <None Include="Application\LevelEditor\add_collider.py" />
+    <None Include="Application\LevelEditor\add_filename.py" />
+    <None Include="Application\LevelEditor\collider.py" />
+    <None Include="Application\LevelEditor\create_ico_sphere.py" />
+    <None Include="Application\LevelEditor\draw_collider.py" />
+    <None Include="Application\LevelEditor\export_scene.py" />
+    <None Include="Application\LevelEditor\file_name.py" />
+    <None Include="Application\LevelEditor\my_menu.py" />
+    <None Include="Application\LevelEditor\stretch_vertex.py" />
+    <None Include="Application\LevelEditor\__init__.py" />
     <None Include="Resource\Shader\OffScreen\CopyImage.hlsli">
       <Filter>Resource\Shader</Filter>
     </None>

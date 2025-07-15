@@ -1,0 +1,171 @@
+#include "LevelDataLoader.h"
+
+#include "3d/Model/ModelManager.h"
+
+#include "json.hpp"
+#include "fstream"
+
+LevelDataLoader* LevelDataLoader::GetInstance() {
+	static LevelDataLoader instance;
+	return &instance;
+}
+
+void LevelDataLoader::Load(const std::string& fileName) {
+
+	//ファイルストリーム
+	std::ifstream file;
+
+	std::string filePath = directory_ + fileName;
+
+	//ファイルを開く
+	file.open(filePath);
+
+	//ファイルが開けなかった場合のエラーチェック
+	if (file.fail()) {
+		assert(0);
+	}
+
+	//JSONデータ
+	nlohmann::json deserialized;
+
+	//ファイルからJSONデータを読み込む
+	file >> deserialized;
+
+	//正しいレベルデータファイルかチェック
+	assert(deserialized.is_object());
+	assert(deserialized.contains("name"));
+	assert(deserialized["name"].is_string());
+
+	//"name"を文字列として取得
+	std::string name = deserialized["name"].get<std::string>();
+
+	//正しいレベルデータファイルかチェック
+	assert(name.compare("scene") == 0);
+
+	std::vector<ObjectData> objectDataList;
+
+	//"objects"の全オブジェクトを走査
+	for (nlohmann::json& object : deserialized["objects"]) {
+
+		assert(object.contains("type"));
+
+		//種別を取得
+		std::string type = object["type"].get<std::string>();
+
+		//種別に応じて処理を分岐
+		if (type.compare("MESH") == 0) {
+
+			/// === MESHの場合 === ///
+
+			ObjectData newObject;
+
+			//モデルのファイル名が存在するかチェック
+			if (object.contains("file_name")) {
+
+				//モデルのファイル名を取得
+				newObject.filename = object["file_name"].get<std::string>();
+
+				//モデルの読み込み
+				ModelManager::GetInstance()->LoadModel(newObject.filename, newObject.filename);
+			}
+
+			if (object.contains("object_group")) {
+
+				//オブジェクトの種別を取得
+				std::string objectType = object["object_group"].get<std::string>();
+
+				//オブジェクトの種別に応じて処理を分岐
+				if (objectType == "PLAYER") {
+
+					newObject.type = ObjectType::PLAYER;
+				} else if (objectType == "ENEMY") {
+
+					newObject.type = ObjectType::ENEMY;
+				} else if (objectType == "OBJECT") {
+
+					newObject.type = ObjectType::OBJECT;
+				} else {
+
+					newObject.type = ObjectType::NONE;
+				}
+
+			} else {
+
+				newObject.type = ObjectType::NONE;
+			}
+
+			//トランスフォームのパラメータ読み込み
+			nlohmann::json& transform = object["transform"];
+
+			//平行移動
+			newObject.position = {
+				static_cast<float>(transform["translation"][0]),
+				static_cast<float>(transform["translation"][2]),
+				-static_cast<float>(transform["translation"][1])
+			};
+
+			//回転
+			newObject.rotation = {
+				static_cast<float>(transform["rotation"][0]),
+				static_cast<float>(transform["rotation"][2]),
+				static_cast<float>(transform["rotation"][1])
+			};
+
+			//拡大縮小
+			newObject.scale = {
+				static_cast<float>(transform["scaling"][0]),
+				static_cast<float>(transform["scaling"][2]),
+				static_cast<float>(transform["scaling"][1])
+			};
+
+			//オブジェクトをコンテナに追加
+			objectDataList.push_back(newObject);
+		}
+	}
+
+	objects_.insert(std::make_pair(fileName, objectDataList));
+}
+
+const int LevelDataLoader::GetObjectCount(const std::string& fileName, const ObjectType type) const {
+
+	if (objects_.count(fileName) == 0) {
+
+		return 0;
+	}
+
+	int count = 0;
+
+	for (const auto& object : objects_.at(fileName)) {
+
+		if (object.type == type) {
+
+			count++;
+		}
+	}
+
+	return count;
+}
+
+const std::vector<LevelDataLoader::ObjectData>& LevelDataLoader::PickObjectData(const std::string& fileName, const ObjectType type) const {
+
+	if (objects_.count(fileName) == 0) {
+
+		static std::vector<ObjectData> emptyData;
+
+		return emptyData;
+	}
+
+	static std::vector<ObjectData> pickedData;
+
+	pickedData.clear();
+
+	for (const auto& object : objects_.at(fileName)) {
+
+		if (object.type == type) {
+
+			pickedData.push_back(object);
+		}
+	}
+
+	return pickedData;
+}

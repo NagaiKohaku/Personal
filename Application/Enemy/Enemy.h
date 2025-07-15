@@ -20,7 +20,7 @@ private:
 	enum STATE {
 		ENTRY,
 		STANDBY,
-		FORWARD,
+		MOVE,
 		EXIT,
 		DEAD
 	};
@@ -42,26 +42,6 @@ public:
 	/// </summary>
 	void Draw();
 
-public:
-
-	/// <summary>
-	/// 座標の設定
-	/// </summary>
-	/// <param name="pos">座標</param>
-	void SetPosition(Vector3 pos) { object_->GetWorldTransform().translate_ = pos; }
-
-	/// <summary>
-	/// スタンバイ状態の座標の設定
-	/// </summary>
-	/// <param name="pos">座標</param>
-	void SetStandbyPos(Vector3 pos) { standbyPos_ = pos; }
-
-	/// <summary>
-	/// 削除可能フラグを取得
-	/// </summary>
-	/// <returns>フラグ</returns>
-	bool GetCanRemove() { return canRemove_; }
-
 private:
 
 	/// <summary>
@@ -78,6 +58,16 @@ private:
 	/// エントリー時処理
 	/// </summary>
 	void Entry();
+
+	/// <summary>
+	/// 移動処理
+	/// </summary>
+	void Move();
+
+	/// <summary>
+	/// 離脱時処理
+	/// </summary>
+	void Exit();
 
 private:
 
@@ -99,15 +89,42 @@ private:
 	//スタンバイ状態の座標
 	Vector3 standbyPos_;
 
+	//離脱座標
+	Vector3 exitPos_;
+
 	//削除可能フラグ
 	bool canRemove_;
 
 	//アニメーションタイマー
 	float animTimer_;
 
+	//エントリー時アニメーション終了時間
+	float entryAnimMaxTime_;
+
+	//離脱時アニメーション終了時間
+	float exitAnimMaxTime_;
+
 	//死亡時アニメーション終了時間
 	float deadAnimMaxTime_;
 
-	//エントリー時アニメーション終了時間
-	float entryAnimMaxTime_;
+public:
+
+	/// <summary>
+	/// 座標のセッター
+	/// </summary>
+	/// <param name="pos">座標</param>
+	void SetPosition(Vector3 pos) { object_->GetWorldTransform().translate_ = pos; }
+
+	/// <summary>
+	/// スタンバイ状態の座標のセッター
+	/// </summary>
+	/// <param name="pos">座標</param>
+	void SetStandbyPos(Vector3 pos) { standbyPos_ = pos; }
+
+	/// <summary>
+	/// 削除可能フラグのゲッター
+	/// </summary>
+	/// <returns>フラグ</returns>
+	bool GetCanRemove() { return canRemove_; }
+
 };
