@@ -9,7 +9,7 @@
 class ModelCommon;
 
 ///=====================================================/// 
-/// モデルマネージャ
+/// モデルマネージャクラス
 ///=====================================================///
 class ModelManager {
 
@@ -19,13 +19,13 @@ class ModelManager {
 public:
 
 	/// <summary>
-	/// シングルトンインスタンス
+	/// シングルトンインスタンスを取得
 	/// </summary>
 	/// <returns>インスタンス</returns>
 	static ModelManager* GetInstance();
 
 	/// <summary>
-	/// 初期化処理
+	/// 初期化
 	/// </summary>
 	void Initialize();
 
@@ -37,12 +37,12 @@ public:
 	void LoadModel(const std::string& modelName, const std::string& modelFileName);
 
 	/// <summary>
-	/// プリミティブモデルの生成
+	/// メッシュモデルの生成
 	/// </summary>
 	/// <param name="type"></param>
 	/// <param name="modelName"></param>
 	/// <param name="textureFilePath"></param>
-	void CreatePrimitiveModel(const std::string& modelName, PrimitiveType type, const std::string& textureFilePath);
+	void CreateMeshModel(const std::string& modelName, MeshType type, const std::string& textureFilePath);
 
 	/// <summary>
 	/// モデルの検索

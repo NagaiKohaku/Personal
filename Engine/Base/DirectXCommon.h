@@ -120,33 +120,6 @@ public:
 	);
 
 	///-------------------------------------------/// 
-	/// ゲッター・セッター
-	///-------------------------------------------///
-public:
-
-	/// <summary>
-	/// デバイスのゲッター
-	/// </summary>
-	/// <returns>デバイス</returns>
-	ID3D12Device* GetDevice() { return device_.Get(); }
-
-	/// <summary>
-	/// コマンドリストのゲッター
-	/// </summary>
-	/// <returns>コマンドリスト</returns>
-	ID3D12GraphicsCommandList* GetCommandList() { return commandList_.Get(); }
-
-	/// <summary>
-	/// バックバッファのゲッター
-	/// </summary>
-	/// <returns>バックバッファ</returns>
-	size_t GetBackBufferCount() const { return backBuffers_.size(); }
-
-	D3D12_VIEWPORT GetViewport() const { return viewport_; }
-
-	D3D12_RECT GetScissorRect() const { return scissorRect_; }
-
-	///-------------------------------------------/// 
 	/// クラス内処理関数
 	///-------------------------------------------///
 private:
@@ -266,4 +239,40 @@ private:
 
 	//記録時間(FPS固定用)
 	std::chrono::steady_clock::time_point reference_;
+
+	///-------------------------------------------/// 
+	/// ゲッター・セッター
+	///-------------------------------------------///
+public:
+
+	/// <summary>
+	/// デバイスを取得
+	/// </summary>
+	/// <returns>デバイス</returns>
+	ID3D12Device* GetDevice() { return device_.Get(); }
+
+	/// <summary>
+	/// コマンドリストを取得
+	/// </summary>
+	/// <returns>コマンドリスト</returns>
+	ID3D12GraphicsCommandList* GetCommandList() { return commandList_.Get(); }
+
+	/// <summary>
+	/// バックバッファを取得
+	/// </summary>
+	/// <returns>バックバッファ</returns>
+	size_t GetBackBufferCount() const { return backBuffers_.size(); }
+
+	/// <summary>
+	/// ビューポート行列を取得
+	/// </summary>
+	/// <returns>ビューポート行列</returns>
+	D3D12_VIEWPORT GetViewport() const { return viewport_; }
+
+	/// <summary>
+	/// シザリング矩形を取得
+	/// </summary>
+	/// <returns>シザリング矩形</returns>
+	D3D12_RECT GetScissorRect() const { return scissorRect_; }
+
 };

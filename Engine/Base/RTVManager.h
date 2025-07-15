@@ -7,6 +7,9 @@
 /// === 前方宣言 === ///
 class DirectXCommon;
 
+///=====================================================/// 
+/// RenderTargetViewマネージャークラス
+///=====================================================///
 class RTVManager {
 
 	///-------------------------------------------/// 
@@ -53,28 +56,9 @@ public:
 	/// <summary>
 	/// RTV生成
 	/// </summary>
-	/// <param name="rtvIndex"></param>
-	/// <param name="pResource"></param>
+	/// <param name="rtvIndex">RTV番号</param>
+	/// <param name="pResource">リソース</param>
 	void CreateRenderTargetView(uint32_t rtvIndex, ID3D12Resource* pResource);
-
-	///-------------------------------------------/// 
-	/// ゲッター・セッター
-	///-------------------------------------------///
-public:
-
-	/// <summary>
-	/// CPUデスクリプターのゲッター
-	/// </summary>
-	/// <param name="index">デスクリプタの番号</param>
-	/// <returns>CPUデスクリプタ</returns>
-	D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(uint32_t index);
-
-	/// <summary>
-	/// GPUデスクリプターのゲッター
-	/// </summary>
-	/// <param name="index">デスクリプタ番号</param>
-	/// <returns>GPUデスクリプタ</returns>
-	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(uint32_t index);
 
 	///-------------------------------------------/// 
 	/// メンバ変数
@@ -92,5 +76,24 @@ private:
 
 	//RTVデスクリプタヒープ
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> rtvDescriptorHeap_;
+
+	///-------------------------------------------/// 
+	/// ゲッター・セッター
+	///-------------------------------------------///
+public:
+
+	/// <summary>
+	/// CPUデスクリプターを取得
+	/// </summary>
+	/// <param name="index">デスクリプタの番号</param>
+	/// <returns>CPUデスクリプタ</returns>
+	D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(uint32_t index);
+
+	/// <summary>
+	/// GPUデスクリプターを取得
+	/// </summary>
+	/// <param name="index">デスクリプタ番号</param>
+	/// <returns>GPUデスクリプタ</returns>
+	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(uint32_t index);
 
 };

@@ -6,6 +6,9 @@
 /// === 前方宣言 === ///
 class DirectXCommon;
 
+///=====================================================/// 
+/// DepthStencilViewマネージャー
+///=====================================================///
 class DSVManager {
 
 	///-------------------------------------------/// 
@@ -49,28 +52,19 @@ public:
 	/// <returns>フラグ</returns>
 	bool AllocateCheck();
 
+	/// <summary>
+	/// DepthStencilViewを作成
+	/// </summary>
+	/// <param name="dsvIndex">DSV番号</param>
+	/// <param name="pResource">リソース</param>
 	void CreateDepthStencilView(uint32_t dsvIndex, ID3D12Resource* pResource);
 
+	/// <summary>
+	/// DepthTextureを作成
+	/// </summary>
+	/// <param name="dsvIndex">DSV番号</param>
+	/// <param name="pResource">リソース</param>
 	void CreateDepthTexture(uint32_t dsvIndex, ID3D12Resource* pResource);
-
-	///-------------------------------------------/// 
-	/// ゲッター・セッター
-	///-------------------------------------------///
-public:
-
-	/// <summary>
-	/// CPUデスクリプターのゲッター
-	/// </summary>
-	/// <param name="index">デスクリプタの番号</param>
-	/// <returns>CPUデスクリプタ</returns>
-	D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(uint32_t index);
-
-	/// <summary>
-	/// GPUデスクリプターのゲッター
-	/// </summary>
-	/// <param name="index">デスクリプタ番号</param>
-	/// <returns>GPUデスクリプタ</returns>
-	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(uint32_t index);
 
 	///-------------------------------------------/// 
 	/// メンバ変数
@@ -88,5 +82,24 @@ private:
 
 	//DSVデスクリプタヒープ
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> dsvDescriptorHeap_;
+
+	///-------------------------------------------/// 
+	/// ゲッター・セッター
+	///-------------------------------------------///
+public:
+
+	/// <summary>
+	/// CPUデスクリプターを取得
+	/// </summary>
+	/// <param name="index">デスクリプタの番号</param>
+	/// <returns>CPUデスクリプタ</returns>
+	D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(uint32_t index);
+
+	/// <summary>
+	/// GPUデスクリプターを取得
+	/// </summary>
+	/// <param name="index">デスクリプタ番号</param>
+	/// <returns>GPUデスクリプタ</returns>
+	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(uint32_t index);
 
 };

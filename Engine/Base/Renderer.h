@@ -17,9 +17,9 @@ class Renderer {
 public:
 
 	/// <summary>
-	/// 静的インスタンス取得
+	/// シングルトンインスタンスの取得
 	/// </summary>
-	/// <returns>静的インスタンス</returns>
+	/// <returns>シングルトンインスタンス</returns>
 	static Renderer* GetInstance();
 
 	/// <summary>
@@ -28,17 +28,21 @@ public:
 	void Initialize();
 
 	/// <summary>
-	/// 描画
+	/// スワップチェーン描画
 	/// </summary>
 	void SwapChainDraw();
 
+	/// <summary>
+	/// オフスクリーン描画
+	/// </summary>
 	void OffScreenDraw();
 
 	/// <summary>
 	/// 描画コマンド追加
 	/// </summary>
 	/// <param name="layer">レイヤー</param>
-	/// <param name="func">描画コマンド</param>
+	/// <param name="isOffScreen">オフスクリーンに送るか</param>
+	/// <param name="func">コマンド</param>
 	void AddDraw(LayerType layer, bool isOffScreen,std::function<void()> func);
 
 	///-------------------------------------------/// 

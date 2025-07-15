@@ -16,6 +16,8 @@
 #include "vector"
 #include "memory"
 
+/// === 前方宣言 === ///
+
 class Object3DCommon;
 
 class Model;
@@ -23,68 +25,9 @@ class Model;
 class Camera;
 
 ///=====================================================/// 
-/// 3Dオブジェクト
+/// 3Dオブジェクトクラス
 ///=====================================================///
 class Object3D {
-
-	///-------------------------------------------/// 
-	/// メンバ関数
-	///-------------------------------------------///
-public:
-
-	/// <summary>
-	/// 初期化処理
-	/// </summary>
-	void Initialize();
-
-	/// <summary>
-	/// 更新処理
-	/// </summary>
-	void Update();
-
-	/// <summary>
-	/// 描画処理
-	/// </summary>
-	void Draw(LayerType layer);
-
-	/// <summary>
-	/// デバッグの描画処理
-	/// </summary>
-	void DebugDraw();
-
-	/// <summary>
-	/// ImGuiの表示
-	/// </summary>
-	void DisplayImGui();
-
-	///-------------------------------------------/// 
-	/// ゲッター・セッター
-	///-------------------------------------------///
-public:
-
-	/// <summary>
-	/// ワールドトランスフォームのゲッター
-	/// </summary>
-	/// <returns>ワールドトランスフォーム</returns>
-	WorldTransform& GetWorldTransform() { return transform_; }
-
-	/// <summary>
-	/// モデルのゲッター
-	/// </summary>
-	/// <returns>モデル</returns>
-	Model* GetModel() const { return model_.get();}
-
-	/// <summary>
-	/// カメラのセッター
-	/// </summary>
-	/// <param name="camera">カメラ</param>
-	void SetCamera(Camera* camera) { camera_ = camera; }
-
-	/// <summary>
-	/// モデルのセッター
-	/// </summary>
-	/// <param name="modelName">ファイル名</param>
-	void SetModel(const std::string& modelName);
 
 	///-------------------------------------------/// 
 	/// メンバ構造体
@@ -97,6 +40,31 @@ private:
 		Matrix4x4 World;
 		Matrix4x4 WorldInverseTranspose;
 	};
+
+	///-------------------------------------------/// 
+	/// メンバ関数
+	///-------------------------------------------///
+public:
+
+	/// <summary>
+	/// 初期化
+	/// </summary>
+	void Initialize();
+
+	/// <summary>
+	/// 更新
+	/// </summary>
+	void Update();
+
+	/// <summary>
+	/// 描画
+	/// </summary>
+	void Draw(LayerType layer);
+
+	/// <summary>
+	/// ImGuiの表示
+	/// </summary>
+	void DisplayImGui();
 
 	///-------------------------------------------/// 
 	/// メンバ変数
@@ -112,17 +80,48 @@ private:
 	//座標データ
 	WorldTransform transform_;
 
-	//バッファリソース
+	//座標変換行列リソース
 	Microsoft::WRL::ComPtr<ID3D12Resource> WVPResource_ = nullptr;
 
-	//バッファリソース内のデータを指すポインタ
+	//座標変換行列データ
 	TransformationMatrix* WVPData_ = nullptr;
 
-	//モデル情報
+	//モデル
 	std::unique_ptr<Model> model_;
 
 	//軸方向ライン
 	std::vector<std::unique_ptr<DebugLine>> axisLines_;
 
+	//デバッグフラグ
 	bool isDebug_;
+
+	///-------------------------------------------/// 
+	/// ゲッター・セッター
+	///-------------------------------------------///
+public:
+
+	/// <summary>
+	/// ワールドトランスフォームを取得
+	/// </summary>
+	/// <returns>ワールドトランスフォーム</returns>
+	WorldTransform& GetWorldTransform() { return transform_; }
+
+	/// <summary>
+	/// モデルを取得
+	/// </summary>
+	/// <returns>モデル</returns>
+	Model* GetModel() const { return model_.get(); }
+
+	/// <summary>
+	/// カメラの設定
+	/// </summary>
+	/// <param name="camera">カメラ</param>
+	void SetCamera(Camera* camera) { camera_ = camera; }
+
+	/// <summary>
+	/// モデルの設定
+	/// </summary>
+	/// <param name="modelName">ファイル名</param>
+	void SetModel(const std::string& modelName);
+
 };

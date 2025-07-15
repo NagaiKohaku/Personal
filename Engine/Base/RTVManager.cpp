@@ -4,11 +4,17 @@
 
 #include "cassert"
 
+///=====================================================/// 
+/// シングルトンインスタンスの取得
+///=====================================================///
 RTVManager* RTVManager::GetInstance() {
 	static RTVManager instance;
 	return &instance;
 }
 
+///=====================================================/// 
+/// 初期化
+///=====================================================///
 void RTVManager::Initialize() {
 
 	//DirectX基底のインスタンスを取得
@@ -21,9 +27,15 @@ void RTVManager::Initialize() {
 	rtvDescriptorSize_ = directXCommon->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 }
 
+///=====================================================/// 
+/// 描画前処理
+///=====================================================///
 void RTVManager::PreDraw() {
 }
 
+///=====================================================/// 
+/// メモリ確保
+///=====================================================///
 uint32_t RTVManager::Allocate() {
 
 	//RTV番号が最大数を越えていないかの確認
@@ -38,6 +50,9 @@ uint32_t RTVManager::Allocate() {
 	return index;
 }
 
+///=====================================================/// 
+/// メモリ確保可能チェック
+///=====================================================///
 bool RTVManager::AllocateCheck() {
 
 	//RTV番号が最大数を越えていないかの確認
@@ -48,6 +63,9 @@ bool RTVManager::AllocateCheck() {
 	return false;
 }
 
+///=====================================================/// 
+/// RTV生成
+///=====================================================///
 void RTVManager::CreateRenderTargetView(uint32_t rtvIndex, ID3D12Resource* pResource) {
 
 	//RTVの情報
@@ -66,6 +84,9 @@ void RTVManager::CreateRenderTargetView(uint32_t rtvIndex, ID3D12Resource* pReso
 	);
 }
 
+///=====================================================/// 
+/// CPUデスクリプタハンドルを取得
+///=====================================================///
 D3D12_CPU_DESCRIPTOR_HANDLE RTVManager::GetCPUDescriptorHandle(uint32_t index) {
 
 	//デスクリプタの最初のメモリを取得
@@ -77,6 +98,9 @@ D3D12_CPU_DESCRIPTOR_HANDLE RTVManager::GetCPUDescriptorHandle(uint32_t index) {
 	return handleCPU;
 }
 
+///=====================================================/// 
+/// GPUデスクリプタハンドルを取得
+///=====================================================///
 D3D12_GPU_DESCRIPTOR_HANDLE RTVManager::GetGPUDescriptorHandle(uint32_t index) {
 
 	//デスクリプタの最初のメモリを取得

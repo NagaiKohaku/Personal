@@ -9,7 +9,7 @@
 class DirectXCommon;
 
 ///=====================================================/// 
-/// SRVマネージャー
+/// ShaderResourceViewマネージャークラス
 ///=====================================================///
 class SrvManager {
 
@@ -75,42 +75,16 @@ public:
 	/// <summary>
 	/// SRV生成(レンダーターゲット用)
 	/// </summary>
-	/// <param name="srvIndex"></param>
-	/// <param name="pResource"></param>
+	/// <param name="srvIndex">srv番号</param>
+	/// <param name="pResource">リソース</param>
 	void CreateRenderTargetSRV(uint32_t srvIndex, ID3D12Resource* pResource);
 
 	/// <summary>
 	/// SRV生成(DepthTexture用)
 	/// </summary>
-	/// <param name="srvIndex"></param>
-	/// <param name="pResource"></param>
+	/// <param name="srvIndex">srv番号</param>
+	/// <param name="pResource">リソース</param>
 	void CreateDepthTextureSRV(uint32_t srvIndex, ID3D12Resource* pResource);
-
-	///-------------------------------------------/// 
-	/// ゲッター・セッター
-	///-------------------------------------------///
-public:
-
-	/// <summary>
-	/// CPUデスクリプターのゲッター
-	/// </summary>
-	/// <param name="index">デスクリプタの番号</param>
-	/// <returns>CPUデスクリプタ</returns>
-	D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(uint32_t index);
-
-	/// <summary>
-	/// GPUデスクリプターのゲッター
-	/// </summary>
-	/// <param name="index">デスクリプタ番号</param>
-	/// <returns>GPUデスクリプタ</returns>
-	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(uint32_t index);
-
-	/// <summary>
-	/// デスクリプタテーブルのセッター
-	/// </summary>
-	/// <param name="RootParameterIndex">パラメータ番号</param>
-	/// <param name="srvIndex">SRV番号</param>
-	void SetGraphicsRootDescriptorTable(UINT RootParameterIndex, uint32_t srvIndex);
 
 	///-------------------------------------------/// 
 	/// メンバ変数
@@ -129,4 +103,29 @@ private:
 	//SRVデスクリプタヒープ
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> srvDescriptorHeap_;
 
+	///-------------------------------------------/// 
+	/// ゲッター・セッター
+	///-------------------------------------------///
+public:
+
+	/// <summary>
+	/// CPUデスクリプターを取得
+	/// </summary>
+	/// <param name="index">デスクリプタの番号</param>
+	/// <returns>CPUデスクリプタ</returns>
+	D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(uint32_t index);
+
+	/// <summary>
+	/// GPUデスクリプターを取得
+	/// </summary>
+	/// <param name="index">デスクリプタ番号</param>
+	/// <returns>GPUデスクリプタ</returns>
+	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(uint32_t index);
+
+	/// <summary>
+	/// デスクリプタテーブルの設定
+	/// </summary>
+	/// <param name="RootParameterIndex">パラメータ番号</param>
+	/// <param name="srvIndex">SRV番号</param>
+	void SetGraphicsRootDescriptorTable(UINT RootParameterIndex, uint32_t srvIndex);
 };

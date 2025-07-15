@@ -1,10 +1,10 @@
 #pragma once
 
-#include "3d/Primitive/PrimitiveBase.h"
+#include "3d/Mesh/MeshBase.h"
 
 #include "numbers"
 
-class Ring : public PrimitiveBase {
+class RingMesh : public MeshBase {
 
 public:
 
@@ -12,12 +12,6 @@ public:
 	/// 初期化処理
 	/// </summary>
 	void Initialize() override;
-	/// <summary>
-	/// 描画処理
-	/// </summary>
-	void Draw() override;
-
-	void CopyMeshData(std::vector<uint32_t> indices, std::vector<VertexData> vertices) override;
 
 private:
 

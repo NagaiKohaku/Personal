@@ -6,11 +6,17 @@
 
 #include "cassert"
 
+///=====================================================/// 
+/// シングルトンインスタンスの取得
+///=====================================================///
 SkyBoxCommon* SkyBoxCommon::GetInstance() {
 	static SkyBoxCommon instance;
 	return &instance;
 }
 
+///=====================================================/// 
+/// 初期化
+///=====================================================///
 void SkyBoxCommon::Initialize() {
 
 	//DirectX基底のインスタンスを取得
@@ -20,9 +26,15 @@ void SkyBoxCommon::Initialize() {
 	CreateGraphicsPipeline();
 }
 
+///=====================================================/// 
+/// 更新
+///=====================================================///
 void SkyBoxCommon::Update() {
 }
 
+///=====================================================/// 
+/// 描画前処理
+///=====================================================///
 void SkyBoxCommon::CommonDrawSetting() {
 
 	//ルートシグネチャを設定
@@ -31,11 +43,14 @@ void SkyBoxCommon::CommonDrawSetting() {
 	//グラフィックパイプラインを設定
 	dxCommon_->GetCommandList()->SetPipelineState(graphicsPipelineState_.Get());
 
-	//プリミティブトポロジーを設定
+	//メッシュトポロジーを設定
 	dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 }
 
+///=====================================================/// 
+/// ルートシグネチャの生成
+///=====================================================///
 void SkyBoxCommon::CreateRootSignature() {
 
 	HRESULT hr;
@@ -46,11 +61,15 @@ void SkyBoxCommon::CreateRootSignature() {
 	descriptionRootSignature.Flags =
 		D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 
+	/// === DescriptorRangeの設定 === ///
+
 	D3D12_DESCRIPTOR_RANGE descriptorRange[1] = {};
 	descriptorRange[0].BaseShaderRegister = 0; //0から始まる
 	descriptorRange[0].NumDescriptors = 1; //数は1つ
 	descriptorRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV; //SRVを使う
 	descriptorRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND; //Offsetを自動計算
+
+	/// === RootParameterの設定 === ///
 
 	//RootParameterを作成
 	D3D12_ROOT_PARAMETER rootParameters[3] = {};
@@ -74,6 +93,8 @@ void SkyBoxCommon::CreateRootSignature() {
 	descriptionRootSignature.pParameters = rootParameters;               //ルートパラメータ配列へのポインタ
 	descriptionRootSignature.NumParameters = _countof(rootParameters);   //配列の長さ
 
+	/// === Samplerの設定 === ///
+
 	D3D12_STATIC_SAMPLER_DESC staticSamplers[1] = {};
 	staticSamplers[0].Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR;         //バイリニアフィルタ
 	staticSamplers[0].AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP;       //0~1の範囲外をリピート
@@ -83,14 +104,17 @@ void SkyBoxCommon::CreateRootSignature() {
 	staticSamplers[0].MaxLOD = D3D12_FLOAT32_MAX;                       //ありったけのMinMapを使う
 	staticSamplers[0].ShaderRegister = 0;                               //レジスタ番号0を使う
 	staticSamplers[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; //PixelShaderで使う
+
 	descriptionRootSignature.pStaticSamplers = staticSamplers;
 	descriptionRootSignature.NumStaticSamplers = _countof(staticSamplers);
 
-	//シリアライズしてバイナリにする
+	/// === RootSignatureの生成 === ///
+
 	Microsoft::WRL::ComPtr<ID3DBlob> signatureBlob = nullptr;
 
 	Microsoft::WRL::ComPtr<ID3DBlob> errorBlob = nullptr;
 
+	//シリアライズしてバイナリにする
 	hr = D3D12SerializeRootSignature(&descriptionRootSignature,
 		D3D_ROOT_SIGNATURE_VERSION_1, &signatureBlob, &errorBlob);
 
@@ -102,12 +126,16 @@ void SkyBoxCommon::CreateRootSignature() {
 		assert(false);
 	}
 
+	//ルートシグネチャを生成する
 	hr = dxCommon_->GetDevice()->CreateRootSignature(0, signatureBlob->GetBufferPointer(),
 		signatureBlob->GetBufferSize(), IID_PPV_ARGS(&rootSignature_));
 
 	assert(SUCCEEDED(hr));
 }
 
+///=====================================================/// 
+/// グラフィックパイプラインの生成
+///=====================================================///
 void SkyBoxCommon::CreateGraphicsPipeline() {
 
 	HRESULT hr;

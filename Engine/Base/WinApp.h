@@ -48,23 +48,6 @@ public:
 	bool ProcessMessage();
 
 	///-------------------------------------------/// 
-	/// ゲッター・セッター
-	///-------------------------------------------///
-public:
-
-	/// <summary>
-	/// インスタンスハンドルのゲッター
-	/// </summary>
-	/// <returns>インスタンスハンドル</returns>
-	HINSTANCE GetHInstance() const { return wc_.hInstance; }
-
-	/// <summary>
-	/// ウィンドウハンドルのゲッター
-	/// </summary>
-	/// <returns>ウィンドウハンドル</returns>
-	HWND GetHwnd() const { return hwnd_; }
-
-	///-------------------------------------------/// 
 	/// 静的メンバ変数
 	///-------------------------------------------///
 public:
@@ -85,5 +68,22 @@ private:
 
 	//ウィンドウハンドル
 	HWND hwnd_ = nullptr;
+
+	///-------------------------------------------/// 
+	/// ゲッター・セッター
+	///-------------------------------------------///
+public:
+
+	/// <summary>
+	/// インスタンスハンドルを取得
+	/// </summary>
+	/// <returns>インスタンスハンドル</returns>
+	HINSTANCE GetHInstance() const { return wc_.hInstance; }
+
+	/// <summary>
+	/// ウィンドウハンドルを取得
+	/// </summary>
+	/// <returns>ウィンドウハンドル</returns>
+	HWND GetHwnd() const { return hwnd_; }
 
 };

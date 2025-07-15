@@ -105,9 +105,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Application\Enemy\Enemy.cpp" />
     <ClCompile Include="Application\Enemy\EnemyManager.cpp" />
     <ClCompile Include="Engine\3d\Object\DebugObject3D.cpp" />
-    <ClCompile Include="Engine\3d\Primitive\Ball.cpp" />
     <ClCompile Include="Engine\Base\DSVManager.cpp" />
-    <ClCompile Include="Engine\3d\Primitive\Cylinder.cpp" />
+    <ClCompile Include="Engine\3d\Mesh\CylinderMesh.cpp" />
     <ClCompile Include="Engine\3d\Particle\EmitterGroup.cpp" />
     <ClCompile Include="Application\Bullet\BulletBase.cpp" />
     <ClCompile Include="Application\Bullet\BulletManager.cpp" />
@@ -123,7 +122,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Base\ImGuiManager.cpp" />
     <ClCompile Include="Engine\Base\Input.cpp" />
     <ClCompile Include="Engine\3d\Model\ModelManager.cpp" />
-    <ClCompile Include="Engine\3d\Particle\ParticleManager.cpp" />
     <ClCompile Include="Engine\Base\SrvManager.cpp" />
     <ClCompile Include="Engine\2d\Sprite\TextureManager.cpp" />
     <ClCompile Include="Engine\Base\WinApp.cpp" />
@@ -150,11 +148,11 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Base\OffScreen.cpp" />
     <ClCompile Include="Engine\Base\RTVManager.cpp" />
     <ClCompile Include="Engine\3d\Particle\ParticleEmitter.cpp" />
-    <ClCompile Include="Engine\3d\Primitive\Plane.cpp" />
-    <ClCompile Include="Engine\3d\Primitive\PrimitiveBase.cpp" />
-    <ClCompile Include="Engine\3d\Primitive\Ring.cpp" />
-    <ClCompile Include="Engine\3d\Primitive\ModelMesh.cpp" />
-    <ClCompile Include="Engine\3d\Primitive\PrimitiveType.cpp" />
+    <ClCompile Include="Engine\3d\Mesh\PlaneMesh.cpp" />
+    <ClCompile Include="Engine\3d\Mesh\MeshBase.cpp" />
+    <ClCompile Include="Engine\3d\Mesh\RingMesh.cpp" />
+    <ClCompile Include="Engine\3d\Mesh\ModelMesh.cpp" />
+    <ClCompile Include="Engine\3d\Mesh\MeshType.cpp" />
     <ClCompile Include="Application\Player\Reticle.cpp" />
     <ClCompile Include="Application\Scene\ParticleEditorScene.cpp" />
     <ClCompile Include="Application\Player\Player.cpp" />
@@ -168,6 +166,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Application\Bullet\TankBullet.cpp" />
     <ClCompile Include="Engine\3d\Object\SkyBox.cpp" />
     <ClCompile Include="Engine\3d\Object\SkyBoxCommon.cpp" />
+    <ClCompile Include="Engine\3d\Mesh\SphereMesh.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application\LevelEditor\LevelDataLoader.h" />
@@ -177,9 +176,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Application\Enemy\Enemy.h" />
     <ClInclude Include="Application\Enemy\EnemyManager.h" />
     <ClInclude Include="Engine\3d\Object\DebugObject3D.h" />
-    <ClInclude Include="Engine\3d\Primitive\Ball.h" />
     <ClInclude Include="Engine\Base\DSVManager.h" />
-    <ClInclude Include="Engine\3d\Primitive\Cylinder.h" />
+    <ClInclude Include="Engine\3d\Mesh\CylinderMesh.h" />
     <ClInclude Include="Engine\3d\Particle\EmitterGroup.h" />
     <ClInclude Include="Application\Bullet\BulletBase.h" />
     <ClInclude Include="Application\Bullet\BulletManager.h" />
@@ -196,7 +194,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Base\ImGuiManager.h" />
     <ClInclude Include="Engine\Base\Input.h" />
     <ClInclude Include="Engine\3d\Model\ModelManager.h" />
-    <ClInclude Include="Engine\3d\Particle\ParticleManager.h" />
     <ClInclude Include="Engine\Base\SrvManager.h" />
     <ClInclude Include="Engine\2d\Sprite\TextureManager.h" />
     <ClInclude Include="Engine\Base\WinApp.h" />
@@ -222,11 +219,11 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Base\OffScreen.h" />
     <ClInclude Include="Engine\Base\RTVManager.h" />
     <ClInclude Include="Engine\3d\Particle\ParticleEmitter.h" />
-    <ClInclude Include="Engine\3d\Primitive\Plane.h" />
-    <ClInclude Include="Engine\3d\Primitive\PrimitiveBase.h" />
-    <ClInclude Include="Engine\3d\Primitive\Ring.h" />
-    <ClInclude Include="Engine\3d\Primitive\ModelMesh.h" />
-    <ClInclude Include="Engine\3d\Primitive\PrimitiveType.h" />
+    <ClInclude Include="Engine\3d\Mesh\PlaneMesh.h" />
+    <ClInclude Include="Engine\3d\Mesh\MeshBase.h" />
+    <ClInclude Include="Engine\3d\Mesh\RingMesh.h" />
+    <ClInclude Include="Engine\3d\Mesh\ModelMesh.h" />
+    <ClInclude Include="Engine\3d\Mesh\MeshType.h" />
     <ClInclude Include="Application\Camera\FollowCamera.h" />
     <ClInclude Include="Application\Player\Reticle.h" />
     <ClInclude Include="Application\Bullet\JetBullet.h" />
@@ -245,6 +242,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Application\Bullet\TankBullet.h" />
     <ClInclude Include="Engine\3d\Object\SkyBox.h" />
     <ClInclude Include="Engine\3d\Object\SkyBoxCommon.h" />
+    <ClInclude Include="Engine\3d\Mesh\SphereMesh.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Application\LevelEditor\add_collider.py">

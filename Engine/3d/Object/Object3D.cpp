@@ -14,15 +14,17 @@
 
 #include "cassert"
 
+///=====================================================/// 
+/// 初期化
+///=====================================================///
 void Object3D::Initialize() {
 
 	//3Dオブジェクト基底のインスタンスを取得
 	object3DCommon_ = Object3DCommon::GetInstance();
 
-	//モデルの設定
-	model_ = ModelManager::GetInstance()->FindModel("Default");
+	/// === 座標変換行列リソースを作成 === ///
 
-	//座標変換行列リソースを作成
+	//リソースを作成
 	WVPResource_ = object3DCommon_->GetDxCommon()->CreateBufferResource(sizeof(TransformationMatrix));
 
 	//書き込むためのアドレスを取得する
@@ -33,10 +35,8 @@ void Object3D::Initialize() {
 	WVPData_->World = MakeIdentity4x4();
 	WVPData_->WorldInverseTranspose = MakeIdentity4x4();
 
+	//トランスフォームの初期化
 	transform_.Initialize();
-
-	//今持っているカメラをデフォルトカメラに設定
-	camera_ = object3DCommon_->GetDefaultCamera();
 
 	/// === 軸方向ラインの初期化 === ///
 
@@ -69,6 +69,15 @@ void Object3D::Initialize() {
 	);
 	axisLines_[2]->SetParent(&transform_);
 
+	/// === 他変数の設定 === ///
+
+	//モデルの設定
+	model_ = ModelManager::GetInstance()->FindModel("Default");
+
+	//今持っているカメラをデフォルトカメラに設定
+	camera_ = object3DCommon_->GetDefaultCamera();
+
+	//デバッグモードの初期化
 	isDebug_ = true;
 }
 
@@ -77,6 +86,7 @@ void Object3D::Initialize() {
 ///=====================================================///
 void Object3D::Update() {
 
+	//トランスフォームの更新
 	transform_.UpdateMatrix();
 
 	//ワールドビュープロジェクション行列
@@ -98,6 +108,7 @@ void Object3D::Update() {
 	WVPData_->World = transform_.GetWorldMatrix();
 	WVPData_->WorldInverseTranspose = Inverse4x4(transform_.GetWorldMatrix());
 
+	//軸方向ラインの更新
 	for (auto& line : axisLines_) {
 		line->Update();
 	}
@@ -125,20 +136,15 @@ void Object3D::Draw(LayerType layer) {
 		}
 		};
 
+	//レンダラーに描画コマンドを登録
 	Renderer::GetInstance()->AddDraw(layer, true, command);
 
 	if (isDebug_) {
 
+		//軸方向ラインの描画
 		for (auto& line : axisLines_) {
 			line->Draw();
 		}
-	}
-}
-
-void Object3D::DebugDraw() {
-
-	for (auto& line : axisLines_) {
-		line->Draw();
 	}
 }
 
@@ -161,7 +167,7 @@ void Object3D::DisplayImGui() {
 }
 
 ///=====================================================/// 
-/// モデルのセッター
+/// モデルの設定
 ///=====================================================///
 void Object3D::SetModel(const std::string& modelName) {
 

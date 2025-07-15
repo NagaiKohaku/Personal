@@ -7,7 +7,7 @@
 #include "Math/Matrix4x4.h"
 #include "Math/WorldTransform.h"
 #include "Math/AABB.h"
-#include "3d/Primitive/PrimitiveBase.h"
+#include "3d/Mesh/MeshBase.h"
 #include "3d/Model/Model.h"
 
 
@@ -34,6 +34,17 @@ class ParticleManager;
 class ParticleEmitter {
 
 	///-------------------------------------------/// 
+	/// 静的メンバ変数
+	///-------------------------------------------///
+public:
+
+	//インスタンスの最大数
+	static const uint32_t kNumMaxInstance;
+
+	//1フレームで進む秒数
+	static const float kDeltaTime;
+
+	///-------------------------------------------/// 
 	/// メンバ構造体
 	///-------------------------------------------///
 private:
@@ -46,7 +57,8 @@ private:
 		Matrix4x4 uvTransform;
 	};
 
-	struct Parameter {
+	//エミッターのパラメータ
+	struct EmitterParameter {
 		Vector3 startNum;
 		Vector3 startRandomRange;
 		Vector3 endNum;
@@ -57,7 +69,8 @@ private:
 		Vector3 accelerationRandomRange;
 	};
 
-	struct ColorParameter {
+	//エミッターの色のパラメータ
+	struct EmitterColorParameter {
 		Vector4 startColor;
 		Vector4 startRandomRange;
 		Vector4 endColor;
@@ -68,6 +81,7 @@ private:
 		Vector4 accelerationRandomRange;
 	};
 
+	//パーティクルのパラメータ
 	struct ParticleParameter {
 		Vector3 startNum;
 		Vector3 endNum;
@@ -75,6 +89,7 @@ private:
 		Vector3 acceleration;
 	};
 
+	//パーティクルの色のパラメータ
 	struct ParticleColorParameter {
 		Vector4 startColor;
 		Vector4 endColor;
@@ -82,12 +97,14 @@ private:
 		Vector4 acceleration;
 	};
 
+	//更新状態
 	enum UpdateState {
 		START,
 		VELOCITY,
 		EASING
 	};
 
+	//イージング状態
 	enum EasingState {
 		LINEAR,
 		EASE_IN,
@@ -95,7 +112,8 @@ private:
 		EASE_INOUT,
 	};
 
-	enum PrimitiveType {
+	//メッシュの種類
+	enum MeshType {
 		PLANE,
 		RING,
 		CYLINDER,
@@ -127,43 +145,32 @@ private:
 		uint32_t textureIndex = 0;
 	};
 
-	//加速場
-	struct AccelerationField {
-		Vector3 acceleration;
-		AABB area;
-	};
-
-	///-------------------------------------------/// 
-	/// 静的メンバ変数
-	///-------------------------------------------///
-public:
-
-	//インスタンスの最大数
-	static const uint32_t kNumMaxInstance;
-
-	//1フレームで進む秒数
-	static const float kDeltaTime;
-
 	///-------------------------------------------/// 
 	/// メンバ関数
 	///-------------------------------------------///
 public:
 
 	/// <summary>
-	/// 初期化処理
+	/// 初期化
 	/// </summary>
+	/// <param name="groupName">グループ名</param>
+	/// <param name="fileName">ファイル名</param>
+	/// <param name="camera">カメラ</param>
 	void Initialize(const std::string& groupName, const std::string& fileName, Camera* camera);
 
 	/// <summary>
-	/// 更新処理
+	/// 更新
 	/// </summary>
 	void Update();
 
 	/// <summary>
-	/// 描画処理
+	/// 描画
 	/// </summary>
 	void Draw(LayerType layer);
 
+	/// <summary>
+	/// ImGuiの表示
+	/// </summary>
 	void ImGui();
 
 	/// <summary>
@@ -172,20 +179,16 @@ public:
 	void Emit();
 
 	/// <summary>
-	/// 加速場との接触判定
+	/// パラメータ情報のエクスポート
 	/// </summary>
-	void CheckCollisionAccelerationField();
-
-	/// <summary>
-	/// 接触判定
-	/// </summary>
-	/// <param name="aabb">AABB</param>
-	/// <param name="point"></param>
-	/// <returns>フラグ</returns>
-	bool IsCollision(const AABB& aabb, const Vector3& point);
-
+	/// <param name="groupName">グループ名</param>
 	void ExportEmitterData(const std::string& groupName);
 
+	/// <summary>
+	/// パラメータ情報のインポート
+	/// </summary>
+	/// <param name="groupName">グループ名</param>
+	/// <param name="fileName">ファイル名</param>
 	void ImportEmitterData(const std::string& groupName, const std::string& fileName);
 
 	///-------------------------------------------/// 
@@ -194,17 +197,27 @@ public:
 public:
 
 	/// <summary>
-	/// 加速場のセッター
+	/// トランスフォームの取得
 	/// </summary>
-	/// <param name="acceleration"></param>
-	void SetAccelerationField(const Vector3& acceleration, const AABB& area);
-
+	/// <returns>トランスフォーム</returns>
 	WorldTransform& GetWorldTransform() { return emitterWorldTransform_; }
 
-	void SetWorldTransform(WorldTransform worldTransform) { emitterWorldTransform_ = worldTransform; }
-
+	/// <summary>
+	/// エミッター名の取得
+	/// </summary>
+	/// <returns>エミッター名</returns>
 	std::string GetName() { return name_; }
 
+	/// <summary>
+	/// トランスフォームの設定
+	/// </summary>
+	/// <param name="worldTransform">トランスフォーム</param>
+	void SetWorldTransform(WorldTransform worldTransform) { emitterWorldTransform_ = worldTransform; }
+
+	/// <summary>
+	/// テクスチャリストの設定
+	/// </summary>
+	/// <param name="list">テクスチャリスト</param>
 	void SetTextureList(std::vector<std::string> list) { textureList_ = list; }
 
 	///-------------------------------------------/// 
@@ -212,12 +225,40 @@ public:
 	///-------------------------------------------///
 private:
 
+	/// <summary>
+	/// 新しいパーティクルを生成
+	/// </summary>
+	/// <returns></returns>
 	Particle MakeNewParticle();
 
+	/// <summary>
+	/// パーティクルの更新
+	/// </summary>
+	/// <param name="num"></param>
+	/// <param name="parameter"></param>
+	/// <param name="updateState"></param>
+	/// <param name="easingState"></param>
+	/// <param name="easingStrength"></param>
+	/// <param name="currentTime"></param>
+	/// <param name="lifeTime"></param>
 	void UpdateParameter(Vector3& num, ParticleParameter& parameter, UpdateState& updateState, EasingState& easingState, float& easingStrength, float& currentTime, float& lifeTime);
 
-	void ImGuiParameter(std::string labelName, Parameter& parameter, UpdateState& updateState, EasingState& easingState, float& easingStrength);
+	/// <summary>
+	/// パラメータのImGui表示
+	/// </summary>
+	/// <param name="labelName"></param>
+	/// <param name="parameter"></param>
+	/// <param name="updateState"></param>
+	/// <param name="easingState"></param>
+	/// <param name="easingStrength"></param>
+	void ImGuiParameter(std::string labelName, EmitterParameter& parameter, UpdateState& updateState, EasingState& easingState, float& easingStrength);
 
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="labelName"></param>
+	/// <param name="label"></param>
+	/// <returns></returns>
 	std::string CreateLabelName(std::string labelName, const char* label);
 
 	///-------------------------------------------/// 
@@ -250,7 +291,7 @@ private:
 	//インスタンシングリソース
 	Microsoft::WRL::ComPtr<ID3D12Resource> instancingResource_;
 
-	/// === バッファリソース内のデータを指すポインタ === ///
+	/// === リソースデータ === ///
 
 	//マテリアルデータ
 	Material* materialData_ = nullptr;
@@ -274,8 +315,10 @@ private:
 
 	/// === エミッター情報 === ///
 
+	//エミッターのディレクトリパス
 	std::string directoryPath_;
 
+	//テクスチャリスト
 	std::vector<std::string> textureList_;
 
 	//エミッター名
@@ -293,41 +336,63 @@ private:
 	//ワールドトランスフォーム
 	WorldTransform emitterWorldTransform_;
 
-	//座標
-	Parameter positionParameter_;
+	/// === 座標パラメータ === ///
 
+	//座標パラメータ
+	EmitterParameter positionParameter_;
+
+	//座標の更新状態
 	UpdateState positionUpdateState_;
 
+	//座標のイージング状態
 	EasingState positionEasingState_;
 
+	//座標のイージング強度
 	float positionEasingStrength_;
 
-	//回転角
-	Parameter rotationParameter_;
+	/// === 角度パラメータ === ///
 
+	//角度パラメータ
+	EmitterParameter rotationParameter_;
+
+	//角度の更新状態
 	UpdateState rotationUpdateState_;
 
+	//角度のイージング状態
 	EasingState rotationEasingState_;
 
+	//角度のイージング強度
 	float rotationEasingStrength_;
 
-	//スケール
-	Parameter scaleParameter_;
+	/// === スケールパラメータ === ///
 
+	//スケールパラメータ
+	EmitterParameter scaleParameter_;
+
+	//スケールの更新状態
 	UpdateState scaleUpdateState_;
 
+	//スケールのイージング状態
 	EasingState scaleEasingState_;
 
+	//スケールのイージング強度
 	float scaleEasingStrength_;
 
-	//色
-	ColorParameter colorParameter_;
+	/// === 色パラメータ === ///
 
+	//色パラメータ
+	EmitterColorParameter colorParameter_;
+
+	//色の更新状態
 	UpdateState colorUpdateState_;
 
+	//色のイージング状態
 	EasingState colorEasingState_;
 
+	//色のイージング強度
 	float colorEasingStrength_;
+
+	/// === 生成パラメータ === ///
 
 	//パーティクルの生存時間
 	float particleLifeTime_;
@@ -356,15 +421,9 @@ private:
 	//生成タイマー
 	float emitTimer_;
 
+	//生成フラグ
 	bool isEmit_;
 
+	//アクティブフラグ
 	bool isActive_;
-
-	bool isFollowEmitter_;
-
-	//加速場のフラグ
-	bool useAccelerationField_;
-
-	//加速場
-	AccelerationField accelerationField_;
 };

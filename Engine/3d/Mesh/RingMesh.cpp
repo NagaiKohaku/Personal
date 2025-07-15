@@ -1,6 +1,6 @@
-#include "Ring.h"
+#include "RingMesh.h"
 
-void Ring::Initialize() {
+void RingMesh::Initialize() {
 
 	directXCommon_ = DirectXCommon::GetInstance();
 
@@ -54,10 +54,10 @@ void Ring::Initialize() {
 	indexCount_ = 6 * kRingDivide;
 
 	//頂点インデックスリソースの生成
-	IndexResource_ = directXCommon_->CreateBufferResource(sizeof(uint32_t) * indexCount_);
+	indexResource_ = directXCommon_->CreateBufferResource(sizeof(uint32_t) * indexCount_);
 
 	//リソースの場所を取得
-	indexBufferView_.BufferLocation = IndexResource_->GetGPUVirtualAddress();
+	indexBufferView_.BufferLocation = indexResource_->GetGPUVirtualAddress();
 
 	//使用するリソースのサイズを設定
 	indexBufferView_.SizeInBytes = sizeof(uint32_t) * indexCount_;
@@ -66,7 +66,7 @@ void Ring::Initialize() {
 	indexBufferView_.Format = DXGI_FORMAT_R32_UINT;
 
 	//リソースにデータを書き込めるようにする
-	IndexResource_->Map(0, nullptr, reinterpret_cast<void**>(&indexData_));
+	indexResource_->Map(0, nullptr, reinterpret_cast<void**>(&indexData_));
 
 	for (uint32_t index = 0; index < kRingDivide; ++index) {
 		indexData_[index * 6 + 0] = index * 4 + 0;
@@ -76,18 +76,4 @@ void Ring::Initialize() {
 		indexData_[index * 6 + 4] = index * 4 + 3;
 		indexData_[index * 6 + 5] = index * 4 + 2;
 	}
-}
-
-void Ring::Draw() {
-
-	//VBVを設定
-	directXCommon_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView_);
-
-	directXCommon_->GetCommandList()->IASetIndexBuffer(&indexBufferView_);
-}
-
-void Ring::CopyMeshData(std::vector<uint32_t> indices, std::vector<VertexData> vertices) {
-
-	std::memcpy(vertexData_, vertices.data(), sizeof(VertexData) * vertices.size());
-	std::memcpy(indexData_, indices.data(), sizeof(uint32_t) * indices.size());
 }

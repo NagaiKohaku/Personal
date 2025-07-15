@@ -4,7 +4,7 @@
 class DirectXCommon;
 
 ///=====================================================/// 
-/// モデル基底
+/// モデル基底クラス
 ///=====================================================///
 class ModelCommon {
 
@@ -14,22 +14,15 @@ class ModelCommon {
 public:
 
 	/// <summary>
-	/// シングルトンインスタンス
+	/// シングルトンインスタンスを取得
 	/// </summary>
 	/// <returns>インスタンス</returns>
 	static ModelCommon* GetInstance();
 
 	/// <summary>
-	/// 初期化処理
+	/// 初期化
 	/// </summary>
 	void Initialize();
-
-	///-------------------------------------------/// 
-	/// ゲッター・セッター
-	///-------------------------------------------///
-public:
-
-	DirectXCommon* GetDxCommon() const { return dxCommon_; }
 
 	///-------------------------------------------/// 
 	/// メンバ変数
@@ -38,4 +31,12 @@ private:
 
 	//DirectX基底
 	DirectXCommon* dxCommon_;
+
+	///-------------------------------------------/// 
+	/// ゲッター・セッター
+	///-------------------------------------------///
+public:
+
+	DirectXCommon* GetDxCommon() const { return dxCommon_; }
+
 };

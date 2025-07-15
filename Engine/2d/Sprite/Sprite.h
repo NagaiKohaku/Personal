@@ -16,164 +16,9 @@
 class SpriteCommon;
 
 ///=====================================================/// 
-/// スプライト
+/// スプライトクラス
 ///=====================================================///
 class Sprite {
-
-	///-------------------------------------------/// 
-	/// メンバ関数
-	///-------------------------------------------///
-public:
-
-	/// <summary>
-	/// 初期化処理
-	/// </summary>
-	/// <param name="modelName">ファイルパス</param>
-	void Initialize(const std::string& filePath);
-
-	/// <summary>
-	/// 更新処理
-	/// </summary>
-	void Update();
-
-	/// <summary>
-	/// 描画処理
-	/// </summary>
-	void Draw();
-
-	/// <summary>
-	/// ImGuiの表示
-	/// </summary>
-	void DisplayImGui();
-
-	/// <summary>
-	/// テクスチャの変更
-	/// </summary>
-	/// <param name="modelName"></param>
-	void ChangeTexture(const std::string& filePath);
-
-	///-------------------------------------------/// 
-	/// セッター・ゲッター
-	///-------------------------------------------///
-public:
-
-	/// <summary>
-	/// 座標のゲッター
-	/// </summary>
-	/// <returns>座標</returns>
-	const Vector2& GetPosition() const { return position_; }
-
-	/// <summary>
-	/// 角度のゲッター
-	/// </summary>
-	/// <returns>角度</returns>
-	float GetRotation() const { return rotation_; }
-
-	/// <summary>
-	/// サイズのゲッター
-	/// </summary>
-	/// <returns>サイズ</returns>
-	const Vector2& GetSize() const { return size_; }
-
-	/// <summary>
-	/// 色のゲッター
-	/// </summary>
-	/// <returns>色</returns>
-	const Vector4& GetColor() const { return materialData_->color; }
-
-	/// <summary>
-	/// アンカーポイントのゲッター
-	/// </summary>
-	/// <returns>アンカーポイント</returns>
-	const Vector2& GetAnchorPoint() const { return anchorPoint_; }
-
-	/// <summary>
-	/// X軸の反転フラグのゲッター
-	/// </summary>
-	/// <returns>X軸の反転フラグ</returns>
-	bool GetIsFlipX() const { return isFlipX_; }
-
-	/// <summary>
-	/// Y軸の反転フラグのゲッター
-	/// </summary>
-	/// <returns>Y軸の反転フラグ</returns>
-	bool GetIsFlipY() const { return isFlipY_; }
-
-	/// <summary>
-	/// テクスチャの左上座標のゲッター
-	/// </summary>
-	/// <returns>テクスチャの左上座標</returns>
-	const Vector2& GetTextureLeftTop() const { return textureLeftTop_; }
-
-	/// <summary>
-	/// テクスチャのサイズのゲッター
-	/// </summary>
-	/// <returns>テクスチャのサイズ</returns>
-	const Vector2& GetTextureSize() const { return textureSize_; }
-
-	/// <summary>
-	/// 座標のセッター
-	/// </summary>
-	/// <param name="position">座標</param>
-	void SetPosition(const Vector2& position) { position_ = position; }
-
-	/// <summary>
-	/// 角度のセッター
-	/// </summary>
-	/// <param name="rotation">角度</param>
-	void SetRotation(float rotation) { rotation_ = rotation; }
-
-	/// <summary>
-	/// サイズのゲッター
-	/// </summary>
-	/// <param name="size">サイズ</param>
-	void SetSize(const Vector2& size) { size_ = size; }
-
-	/// <summary>
-	/// 色のセッター
-	/// </summary>
-	/// <param name="color">色</param>
-	void SetColor(const Vector4& color) { materialData_->color = color; }
-
-	/// <summary>
-	/// アンカーポイントのセッター
-	/// </summary>
-	/// <param name="anchorPoint">アンカーポイント</param>
-	void SetAnchorPoint(const Vector2& anchorPoint) { anchorPoint_ = anchorPoint; }
-
-	/// <summary>
-	/// X軸の反転フラグのセッター
-	/// </summary>
-	/// <param name="isFlipX">X軸の反転フラグ</param>
-	void SetIsFlipX(const bool isFlipX) { isFlipX_ = isFlipX; }
-
-	/// <summary>
-	/// Y軸の反転フラグのセッター
-	/// </summary>
-	/// <param name="isFlipX">Y軸の反転フラグ</param>
-	void SetIsFlipY(const bool isFlipY) { isFlipY_ = isFlipY; }
-
-	/// <summary>
-	/// テクスチャの左上座標のセッター
-	/// </summary>
-	/// <param name="textureLeftTop">テクスチャの左上座標</param>
-	void SetTextureLeftTop(const Vector2& textureLeftTop) { textureLeftTop_ = textureLeftTop; }
-
-	/// <summary>
-	/// テクスチャのサイズのセッター
-	/// </summary>
-	/// <param name="textureSize">テクスチャのサイズ</param>
-	void SetTextureSize(const Vector2& textureSize) { textureSize_ = textureSize; }
-
-	///-------------------------------------------/// 
-	/// クラス内処理関数
-	///-------------------------------------------///
-private:
-
-	/// <summary>
-	/// スプライトのサイズをテクスチャのサイズに合わせる
-	/// </summary>
-	void AdjustTextureSize();
 
 	///-------------------------------------------/// 
 	/// メンバ構造体
@@ -196,6 +41,48 @@ private:
 	};
 
 	///-------------------------------------------/// 
+	/// メンバ関数
+	///-------------------------------------------///
+public:
+
+	/// <summary>
+	/// 初期化
+	/// </summary>
+	/// <param name="modelName">ファイルパス</param>
+	void Initialize(const std::string& filePath);
+
+	/// <summary>
+	/// 更新
+	/// </summary>
+	void Update();
+
+	/// <summary>
+	/// 描画
+	/// </summary>
+	void Draw();
+
+	/// <summary>
+	/// ImGuiの表示
+	/// </summary>
+	void DisplayImGui();
+
+	/// <summary>
+	/// テクスチャの変更
+	/// </summary>
+	/// <param name="modelName"></param>
+	void ChangeTexture(const std::string& filePath);
+
+	///-------------------------------------------/// 
+	/// クラス内処理関数
+	///-------------------------------------------///
+private:
+
+	/// <summary>
+	/// スプライトのサイズをテクスチャのサイズに合わせる
+	/// </summary>
+	void AdjustTextureSize();
+
+	///-------------------------------------------/// 
 	/// メンバ変数
 	///-------------------------------------------///
 private:
@@ -214,7 +101,7 @@ private:
 	//マテリアルリソース
 	Microsoft::WRL::ComPtr<ID3D12Resource> materialResource_ = nullptr;
 
-	/// === バッファリソース内のデータを指すポインタ === ///
+	/// === リソースデータ === ///
 
 	//頂点データ
 	VertexData* vertexData_ = nullptr;
@@ -233,20 +120,22 @@ private:
 	//頂点番号バッファビュー
 	D3D12_INDEX_BUFFER_VIEW indexBufferView_;
 
+	/// === その他変数 === ///
+
 	//テクスチャパス
 	std::string texturePath_;
 
 	//座標
-	Vector2 position_{ 0.0f,0.0f };
+	Vector2 translation_;
 
 	//角度
-	float rotation_ = 0.0f;
+	float rotation_;
 
 	//サイズ
-	Vector2 size_ = { 640.0f,360.0f };
+	Vector2 size_;
 
 	//アンカーポイント
-	Vector2 anchorPoint_ = { 0.0f,0.0f };
+	Vector2 anchorPoint_;
 
 	//X軸の反転フラグ
 	bool isFlipX_ = false;
@@ -255,9 +144,122 @@ private:
 	bool isFlipY_ = false;
 
 	//テクスチャの左上座標
-	Vector2 textureLeftTop_ = { 0.0f,0.0f };
+	Vector2 textureLeftTop_;
 
 	//テクスチャのサイズ
-	Vector2 textureSize_ = { 100.0f,100.0f };
+	Vector2 textureSize_;
+
+	///-------------------------------------------/// 
+	/// セッター・ゲッター
+	///-------------------------------------------///
+public:
+
+	/// <summary>
+	/// 座標を取得
+	/// </summary>
+	/// <returns>座標</returns>
+	const Vector2& GetTranslation() const { return translation_; }
+
+	/// <summary>
+	/// 角度を取得
+	/// </summary>
+	/// <returns>角度</returns>
+	float GetRotation() const { return rotation_; }
+
+	/// <summary>
+	/// サイズを取得
+	/// </summary>
+	/// <returns>サイズ</returns>
+	const Vector2& GetSize() const { return size_; }
+
+	/// <summary>
+	/// 色を取得
+	/// </summary>
+	/// <returns>色</returns>
+	const Vector4& GetColor() const { return materialData_->color; }
+
+	/// <summary>
+	/// アンカーポイントを取得
+	/// </summary>
+	/// <returns>アンカーポイント</returns>
+	const Vector2& GetAnchorPoint() const { return anchorPoint_; }
+
+	/// <summary>
+	/// X軸の反転フラグを取得
+	/// </summary>
+	/// <returns>X軸の反転フラグ</returns>
+	bool GetIsFlipX() const { return isFlipX_; }
+
+	/// <summary>
+	/// Y軸の反転フラグを取得
+	/// </summary>
+	/// <returns>Y軸の反転フラグ</returns>
+	bool GetIsFlipY() const { return isFlipY_; }
+
+	/// <summary>
+	/// テクスチャの左上座標を取得
+	/// </summary>
+	/// <returns>テクスチャの左上座標</returns>
+	const Vector2& GetTextureLeftTop() const { return textureLeftTop_; }
+
+	/// <summary>
+	/// テクスチャのサイズを取得
+	/// </summary>
+	/// <returns>テクスチャのサイズ</returns>
+	const Vector2& GetTextureSize() const { return textureSize_; }
+
+	/// <summary>
+	/// 座標の設定
+	/// </summary>
+	/// <param name="position">座標</param>
+	void SetTranslation(const Vector2& position) { translation_ = position; }
+
+	/// <summary>
+	/// 角度の設定
+	/// </summary>
+	/// <param name="rotation">角度</param>
+	void SetRotation(float rotation) { rotation_ = rotation; }
+
+	/// <summary>
+	/// サイズの設定
+	/// </summary>
+	/// <param name="size">サイズ</param>
+	void SetSize(const Vector2& size) { size_ = size; }
+
+	/// <summary>
+	/// 色の設定
+	/// </summary>
+	/// <param name="color">色</param>
+	void SetColor(const Vector4& color) { materialData_->color = color; }
+
+	/// <summary>
+	/// アンカーポイントの設定
+	/// </summary>
+	/// <param name="anchorPoint">アンカーポイント</param>
+	void SetAnchorPoint(const Vector2& anchorPoint) { anchorPoint_ = anchorPoint; }
+
+	/// <summary>
+	/// X軸の反転フラグの設定
+	/// </summary>
+	/// <param name="isFlipX">X軸の反転フラグ</param>
+	void SetIsFlipX(const bool isFlipX) { isFlipX_ = isFlipX; }
+
+	/// <summary>
+	/// Y軸の反転フラグの設定
+	/// </summary>
+	/// <param name="isFlipX">Y軸の反転フラグ</param>
+	void SetIsFlipY(const bool isFlipY) { isFlipY_ = isFlipY; }
+
+	/// <summary>
+	/// テクスチャの左上座標の設定
+	/// </summary>
+	/// <param name="textureLeftTop">テクスチャの左上座標</param>
+	void SetTextureLeftTop(const Vector2& textureLeftTop) { textureLeftTop_ = textureLeftTop; }
+
+	/// <summary>
+	/// テクスチャのサイズの設定
+	/// </summary>
+	/// <param name="textureSize">テクスチャのサイズ</param>
+	void SetTextureSize(const Vector2& textureSize) { textureSize_ = textureSize; }
 
 };

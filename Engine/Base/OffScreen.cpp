@@ -30,10 +30,13 @@ void OffScreen::Initialize() {
 
 	//DirectX基底のインスタンスを取得
 	dxCommon_ = DirectXCommon::GetInstance();
+
 	//RTVマネージャーのインスタンスを取得
 	rtvManager_ = RTVManager::GetInstance();
+
 	//DSVマネージャーのインスタンスを取得
 	dsvManager_ = DSVManager::GetInstance();
+
 	//SRVマネージャーのインスタンスを取得
 	srvManager_ = SrvManager::GetInstance();
 
@@ -220,7 +223,7 @@ void OffScreen::DrawToSwapChain() {
 	//PSOの設定
 	dxCommon_->GetCommandList()->SetPipelineState(offScreenGraphicsPipelineState_[0].Get());
 
-	//プリミティブトポロジーを設定
+	//メッシュトポロジーを設定
 	dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	//RenderTextureのSRVの設定
@@ -289,15 +292,6 @@ void OffScreen::ImGui() {
 	}
 
 	ImGui::End();
-}
-
-///=====================================================/// 
-/// デフォルトカメラの設定
-///=====================================================///
-void OffScreen::SetDefaultCamera(Camera* ptr) {
-	camera_ = ptr;
-
-	materialData_->projectionInverse = Inverse4x4(camera_->GetProjectionMatrix());
 }
 
 ///=====================================================/// 
@@ -747,4 +741,13 @@ Microsoft::WRL::ComPtr<ID3D12Resource> OffScreen::CreateDepthTexture(Microsoft::
 	assert(SUCCEEDED(hr));
 
 	return resource;
+}
+
+///=====================================================/// 
+/// デフォルトカメラの設定
+///=====================================================///
+void OffScreen::SetDefaultCamera(Camera* ptr) {
+	camera_ = ptr;
+
+	materialData_->projectionInverse = Inverse4x4(camera_->GetProjectionMatrix());
 }

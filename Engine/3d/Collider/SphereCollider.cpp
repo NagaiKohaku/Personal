@@ -24,10 +24,10 @@ void SphereCollider::Initialize(WorldTransform* parent) {
 	worldTransform_.scale_ = { sphere_.radius, sphere_.radius, sphere_.radius };
 
 	//球体モデルを作成
-	ModelManager::GetInstance()->CreatePrimitiveModel("SpherePrimitive", PrimitiveType::BALL, "Resource/Texture/white_128x128.png");
+	ModelManager::GetInstance()->CreateMeshModel("SphereMesh", MeshType::SPHERE, "Resource/Texture/white_128x128.png");
 
 	//デバッグオブジェクトに球体モデルを設定
-	debugObject_->SetModel("SpherePrimitive");
+	debugObject_->SetModel("SphereMesh");
 
 	//親オブジェクトのワールドトランスフォームとペアレント設定
 	debugObject_->GetWorldTransform().SetParent(&worldTransform_);

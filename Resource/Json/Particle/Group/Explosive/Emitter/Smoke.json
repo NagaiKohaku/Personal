@@ -66,7 +66,7 @@
     "lifeTimeRandomRange": 0.0,
     "maxCount": 1,
     "modelFileName": "",
-    "modelName": "PlanePrimitive",
+    "modelName": "PlaneMesh",
     "name": "Smoke",
     "position": {
         "acceleration": [

@@ -221,6 +221,6 @@
         ]
     },
     "textureFileName": "white_128x128.png",
-    "modelName": "PlanePrimitive",
+    "modelName": "PlaneMesh",
     "modelFileName": ""
 }

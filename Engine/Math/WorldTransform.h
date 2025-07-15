@@ -116,25 +116,25 @@ public:
 	const Matrix4x4 GetLocalScaleMatrix() const;
 
 	/// <summary>
-	/// ワールド行列のセッター
+	/// ワールド行列の設定
 	/// </summary>
 	/// <param name="matrix">行列</param>
 	void SetWorldMatrix(const Matrix4x4& matrix) { worldMatrix_ = matrix; }
 
 	/// <summary>
-	/// 回転行列のセッター
+	/// 回転行列の設定
 	/// </summary>
 	/// <param name="matrix">行列</param>
 	void SetRotateMatrix(const Matrix4x4& matrix){}
 
 	/// <summary>
-	/// オフセットのセッター
+	/// オフセットの設定
 	/// </summary>
 	/// <param name="vector">オフセット</param>
 	void SetOffset(const Vector3& vector) { offset_ = vector; }
 
 	/// <summary>
-	/// 親オブジェクトのセッター
+	/// 親オブジェクトの設定
 	/// </summary>
 	/// <param name="parent"></param>
 	void SetParent(WorldTransform* parent);

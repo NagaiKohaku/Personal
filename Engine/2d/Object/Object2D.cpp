@@ -17,19 +17,25 @@
 ///=====================================================///
 void Object2D::Initialize() {
 
+	/// === インスタンスの取得 === ///
+
 	//2Dオブジェクト基底のインスタンスを取得
 	object2DCommon_ = Object2DCommon::GetInstance();
 
-	//座標変換行列リソースを作成
+	/// === 座標変換行列リソースを作成 === ///
+
+	//リソースの作成
 	WVPResource_ = object2DCommon_->GetDxCommon()->CreateBufferResource(sizeof(TransformationMatrix));
 
 	//書き込むためのアドレスを取得する
 	WVPResource_->Map(0, nullptr, reinterpret_cast<void**>(&WVPData_));
 
-	//座標変換行列データの設定
+	//データを初期化
 	WVPData_->WVP = MakeIdentity4x4();
 	WVPData_->World = MakeIdentity4x4();
 	WVPData_->WorldInverseTranspose = MakeIdentity4x4();
+
+	/// === その他変数の初期化 === ///
 
 	//座標の設定
 	translate_ = { 0.0f,0.0f };
@@ -46,10 +52,13 @@ void Object2D::Initialize() {
 ///=====================================================///
 void Object2D::Update() {
 
-	//スプライトの更新
+	/// === スプライトの更新 === ///
+
 	if (sprite_) {
 		sprite_->Update();
 	}
+
+	/// === 座標変換行列の更新 === ///
 
 	//ワールド行列に変換できる形に直す
 	Transform transform{
@@ -94,6 +103,7 @@ void Object2D::Draw(LayerType layer) {
 		}
 		};
 
+	//レンダラーに描画関数を登録
 	Renderer::GetInstance()->AddDraw(layer, true, func);
 }
 
@@ -122,12 +132,13 @@ void Object2D::DisplayImGui() {
 }
 
 ///=====================================================/// 
-/// スプライトのセッター
+/// スプライトの設定
 ///=====================================================///
 void Object2D::SetSprite(const std::string& spriteName) {
 
 	//引数のスプライト名からスプライトを探す
 	sprite_ = SpriteManager::GetInstance()->FindSprite(spriteName);
 
+	//スプライトのサイズに合わせる
 	size_ = sprite_->GetSize();
 }

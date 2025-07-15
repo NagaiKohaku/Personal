@@ -7,7 +7,6 @@
 #include "2d/Sprite/TextureManager.h"
 #include "3d/Camera/Camera.h"
 #include "3d/Particle/ParticleCommon.h"
-#include "3d/Particle/ParticleManager.h"
 #include "3d/Model/ModelManager.h"
 
 #include "Math/MakeMatrixMath.h"
@@ -26,6 +25,9 @@ const uint32_t ParticleEmitter::kNumMaxInstance = 1000;
 //1フレームで進む秒数
 const float ParticleEmitter::kDeltaTime = 1.0f / 60.0f;
 
+///=====================================================/// 
+/// 初期化
+///=====================================================///
 void ParticleEmitter::Initialize(const std::string& groupName, const std::string& fileName, Camera* camera) {
 
 	/// === シングルトンインスタンスの取得 === ///
@@ -38,9 +40,6 @@ void ParticleEmitter::Initialize(const std::string& groupName, const std::string
 
 	//SRVマネージャーのインスタンスを取得
 	srvManager_ = SrvManager::GetInstance();
-
-	//パーティクルマネージャーのインスタンスを取得
-	particleManager_ = ParticleManager::GetInstance();
 
 	//カメラ情報の設定
 	defaultCamera_ = camera;
@@ -86,27 +85,30 @@ void ParticleEmitter::Initialize(const std::string& groupName, const std::string
 
 	/// === エミッター情報の初期化 === ///
 
+	//ディレクトリパスの設定
 	directoryPath_ = "Resource/Json/Particle/Group/";
 
 	//ワールドトランスフォームの初期化
 	emitterWorldTransform_.Initialize();
 
+	//パラメータの読み込み
 	ImportEmitterData(groupName, fileName);
 
+	//タイマーの初期化
 	emitTimer_ = 0.0f;
 
+	//生成数の初期化
 	emitCount_ = 0;
 
+	//生成フラグの初期化
 	isEmit_ = false;
 
+	//アクティブの初期化
 	isActive_ = true;
-
-	//加速場フラグの初期化
-	useAccelerationField_ = false;
 
 	/// === パーティクル情報の初期化 === ///
 
-	if (modelFileName_.find(".obj")) {
+	if (modelFileName_.find(".obj") != std::string::npos) {
 
 		//モデルの読み込み
 		ModelManager::GetInstance()->LoadModel(modelName_, modelFileName_);
@@ -125,26 +127,40 @@ void ParticleEmitter::Initialize(const std::string& groupName, const std::string
 	model_->SetTextureIndex(textureManager_->GetSrvIndex(model_->GetTextureFilePath()));
 }
 
+///=====================================================/// 
+/// 更新
+///=====================================================///
 void ParticleEmitter::Update() {
 
+	//ワールドトランスフォームの更新
 	emitterWorldTransform_.UpdateMatrix();
 
+	//アクティブフラグがfalseの場合は更新しない
 	if (!isActive_) {
 		return;
 	}
 
+	/// === パーティクルの生成 === ///
+
+	//タイマーの更新
 	emitTimer_ += 1.0f / 60.0f;
 
+	//生成フラグがtrueの場合はパーティクルを生成する
 	if (isEmit_) {
 
+		//登録するパーティクル
 		std::list<Particle> particles;
 
+		//タイマーが生成間隔を超えた場合はパーティクルを生成する
 		while (emitTimer_ >= emitFrequency_) {
 
+			//最大生成数以下であれば生成する
 			if (emitCount_ >= emitMaxCount_) {
 
+				//生成フラグをfalseにする
 				isEmit_ = false;
 
+				//無限生成フラグがtrueの場合は生成を続ける
 				if (isInfinity_) {
 
 					Emit();
@@ -153,20 +169,26 @@ void ParticleEmitter::Update() {
 				break;
 			}
 
+			//新しいパーティクルの生成
 			particles.push_back(MakeNewParticle());
 
+			//タイマーを生成間隔分減らす
 			emitTimer_ -= emitFrequency_;
 
+			//生成数をカウントアップ
 			emitCount_++;
 		}
 
+		//パーティクルをリストに追加
 		particles_.splice(particles_.end(), particles);
 	}
+
+	/// === パーティクルの更新 === ///
 
 	//カメラからビュープロジェクション行列を取得
 	Matrix4x4 viewProjectionMatrix = defaultCamera_->GetViewProjectionMatrix();
 
-	//ビルボード行列の計算
+	//カメラからビュー行列を取得
 	Matrix4x4 viewMatrix = defaultCamera_->GetViewMatrix();
 
 	viewMatrix.m[3][0] = 0.0f;
@@ -174,13 +196,17 @@ void ParticleEmitter::Update() {
 	viewMatrix.m[3][2] = 0.0f;
 	viewMatrix.m[3][3] = 1.0f;
 
+	//ビルボード用の行列を計算
 	Matrix4x4 billboardMatrix = Inverse4x4(viewMatrix);
 
+	//インスタンス数の初期化
 	numInstance_ = 0;
 
+	//パーティクルの更新
 	for (std::list<Particle>::iterator particle = particles_.begin();
 		particle != particles_.end();) {
 
+		//生存時間を超えたパーティクルは削除する
 		if (particle->lifeTime <= particle->currentTime) {
 			particle = particles_.erase(particle);
 			continue;
@@ -289,27 +315,36 @@ void ParticleEmitter::Update() {
 
 			if (!isLoop_) {
 
+				//ループしない場合は時間を進める
 				particle->currentTime += kDeltaTime;
 			}
 
+			//パーティクルのワールド行列を更新
 			particle->transform.UpdateMatrix();
 
-			Matrix4x4 translateEMatrix = emitterWorldTransform_.GetLocalTranslateMatrix();
-			Matrix4x4 rotateEMatrix = emitterWorldTransform_.GetLocalRotateMatrix();
-			Matrix4x4 scaleEMatrix = emitterWorldTransform_.GetLocalScaleMatrix();
+			//NOTE:エミッターの座標との親子関係ができていない。改良の必要あり。
 
+			////エミッターのワールド行列を取得
+			//Matrix4x4 translateEMatrix = emitterWorldTransform_.GetLocalTranslateMatrix();
+			//Matrix4x4 rotateEMatrix = emitterWorldTransform_.GetLocalRotateMatrix();
+			//Matrix4x4 scaleEMatrix = emitterWorldTransform_.GetLocalScaleMatrix();
+
+			//translateMatrix = translateMatrix/* * translateEMatrix*/;
+			//rotateMatrix = rotateMatrix/* * rotateEMatrix*/;
+			//scaleMatrix = scaleMatrix/* * scaleEMatrix*/;
+
+			//パーティクルのワールド行列を取得
 			Matrix4x4 translateMatrix = particle->transform.GetLocalTranslateMatrix();
 			Matrix4x4 rotateMatrix = particle->transform.GetLocalRotateMatrix();
 			Matrix4x4 scaleMatrix = particle->transform.GetLocalScaleMatrix();
 
-			translateMatrix = translateMatrix/* * translateEMatrix*/;
-			rotateMatrix = rotateMatrix/* * rotateEMatrix*/;
-			scaleMatrix = scaleMatrix/* * scaleEMatrix*/;
-
+			//ビルボードの場合はZ軸の回転を行う
 			if (isBillboard_) {
 
+				//Z軸の回転行列を作成
 				Matrix4x4 zRot = MakeRotateZMatrix(particle->transform.rotate_.z);
 
+				//ビルボード行列を掛け合わせる
 				rotateMatrix = zRot * billboardMatrix;
 			}
 
@@ -319,6 +354,7 @@ void ParticleEmitter::Update() {
 			//ワールドビュープロジェクション行列の合成
 			Matrix4x4 worldViewProjectionMatrix = worldMatrix * viewProjectionMatrix;
 
+			//更新後のワールド行列を設定
 			particle->transform.SetWorldMatrix(worldMatrix);
 
 			//インスタンシングデータに書き込む
@@ -327,13 +363,18 @@ void ParticleEmitter::Update() {
 			instancingData_[numInstance_].color = particle->color;
 			instancingData_[numInstance_].color.w = particle->color.w;
 
+			//インスタンス数をカウントアップ
 			numInstance_++;
 		}
 
+		//次のパーティクルへ
 		particle++;
 	}
 }
 
+///=====================================================/// 
+/// 描画
+///=====================================================///
 void ParticleEmitter::Draw(LayerType layer) {
 
 	//Renderクラスに渡す
@@ -348,7 +389,7 @@ void ParticleEmitter::Draw(LayerType layer) {
 		//パーティクルの描画前処理
 		ParticleCommon::GetInstance()->CommonDrawSetting();
 
-		model_->DrawPrimitive();
+		model_->DrawMesh();
 
 		model_->DrawMaterial();
 
@@ -356,12 +397,16 @@ void ParticleEmitter::Draw(LayerType layer) {
 
 		directXCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(1, srvManager_->GetGPUDescriptorHandle(srvIndex_));
 
-		directXCommon_->GetCommandList()->DrawIndexedInstanced(model_->GetPrimitive()->GetIndexCount(), numInstance_, 0, 0, 0);
+		directXCommon_->GetCommandList()->DrawIndexedInstanced(model_->GetMesh()->GetIndexCount(), numInstance_, 0, 0, 0);
 		};
 
+	//レンダラーにコマンドを登録
 	Renderer::GetInstance()->AddDraw(layer, true, command);
 }
 
+///=====================================================/// 
+/// ImGuiの表示
+///=====================================================///
 void ParticleEmitter::ImGui() {
 
 	std::string currentName = name_;
@@ -385,10 +430,10 @@ void ParticleEmitter::ImGui() {
 			int currentModel = 0;
 
 			modelItems.push_back("モデルを選択");
-			modelItems.push_back("PlanePrimitive");
-			modelItems.push_back("RingPrimitive");
-			modelItems.push_back("CylinderPrimitive");
-			modelItems.push_back("SpherePrimitive");
+			modelItems.push_back("PlaneMesh");
+			modelItems.push_back("RingMesh");
+			modelItems.push_back("CylinderMesh");
+			modelItems.push_back("SphereMesh");
 
 			ImGui::Text("モデル");
 			if (ImGui::Combo("##Model", &currentModel, modelItems.data(), static_cast<int>(modelItems.size()))) {
@@ -634,6 +679,9 @@ void ParticleEmitter::ImGui() {
 	}
 }
 
+///=====================================================/// 
+/// パーティクルの生成
+///=====================================================///
 void ParticleEmitter::Emit() {
 
 	isEmit_ = true;
@@ -643,36 +691,9 @@ void ParticleEmitter::Emit() {
 	emitTimer_ = 0;
 }
 
-void ParticleEmitter::CheckCollisionAccelerationField() {
-
-	if (useAccelerationField_) {
-
-		for (std::list<Particle>::iterator particle = particles_.begin(); particle != particles_.end(); ++particle) {
-
-			if (IsCollision(accelerationField_.area, particle->transform.translate_)) {
-				particle->positionPara.velocity = particle->positionPara.velocity + accelerationField_.acceleration * kDeltaTime;
-			}
-		}
-	}
-}
-
-bool ParticleEmitter::IsCollision(const AABB& aabb, const Vector3& point) {
-
-	Vector3 closestPoint{
-		std::clamp(point.x,aabb.min.x,aabb.max.x),
-		std::clamp(point.y,aabb.min.y,aabb.max.y),
-		std::clamp(point.z,aabb.min.z,aabb.max.z)
-	};
-
-	float distance = Length(closestPoint - point);
-
-	if (distance <= 0.0f) {
-		return true;
-	}
-
-	return false;
-}
-
+///=====================================================/// 
+/// パラメータ情報のエクスポート
+///=====================================================///
 void ParticleEmitter::ExportEmitterData(const std::string& groupName) {
 
 	nlohmann::json jsonData;
@@ -775,6 +796,9 @@ void ParticleEmitter::ExportEmitterData(const std::string& groupName) {
 	file.close();
 }
 
+///=====================================================/// 
+/// パラメータ情報のインポート
+///=====================================================///
 void ParticleEmitter::ImportEmitterData(const std::string& groupName, const std::string& fileName) {
 
 	nlohmann::json jsonData;
@@ -886,14 +910,9 @@ void ParticleEmitter::ImportEmitterData(const std::string& groupName, const std:
 	}
 }
 
-void ParticleEmitter::SetAccelerationField(const Vector3& acceleration, const AABB& area) {
-
-	accelerationField_.acceleration = acceleration;
-	accelerationField_.area = area;
-
-	useAccelerationField_ = true;
-}
-
+///=====================================================/// 
+/// 新しいパーティクルの生成
+///=====================================================///
 ParticleEmitter::Particle ParticleEmitter::MakeNewParticle() {
 
 	//新しいパーティクルの生成
@@ -945,6 +964,9 @@ ParticleEmitter::Particle ParticleEmitter::MakeNewParticle() {
 	return particle;
 }
 
+///=====================================================/// 
+/// パラメータの更新
+///=====================================================///
 void ParticleEmitter::UpdateParameter(Vector3& num, ParticleParameter& parameter, UpdateState& updateState, EasingState& easingState, float& easingStrength, float& currentTime, float& lifeTime) {
 
 	switch (updateState) {
@@ -1009,7 +1031,10 @@ void ParticleEmitter::UpdateParameter(Vector3& num, ParticleParameter& parameter
 	}
 }
 
-void ParticleEmitter::ImGuiParameter(std::string labelName, Parameter& parameter, UpdateState& updateState, EasingState& easingState, float& easingStrength) {
+///=====================================================/// 
+/// パラメータのImGui表示
+///=====================================================///
+void ParticleEmitter::ImGuiParameter(std::string labelName, EmitterParameter& parameter, UpdateState& updateState, EasingState& easingState, float& easingStrength) {
 
 	/// === 更新ステート === ///
 

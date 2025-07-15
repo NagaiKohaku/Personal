@@ -3,7 +3,7 @@
 #include "3d/Model/ModelCommon.h"
 
 ///=====================================================/// 
-/// シングルトンインスタンス
+/// シングルトンインスタンスを取得
 ///=====================================================///
 ModelManager* ModelManager::GetInstance() {
 	static ModelManager instance;
@@ -18,13 +18,19 @@ void ModelManager::Initialize() {
 	//モデル基底のインスタンスを取得
 	modelCommon_ = ModelCommon::GetInstance();
 
-	CreatePrimitiveModel("PlanePrimitive", PrimitiveType::PLANE, "Resource/Texture/white_128x128.png");
+	/// === 初期モデルの生成 === ///
 
-	CreatePrimitiveModel("RingPrimitive", PrimitiveType::RING, "Resource/Texture/white_128x128.png");
+	//PlaneMeshモデルの生成
+	CreateMeshModel("PlaneMesh", MeshType::PLANE, "Resource/Texture/white_128x128.png");
 
-	CreatePrimitiveModel("CylinderPrimitive", PrimitiveType::CYLINDER, "Resource/Texture/white_128x128.png");
+	//RingMeshモデルの生成
+	CreateMeshModel("RingMesh", MeshType::RING, "Resource/Texture/white_128x128.png");
 
-	CreatePrimitiveModel("SpherePrimitive", PrimitiveType::BALL, "Resource/Texture/white_128x128.png");
+	//CylinderMeshモデルの生成
+	CreateMeshModel("CylinderMesh", MeshType::CYLINDER, "Resource/Texture/white_128x128.png");
+
+	//Ballモデルの生成
+	CreateMeshModel("SphereMesh", MeshType::SPHERE, "Resource/Texture/white_128x128.png");
 
 	//球体モデルの読み込み
 	LoadModel("Sphere", "sphere");
@@ -55,9 +61,10 @@ void ModelManager::LoadModel(const std::string& modelName, const std::string& mo
 	models_.insert(std::make_pair(modelName, std::move(model)));
 }
 
-
-
-void ModelManager::CreatePrimitiveModel(const std::string& modelName, PrimitiveType type, const std::string& textureFilePath) {
+///=====================================================/// 
+/// メッシュモデルの生成
+///=====================================================///
+void ModelManager::CreateMeshModel(const std::string& modelName, MeshType type, const std::string& textureFilePath) {
 
 	//読み込み済みモデルの検索
 	if (models_.contains(modelName)) {
@@ -65,10 +72,10 @@ void ModelManager::CreatePrimitiveModel(const std::string& modelName, PrimitiveT
 		return;
 	}
 
-	//プリミティブモデルの生成
+	//メッシュモデルの生成
 	std::unique_ptr<Model> model = std::make_unique<Model>();
 
-	//プリミティブモデルの初期化
+	//メッシュモデルの初期化
 	model->Initialize(type, textureFilePath);
 
 	//モデル名とモデルデータをコンテナに登録
@@ -83,15 +90,17 @@ std::unique_ptr<Model> ModelManager::FindModel(const std::string& modelName) {
 	//読み込み済みモデルの検索
 	if (models_.contains(modelName)) {
 
+		//リストからモデルを取得
 		Model* model = models_.at(modelName).get();
 
-		PrimitiveType primitiveType = GetPrimitiveType(model);
+		//メッシュタイプを取得
+		MeshType meshType = GetMeshType(model);
 
+		//モデルを生成
 		std::unique_ptr<Model> newModel = std::make_unique<Model>();
 
-		newModel->Copy(model);
-
-		newModel->Initialize(primitiveType);
+		//初期化
+		newModel->Initialize(meshType, model);
 
 		//読み込みモデルを戻り値としてreturn
 		return std::move(newModel);

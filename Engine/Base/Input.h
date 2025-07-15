@@ -98,19 +98,14 @@ public:
 	/// <returns>判定フラグ</returns>
 	bool IsTriggerReleaseMouseButton(int mouseButton);
 
-	///-------------------------------------------/// 
-	/// セッター・ゲッター
-	///-------------------------------------------///
-public:
-
 	/// <summary>
-	/// マウス座標のゲッター
+	/// マウス座標を取得
 	/// </summary>
 	/// <returns>マウス座標</returns>
 	Vector2 GetMousePos();
 
 	/// <summary>
-	/// マウスの移動量のゲッター
+	/// マウスの移動量を取得
 	/// </summary>
 	/// <returns>マウスの移動量</returns>
 	Vector3 GetMouseVelocity();

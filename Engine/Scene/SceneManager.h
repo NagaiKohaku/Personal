@@ -2,6 +2,8 @@
 
 #include "memory"
 
+/// === 前方宣言 === ///
+ 
 class BaseScene;
 
 ///=====================================================/// 
@@ -66,16 +68,11 @@ public:
 	/// <returns></returns>
 	std::unique_ptr<BaseScene> CreateScene(SceneType sceneType);
 
-	/// <summary>
-	/// シーン監視
-	/// </summary>
-	void SceneObserver();
-
 	///-------------------------------------------/// 
 	///メンバ変数
 	///-------------------------------------------///
 private:
 
-	/// ===現在のシーン=== ///
+	//現在のシーン
 	std::unique_ptr<BaseScene> currentScene_;
 };

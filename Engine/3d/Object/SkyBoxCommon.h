@@ -6,10 +6,14 @@
 #include "vector"
 
 /// === 前方宣言 === ///
+
 class DirectXCommon;
 
 class Camera;
 
+///=====================================================/// 
+/// SkyBoxCommonクラス
+///=====================================================///
 class SkyBoxCommon {
 
 	///-------------------------------------------/// 
@@ -18,7 +22,7 @@ class SkyBoxCommon {
 public:
 
 	/// <summary>
-	/// シングルトンインスタンス
+	/// シングルトンインスタンスを取得
 	/// </summary>
 	/// <returns>インスタンス</returns>
 	static SkyBoxCommon* GetInstance();
@@ -37,29 +41,6 @@ public:
 	/// 描画前処理
 	/// </summary>
 	void CommonDrawSetting();
-
-	///-------------------------------------------/// 
-	/// セッター・ゲッター
-	///-------------------------------------------///
-public:
-
-	/// <summary>
-	/// DirectX基底のゲッター
-	/// </summary>
-	/// <returns></returns>
-	DirectXCommon* GetDxCommon() const { return dxCommon_; }
-
-	/// <summary>
-	/// カメラのセッター
-	/// </summary>
-	/// <param name="ptr"></param>
-	void SetDefaultCamera(Camera* ptr) { camera_ = ptr; }
-
-	/// <summary>
-	/// カメラのゲッター
-	/// </summary>
-	/// <returns></returns>
-	Camera* GetCamera() const { return camera_; }
 
 	///-------------------------------------------/// 
 	/// クラス内処理関数
@@ -92,4 +73,28 @@ private:
 
 	//グラフィックパイプラインステート
 	Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState_ = nullptr;
+
+	///-------------------------------------------/// 
+	/// セッター・ゲッター
+	///-------------------------------------------///
+public:
+
+	/// <summary>
+	/// DirectX基底を取得
+	/// </summary>
+	/// <returns>DirectX基底</returns>
+	DirectXCommon* GetDxCommon() const { return dxCommon_; }
+
+	/// <summary>
+	/// カメラを取得
+	/// </summary>
+	/// <returns>カメラ</returns>
+	Camera* GetCamera() const { return camera_; }
+
+	/// <summary>
+	/// カメラの設定
+	/// </summary>
+	/// <param name="ptr">カメラ</param>
+	void SetDefaultCamera(Camera* ptr) { camera_ = ptr; }
+
 };

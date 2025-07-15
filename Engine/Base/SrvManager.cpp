@@ -145,7 +145,7 @@ void SrvManager::CreateDepthTextureSRV(uint32_t srvIndex, ID3D12Resource* pResou
 }
 
 ///=====================================================/// 
-/// CPUデスクリプターのゲッター
+/// CPUデスクリプターを取得
 ///=====================================================///
 D3D12_CPU_DESCRIPTOR_HANDLE SrvManager::GetCPUDescriptorHandle(uint32_t index) {
 
@@ -159,7 +159,7 @@ D3D12_CPU_DESCRIPTOR_HANDLE SrvManager::GetCPUDescriptorHandle(uint32_t index) {
 }
 
 ///=====================================================/// 
-/// GPUデスクリプターのゲッター
+/// GPUデスクリプターを取得
 ///=====================================================///
 D3D12_GPU_DESCRIPTOR_HANDLE SrvManager::GetGPUDescriptorHandle(uint32_t index) {
 
@@ -173,7 +173,7 @@ D3D12_GPU_DESCRIPTOR_HANDLE SrvManager::GetGPUDescriptorHandle(uint32_t index) {
 }
 
 ///=====================================================/// 
-/// デスクリプタテーブルのセッター
+/// デスクリプタテーブルの設定
 ///=====================================================///
 void SrvManager::SetGraphicsRootDescriptorTable(UINT RootParameterIndex, uint32_t srvIndex) {
 

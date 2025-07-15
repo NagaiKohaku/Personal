@@ -11,9 +11,9 @@
 #include "numbers"
 
 ///=====================================================/// 
-/// コンストラクタ
+/// 初期化
 ///=====================================================///
-Camera::Camera() {
+void Camera::Initialize() {
 
 	//カメラの座標の設定
 	transform_.Initialize();
@@ -139,7 +139,7 @@ void Camera::Update() {
 		/// === 通常カメラの場合 === ///
 
 		//追従対象がいる場合
-		if (object_) {
+		if (trackingObject_) {
 
 			/// === 追従カメラの場合 === ///
 
@@ -158,7 +158,7 @@ void Camera::Update() {
 			transform_.SetOffset(offset);
 
 			//カメラ座標を追従対象を中心にオフセット分ずらす
-			transform_.translate_ = object_->GetWorldTransform().GetWorldTranslate();
+			transform_.translate_ = trackingObject_->GetWorldTransform().GetWorldTranslate();
 		}
 
 		/// === 行列の計算 === ///
@@ -175,7 +175,6 @@ void Camera::Update() {
 		//ビュープロジェクション行列の計算
 		viewProjectionMatrix_ = viewMatrix_ * projectionMatrix_;
 	}
-
 }
 
 ///=====================================================/// 

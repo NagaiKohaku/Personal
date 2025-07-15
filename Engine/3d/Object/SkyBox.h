@@ -11,12 +11,20 @@
 #include "stdint.h"
 #include "string"
 
+/// === 前方宣言 === ///
+
 class SkyBoxCommon;
 
 class Camera;
 
+///=====================================================/// 
+/// SkyBoxクラス
+///=====================================================///
 class SkyBox {
 
+	///-------------------------------------------/// 
+	/// メンバ構造体
+	///-------------------------------------------///
 private:
 
 	//頂点データ
@@ -25,31 +33,6 @@ private:
 		Vector2 texcoord;
 		Vector3 normal;
 	};
-
-	///-------------------------------------------/// 
-	/// メンバ関数
-	///-------------------------------------------///
-public:
-
-	/// <summary>
-	/// 初期化処理
-	/// </summary>
-	void Initialize(std::string filePath);
-
-	/// <summary>
-	/// 更新処理
-	/// </summary>
-	void Update();
-
-	/// <summary>
-	/// 描画処理
-	/// </summary>
-	void Draw();
-
-	///-------------------------------------------/// 
-	/// メンバ構造体
-	///-------------------------------------------///
-private:
 
 	//座標変換行列データ
 	struct TransformationMatrix {
@@ -68,27 +51,24 @@ private:
 	};
 
 	///-------------------------------------------/// 
-	/// ゲッター・セッター
+	/// メンバ関数
 	///-------------------------------------------///
 public:
 
 	/// <summary>
-	/// ワールドトランスフォームのゲッター
+	/// 初期化
 	/// </summary>
-	/// <returns>ワールドトランスフォーム</returns>
-	WorldTransform& GetWorldTransform() { return transform_; }
+	void Initialize(std::string filePath);
 
 	/// <summary>
-	/// カメラのセッター
+	/// 更新
 	/// </summary>
-	/// <param name="camera">カメラ</param>
-	void SetCamera(Camera* camera) { camera_ = camera; }
+	void Update();
 
 	/// <summary>
-	/// テクスチャファイルパスのセッター
+	/// 描画
 	/// </summary>
-	/// <returns>ファイルパス</returns>
-	std::string GetTextureFilePath() const { return textureFilePath_; }
+	void Draw();
 
 	///-------------------------------------------/// 
 	/// メンバ変数
@@ -104,12 +84,16 @@ private:
 	//座標データ
 	WorldTransform transform_;
 
-	uint32_t vertexCount_ = 0;
+	//頂点数
+	uint32_t vertexCount_;
 
-	uint32_t indexCount_ = 0;
+	//頂点番号数
+	uint32_t indexCount_;
 
-	uint32_t surfaceCount_ = 6; // SkyBoxは6面体
+	//面数
+	uint32_t surfaceCount_;
 
+	//テクスチャファイルパス
 	std::string textureFilePath_;
 
 	/// === バッファリソース === ///
@@ -126,7 +110,7 @@ private:
 	//座標変換行列リソース
 	Microsoft::WRL::ComPtr<ID3D12Resource> WVPResource_ = nullptr;
 
-	/// === バッファリソース内のデータを指すポインタ === ///
+	/// === リソースデータ === ///
 
 	//頂点データ
 	VertexData* vertexData_ = nullptr;
@@ -147,5 +131,28 @@ private:
 
 	//頂点番号バッファビュー
 	D3D12_INDEX_BUFFER_VIEW indexBufferView_;
+
+	///-------------------------------------------/// 
+	/// ゲッター・セッター
+	///-------------------------------------------///
+public:
+
+	/// <summary>
+	/// ワールドトランスフォームを取得
+	/// </summary>
+	/// <returns>ワールドトランスフォーム</returns>
+	WorldTransform& GetWorldTransform() { return transform_; }
+
+	/// <summary>
+	/// カメラの設定
+	/// </summary>
+	/// <param name="camera">カメラ</param>
+	void SetCamera(Camera* camera) { camera_ = camera; }
+
+	/// <summary>
+	/// テクスチャファイルパスの設定
+	/// </summary>
+	/// <returns>ファイルパス</returns>
+	std::string GetTextureFilePath() const { return textureFilePath_; }
 
 };
