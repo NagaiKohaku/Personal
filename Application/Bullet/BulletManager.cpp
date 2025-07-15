@@ -16,9 +16,13 @@ void BulletManager::Update() {
 
 	//弾の削除
 	bullets_.remove_if([](std::unique_ptr<BulletBase>& bullet) {
+
+		//弾が死んでいるかチェック
 		if (bullet->IsDead()) {
+
 			return true;
 		}
+
 		return false;
 		});
 
@@ -35,6 +39,7 @@ void BulletManager::Draw() {
 
 	//弾の描画
 	for (auto& bullet : bullets_) {
+
 		bullet->Draw();
 	}
 }
@@ -61,6 +66,7 @@ std::unique_ptr<BulletBase> BulletManager::CreateBullet(BULLETTYPE type) {
 
 	std::unique_ptr<BulletBase> newBullet;
 
+	//弾のタイプによってインスタンスを生成
 	switch (type) {
 	case BulletManager::TANK:
 
@@ -69,8 +75,6 @@ std::unique_ptr<BulletBase> BulletManager::CreateBullet(BULLETTYPE type) {
 	case BulletManager::JET:
 
 		newBullet = std::make_unique<JetBullet>();
-		break;
-	default:
 		break;
 	}
 
