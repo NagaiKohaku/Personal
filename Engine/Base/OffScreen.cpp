@@ -447,7 +447,7 @@ void OffScreen::CreatePipeline() {
 	//VertexShaderをコンパイルする
 	Microsoft::WRL::ComPtr<IDxcBlob> vertexShaderBlob =
 		dxCommon_->CompileShader(
-			shaderFileName + L".VS.hlsl",
+			shaderDirectory + L"CopyImage.VS.hlsl",
 			L"vs_6_0"
 		);
 

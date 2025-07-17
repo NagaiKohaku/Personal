@@ -1,4 +1,4 @@
-#include "GrayScale.hlsli"
+#include "CopyImage.hlsli"
 
 //出力データ
 struct PixelShaderOutPut

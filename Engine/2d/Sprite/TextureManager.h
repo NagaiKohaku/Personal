@@ -66,6 +66,12 @@ public:
 	/// <param name="modelName">ファイルパス</param>
 	void LoadTexture(const std::string& filePath);
 
+	/// <summary>
+	/// キューブテクスチャの読み込み
+	/// </summary>
+	/// <param name="filePath">ファイルパス</param>
+	void LoadCubeTexture(const std::string& filePath);
+
 	///-------------------------------------------/// 
 	/// クラス内処理関数
 	///-------------------------------------------///
@@ -78,6 +84,8 @@ private:
 	/// <returns>テクスチャリソース</returns>
 	Microsoft::WRL::ComPtr<ID3D12Resource> CreateTextureResource(const DirectX::TexMetadata& metadata);
 
+	Microsoft::WRL::ComPtr<ID3D12Resource> CreateCubeTextureResource(const DirectX::TexMetadata& metadata);
+
 	/// <summary>
 	/// テクスチャデータをGPUに転送
 	/// </summary>
@@ -86,6 +94,18 @@ private:
 	/// <returns>リソース</returns>
 	[[nodiscard]]
 	Microsoft::WRL::ComPtr<ID3D12Resource> UploadTextureData(
+		Microsoft::WRL::ComPtr<ID3D12Resource> textureData,
+		const DirectX::ScratchImage& mipImages
+	);
+
+	/// <summary>
+	/// テクスチャデータをGPUに転送
+	/// </summary>
+	/// <param name="textureData">テクスチャデータ</param>
+	/// <param name="mipImages">ミップレベル</param>
+	/// <returns>リソース</returns>
+	[[nodiscard]]
+	Microsoft::WRL::ComPtr<ID3D12Resource> UploadCubeTextureData(
 		Microsoft::WRL::ComPtr<ID3D12Resource> textureData,
 		const DirectX::ScratchImage& mipImages
 	);

@@ -12,6 +12,7 @@ enum MeshType {
 	RING,
 	CYLINDER,
 	SPHERE,
+	CUBE,
 	MODEL,
 	END
 };

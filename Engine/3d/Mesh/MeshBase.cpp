@@ -2,17 +2,17 @@
 
 void MeshBase::Draw() {
 
-	//’¸“_ƒf[ƒ^‚ğGPU‚É“]‘—
+	//é ‚ç‚¹ãƒ‡ãƒ¼ã‚¿ã‚’GPUã«è»¢é€
 	directXCommon_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView_);
 
-	//ƒCƒ“ƒfƒbƒNƒXƒf[ƒ^‚ğGPU‚É“]‘—
+	//ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ãƒ‡ãƒ¼ã‚¿ã‚’GPUã«è»¢é€
 	directXCommon_->GetCommandList()->IASetIndexBuffer(&indexBufferView_);
 }
 
 void MeshBase::CopyMeshData(std::vector<uint32_t> indices, std::vector<VertexData> vertices) {
-	//vertexData_‚É’¸“_ƒf[ƒ^‚ğƒRƒs[
+	//vertexData_ã«é ‚ç‚¹ãƒ‡ãƒ¼ã‚¿ã‚’ã‚³ãƒ”ãƒ¼
 	std::memcpy(vertexData_, vertices.data(), sizeof(VertexData) * vertices.size());
 
-	//indexData_‚ÉƒCƒ“ƒfƒbƒNƒXƒf[ƒ^‚ğƒRƒs[
+	//indexData_ã«ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ãƒ‡ãƒ¼ã‚¿ã‚’ã‚³ãƒ”ãƒ¼
 	std::memcpy(indexData_, indices.data(), sizeof(uint32_t) * indices.size());
 }

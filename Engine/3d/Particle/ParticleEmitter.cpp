@@ -430,10 +430,10 @@ void ParticleEmitter::ImGui() {
 			int currentModel = 0;
 
 			modelItems.push_back("モデルを選択");
-			modelItems.push_back("PlaneMesh");
-			modelItems.push_back("RingMesh");
-			modelItems.push_back("CylinderMesh");
-			modelItems.push_back("SphereMesh");
+			modelItems.push_back("Plane");
+			modelItems.push_back("Ring");
+			modelItems.push_back("Cylinder");
+			modelItems.push_back("Sphere");
 
 			ImGui::Text("モデル");
 			if (ImGui::Combo("##Model", &currentModel, modelItems.data(), static_cast<int>(modelItems.size()))) {

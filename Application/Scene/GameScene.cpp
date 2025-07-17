@@ -67,7 +67,7 @@ void GameScene::Initialize() {
 	skyBox_ = std::make_unique<SkyBox>();
 
 	//初期化
-	skyBox_->Initialize("Resource/Texture/skyBox.dds");
+	skyBox_->Initialize("Resource/Texture/CubeTexture/Transparent.png");
 
 	//スケールの設定
 	skyBox_->GetWorldTransform().scale_ = { 10000.0f,10000.0f,10000.0f };

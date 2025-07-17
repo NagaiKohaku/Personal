@@ -184,7 +184,7 @@ void SkyBox::Initialize(std::string filePath) {
 	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));
 
 	//マテリアルデータの設定
-	materialData_->color = Vector4(1.0f,1.0f,1.0f,0.0f);
+	materialData_->color = Vector4(1.0f,1.0f,1.0f,1.0f);
 	materialData_->enableLighting = true;
 	materialData_->uvTransform = MakeIdentity4x4();
 	materialData_->shininess = 50.0f;
@@ -193,7 +193,7 @@ void SkyBox::Initialize(std::string filePath) {
 	textureFilePath_ = filePath;
 
 	//テクスチャの読み込み
-	TextureManager::GetInstance()->LoadTexture(textureFilePath_);
+	TextureManager::GetInstance()->LoadCubeTexture(textureFilePath_);
 
 	/// === 座標変換行列リソースの生成 === ///
 
