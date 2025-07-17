@@ -21,22 +21,20 @@ void ModelManager::Initialize() {
 	/// === 初期モデルの生成 === ///
 
 	//PlaneMeshモデルの生成
-	CreateMeshModel("PlaneMesh", MeshType::PLANE, "Resource/Texture/white_128x128.png");
+	CreateMeshModel("Plane", MeshType::PLANE, "Resource/Texture/white_128x128.png");
 
 	//RingMeshモデルの生成
-	CreateMeshModel("RingMesh", MeshType::RING, "Resource/Texture/white_128x128.png");
+	CreateMeshModel("Ring", MeshType::RING, "Resource/Texture/white_128x128.png");
 
 	//CylinderMeshモデルの生成
-	CreateMeshModel("CylinderMesh", MeshType::CYLINDER, "Resource/Texture/white_128x128.png");
+	CreateMeshModel("Cylinder", MeshType::CYLINDER, "Resource/Texture/white_128x128.png");
 
-	//Ballモデルの生成
-	CreateMeshModel("SphereMesh", MeshType::SPHERE, "Resource/Texture/white_128x128.png");
+	//Sphereモデルの生成
+	CreateMeshModel("Sphere", MeshType::SPHERE, "Resource/Texture/white_128x128.png");
 
-	//球体モデルの読み込み
-	LoadModel("Sphere", "sphere");
+	//Cubeモデルの生成
+	CreateMeshModel("Cube", MeshType::CUBE, "Resource/Texture/white_128x128.png");
 
-	//正方形モデルの読み込み
-	LoadModel("Cube", "cube");
 }
 
 ///=====================================================/// 

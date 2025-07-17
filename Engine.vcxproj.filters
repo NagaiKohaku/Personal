@@ -40,25 +40,13 @@
     <FxCompile Include="Resource\Shader\OffScreen\GrayScale.PS.hlsl">
       <Filter>Resource\Shader\OffScreen</Filter>
     </FxCompile>
-    <FxCompile Include="Resource\Shader\OffScreen\GrayScale.VS.hlsl">
-      <Filter>Resource\Shader\OffScreen</Filter>
-    </FxCompile>
     <FxCompile Include="Resource\Shader\OffScreen\OutLine.PS.hlsl">
-      <Filter>Resource\Shader\OffScreen</Filter>
-    </FxCompile>
-    <FxCompile Include="Resource\Shader\OffScreen\OutLine.VS.hlsl">
-      <Filter>Resource\Shader\OffScreen</Filter>
-    </FxCompile>
-    <FxCompile Include="Resource\Shader\OffScreen\Smooth.VS.hlsl">
       <Filter>Resource\Shader\OffScreen</Filter>
     </FxCompile>
     <FxCompile Include="Resource\Shader\OffScreen\Smooth.PS.hlsl">
       <Filter>Resource\Shader\OffScreen</Filter>
     </FxCompile>
     <FxCompile Include="Resource\Shader\OffScreen\Vignette.PS.hlsl">
-      <Filter>Resource\Shader\OffScreen</Filter>
-    </FxCompile>
-    <FxCompile Include="Resource\Shader\OffScreen\Vignette.VS.hlsl">
       <Filter>Resource\Shader\OffScreen</Filter>
     </FxCompile>
   </ItemGroup>
@@ -268,6 +256,7 @@
     <ClCompile Include="Engine\3d\Mesh\SphereMesh.cpp">
       <Filter>Engine\3d\Mesh</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\3d\Mesh\CubeMesh.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application\Bullet\BulletBase.h">
@@ -492,6 +481,7 @@
     <ClInclude Include="Engine\3d\Mesh\SphereMesh.h">
       <Filter>Engine\3d\Mesh</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\3d\Mesh\CubeMesh.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resource\Shader\DebugObject.hlsli">
@@ -538,18 +528,6 @@
     </None>
     <None Include="Application\LevelEditor\stretch_vertex.py">
       <Filter>Application\LevelEditor</Filter>
-    </None>
-    <None Include="Resource\Shader\OffScreen\GrayScale.hlsli">
-      <Filter>Resource\Shader\OffScreen</Filter>
-    </None>
-    <None Include="Resource\Shader\OffScreen\OutLine.hlsli">
-      <Filter>Resource\Shader\OffScreen</Filter>
-    </None>
-    <None Include="Resource\Shader\OffScreen\Smooth.hlsli">
-      <Filter>Resource\Shader\OffScreen</Filter>
-    </None>
-    <None Include="Resource\Shader\OffScreen\Vignette.hlsli">
-      <Filter>Resource\Shader\OffScreen</Filter>
     </None>
     <None Include="Resource\Shader\CopyImage.hlsli">
       <Filter>Resource\Shader\OffScreen</Filter>

@@ -1,4 +1,4 @@
-#include "OutLine.hlsli"
+#include "CopyImage.hlsli"
 
 //出力データ
 struct PixelShaderOutPut

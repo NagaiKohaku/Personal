@@ -192,7 +192,7 @@ void Object3DCommon::CreateRootSignature() {
 	rootParameters[6].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;                //PixelShaderを使う
 	rootParameters[6].Descriptor.ShaderRegister = 4;                                   //レジスタ番号4を使う
 
-	//テクスチャ
+	//スカイボックステクスチャ
 	rootParameters[7].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;      //DesctiptorTableを使う
 	rootParameters[7].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;                //PixelShaderを使う
 	rootParameters[7].DescriptorTable.pDescriptorRanges = textureCubeRange;             //Tableの中身の配列を指定

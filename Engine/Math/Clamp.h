@@ -1,7 +1,7 @@
 #pragma once
 
 /// <summary>
-/// 0–¢–ž‚Ì’l‚ð0‚ÉƒNƒ‰ƒ“ƒv‚·‚éŠÖ”
+/// 0æœªæº€ã®å€¤ã‚’0ã«ã‚¯ãƒ©ãƒ³ãƒ—ã™ã‚‹é–¢æ•°
 /// </summary>
 /// <param name="num"></param>
 /// <returns></returns>

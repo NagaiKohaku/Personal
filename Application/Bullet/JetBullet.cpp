@@ -29,7 +29,7 @@ void JetBullet::Initialize(Vector3 pos, Vector3 direction) {
 	object_->GetWorldTransform().scale_ = { 0.5f,0.5f,0.5f };
 
 	//モデルの設定
-	object_->SetModel("SphereMesh");
+	object_->SetModel("Sphere");
 
 	/// === コライダーの生成 === ///
 
