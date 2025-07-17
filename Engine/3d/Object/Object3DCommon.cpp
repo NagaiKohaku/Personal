@@ -64,6 +64,10 @@ void Object3DCommon::Initialize() {
 
 	//ブレンドモードをNormalに設定
 	blendMode_ = Normal;
+
+	textureCubeFilePath_ = "Resource/Texture/CubeTexture/Transparent.png";
+
+	TextureManager::GetInstance()->LoadCubeTexture(textureCubeFilePath_);
 }
 
 ///=====================================================/// 

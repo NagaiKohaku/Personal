@@ -59,21 +59,27 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	OffScreen* offScreen = OffScreen::GetInstance();
 	offScreen->Initialize();
 
-	//モデル基底
-	ModelCommon* modelCommon = ModelCommon::GetInstance();
-	modelCommon->Initialize();
-
 	//スプライト基底
 	SpriteCommon* spriteCommon = SpriteCommon::GetInstance();
 	spriteCommon->Initialize();
 
-	//3Dオブジェクト基底
-	Object3DCommon* object3DCommon = Object3DCommon::GetInstance();
-	object3DCommon->Initialize();
+	//モデル基底
+	ModelCommon* modelCommon = ModelCommon::GetInstance();
+	modelCommon->Initialize();
+
+	//テクスチャマネージャー
+	TextureManager::GetInstance()->Initialize();
+
+	//モデルマネージャー
+	ModelManager::GetInstance()->Initialize();
 
 	//2Dオブジェクト基底
 	Object2DCommon* object2dCommon = Object2DCommon::GetInstance();
 	object2dCommon->Initialize();
+
+	//3Dオブジェクト基底
+	Object3DCommon* object3DCommon = Object3DCommon::GetInstance();
+	object3DCommon->Initialize();
 
 	//デバッグオブジェクト基底
 	DebugObjectCommon* debugObjectCommon = DebugObjectCommon::GetInstance();
@@ -106,12 +112,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//シーンマネージャー
 	SceneManager* sceneManager = SceneManager::GetInstance();
 	sceneManager->Initialize();
-
-	//テクスチャマネージャー
-	TextureManager::GetInstance()->Initialize();
-
-	//モデルマネージャー
-	ModelManager::GetInstance()->Initialize();
 
 	//シーンを設定
 	sceneManager->ChangeScene(SceneManager::kGame);

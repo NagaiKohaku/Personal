@@ -61,20 +61,6 @@ void GameScene::Initialize() {
 	//追尾カメラの初期化
 	followCamera_->Initialize(camera_.get(), player_.get());
 
-	/// === スカイボックスの生成 === ///
-
-	//生成
-	skyBox_ = std::make_unique<SkyBox>();
-
-	//初期化
-	skyBox_->Initialize("Resource/Texture/CubeTexture/Transparent.png");
-
-	//スケールの設定
-	skyBox_->GetWorldTransform().scale_ = { 10000.0f,10000.0f,10000.0f };
-
-	//スカイボックスのテクスチャファイルパスを設定
-	Object3DCommon::GetInstance()->SetTextureCubeFilePath(skyBox_->GetTextureFilePath());
-
 	/// === 床のラインを生成 === ///
 
 	const float lineDivide = 30.0f;
@@ -136,9 +122,6 @@ void GameScene::Update() {
 	//カメラをデバッグ状態で更新
 	camera_->Update();
 
-	//スカイボックスの更新
-	skyBox_->Update();
-
 	//プレイヤーの更新
 	player_->Update();
 
@@ -168,9 +151,6 @@ void GameScene::Draw() {
 
 	//弾の描画
 	bulletManager_->Draw();
-
-	//スカイボックスの描画
-	skyBox_->Draw();
 
 	for (auto& line : lines_) {
 

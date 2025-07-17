@@ -256,7 +256,9 @@
     <ClCompile Include="Engine\3d\Mesh\SphereMesh.cpp">
       <Filter>Engine\3d\Mesh</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\3d\Mesh\CubeMesh.cpp" />
+    <ClCompile Include="Engine\3d\Mesh\CubeMesh.cpp">
+      <Filter>Engine\3d\Mesh</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application\Bullet\BulletBase.h">
@@ -481,7 +483,9 @@
     <ClInclude Include="Engine\3d\Mesh\SphereMesh.h">
       <Filter>Engine\3d\Mesh</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\3d\Mesh\CubeMesh.h" />
+    <ClInclude Include="Engine\3d\Mesh\CubeMesh.h">
+      <Filter>Engine\3d\Mesh</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resource\Shader\DebugObject.hlsli">
