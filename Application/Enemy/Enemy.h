@@ -39,6 +39,11 @@ public:
 	void Initialize(Camera* ptr);
 
 	/// <summary>
+	/// 初期化
+	/// </summary>
+	void Initialize(Camera* ptr, ObjectData objectData);
+
+	/// <summary>
 	/// 更新
 	/// </summary>
 	void Update();

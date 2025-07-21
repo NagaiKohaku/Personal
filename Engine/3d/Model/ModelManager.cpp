@@ -59,6 +59,25 @@ void ModelManager::LoadModel(const std::string& modelName, const std::string& mo
 	models_.insert(std::make_pair(modelName, std::move(model)));
 }
 
+void ModelManager::LoadModel(const std::string& modelName, const std::string& modelDirectory, const std::string& modelFileName) {
+
+	//読み込み済みモデルの検索
+	if (models_.contains(modelName)) {
+
+		//読み込み済みなら早期return
+		return;
+	}
+
+	//モデルデータ
+	std::unique_ptr<Model> model = std::make_unique<Model>();
+
+	//モデルの読み込み
+	model->Initialize("Resource/Model/" + modelDirectory, modelFileName + ".obj");
+
+	//モデル名とモデルデータをコンテナに登録
+	models_.insert(std::make_pair(modelName, std::move(model)));
+}
+
 ///=====================================================/// 
 /// メッシュモデルの生成
 ///=====================================================///

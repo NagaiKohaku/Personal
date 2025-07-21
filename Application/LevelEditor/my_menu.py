@@ -4,6 +4,20 @@ from .stretch_vertex import MYADDON_OT_stretch_vertex
 from .create_ico_sphere import MYADDON_OT_create_ico_sphere
 from .export_scene import MYADDON_OT_export_scene
 
+# ブレンダーに登録するアドオン情報
+bl_info = {
+    "name": "レベルエディタ",
+    "author": "Kohaku Nagai",
+    "version": (1,0),
+    "blender": (3,3,1),
+    "location": "",
+    "description": "レベルエディタ",
+    "warning": "",
+    "wiki_url": "",
+    "tracker_url": "",
+    "category": "Object"
+}
+
 #トップバーの拡張メニュー
 class TOPBAR_MT_my_menu(bpy.types.Menu):
 
@@ -14,7 +28,7 @@ class TOPBAR_MT_my_menu(bpy.types.Menu):
     bl_label = "MyMenu"
 
     #著者表示用の文字列
-    bl_description = "拡張メニュー by" + __init__.bl_info["author"]
+    bl_description = "拡張メニュー by" + bl_info["author"]
 
     #サブメニューの描画
     def draw(self,context):

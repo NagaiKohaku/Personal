@@ -70,7 +70,7 @@ class MYADDON_OT_export_scene(bpy.types.Operator, bpy_extras.io_utils.ExportHelp
         rot.z = math.degrees(rot.z)
 
         #トランスフォーム情報を表示
-        self.write_and_print(file,indent + "T %f %f %f" % (trans.x,trans.y,trans.z))
+        self.write_and_print(file,indent + "T %f %f %f" % (trans.x,trans.z,-trans.y))
         self.write_and_print(file,indent + "R %f %f %f" % (rot.x,rot.y,rot.z))
         self.write_and_print(file,indent + "S %f %f %f" % (scale.x,scale.y,scale.z))
         
@@ -96,6 +96,17 @@ class MYADDON_OT_export_scene(bpy.types.Operator, bpy_extras.io_utils.ExportHelp
             temp_str %= (object["collider_size"][0],object["collider_size"][1],object["collider_size"][2])
             self.write_and_print(file, temp_str)
 
+        #カスタムプロパティ'disabled'
+        if "disable" in object:
+
+            self.write_and_print(file, indent + "D %b" % object["disable"])
+
+        #カスタムプロパティ'object_group'
+        if "object_group" in object:
+
+            #名前を表示
+            self.write_and_print(file, indent + "N %s" % object["object_group"])
+        
         self.write_and_print(file, indent + 'END')
         self.write_and_print(file,'')
 
@@ -158,7 +169,7 @@ class MYADDON_OT_export_scene(bpy.types.Operator, bpy_extras.io_utils.ExportHelp
 
         #トランスフォーム情報をディクショナリに登録
         transform = dict()
-        transform["translation"] = (trans.x,trans.y,trans.z)
+        transform["translation"] = (trans.x,trans.z,-trans.y)
         transform["rotation"] = (rot.x,rot.y,rot.z)
         transform["scaling"] = (scale.x,scale.y,scale.z)
 
@@ -176,6 +187,14 @@ class MYADDON_OT_export_scene(bpy.types.Operator, bpy_extras.io_utils.ExportHelp
             collider["center"] = object["collider_center"].to_list()
             collider["size"] = object["collider_size"].to_list()
             json_object["collider"] = collider
+
+        #カスタムプロパティ'disabled'
+        if "disable" in object:
+            json_object["disable"] = object["disable"]
+
+        #カスタムプロパティ'object_group'
+        if "object_group" in object:
+            json_object["object_group"] = object["object_group"]
 
         #1個分のjsonオブジェクトを親オブジェクトに登録
         data_parent.append(json_object)

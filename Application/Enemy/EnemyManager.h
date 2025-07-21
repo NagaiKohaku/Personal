@@ -52,7 +52,7 @@ private:
 	/// </summary>
 	/// <param name="entryPos">出現位置</param>
 	/// <param name="standbyPos">待機位置</param>
-	void Spawn(Vector3 entryPos, Vector3 standbyPos);
+	void Spawn(Vector3 entryPos, Vector3 standbyPos, ObjectData objectData);
 
 	/// <summary>
 	/// エネミーの削除

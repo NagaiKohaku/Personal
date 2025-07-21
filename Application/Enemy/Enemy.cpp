@@ -70,6 +70,65 @@ void Enemy::Initialize(Camera* ptr) {
 	exitPos_ = { 0.0f, 0.0f, 20.0f };
 }
 
+void Enemy::Initialize(Camera* ptr, ObjectData objectData) {
+
+	//カメラのポインタを取得
+	camera_ = ptr;
+
+	/// === オブジェクトの生成 === ///
+
+	//生成
+	object_ = std::make_unique<Object3D>();
+
+	//初期化
+	object_->Initialize(objectData);
+
+	/// === コライダーの生成 === ///
+
+	//生成
+	collider_ = std::make_unique<SphereCollider>();
+
+	//初期化
+	collider_->Initialize(&object_->GetWorldTransform());
+
+	//タグの設定
+	collider_->SetTag(Collider::Tag::ENEMY);
+
+	//大きさの設定
+	collider_->SetRadius(1.5f);
+
+	/// === エミッターの生成 === ///
+
+	//死亡時エミッターの生成
+	explosiveEmitter_ = std::make_unique<EmitterGroup>();
+
+	//死亡時エミッターの初期化
+	explosiveEmitter_->Initialize(camera_);
+
+	//死亡時エミッターのエミッター情報読み込み
+	explosiveEmitter_->LoadEmitter("BlockExplosive");
+
+	/// === 他変数の初期化 === ///
+
+	//行動状態はエントリー状態で初期化
+	state_ = ENTRY;
+
+	//アニメーションタイマーの初期化
+	animTimer_ = 0.0f;
+
+	//エントリー時アニメーション終了時間の初期化
+	entryAnimMaxTime_ = 1.0f;
+
+	//離脱時アニメーション終了時間の初期化
+	exitAnimMaxTime_ = 2.0f;
+
+	//死亡時アニメーション終了時間の初期化
+	deadAnimMaxTime_ = 5.0f;
+
+	//離脱座標の初期化
+	exitPos_ = { 0.0f, 0.0f, 20.0f };
+}
+
 ///=====================================================/// 
 /// 更新処理
 ///=====================================================///

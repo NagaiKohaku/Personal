@@ -59,6 +59,17 @@ void LevelDataLoader::Load(const std::string& fileName) {
 		//種別を取得
 		std::string type = object["type"].get<std::string>();
 
+		if (object.contains("disable")) {
+
+			//無効フラグを取得
+			bool disabled = object["disable"].get<bool>();
+
+			if (disabled) {
+
+				continue;
+			}
+		}
+
 		//種別に応じて処理を分岐
 		if (type.compare("MESH") == 0) {
 
@@ -66,29 +77,32 @@ void LevelDataLoader::Load(const std::string& fileName) {
 
 			ObjectData newObject;
 
-			//モデルのファイル名が存在するかチェック
-			if (object.contains("file_name")) {
-
-				//モデルのファイル名を取得
-				newObject.filename = object["file_name"].get<std::string>();
-
-				//モデルの読み込み
-				ModelManager::GetInstance()->LoadModel(newObject.filename, newObject.filename);
-			}
+			std::string objectType;
 
 			if (object.contains("object_group")) {
 
+				std::string typeName;
+
 				//オブジェクトの種別を取得
-				std::string objectType = object["object_group"].get<std::string>();
+				objectType = object["object_group"].get<std::string>();
+
+				typeName = objectType;
+
+				std::transform(
+					objectType.begin(),
+					objectType.end(),
+					typeName.begin(),
+					[](char c) {return std::toupper(c); }
+				);
 
 				//オブジェクトの種別に応じて処理を分岐
-				if (objectType == "PLAYER") {
+				if (typeName == "PLAYER") {
 
 					newObject.type = ObjectType::PLAYER;
-				} else if (objectType == "ENEMY") {
+				} else if (typeName == "ENEMY") {
 
 					newObject.type = ObjectType::ENEMY;
-				} else if (objectType == "OBJECT") {
+				} else if (typeName == "OBJECT") {
 
 					newObject.type = ObjectType::OBJECT;
 				} else {
@@ -102,6 +116,23 @@ void LevelDataLoader::Load(const std::string& fileName) {
 				newObject.type = ObjectType::NONE;
 			}
 
+			//モデルのファイル名が存在するかチェック
+			if (object.contains("file_name")) {
+
+				//モデルのファイル名を取得
+				newObject.filename = object["file_name"].get<std::string>();
+
+				if (newObject.type != NONE) {
+
+					//モデルの読み込み
+					ModelManager::GetInstance()->LoadModel(newObject.filename, objectType, newObject.filename);
+				} else {
+
+					ModelManager::GetInstance()->LoadModel(newObject.filename, newObject.filename);
+				}
+
+			}
+
 			//トランスフォームのパラメータ読み込み
 			nlohmann::json& transform = object["transform"];
 
@@ -109,7 +140,7 @@ void LevelDataLoader::Load(const std::string& fileName) {
 			newObject.position = {
 				static_cast<float>(transform["translation"][0]),
 				static_cast<float>(transform["translation"][2]),
-				-static_cast<float>(transform["translation"][1])
+				static_cast<float>(transform["translation"][1])
 			};
 
 			//回転
@@ -164,7 +195,7 @@ const int LevelDataLoader::GetObjectCount(const std::string& fileName, const Obj
 ///=====================================================/// 
 /// 指定したタイプのオブジェクトデータを取得
 ///=====================================================///
-const std::vector<LevelDataLoader::ObjectData>& LevelDataLoader::PickObjectData(const std::string& fileName, const ObjectType type) const {
+const std::vector<ObjectData>& LevelDataLoader::PickObjectData(const std::string& fileName, const ObjectType type) const {
 
 	//ファイル名が存在しない場合は空のデータを返す
 	if (levelData_.count(fileName) == 0) {

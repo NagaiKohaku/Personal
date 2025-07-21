@@ -28,6 +28,10 @@ from .add_filename import MYADDON_OT_add_filename
 
 from .add_collider import MYADDON_OT_add_collider
 
+from .add_disabled import MYADDON_OT_add_disabled
+
+from .add_objectgroup import MYADDON_OT_add_objectgroup
+
 ###-------###
 ### パネル ###
 ###-------###
@@ -35,6 +39,10 @@ from .add_collider import MYADDON_OT_add_collider
 from .file_name import OBJECT_PT_file_name
 
 from .collider import OBJECT_PT_collider
+
+from .disabled import OBJECT_PT_disabled
+
+from .objectgroup import OBJECT_PT_object_group
 
 ###------###
 ### 関数 ###
@@ -51,8 +59,12 @@ classes = (
     MYADDON_OT_export_scene,
     MYADDON_OT_add_filename,
     MYADDON_OT_add_collider,
+    MYADDON_OT_add_disabled,
+    MYADDON_OT_add_objectgroup,
     OBJECT_PT_file_name,
     OBJECT_PT_collider,
+    OBJECT_PT_disabled,
+    OBJECT_PT_object_group,
     TOPBAR_MT_my_menu
 )
 
