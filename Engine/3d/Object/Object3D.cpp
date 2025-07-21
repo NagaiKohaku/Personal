@@ -81,6 +81,76 @@ void Object3D::Initialize() {
 	isDebug_ = true;
 }
 
+void Object3D::Initialize(ObjectData objectData) {
+
+	//3Dオブジェクト基底のインスタンスを取得
+	object3DCommon_ = Object3DCommon::GetInstance();
+
+	/// === 座標変換行列リソースを作成 === ///
+
+	//リソースを作成
+	WVPResource_ = object3DCommon_->GetDxCommon()->CreateBufferResource(sizeof(TransformationMatrix));
+
+	//書き込むためのアドレスを取得する
+	WVPResource_->Map(0, nullptr, reinterpret_cast<void**>(&WVPData_));
+
+	//座標変換行列データの設定
+	WVPData_->WVP = MakeIdentity4x4();
+	WVPData_->World = MakeIdentity4x4();
+	WVPData_->WorldInverseTranspose = MakeIdentity4x4();
+
+	//トランスフォームの初期化
+	transform_.Initialize();
+
+	/// === 軸方向ラインの初期化 === ///
+
+	//3方向分のサイズを確保
+	axisLines_.resize(3);
+
+	//X軸ラインの初期化
+	axisLines_[0] = std::make_unique<DebugLine>();
+	axisLines_[0]->Initialize(
+		{ 0.0f,0.0f,0.0f },
+		transform_.GetRight(),
+		{ 1.0f,0.0f,0.0f,1.0f }
+	);
+	axisLines_[0]->SetParent(&transform_);
+
+	//Y軸ラインの初期化
+	axisLines_[1] = std::make_unique<DebugLine>();
+	axisLines_[1]->Initialize(
+		{ 0.0f,0.0f,0.0f },
+		transform_.GetUp(),
+		{ 0.0f,1.0f,0.0f,1.0f });
+	axisLines_[1]->SetParent(&transform_);
+
+	//Z軸ラインの初期化
+	axisLines_[2] = std::make_unique<DebugLine>();
+	axisLines_[2]->Initialize(
+		{ 0.0f,0.0f,0.0f },
+		transform_.GetForward(),
+		{ 0.0f,0.0f,1.0f,1.0f }
+	);
+	axisLines_[2]->SetParent(&transform_);
+
+	/// === 他変数の設定 === ///
+
+	//モデルの設定
+	model_ = ModelManager::GetInstance()->FindModel(objectData.filename);
+
+	transform_.translate_ = objectData.position;
+
+	transform_.rotate_ = objectData.rotation;
+
+	transform_.scale_ = objectData.scale;
+
+	//今持っているカメラをデフォルトカメラに設定
+	camera_ = object3DCommon_->GetDefaultCamera();
+
+	//デバッグモードの初期化
+	isDebug_ = true;
+}
+
 ///=====================================================/// 
 /// 更新処理
 ///=====================================================///

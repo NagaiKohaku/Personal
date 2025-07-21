@@ -332,7 +332,7 @@ void Model::LoadObjFile(const std::string& directoryPath, const std::string& fil
 				Vector3 normal = normals[elementIndices[2] - 1];
 
 				//三角形の構築
-				triangle[faceVertex] = {position,texCoord,normal};
+				triangle[faceVertex] = { position,texCoord,normal };
 			}
 
 			//頂点データの設定

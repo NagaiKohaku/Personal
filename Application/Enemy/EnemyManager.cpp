@@ -32,10 +32,10 @@ void EnemyManager::Initialize(Camera* ptr) {
 	//距離の設定
 	spawnDistance_ = 3.0f;
 
+	levelDataLoader_->Load("EnemyFormation02.json");
+
 	//オフセットの設定
 	spawnOffset_ = { 0.0f,4.0f,30.0f };
-
-	levelDataLoader_->Load("EnemyFormation01.json");
 }
 
 ///=====================================================/// 
@@ -84,7 +84,7 @@ void EnemyManager::SpawnUpdate() {
 	//スポーン間隔を越えたら
 	if (spawnTimer_ >= spawnInterval_) {
 
-		std::vector<LevelDataLoader::ObjectData> objectDatas = levelDataLoader_->PickObjectData("EnemyFormation01.json", LevelDataLoader::ENEMY);
+		std::vector<ObjectData> objectDatas = levelDataLoader_->PickObjectData("EnemyFormation02.json", ObjectType::ENEMY);
 
 		for (int i = 0; i < objectDatas.size(); i++) {
 
@@ -98,7 +98,7 @@ void EnemyManager::SpawnUpdate() {
 			Vector3 entryPos = spawnDirection * (spawnDistance_ * 8.0f) + standbyPos;
 
 			//エネミーをスポーンさせる
-			Spawn(entryPos, standbyPos);
+			Spawn(entryPos, standbyPos, objectDatas[i]);
 		}
 
 		//タイマーのリセット
@@ -109,13 +109,13 @@ void EnemyManager::SpawnUpdate() {
 ///=====================================================/// 
 /// スポーン処理
 ///=====================================================///
-void EnemyManager::Spawn(Vector3 entryPos, Vector3 standbyPos) {
+void EnemyManager::Spawn(Vector3 entryPos, Vector3 standbyPos, ObjectData objectData) {
 
 	//エネミーを生成
 	std::unique_ptr<Enemy> newEnemy = std::make_unique<Enemy>();
 
 	//初期化
-	newEnemy->Initialize(camera_);
+	newEnemy->Initialize(camera_,objectData);
 
 	//初期座標を設定
 	newEnemy->SetPosition(entryPos);

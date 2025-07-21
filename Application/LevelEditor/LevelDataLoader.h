@@ -1,5 +1,7 @@
 #pragma once
 
+#include "LevelEditor/ObjectData.h"
+
 #include "Math/Vector3.h"
 
 #include "string"
@@ -10,33 +12,6 @@
 /// レベルデータローダークラス
 ///=====================================================///
 class LevelDataLoader {
-
-	///-------------------------------------------/// 
-	/// 列挙型
-	///-------------------------------------------///
-public:
-
-	//オブジェクトのタイプ
-	enum ObjectType {
-		NONE,
-		PLAYER,
-		ENEMY,
-		OBJECT
-	};
-
-	///-------------------------------------------/// 
-	/// メンバ構造体
-	///-------------------------------------------///
-public:
-
-	//オブジェクトのデータ構造体
-	struct ObjectData {
-		std::string filename;
-		ObjectType type;
-		Vector3 position;
-		Vector3 rotation;
-		Vector3 scale;
-	};
 
 	///-------------------------------------------/// 
 	/// メンバ関数

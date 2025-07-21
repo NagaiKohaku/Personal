@@ -1,8 +1,11 @@
 #include "Player.h"
 
-#include "Bullet/BulletManager.h"
+#include "3d/Model/ModelManager.h"
 
 #include "Base/Input.h"
+
+#include "LevelEditor/LevelDataLoader.h"
+#include "Bullet/BulletManager.h"
 
 #include "Math/Easing.h"
 
@@ -19,16 +22,32 @@ void Player::Initialize(Camera* cameraPtr, BulletManager* bulletPtr) {
 	//バレットマネージャーを取得
 	bulletManager_ = bulletPtr;
 
+	//レベルデータローダーを取得
+	levelDataLoader_ = LevelDataLoader::GetInstance();
+
+	levelDataLoader_->Load("JetPlayer.json");
+
+	objectData_ = levelDataLoader_->PickObjectData("JetPlayer.json", ObjectType::PLAYER);
+
 	/// === オブジェクトの生成 === ///
 
 	//生成
-	object_ = std::make_unique<Object3D>();
+	core_ = std::make_unique<Object3D>();
 
 	//初期化
-	object_->Initialize();
+	core_->Initialize(objectData_[0]);
 
-	//モデルの設定
-	object_->SetModel("Cube");
+	rightWing_ = std::make_unique<Object3D>();
+
+	rightWing_->Initialize(objectData_[1]);
+
+	rightWing_->GetWorldTransform().SetParent(&core_->GetWorldTransform());
+
+	leftWing_ = std::make_unique<Object3D>();
+
+	leftWing_->Initialize(objectData_[2]);
+
+	leftWing_->GetWorldTransform().SetParent(&core_->GetWorldTransform());
 
 	/// === コライダーの生成 === ///
 
@@ -36,7 +55,7 @@ void Player::Initialize(Camera* cameraPtr, BulletManager* bulletPtr) {
 	collider_ = std::make_unique<SphereCollider>();
 
 	//初期化
-	collider_->Initialize(&object_->GetWorldTransform());
+	collider_->Initialize(&core_->GetWorldTransform());
 
 	//タグの設定
 	collider_->SetTag(Collider::Tag::PLAYER);
@@ -79,13 +98,13 @@ void Player::Initialize(Camera* cameraPtr, BulletManager* bulletPtr) {
 	driveRotRange_ = { 0.0f,0.5f,0.0f };
 
 	//飛行機状態の回転範囲の設定
-	flightRotRange_ = { 0.2f,0.0f,0.2f };
+	flightRotRange_ = { 0.5f,0.0f,0.3f };
 
 	//初期座標の設定
 	initialPos_ = { 0.0f,2.0f,0.0f };
 
 	//座標の設定
-	object_->GetWorldTransform().translate_ = initialPos_;
+	core_->GetWorldTransform().translate_ = initialPos_;
 
 }
 
@@ -95,7 +114,7 @@ void Player::Initialize(Camera* cameraPtr, BulletManager* bulletPtr) {
 void Player::Update() {
 
 	//地面に接していたら
-	if (object_->GetWorldTransform().translate_.y == 1.0f) {
+	if (core_->GetWorldTransform().translate_.y == 1.0f) {
 
 		//戦車状態に変更
 		moveState_ = TANK;
@@ -115,7 +134,11 @@ void Player::Update() {
 	IsCollision();
 
 	//プレイヤーの更新
-	object_->Update();
+	core_->Update();
+
+	rightWing_->Update();
+
+	leftWing_->Update();
 
 	//コライダーの更新
 	collider_->Update();
@@ -129,7 +152,11 @@ void Player::Update() {
 void Player::Draw() {
 
 	//プレイヤーの描画
-	object_->Draw(LayerType::Object);
+	core_->Draw(LayerType::Object);
+
+	rightWing_->Draw(LayerType::Object);
+
+	leftWing_->Draw(LayerType::Object);
 
 	//コライダーの描画
 	collider_->Draw();
@@ -174,7 +201,7 @@ void Player::Move() {
 	if (Length(velocity_) != 0.0f) {
 
 		//プレイヤーの現在座標
-		Vector3 playerPos = object_->GetWorldTransform().translate_;
+		Vector3 playerPos = core_->GetWorldTransform().translate_;
 
 		//移動後の座標
 		Vector3 movePos = playerPos + velocity_;
@@ -193,7 +220,7 @@ void Player::Move() {
 		moveResult.y = fmaxf(1.0f, moveResult.y);
 
 		//オブジェクトの座標を結果座標で設定
-		object_->GetWorldTransform().translate_ = moveResult;
+		core_->GetWorldTransform().translate_ = moveResult;
 	}
 
 	switch (moveState_) {
@@ -219,7 +246,7 @@ void Player::Move() {
 void Player::TankMove() {
 
 	//プレイヤーの現在角度
-	Vector3 playerRot = object_->GetWorldTransform().rotate_;
+	Vector3 playerRot = core_->GetWorldTransform().rotate_;
 
 	//左右移動に応じてY軸回転をするように設定
 	Vector3 rotate = {
@@ -236,7 +263,7 @@ void Player::TankMove() {
 	};
 
 	//線形補間で回転
-	object_->GetWorldTransform().rotate_ = Lerp(playerRot, rotate, rotStrength_ / 100.0f);
+	core_->GetWorldTransform().rotate_ = Lerp(playerRot, rotate, rotStrength_ / 100.0f);
 }
 
 ///=====================================================/// 
@@ -245,7 +272,7 @@ void Player::TankMove() {
 void Player::JetMove() {
 
 	//プレイヤーの現在角度
-	Vector3 playerRot = object_->GetWorldTransform().rotate_;
+	Vector3 playerRot = core_->GetWorldTransform().rotate_;
 
 	//左右移動でZ軸回転、上下移動でX軸回転をするように設定
 	Vector3 rotate = {
@@ -262,7 +289,7 @@ void Player::JetMove() {
 	};
 
 	//線形補間で回転
-	object_->GetWorldTransform().rotate_ = Lerp(playerRot, rotate, rotStrength_ / 100.0f);
+	core_->GetWorldTransform().rotate_ = Lerp(playerRot, rotate, rotStrength_ / 100.0f);
 }
 
 ///=====================================================/// 
@@ -301,11 +328,11 @@ void Player::TankAttack() {
 		if (Input::GetInstance()->isPushKey(DIK_SPACE)) {
 
 			//オブジェクトからレティクルへの方向
-			Vector3 direction = reticle_->GetWorldPos() - object_->GetWorldTransform().GetWorldTranslate();
+			Vector3 direction = reticle_->GetWorldPos() - core_->GetWorldTransform().GetWorldTranslate();
 
 			//バレットマネージャーに弾を追加
 			bulletManager_->AddBullet(
-				object_->GetWorldTransform().translate_,
+				core_->GetWorldTransform().translate_,
 				Normalize(direction),
 				BulletManager::BULLETTYPE::TANK
 			);
@@ -328,11 +355,11 @@ void Player::JetAttack() {
 		if (Input::GetInstance()->isPushKey(DIK_SPACE)) {
 
 			//オブジェクトからレティクルへの方向
-			Vector3 direction = reticle_->GetWorldPos() - object_->GetWorldTransform().GetWorldTranslate();
+			Vector3 direction = reticle_->GetWorldPos() - core_->GetWorldTransform().GetWorldTranslate();
 
 			//バレットマネージャーに弾を追加
 			bulletManager_->AddBullet(
-				object_->GetWorldTransform().translate_,
+				core_->GetWorldTransform().translate_,
 				Normalize(direction),
 				BulletManager::BULLETTYPE::JET
 			);

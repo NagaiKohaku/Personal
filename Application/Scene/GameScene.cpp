@@ -10,6 +10,8 @@
 #include "3d/Object/DebugObjectCommon.h"
 #include "3d/Object/SkyBoxCommon.h"
 
+#include "LevelEditor/LevelDataLoader.h"
+
 #include "imgui.h"
 
 #include "numbers"

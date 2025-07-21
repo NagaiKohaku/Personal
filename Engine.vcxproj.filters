@@ -486,6 +486,9 @@
     <ClInclude Include="Engine\3d\Mesh\CubeMesh.h">
       <Filter>Engine\3d\Mesh</Filter>
     </ClInclude>
+    <ClInclude Include="Application\LevelEditor\ObjectData.h">
+      <Filter>Application\LevelEditor</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resource\Shader\DebugObject.hlsli">
@@ -535,6 +538,18 @@
     </None>
     <None Include="Resource\Shader\CopyImage.hlsli">
       <Filter>Resource\Shader\OffScreen</Filter>
+    </None>
+    <None Include="Application\LevelEditor\add_disabled.py">
+      <Filter>Application\LevelEditor</Filter>
+    </None>
+    <None Include="Application\LevelEditor\add_objectgroup.py">
+      <Filter>Application\LevelEditor</Filter>
+    </None>
+    <None Include="Application\LevelEditor\disabled.py">
+      <Filter>Application\LevelEditor</Filter>
+    </None>
+    <None Include="Application\LevelEditor\objectgroup.py">
+      <Filter>Application\LevelEditor</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

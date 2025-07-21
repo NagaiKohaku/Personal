@@ -37,6 +37,11 @@ void TextureManager::Initialize() {
 ///=====================================================///
 void TextureManager::LoadTexture(const std::string& filePath) {
 
+	if (filePath == "") {
+
+		return;
+	}
+
 	//読み込み済みテクスチャを検索
 	if (textureData_.contains(filePath)) {
 
@@ -192,9 +197,12 @@ const DirectX::TexMetadata& TextureManager::GetMetaData(const std::string& fileP
 ///=====================================================///
 uint32_t TextureManager::GetSrvIndex(const std::string& filePath) {
 
-	TextureData& textureData = textureData_[filePath];
+	if (textureData_.find(filePath) == textureData_.end()) {
 
-	return textureData.srvIndex;
+		return textureData_["Resource/Texture/white_128x128.png"].srvIndex;
+	}
+
+	return textureData_[filePath].srvIndex;
 }
 
 ///=====================================================/// 
@@ -202,9 +210,12 @@ uint32_t TextureManager::GetSrvIndex(const std::string& filePath) {
 ///=====================================================///
 D3D12_GPU_DESCRIPTOR_HANDLE TextureManager::GetSrvHandleGPU(const std::string& filePath) {
 
-	TextureData& textureData = textureData_[filePath];
+	if (textureData_.find(filePath) == textureData_.end()) {
 
-	return textureData.srvHandleGPU;
+		return textureData_["Resource/Texture/white_128x128.png"].srvHandleGPU;
+	}
+
+	return textureData_[filePath].srvHandleGPU;
 }
 
 ///=====================================================/// 

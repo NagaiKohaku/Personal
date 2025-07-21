@@ -13,6 +13,8 @@
 
 /// === 前方宣言 === ///
 
+class LevelDataLoader;
+
 class BulletManager;
 
 ///=====================================================/// 
@@ -104,8 +106,17 @@ private:
 	//バレットマネージャー
 	BulletManager* bulletManager_ = nullptr;
 
+	//レベルデータローダー
+	LevelDataLoader* levelDataLoader_;
+
 	//オブジェクト
-	std::unique_ptr<Object3D> object_ = nullptr;
+	std::unique_ptr<Object3D> core_ = nullptr;
+
+	std::unique_ptr<Object3D> rightWing_;
+
+	std::unique_ptr<Object3D> leftWing_;
+
+	std::vector<ObjectData> objectData_;
 
 	//コライダー
 	std::unique_ptr<SphereCollider> collider_ = nullptr;
@@ -158,7 +169,7 @@ public:
 	/// ワールド座標を取得
 	/// </summary>
 	/// <returns>ワールド座標</returns>
-	Vector3 GetWorldPos() { return object_->GetWorldTransform().GetWorldTranslate(); }
+	Vector3 GetWorldPos() { return core_->GetWorldTransform().GetWorldTranslate(); }
 
 	/// <summary>
 	/// 移動量を取得

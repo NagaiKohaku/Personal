@@ -37,6 +37,14 @@ public:
 	void LoadModel(const std::string& modelName, const std::string& modelFileName);
 
 	/// <summary>
+	/// モデルの読み込み(ディレクトリ別)
+	/// </summary>
+	/// <param name="modelName"></param>
+	/// <param name="modelDirectory"></param>
+	/// <param name="modelFileName"></param>
+	void LoadModel(const std::string& modelName, const std::string& modelDirectory, const std::string& modelFileName);
+
+	/// <summary>
 	/// メッシュモデルの生成
 	/// </summary>
 	/// <param name="type"></param>

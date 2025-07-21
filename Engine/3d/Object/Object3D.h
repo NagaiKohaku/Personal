@@ -3,6 +3,8 @@
 #include "Base/LayerType.h"
 #include "3d/Object/DebugLine.h"
 
+#include "LevelEditor/ObjectData.h"
+
 #include "Math/Vector3.h"
 #include "Math/Vector4.h"
 #include "Math/Matrix4x4.h"
@@ -50,6 +52,12 @@ public:
 	/// 初期化
 	/// </summary>
 	void Initialize();
+
+	/// <summary>
+	/// 初期化(オブジェクトデータ)
+	/// </summary>
+	/// <param name="objectData"></param>
+	void Initialize(ObjectData objectData);
 
 	/// <summary>
 	/// 更新
