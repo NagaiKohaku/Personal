@@ -79,6 +79,26 @@ Vector3 EaseOut(const Vector3& v1, const Vector3& v2, float t, float mag);
 Vector4 EaseOut(const Vector4& v1, const Vector4& v2, float t, float mag);
 
 /// <summary>
+/// EaseOutCirc関数
+/// </summary>
+/// <param name="v1"></param>
+/// <param name="v2"></param>
+/// <param name="t"></param>
+/// <param name="mag"></param>
+/// <returns></returns>
+Vector3 EaseOutCirc(const Vector3& v1, const Vector3& v2, float t, float mag);
+
+/// <summary>
+/// EaseOutBack関数
+/// </summary>
+/// <param name="v1"></param>
+/// <param name="v2"></param>
+/// <param name="t"></param>
+/// <param name="mag"></param>
+/// <returns></returns>
+Vector3 EaseOutBack(const Vector3& v1, const Vector3& v2, float t, float mag);
+
+/// <summary>
 /// EaseInOut関数
 /// </summary>
 /// <param name="v1"></param>

@@ -30,7 +30,7 @@ void GameScene::Initialize() {
 	camera_->Initialize();
 
 	//デバッグカメラを使用しない
-	camera_->SetDebugCameraFlag(true);
+	camera_->SetDebugCameraFlag(false);
 
 	//カメラの座標
 	camera_->GetWorldTransform().translate_ = { 0.0f,3.0f,0.0f };
@@ -63,45 +63,10 @@ void GameScene::Initialize() {
 	//追尾カメラの初期化
 	followCamera_->Initialize(camera_.get(), player_.get());
 
-	/// === 床のラインを生成 === ///
+	lineGround_ = std::make_unique<LineGround>();
 
-	const float lineDivide = 30.0f;
+	lineGround_->Initialize();
 
-	const float lineDistance = 5.0f;
-
-	for (size_t i = 0; i < lineDivide + 1; i++) {
-
-		std::unique_ptr<DebugLine> newLine = std::make_unique<DebugLine>();
-
-		newLine->Initialize(
-			{ (i - lineDivide / 2.0f) * lineDistance, 0.0f, (-lineDivide / 2.0f) * lineDistance },
-			{ (i - lineDivide / 2.0f) * lineDistance, 0.0f, (lineDivide / 2.0f) * lineDistance },
-			{ 1.0f,1.0f,1.0f,1.0f }
-		);
-
-		if (i == static_cast<int>(lineDivide / 2.0f)) {
-			newLine->SetColor({ 1.0f,0.0f,0.0f,1.0f });
-		}
-
-		lines_.push_back(std::move(newLine));
-	}
-
-	for (size_t i = 0; i < lineDivide + 1; i++) {
-
-		std::unique_ptr<DebugLine> newLine = std::make_unique<DebugLine>();
-
-		newLine->Initialize(
-			{ (-lineDivide / 2.0f) * lineDistance, 0.0f, (i - lineDivide / 2.0f) * lineDistance },
-			{ (lineDivide / 2.0f) * lineDistance, 0.0f, (i - lineDivide / 2.0f) * lineDistance },
-			{ 1.0f,1.0f,1.0f,1.0f }
-		);
-
-		if (i == static_cast<int>(lineDivide / 2.0f)) {
-			newLine->SetColor({ 0.0f,1.0f,0.0f,1.0f });
-		}
-
-		lines_.push_back(std::move(newLine));
-	}
 }
 
 ///=====================================================/// 
@@ -133,11 +98,7 @@ void GameScene::Update() {
 	//弾の更新
 	bulletManager_->Update();
 
-	for (auto& line : lines_) {
-
-		line->Update();
-	}
-
+	lineGround_->Update();
 }
 
 ///=====================================================/// 
@@ -154,10 +115,7 @@ void GameScene::Draw() {
 	//弾の描画
 	bulletManager_->Draw();
 
-	for (auto& line : lines_) {
-
-		line->Draw(LayerType::Object);
-	}
+	lineGround_->Draw();
 }
 
 ///=====================================================/// 

@@ -10,6 +10,7 @@
 #include "Math/Easing.h"
 
 #include "algorithm"
+#include "numbers"
 
 ///=====================================================/// 
 /// 初期化
@@ -48,6 +49,26 @@ void Player::Initialize(Camera* cameraPtr, BulletManager* bulletPtr) {
 	leftWing_->Initialize(objectData_[2]);
 
 	leftWing_->GetWorldTransform().SetParent(&core_->GetWorldTransform());
+
+	rightTrail_ = std::make_unique<EmitterGroup>();
+
+	rightTrail_->Initialize(camera_);
+
+	rightTrail_->LoadEmitter("Trail");
+
+	rightTrail_->GetWorldTransform().SetParent(&rightWing_->GetWorldTransform());
+
+	rightTrail_->Emit();
+
+	leftTrail_ = std::make_unique<EmitterGroup>();
+
+	leftTrail_->Initialize(camera_);
+
+	leftTrail_->LoadEmitter("Trail");
+
+	leftTrail_->GetWorldTransform().SetParent(&leftWing_->GetWorldTransform());
+
+	leftTrail_->Emit();
 
 	/// === コライダーの生成 === ///
 
@@ -140,6 +161,10 @@ void Player::Update() {
 
 	leftWing_->Update();
 
+	rightTrail_->Update();
+
+	leftTrail_->Update();
+
 	//コライダーの更新
 	collider_->Update();
 
@@ -157,6 +182,10 @@ void Player::Draw() {
 	rightWing_->Draw(LayerType::Object);
 
 	leftWing_->Draw(LayerType::Object);
+
+	rightTrail_->Draw();
+
+	leftTrail_->Draw();
 
 	//コライダーの描画
 	collider_->Draw();
@@ -248,6 +277,18 @@ void Player::TankMove() {
 	//プレイヤーの現在角度
 	Vector3 playerRot = core_->GetWorldTransform().rotate_;
 
+	Vector3 rightWingPos = rightWing_->GetWorldTransform().translate_;
+
+	Vector3 rightWingRot = rightWing_->GetWorldTransform().rotate_;
+
+	Vector3 rightTrailPos = rightTrail_->GetWorldTransform().translate_;
+
+	Vector3 leftWingPos = leftWing_->GetWorldTransform().translate_;
+
+	Vector3 leftWingRot = leftWing_->GetWorldTransform().rotate_;
+
+	Vector3 leftTrailPos = leftTrail_->GetWorldTransform().translate_;
+
 	//左右移動に応じてY軸回転をするように設定
 	Vector3 rotate = {
 		0.0f,
@@ -264,6 +305,29 @@ void Player::TankMove() {
 
 	//線形補間で回転
 	core_->GetWorldTransform().rotate_ = Lerp(playerRot, rotate, rotStrength_ / 100.0f);
+
+	rightWing_->GetWorldTransform().translate_ = EaseOut(rightWingPos, Vector3(0.75f, 0.0f, 0.0f), 0.1f, 2.0f);
+
+	rightWing_->GetWorldTransform().rotate_ = EaseOut(
+		rightWingRot,
+		Vector3(0.0f, 0.0f, std::numbers::pi_v<float> / 2.0f + std::numbers::pi_v<float> * 2.0f),
+		0.1f,
+		2.0f
+	);
+
+	rightTrail_->GetWorldTransform().translate_ = EaseOut(rightTrailPos, Vector3(-0.75f, 0.0f, 0.0f), 0.1f, 2.0f);
+
+	leftWing_->GetWorldTransform().translate_ = EaseOut(leftWingPos, Vector3(-0.75f, 0.0f, 0.0f), 0.1f, 2.0f);
+
+	leftWing_->GetWorldTransform().rotate_ = EaseOut(
+		leftWingRot,
+		Vector3(0.0f, 0.0f, -std::numbers::pi_v<float> / 2.0f - std::numbers::pi_v<float> * 2.0f),
+		0.1f,
+		2.0f
+	);
+
+	leftTrail_->GetWorldTransform().translate_ = EaseOut(leftTrailPos, Vector3(0.75f, 0.0f, 0.0f), 0.1f, 2.0f);
+
 }
 
 ///=====================================================/// 
@@ -273,6 +337,18 @@ void Player::JetMove() {
 
 	//プレイヤーの現在角度
 	Vector3 playerRot = core_->GetWorldTransform().rotate_;
+
+	Vector3 rightWingPos = rightWing_->GetWorldTransform().translate_;
+
+	Vector3 rightWingRot = rightWing_->GetWorldTransform().rotate_;
+
+	Vector3 rightTrailPos = rightTrail_->GetWorldTransform().translate_;
+
+	Vector3 leftWingPos = leftWing_->GetWorldTransform().translate_;
+
+	Vector3 leftWingRot = leftWing_->GetWorldTransform().rotate_;
+
+	Vector3 leftTrailPos = leftTrail_->GetWorldTransform().translate_;
 
 	//左右移動でZ軸回転、上下移動でX軸回転をするように設定
 	Vector3 rotate = {
@@ -290,6 +366,19 @@ void Player::JetMove() {
 
 	//線形補間で回転
 	core_->GetWorldTransform().rotate_ = Lerp(playerRot, rotate, rotStrength_ / 100.0f);
+
+	rightWing_->GetWorldTransform().translate_ = EaseOut(rightWingPos, Vector3(1.35f, 0.0f, 0.0f), 0.1f, 2.0f);
+
+	rightWing_->GetWorldTransform().rotate_ = EaseOut(rightWingRot, Vector3(0.0f, 0.0f, 0.0f), 0.1f, 2.0f);
+
+	rightTrail_->GetWorldTransform().translate_ = EaseOut(rightTrailPos, Vector3(0.75f, 0.0f, 0.0f), 0.1f, 2.0f);
+
+	leftWing_->GetWorldTransform().translate_ = EaseOut(leftWingPos, Vector3(-1.35f, 0.0f, 0.0f), 0.1f, 2.0f);
+
+	leftWing_->GetWorldTransform().rotate_ = EaseOut(leftWingRot, Vector3(0.0f, 0.0f, 0.0f), 0.1f, 2.0f);
+
+	leftTrail_->GetWorldTransform().translate_ = EaseOut(leftTrailPos, Vector3(-0.75f, 0.0f, 0.0f), 0.1f, 2.0f);
+
 }
 
 ///=====================================================/// 

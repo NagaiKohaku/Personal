@@ -54,7 +54,7 @@ void EmitterGroup::Draw() {
 	for (auto& emitter : particleEmitters_) {
 
 		//エミッターの描画
-		emitter->Draw(Object);
+		emitter->Draw(Particle);
 	}
 }
 

@@ -135,6 +135,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Math\Random.cpp" />
     <ClCompile Include="Application\Camera\FollowCamera.cpp" />
     <ClCompile Include="Application\Bullet\JetBullet.cpp" />
+    <ClCompile Include="Application\Ground\LineGround.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Engine\Math\Easing.cpp" />
     <ClCompile Include="Engine\Math\MakeMatrixMath.cpp" />
@@ -248,6 +249,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\3d\Object\SkyBoxCommon.h" />
     <ClInclude Include="Engine\3d\Mesh\SphereMesh.h" />
     <ClInclude Include="Application\LevelEditor\ObjectData.h" />
+    <ClInclude Include="Application\Ground\LineGround.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Application\LevelEditor\add_collider.py">

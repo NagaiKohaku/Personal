@@ -103,10 +103,16 @@ void DebugLine::Initialize(Vector3 start, Vector3 end, Vector4 color) {
 
 	/// === モデルデータの設定 === ///
 
+	Vector3 center = (start + end) * 0.5f;
+
+	Vector3 toStartLength = start - center;
+
+	Vector3 toEndLength = end - center;
+
 	//頂点座標を設定
 	modelData_.vertices = {
-		{start.x,start.y,start.z,1.0f},
-		{end.x,end.y,end.z,1.0f}
+		{toStartLength.x,toStartLength.y,toStartLength.z,1.0f},
+		{toEndLength.x,toEndLength.y,toEndLength.z,1.0f}
 	};
 
 	//頂点番号を設定
@@ -169,6 +175,8 @@ void DebugLine::Initialize(Vector3 start, Vector3 end, Vector4 color) {
 	materialData_->color = color;
 
 	transform_.Initialize();
+
+	transform_.translate_ = center;
 }
 
 ///=====================================================/// 

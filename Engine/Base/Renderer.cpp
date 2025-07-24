@@ -31,6 +31,17 @@ void Renderer::SwapChainDraw() {
 		//レイヤーに入っている描画コマンドすべてを実行する
 		for (int i = 0; i < drawQueue_[layer].size(); i++) {
 
+			if (layer == LayerType::Debug) {
+
+				if (isDebug()) {
+
+					//描画コマンドを実行
+					func[i]();
+				}
+
+				continue;
+			}
+
 			//描画コマンドを実行
 			func[i]();
 		}
@@ -50,6 +61,17 @@ void Renderer::OffScreenDraw() {
 
 		//レイヤーに入っている描画コマンドすべてを実行する
 		for (int i = 0; i < offScreenDrawQueue_[layer].size(); i++) {
+
+			if (layer == LayerType::Debug) {
+
+				if (isDebug()) {
+
+					//描画コマンドを実行
+					func[i]();
+				}
+
+				continue;
+			}
 
 			//描画コマンドを実行
 			func[i]();
@@ -101,4 +123,13 @@ void Renderer::ClearOffScreenQueue() {
 		//レイヤーに入っている描画コマンドをクリア
 		func.clear();
 	}
+}
+
+bool Renderer::isDebug() {
+
+#ifdef DEBUG
+	return true;
+#endif // DEBUG
+
+	return false;
 }

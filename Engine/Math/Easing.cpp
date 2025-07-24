@@ -108,6 +108,32 @@ Vector4 EaseOut(const Vector4& v1, const Vector4& v2, float t, float mag) {
 	return result;
 }
 
+Vector3 EaseOutCirc(const Vector3& v1, const Vector3& v2, float t, float mag) {
+
+	float easeT = sqrtf(1.0f - powf(1.0f - t, mag));
+
+	Vector3 result;
+
+	result = Lerp(v1, v2, easeT);
+
+	return result;
+}
+
+Vector3 EaseOutBack(const Vector3& v1, const Vector3& v2, float t, float mag) {
+
+	float c1 = mag;
+
+	float c3 = c1 + 1;
+
+	float easeT = 1.0f + c3 * powf(t - 1.0f, 3.0f) + c1 * powf(t - 1.0f, 2.0f);
+
+	Vector3 result;
+
+	result = Lerp(v1, v2, easeT);
+
+	return result;
+}
+
 ///=====================================================/// 
 ///EaseInOut関数
 ///=====================================================///
