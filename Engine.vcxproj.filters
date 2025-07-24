@@ -259,6 +259,9 @@
     <ClCompile Include="Engine\3d\Mesh\CubeMesh.cpp">
       <Filter>Engine\3d\Mesh</Filter>
     </ClCompile>
+    <ClCompile Include="Application\Ground\LineGround.cpp">
+      <Filter>Application\Ground</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application\Bullet\BulletBase.h">
@@ -489,6 +492,9 @@
     <ClInclude Include="Application\LevelEditor\ObjectData.h">
       <Filter>Application\LevelEditor</Filter>
     </ClInclude>
+    <ClInclude Include="Application\Ground\LineGround.h">
+      <Filter>Application\Ground</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resource\Shader\DebugObject.hlsli">
@@ -630,6 +636,9 @@
     </Filter>
     <Filter Include="Engine\3d\Mesh">
       <UniqueIdentifier>{4b1ecc41-f624-4227-910d-ff9e8e6c5d31}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Application\Ground">
+      <UniqueIdentifier>{5ac4747f-252b-4240-8029-b712f904bbc7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

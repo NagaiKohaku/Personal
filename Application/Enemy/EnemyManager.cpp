@@ -4,6 +4,8 @@
 
 #include "LevelEditor/LevelDataLoader.h"
 
+#include "Math/Random.h"
+
 #include "numbers"
 
 ///=====================================================/// 
@@ -21,7 +23,7 @@ void EnemyManager::Initialize(Camera* ptr) {
 	spawnTimer_ = 0.0f;
 
 	//スポーン間隔の設定
-	spawnInterval_ = 1.0f;
+	spawnInterval_ = 8.0f;
 
 	//最大数の設定
 	spawnMaxSize_ = 4;
@@ -32,7 +34,11 @@ void EnemyManager::Initialize(Camera* ptr) {
 	//距離の設定
 	spawnDistance_ = 3.0f;
 
+	levelDataLoader_->Load("EnemyFormation01.json");
+
 	levelDataLoader_->Load("EnemyFormation02.json");
+
+	levelDataLoader_->Load("EnemyFormation03.json");
 
 	//オフセットの設定
 	spawnOffset_ = { 0.0f,4.0f,30.0f };
@@ -73,18 +79,13 @@ void EnemyManager::Draw() {
 ///=====================================================///
 void EnemyManager::SpawnUpdate() {
 
-	//エネミーが残っていれば早期リターン
-	if (enemies_.size() != 0) {
-		return;
-	}
-
 	//タイマーを進ませる
 	spawnTimer_ += 1.0f / 60.0f;
 
 	//スポーン間隔を越えたら
 	if (spawnTimer_ >= spawnInterval_) {
 
-		std::vector<ObjectData> objectDatas = levelDataLoader_->PickObjectData("EnemyFormation02.json", ObjectType::ENEMY);
+		std::vector<ObjectData> objectDatas = levelDataLoader_->PickObjectData("EnemyFormation03.json", ObjectType::ENEMY);
 
 		for (int i = 0; i < objectDatas.size(); i++) {
 
@@ -95,7 +96,7 @@ void EnemyManager::SpawnUpdate() {
 			Vector3 spawnDirection = Normalize(Vector3(standbyPos.x,standbyPos.y,0.0f));
 
 			//出現座標
-			Vector3 entryPos = spawnDirection * (spawnDistance_ * 8.0f) + standbyPos;
+			Vector3 entryPos = spawnDirection * (spawnDistance_ * 10.0f) + standbyPos;
 
 			//エネミーをスポーンさせる
 			Spawn(entryPos, standbyPos, objectDatas[i]);
@@ -120,8 +121,17 @@ void EnemyManager::Spawn(Vector3 entryPos, Vector3 standbyPos, ObjectData object
 	//初期座標を設定
 	newEnemy->SetPosition(entryPos);
 
+	//エントリー座標を設定
+	newEnemy->SetEntryPos(entryPos);
+
 	//待機座標を設定
 	newEnemy->SetStandbyPos(standbyPos);
+
+	//離脱開始座標を設定
+	newEnemy->SetExitStartPos(Vector3(standbyPos.x, standbyPos.y, standbyPos.z - 5.0f));
+
+	//離脱座標を設定
+	newEnemy->SetExitPos(entryPos);
 
 	//リストに登録
 	enemies_.push_back(std::move(newEnemy));

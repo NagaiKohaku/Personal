@@ -15,6 +15,7 @@
 #include "Enemy/EnemyManager.h"
 #include "Bullet/BulletManager.h"
 #include "Camera/FollowCamera.h"
+#include "Ground/LineGround.h"
 
 #include "memory"
 #include "list"
@@ -77,4 +78,6 @@ private:
 	//バレットマネージャー
 	std::unique_ptr<BulletManager> bulletManager_;
 
+	//ライン描画の地面
+	std::unique_ptr<LineGround> lineGround_;
 };

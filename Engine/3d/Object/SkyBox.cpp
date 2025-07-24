@@ -3,6 +3,7 @@
 #include "Base/DirectXCommon.h"
 #include "Base/Renderer.h"
 #include "3d/Object/SkyBoxCommon.h"
+#include "3d/Object/Object3DCommon.h"
 #include "3d/Camera/Camera.h"
 #include "2d/Sprite/TextureManager.h"
 
@@ -190,10 +191,12 @@ void SkyBox::Initialize(std::string filePath) {
 	materialData_->shininess = 50.0f;
 
 	//テクスチャファイルパスの設定
-	textureFilePath_ = filePath;
+	textureFilePath_ = "Resource/Texture/CubeTexture/" + filePath;
 
 	//テクスチャの読み込み
 	TextureManager::GetInstance()->LoadCubeTexture(textureFilePath_);
+
+	Object3DCommon::GetInstance()->SetTextureCubeFilePath(textureFilePath_);
 
 	/// === 座標変換行列リソースの生成 === ///
 
@@ -210,6 +213,8 @@ void SkyBox::Initialize(std::string filePath) {
 
 	//トランスフォームの初期化
 	transform_.Initialize();
+
+	transform_.scale_ = { 10000.0f,10000.0f,10000.0f };
 
 	//今持っているカメラをデフォルトカメラに設定
 	camera_ = skyBoxCommon_->GetCamera();

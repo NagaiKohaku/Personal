@@ -118,6 +118,10 @@ private:
 
 	std::vector<ObjectData> objectData_;
 
+	std::unique_ptr<EmitterGroup> rightTrail_;
+
+	std::unique_ptr<EmitterGroup> leftTrail_;
+
 	//コライダー
 	std::unique_ptr<SphereCollider> collider_ = nullptr;
 

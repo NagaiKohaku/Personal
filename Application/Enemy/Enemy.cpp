@@ -1,6 +1,10 @@
 #include "Enemy.h"
 
 #include "Math/Easing.h"
+#include "Math/Random.h"
+
+#include "algorithm"
+#include "numbers"
 
 ///=====================================================/// 
 /// 初期化
@@ -60,14 +64,14 @@ void Enemy::Initialize(Camera* ptr) {
 	//エントリー時アニメーション終了時間の初期化
 	entryAnimMaxTime_ = 1.0f;
 
+	moveAnimMaxTime_ = 5.0f;
+
 	//離脱時アニメーション終了時間の初期化
 	exitAnimMaxTime_ = 2.0f;
 
 	//死亡時アニメーション終了時間の初期化
 	deadAnimMaxTime_ = 5.0f;
 
-	//離脱座標の初期化
-	exitPos_ = { 0.0f, 0.0f, 20.0f };
 }
 
 void Enemy::Initialize(Camera* ptr, ObjectData objectData) {
@@ -119,14 +123,14 @@ void Enemy::Initialize(Camera* ptr, ObjectData objectData) {
 	//エントリー時アニメーション終了時間の初期化
 	entryAnimMaxTime_ = 1.0f;
 
+	moveAnimMaxTime_ = 5.0f;
+
 	//離脱時アニメーション終了時間の初期化
 	exitAnimMaxTime_ = 2.0f;
 
 	//死亡時アニメーション終了時間の初期化
 	deadAnimMaxTime_ = 5.0f;
 
-	//離脱座標の初期化
-	exitPos_ = { 0.0f, 0.0f, 20.0f };
 }
 
 ///=====================================================/// 
@@ -167,6 +171,12 @@ void Enemy::Update() {
 
 		break;
 	}
+
+	prePos_ = object_->GetWorldTransform().translate_;
+
+	object_->GetWorldTransform().translate_ = Lerp(object_->GetWorldTransform().translate_, targetPos_, 0.1f);
+
+	object_->GetWorldTransform().rotate_ = Lerp(object_->GetWorldTransform().rotate_, targetRot_, 0.1f);
 
 	//オブジェクトの更新
 	object_->Update();
@@ -224,6 +234,16 @@ void Enemy::Dead() {
 	//アニメーションタイマーを進ませる
 	animTimer_ += 1.0f / 60.0f;
 
+	//アニメーションタイマーが終了時間に達したら
+	if (animTimer_ >= deadAnimMaxTime_) {
+
+		//削除可能にする
+		canRemove_ = true;
+	}
+
+	//タイマーの比率
+	float animRatio = animTimer_ / deadAnimMaxTime_;
+
 	//下を向く
 	object_->GetWorldTransform().rotate_ = { 1.0f,0.0f,0.0f };
 
@@ -236,12 +256,16 @@ void Enemy::Dead() {
 	//エミッターの更新処理
 	explosiveEmitter_->Update();
 
-	//アニメーションタイマーが終了時間に達したら
-	if (animTimer_ >= deadAnimMaxTime_) {
+	Vector3 objectPos = object_->GetWorldTransform().translate_;
 
-		//削除可能にする
-		canRemove_ = true;
-	}
+	targetPos_ = EaseOut(objectPos, objectPos + Vector3(0.0f, -1.0f, -10.0f), animRatio, 4.0f);
+
+	targetRot_ = Lerp(
+		Vector3(0.0f, -std::numbers::pi_v<float>, 0.0f),
+		Vector3(0.0f, -std::numbers::pi_v<float>, std::numbers::pi_v<float> *100.0f),
+		animRatio
+	);
+
 }
 
 ///=====================================================/// 
@@ -267,27 +291,37 @@ void Enemy::Entry() {
 	//タイマーの比率
 	float animRatio = animTimer_ / entryAnimMaxTime_;
 
-	//オブジェクトの座標
-	Vector3 objectPos = object_->GetWorldTransform().translate_;
+	targetPos_ = EaseOutBack(entryPos_, standbyPos_, animRatio, 1.0f);
 
-	//スタンバイ座標までイージングで移動
-	objectPos = EaseOut(objectPos, standbyPos_, animRatio, 0.1f);
+	Vector3 velocity = prePos_ - targetPos_ + Vector3(0.0f, 0.0f, 10.0f);
 
-	//移動後座標を設定
-	object_->GetWorldTransform().translate_ = objectPos;
+	targetRot_ = {
+		Normalize(velocity).y,
+		-std::numbers::pi_v<float>,
+		Normalize(velocity).x
+	};
 }
 
 void Enemy::Move() {
 
-	if (object_->GetWorldTransform().translate_.z <= exitPos_.z) {
+	//アニメーションタイマーを進ませる
+	animTimer_ += 1.0f / 60.0f;
+
+	if (animTimer_ >= moveAnimMaxTime_) {
 
 		state_ = EXIT;
+
+		animTimer_ = 0.0f;
 
 		return;
 	}
 
-	object_->GetWorldTransform().translate_.z -= 0.1f;
+	//タイマーの比率
+	float animRatio = animTimer_ / moveAnimMaxTime_;
 
+	targetPos_ = Lerp(standbyPos_, exitStartPos_, animRatio);
+
+	targetRot_ = Vector3(0.0f, -std::numbers::pi_v<float>, 0.0f);
 }
 
 void Enemy::Exit() {
@@ -310,17 +344,13 @@ void Enemy::Exit() {
 	//タイマーの比率
 	float animRatio = animTimer_ / exitAnimMaxTime_;
 
-	//オブジェクトの座標
-	Vector3 objectPos = object_->GetWorldTransform().translate_;
+	targetPos_ = EaseOut(exitStartPos_, exitPos_, animRatio, 2.0f);
 
-	Vector3 exitDirection = Normalize(Vector3(standbyPos_.x, standbyPos_.y, 0.0f));
+	Vector3 velocity = prePos_ - targetPos_ + Vector3(0.0f, 0.0f, 10.0f);
 
-	//出現座標
-	Vector3 exitPos = exitDirection * 24.0f + exitPos_;
-
-	//スタンバイ座標までイージングで移動
-	objectPos = EaseOut(objectPos, exitPos, animRatio, 0.1f);
-
-	//移動後座標を設定
-	object_->GetWorldTransform().translate_ = objectPos;
+	targetRot_ = {
+		Normalize(velocity).y,
+		-std::numbers::pi_v<float>,
+		Normalize(velocity).x
+	};
 }

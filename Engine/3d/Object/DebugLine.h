@@ -116,6 +116,8 @@ private:
 	///-------------------------------------------///
 public:
 
+	WorldTransform& GetWorldTransform() { return transform_; }
+
 	/// <summary>
 	/// 親オブジェクトの設定
 	/// </summary>

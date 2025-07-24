@@ -103,11 +103,23 @@ private:
 	//行動状態
 	STATE state_;
 
+	//エントリー状態の座標
+	Vector3 entryPos_;
+
 	//スタンバイ状態の座標
 	Vector3 standbyPos_;
 
+	//離脱開始座標
+	Vector3 exitStartPos_;
+
 	//離脱座標
 	Vector3 exitPos_;
+
+	Vector3 prePos_;
+
+	Vector3 targetPos_;
+
+	Vector3 targetRot_;
 
 	//削除可能フラグ
 	bool canRemove_;
@@ -117,6 +129,8 @@ private:
 
 	//エントリー時アニメーション終了時間
 	float entryAnimMaxTime_;
+
+	float moveAnimMaxTime_;
 
 	//離脱時アニメーション終了時間
 	float exitAnimMaxTime_;
@@ -136,10 +150,28 @@ public:
 	void SetPosition(Vector3 pos) { object_->GetWorldTransform().translate_ = pos; }
 
 	/// <summary>
+	/// エントリーの位置を設定します。
+	/// </summary>
+	/// <param name="pos">座標</param>
+	void SetEntryPos(Vector3 pos) { entryPos_ = pos; }
+
+	/// <summary>
 	/// スタンバイ状態の座標のセッター
 	/// </summary>
 	/// <param name="pos">座標</param>
 	void SetStandbyPos(Vector3 pos) { standbyPos_ = pos; }
+
+	/// <summary>
+	/// 離脱開始座標の設定
+	/// </summary>
+	/// <param name="pos">座標</param>
+	void SetExitStartPos(Vector3 pos) { exitStartPos_ = pos; }
+
+	/// <summary>
+	/// 離脱状態の座標の設定
+	/// </summary>
+	/// <param name="pos">座標</param>
+	void SetExitPos(Vector3 pos) { exitPos_ = pos; }
 
 	/// <summary>
 	/// 削除可能フラグのゲッター
