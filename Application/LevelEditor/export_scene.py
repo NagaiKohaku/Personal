@@ -70,7 +70,7 @@ class MYADDON_OT_export_scene(bpy.types.Operator, bpy_extras.io_utils.ExportHelp
         rot.z = math.degrees(rot.z)
 
         #トランスフォーム情報を表示
-        self.write_and_print(file,indent + "T %f %f %f" % (trans.x,trans.z,-trans.y))
+        self.write_and_print(file,indent + "T %f %f %f" % (trans.x,trans.y,trans.z))
         self.write_and_print(file,indent + "R %f %f %f" % (rot.x,rot.y,rot.z))
         self.write_and_print(file,indent + "S %f %f %f" % (scale.x,scale.y,scale.z))
         
@@ -152,7 +152,10 @@ class MYADDON_OT_export_scene(bpy.types.Operator, bpy_extras.io_utils.ExportHelp
         #シーンのオブジェクト1個分のjsonオブジェクト生成
         json_object = dict()
         #オブジェクト種類
-        json_object["type"] = object.type
+        if "type" in object: #カスタムプロパティで指定された場合
+            json_object["type"] = object["type"]
+        else:
+            json_object["type"] = object.type
         #オブジェクト名
         json_object["name"] = object.name
 
@@ -169,7 +172,7 @@ class MYADDON_OT_export_scene(bpy.types.Operator, bpy_extras.io_utils.ExportHelp
 
         #トランスフォーム情報をディクショナリに登録
         transform = dict()
-        transform["translation"] = (trans.x,trans.z,-trans.y)
+        transform["translation"] = (trans.x,trans.y,trans.z)
         transform["rotation"] = (rot.x,rot.y,rot.z)
         transform["scaling"] = (scale.x,scale.y,scale.z)
 

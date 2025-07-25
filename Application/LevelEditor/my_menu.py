@@ -3,6 +3,7 @@ from . import __init__
 from .stretch_vertex import MYADDON_OT_stretch_vertex
 from .create_ico_sphere import MYADDON_OT_create_ico_sphere
 from .export_scene import MYADDON_OT_export_scene
+from .spawn import MYADDON_OT_spawn_create_symbol
 
 # ブレンダーに登録するアドオン情報
 bl_info = {
@@ -37,6 +38,7 @@ class TOPBAR_MT_my_menu(bpy.types.Menu):
         self.layout.operator(MYADDON_OT_stretch_vertex.bl_idname,text=MYADDON_OT_stretch_vertex.bl_label)
         self.layout.operator(MYADDON_OT_create_ico_sphere.bl_idname,text=MYADDON_OT_create_ico_sphere.bl_label)
         self.layout.operator(MYADDON_OT_export_scene.bl_idname,text=MYADDON_OT_export_scene.bl_label)
+        self.layout.operator(MYADDON_OT_spawn_create_symbol.bl_idname,text=MYADDON_OT_spawn_create_symbol.bl_label)
         self.layout.separator()
 
     #既存のメニューにサブメニューを追加

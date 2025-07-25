@@ -38,6 +38,9 @@ private:
 	//レベルデータ
 	std::map<std::string, std::vector<ObjectData>> levelData_;
 
+	//自キャラ配列
+	std::vector<PlayerSpawnData> players_;
+
 	//ディレクトリパス
 	const std::string directory_ = "Resource/Json/LevelData/";
 

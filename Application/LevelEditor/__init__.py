@@ -24,6 +24,10 @@ from .create_ico_sphere import MYADDON_OT_create_ico_sphere
 
 from .export_scene import MYADDON_OT_export_scene
 
+from .spawn import MYADDON_OT_spawn_import_symbol
+
+from .spawn import MYADDON_OT_spawn_create_symbol
+
 from .add_filename import MYADDON_OT_add_filename
 
 from .add_collider import MYADDON_OT_add_collider
@@ -57,6 +61,8 @@ classes = (
     MYADDON_OT_stretch_vertex,
     MYADDON_OT_create_ico_sphere,
     MYADDON_OT_export_scene,
+    MYADDON_OT_spawn_import_symbol,
+    MYADDON_OT_spawn_create_symbol,
     MYADDON_OT_add_filename,
     MYADDON_OT_add_collider,
     MYADDON_OT_add_disabled,

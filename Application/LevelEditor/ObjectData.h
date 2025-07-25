@@ -20,3 +20,9 @@ struct ObjectData {
 	Vector3 rotation;
 	Vector3 scale;
 };
+
+//プレイヤーのスポーンデータ構造体
+struct PlayerSpawnData {
+	Vector3 position;
+	Vector3 rotation;
+};

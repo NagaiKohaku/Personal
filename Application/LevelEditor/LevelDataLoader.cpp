@@ -160,6 +160,27 @@ void LevelDataLoader::Load(const std::string& fileName) {
 			//オブジェクトをコンテナに追加
 			objectDataList.push_back(newObject);
 		}
+		else if (type.compare("PlayerSpawn") == 0) {
+
+			/// === PlayerSpawnの場合 === ///
+
+			PlayerSpawnData newData;
+
+			//トランスフォームのパラメータ読み込み
+			nlohmann::json& transform = object["transform"];
+
+			newData.position = {
+				static_cast<float>(transform["translation"][0]),
+				static_cast<float>(transform["translation"][2]),
+				static_cast<float>(transform["translation"][1])
+			};
+
+			newData.rotation = {
+				static_cast<float>(transform["rotation"][0]),
+				static_cast<float>(transform["rotation"][2]),
+				static_cast<float>(transform["rotation"][1])
+			};
+		}
 	}
 
 	//レベルデータにオブジェクトデータを追加
