@@ -6,10 +6,9 @@
 #include "3d/Camera/Camera.h"
 #include "3d/Object/Object3D.h"
 #include "3d/Object/DebugLine.h"
+#include "3d/Object/SkyBox.h"
 #include "3d/Particle/ParticleEmitter.h"
 #include "3d/Particle/EmitterGroup.h"
-
-#include "3d/Object/SkyBox.h"
 
 #include "Player/Player.h"
 #include "Enemy/EnemyManager.h"
@@ -80,4 +79,6 @@ private:
 
 	//ライン描画の地面
 	std::unique_ptr<LineGround> lineGround_;
+
+	std::unique_ptr<SkyBox> skyBox_;
 };

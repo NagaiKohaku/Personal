@@ -67,6 +67,10 @@ void GameScene::Initialize() {
 
 	lineGround_->Initialize();
 
+	skyBox_ = std::make_unique<SkyBox>();
+
+	skyBox_->Initialize("skyBox.dds");
+
 }
 
 ///=====================================================/// 
@@ -99,6 +103,8 @@ void GameScene::Update() {
 	bulletManager_->Update();
 
 	lineGround_->Update();
+
+	skyBox_->Update();
 }
 
 ///=====================================================/// 
@@ -116,6 +122,8 @@ void GameScene::Draw() {
 	bulletManager_->Draw();
 
 	lineGround_->Draw();
+
+	skyBox_->Draw();
 }
 
 ///=====================================================/// 
