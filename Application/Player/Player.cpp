@@ -82,7 +82,7 @@ void Player::Initialize(Camera* cameraPtr, BulletManager* bulletPtr) {
 	collider_->SetTag(Collider::Tag::PLAYER);
 
 	//大きさの設定
-	collider_->SetRadius(1.5f);
+	collider_->SetRadius(0.5f);
 
 	/// === レティクルの生成 === ///
 

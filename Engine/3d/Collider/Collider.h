@@ -63,10 +63,10 @@ protected:
 	Tag tag_;
 
 	//衝突相手の識別タグ
-	Tag hitTag_;
+	std::vector<Tag> hitTag_;
 
 	//1フレーム前の衝突相手の識別タグ
-	Tag hitTagBefore_;
+	std::vector<Tag> hitTagBefore_;
 
 	//ワールドトランスフォーム
 	WorldTransform worldTransform_;
@@ -116,7 +116,10 @@ public:
 	/// 衝突相手の識別タグを取得
 	/// </summary>
 	/// <returns>タグ</returns>
-	Tag GetHitTag() const { return hitTag_; }
+	std::vector<Tag> GetHitTag() const { return hitTag_; }
+
+
+	bool CheckHitTag(Tag tag) const { return std::find(hitTag_.begin(), hitTag_.end(), tag) != hitTag_.end(); }
 
 	/// <summary>
 	/// アクティブフラグを取得
@@ -146,7 +149,7 @@ public:
 	/// 接触相手の識別タグの設定
 	/// </summary>
 	/// <param name="hitTag">タグ</param>
-	void SetHitTag(Tag hitTag) { hitTag_ = hitTag; }
+	void AddHitTag(Tag hitTag) { hitTag_.push_back(hitTag); }
 
 	/// <summary>
 	/// 描画フラグの設定

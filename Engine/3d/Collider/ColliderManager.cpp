@@ -83,8 +83,8 @@ void ColliderManager::CheckAllCollision() {
 			if (CheckPair(*it1, *it2)) {
 
 				//接触相手のタグを登録
-				(*it1)->SetHitTag((*it2)->GetTag());
-				(*it2)->SetHitTag((*it1)->GetTag());
+				(*it1)->AddHitTag((*it2)->GetTag());
+				(*it2)->AddHitTag((*it1)->GetTag());
 			}
 		}
 	}

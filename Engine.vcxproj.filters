@@ -262,6 +262,7 @@
     <ClCompile Include="Application\Ground\LineGround.cpp">
       <Filter>Application\Ground</Filter>
     </ClCompile>
+    <ClCompile Include="Application\Bullet\EnemyBullet.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application\Bullet\BulletBase.h">
@@ -495,6 +496,7 @@
     <ClInclude Include="Application\Ground\LineGround.h">
       <Filter>Application\Ground</Filter>
     </ClInclude>
+    <ClInclude Include="Application\Bullet\EnemyBullet.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resource\Shader\DebugObject.hlsli">

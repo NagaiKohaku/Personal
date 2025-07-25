@@ -37,17 +37,14 @@ void GameScene::Initialize() {
 
 	/// === オブジェクトマネージャーの生成 === ///
 
+	//エネミーマネージャーの生成
+	enemyManager_ = std::make_unique<EnemyManager>();
+
 	//バレットマネージャーの生成
 	bulletManager_ = std::make_unique<BulletManager>();
 
 	//バレットマネージャーの初期化
 	bulletManager_->Initialize();
-
-	//エネミーマネージャーの生成
-	enemyManager_ = std::make_unique<EnemyManager>();
-
-	//エネミーマネージャーの初期化
-	enemyManager_->Initialize(camera_.get());
 
 	/// === オブジェクトの生成 === ///
 
@@ -56,6 +53,9 @@ void GameScene::Initialize() {
 
 	//プレイヤーの初期化
 	player_->Initialize(camera_.get(), bulletManager_.get());
+
+	//エネミーマネージャーの初期化
+	enemyManager_->Initialize(camera_.get(), bulletManager_.get(), player_.get());
 
 	//追尾カメラの生成
 	followCamera_ = std::make_unique<FollowCamera>();

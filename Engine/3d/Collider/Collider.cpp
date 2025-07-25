@@ -2,6 +2,8 @@
 
 #include "Math/MakeMatrixMath.h"
 
+#include "algorithm"
+
 ///=====================================================/// 
 /// 初期化
 ///=====================================================///
@@ -17,10 +19,10 @@ void Collider::Initialize(WorldTransform* parent) {
 	tag_ = NONE;
 
 	//衝突相手の識別タグの初期化
-	hitTag_ = NONE;
+	hitTag_.clear();
 
 	//1フレーム前の接触相手の識別タグの初期化
-	hitTagBefore_ = NONE;
+	hitTagBefore_.clear();
 
 	//描画フラグの設定
 	isDraw_ = false;
@@ -75,14 +77,17 @@ void Collider::Update() {
 
 	/// === 接触判定の更新 === ///
 
+	std::sort(hitTag_.begin(), hitTag_.end());
+
 	//タグが更新されていなければ
-	if (hitTag_ != NONE) {
+	if (hitTag_.size() > 0) {
 		isCollision_ = true;
 	} else {
 		isCollision_ = false;
 	}
 
 	//1フレーム前と接触相手のタグに変更があれば
+
 	if (hitTag_ != hitTagBefore_) {
 		isTrigger_ = true;
 	} else {
@@ -100,7 +105,7 @@ void Collider::Update() {
 	}
 
 	//接触タグのリセット
-	hitTag_ = NONE;
+	hitTag_.clear();
 }
 
 ///=====================================================/// 

@@ -2,6 +2,7 @@
 
 #include "Bullet/TankBullet.h"
 #include "Bullet/JetBullet.h"
+#include "Bullet/EnemyBullet.h"
 
 ///=====================================================/// 
 /// 初期化
@@ -75,6 +76,10 @@ std::unique_ptr<BulletBase> BulletManager::CreateBullet(BULLETTYPE type) {
 	case BulletManager::JET:
 
 		newBullet = std::make_unique<JetBullet>();
+		break;
+	case BulletManager::ENEMY:
+
+		newBullet = std::make_unique<EnemyBullet>();
 		break;
 	}
 
