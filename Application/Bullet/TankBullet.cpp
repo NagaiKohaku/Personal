@@ -137,7 +137,7 @@ void TankBullet::IsCollision() {
 	if (collider_->GetIsTrigger()) {
 
 		//接触相手のタグがENEMYであれば
-		if (collider_->GetHitTag() == Collider::Tag::ENEMY) {
+		if (collider_->CheckHitTag(Collider::Tag::ENEMY)) {
 
 			//移動量を0にする
 			velocity_ = { 0.0f,0.0f,0.0f };

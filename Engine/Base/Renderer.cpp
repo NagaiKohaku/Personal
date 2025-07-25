@@ -127,9 +127,9 @@ void Renderer::ClearOffScreenQueue() {
 
 bool Renderer::isDebug() {
 
-#ifdef DEBUG
+#ifdef _DEBUG
 	return true;
-#endif // DEBUG
+#endif // _DEBUG
 
 	return false;
 }

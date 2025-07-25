@@ -1,5 +1,8 @@
 #include "Enemy.h"
 
+#include "Bullet/BulletManager.h"
+#include "Player/Player.h"
+
 #include "Math/Easing.h"
 #include "Math/Random.h"
 
@@ -9,75 +12,16 @@
 ///=====================================================/// 
 /// 初期化
 ///=====================================================///
-void Enemy::Initialize(Camera* ptr) {
+void Enemy::Initialize(Camera* cameraPtr, BulletManager* bulletPtr, Player* playerPtr, ObjectData objectData) {
 
 	//カメラのポインタを取得
-	camera_ = ptr;
+	camera_ = cameraPtr;
 
-	/// === オブジェクトの生成 === ///
+	//バレットマネージャーのポインタを取得
+	bulletManager_ = bulletPtr;
 
-	//生成
-	object_ = std::make_unique<Object3D>();
-
-	//初期化
-	object_->Initialize();
-
-	//座標設定
-	object_->GetWorldTransform().translate_ = { 0.0f,1.0f,0.0f };
-
-	//モデルの設定
-	object_->SetModel("Cube");
-
-	/// === コライダーの生成 === ///
-
-	//生成
-	collider_ = std::make_unique<SphereCollider>();
-
-	//初期化
-	collider_->Initialize(&object_->GetWorldTransform());
-
-	//タグの設定
-	collider_->SetTag(Collider::Tag::ENEMY);
-
-	//大きさの設定
-	collider_->SetRadius(1.5f);
-
-	/// === エミッターの生成 === ///
-
-	//死亡時エミッターの生成
-	explosiveEmitter_ = std::make_unique<EmitterGroup>();
-
-	//死亡時エミッターの初期化
-	explosiveEmitter_->Initialize(camera_);
-
-	//死亡時エミッターのエミッター情報読み込み
-	explosiveEmitter_->LoadEmitter("BlockExplosive");
-
-	/// === 他変数の初期化 === ///
-
-	//行動状態はエントリー状態で初期化
-	state_ = ENTRY;
-
-	//アニメーションタイマーの初期化
-	animTimer_ = 0.0f;
-
-	//エントリー時アニメーション終了時間の初期化
-	entryAnimMaxTime_ = 1.0f;
-
-	moveAnimMaxTime_ = 5.0f;
-
-	//離脱時アニメーション終了時間の初期化
-	exitAnimMaxTime_ = 2.0f;
-
-	//死亡時アニメーション終了時間の初期化
-	deadAnimMaxTime_ = 5.0f;
-
-}
-
-void Enemy::Initialize(Camera* ptr, ObjectData objectData) {
-
-	//カメラのポインタを取得
-	camera_ = ptr;
+	//プレイヤーのポインタを取得
+	player_ = playerPtr;
 
 	/// === オブジェクトの生成 === ///
 
@@ -120,16 +64,29 @@ void Enemy::Initialize(Camera* ptr, ObjectData objectData) {
 	//アニメーションタイマーの初期化
 	animTimer_ = 0.0f;
 
-	//エントリー時アニメーション終了時間の初期化
+	attackTimer_ = 0.0f;
+
+	blinkTimer_ = 0.0f;
+
+	//アニメーション終了時間の初期化
 	entryAnimMaxTime_ = 1.0f;
 
 	moveAnimMaxTime_ = 5.0f;
 
-	//離脱時アニメーション終了時間の初期化
+	attackAnimMaxTime_ = 2.0f;
+
 	exitAnimMaxTime_ = 2.0f;
 
-	//死亡時アニメーション終了時間の初期化
 	deadAnimMaxTime_ = 5.0f;
+
+	//点滅フラグの初期化
+	isBlink_ = false;
+
+	//攻撃間隔の初期化
+	attackFrequency_ = 1.0f;
+
+	//点滅間隔の初期化
+	blinkFrequency_ = 2.0f;
 
 }
 
@@ -149,37 +106,49 @@ void Enemy::Update() {
 		Entry();
 
 		break;
-	case Enemy::STANDBY:
-
-		break;
 	case Enemy::MOVE:
 
 		//移動処理
 		Move();
 
 		break;
+	case Enemy::ATTACK:
+
+		//攻撃処理
+		Attack();
+
+		break;
 	case Enemy::EXIT:
 
-		//離脱時の処理
+		//離脱処理
 		Exit();
 
 		break;
 	case Enemy::DEAD:
 
-		//死亡時の処理
+		//死亡処理
 		Dead();
 
 		break;
 	}
 
+	//点滅処理
+	Blink();
+
+	//前フレームの座標を取得
 	prePos_ = object_->GetWorldTransform().translate_;
 
+	//目標座標に移動
 	object_->GetWorldTransform().translate_ = Lerp(object_->GetWorldTransform().translate_, targetPos_, 0.1f);
 
+	//目標角度に回転
 	object_->GetWorldTransform().rotate_ = Lerp(object_->GetWorldTransform().rotate_, targetRot_, 0.1f);
 
 	//オブジェクトの更新
 	object_->Update();
+
+	//エミッターの更新処理
+	explosiveEmitter_->Update();
 
 	//コライダーの処理
 	collider_->Update();
@@ -206,10 +175,10 @@ void Enemy::Draw() {
 void Enemy::IsCollision() {
 
 	//接触状態であれば
-	if (collider_->GetIsCollision()) {
+	if (collider_->GetIsTrigger()) {
 
 		//接触相手のタグがPLAYERBULLETであれば
-		if (collider_->GetHitTag() == Collider::Tag::PLAYERBULLET) {
+		if (collider_->CheckHitTag(Collider::Tag::PLAYERBULLET)) {
 
 			//死亡状態に変更
 			state_ = DEAD;
@@ -244,25 +213,18 @@ void Enemy::Dead() {
 	//タイマーの比率
 	float animRatio = animTimer_ / deadAnimMaxTime_;
 
-	//下を向く
-	object_->GetWorldTransform().rotate_ = { 1.0f,0.0f,0.0f };
-
-	//下に落ちていく
-	object_->GetWorldTransform().translate_.y -= 0.1f;
-
-	//エミッターを中心座標に移動させる
-	explosiveEmitter_->GetWorldTransform().translate_ = object_->GetWorldTransform().translate_;
-
-	//エミッターの更新処理
-	explosiveEmitter_->Update();
-
 	Vector3 objectPos = object_->GetWorldTransform().translate_;
 
-	targetPos_ = EaseOut(objectPos, objectPos + Vector3(0.0f, -1.0f, -10.0f), animRatio, 4.0f);
+	//エミッターを中心座標に移動させる
+	explosiveEmitter_->GetWorldTransform().translate_ = objectPos;
 
+	//下方向に落ちていくように設定
+	targetPos_ = Lerp(objectPos, objectPos + Vector3(0.0f, -5.0f, -10.0f), animRatio);
+
+	//Z軸で回転するように設定
 	targetRot_ = Lerp(
 		Vector3(0.0f, -std::numbers::pi_v<float>, 0.0f),
-		Vector3(0.0f, -std::numbers::pi_v<float>, std::numbers::pi_v<float> *100.0f),
+		Vector3(0.0f, -std::numbers::pi_v<float> * 10.0f, std::numbers::pi_v<float> * 10.0f),
 		animRatio
 	);
 
@@ -291,10 +253,13 @@ void Enemy::Entry() {
 	//タイマーの比率
 	float animRatio = animTimer_ / entryAnimMaxTime_;
 
+	//待機座標まで移動
 	targetPos_ = EaseOutBack(entryPos_, standbyPos_, animRatio, 1.0f);
 
+	//前方を向くように設定
 	Vector3 velocity = prePos_ - targetPos_ + Vector3(0.0f, 0.0f, 10.0f);
 
+	//移動方向を向くように設定
 	targetRot_ = {
 		Normalize(velocity).y,
 		-std::numbers::pi_v<float>,
@@ -302,16 +267,31 @@ void Enemy::Entry() {
 	};
 }
 
+///=====================================================/// 
+/// 移動処理
+///=====================================================///
 void Enemy::Move() {
 
 	//アニメーションタイマーを進ませる
 	animTimer_ += 1.0f / 60.0f;
 
+	//アニメーションタイマーが終了時間に達したら
 	if (animTimer_ >= moveAnimMaxTime_) {
 
-		state_ = EXIT;
+		//攻撃状態に設定
+		state_ = ATTACK;
 
+		//アニメーションタイマーをリセット
 		animTimer_ = 0.0f;
+
+		//攻撃状態になったら即攻撃できるように設定
+		attackTimer_ = attackFrequency_;
+
+		//点滅を終了
+		isBlink_ = false;
+
+		//オブジェクトの色を元に戻す
+		object_->GetModel()->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
 
 		return;
 	}
@@ -319,11 +299,67 @@ void Enemy::Move() {
 	//タイマーの比率
 	float animRatio = animTimer_ / moveAnimMaxTime_;
 
+	//離脱開始座標まで移動
 	targetPos_ = Lerp(standbyPos_, exitStartPos_, animRatio);
 
+	//前方を向くように設定
 	targetRot_ = Vector3(0.0f, -std::numbers::pi_v<float>, 0.0f);
+
+	//終了2秒前になったら
+	if (animTimer_ >= moveAnimMaxTime_ - 2.0f) {
+
+		//点滅を開始する
+		isBlink_ = true;
+	}
 }
 
+///=====================================================/// 
+/// 攻撃処理
+///=====================================================///
+void Enemy::Attack() {
+
+	//アニメーションタイマーを進ませる
+	animTimer_ += 1.0f / 60.0f;
+
+	//攻撃タイマーを進ませる
+	attackTimer_ += 1.0f / 60.0f;
+
+	//アニメーションタイマーが終了時間に達したら
+	if (animTimer_ >= attackAnimMaxTime_) {
+
+		//離脱状態に設定
+		state_ = EXIT;
+
+		//アニメーションタイマーをリセット
+		animTimer_ = 0.0f;
+
+		return;
+	}
+
+	//タイマーの比率
+	float animRatio = animTimer_ / attackAnimMaxTime_;
+
+	//攻撃可能になったら
+	if (attackTimer_ >= attackFrequency_) {
+
+		//プレイヤーへの方向
+		Vector3 direction = player_->GetWorldPos() - object_->GetWorldTransform().translate_;
+
+		//プレイヤーに向かって弾を発射
+		bulletManager_->AddBullet(
+			object_->GetWorldTransform().translate_,
+			Normalize(direction),
+			BulletManager::BULLETTYPE::ENEMY
+		);
+
+		//攻撃タイマーのリセット
+		attackTimer_ = 0.0f;
+	}
+}
+
+///=====================================================/// 
+/// 離脱処理
+///=====================================================///
 void Enemy::Exit() {
 
 	//アニメーションタイマーを進ませる
@@ -344,13 +380,45 @@ void Enemy::Exit() {
 	//タイマーの比率
 	float animRatio = animTimer_ / exitAnimMaxTime_;
 
+	//離脱座標まで移動
 	targetPos_ = EaseOut(exitStartPos_, exitPos_, animRatio, 2.0f);
 
+	//前方を向くように設定
 	Vector3 velocity = prePos_ - targetPos_ + Vector3(0.0f, 0.0f, 10.0f);
 
+	//移動方向を向くように設定
 	targetRot_ = {
 		Normalize(velocity).y,
 		-std::numbers::pi_v<float>,
 		Normalize(velocity).x
 	};
+}
+
+///=====================================================/// 
+/// 点滅処理
+///=====================================================///
+void Enemy::Blink() {
+
+	//フラグがfalseであれば
+	if (!isBlink_) {
+
+		//早期リターン
+		return;
+	}
+
+	//タイマーを進ませる
+	blinkTimer_ += 1.0f / 60.0f;
+
+	//0.0f~1.0fの間を往復
+	float blink = (sinf(blinkTimer_ * 2.0f * std::numbers::pi_v<float> * blinkFrequency_) + 1.0f) * 0.5f;
+
+	//オブジェクトの色情報
+	Vector4 color = object_->GetModel()->GetColor();
+
+	//赤色に点滅するように設定
+	color.y = 1.0f - blink;
+	color.z = 1.0f - blink;
+
+	//色情報を設定
+	object_->GetModel()->SetColor(color);
 }

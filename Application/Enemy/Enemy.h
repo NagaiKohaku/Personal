@@ -9,6 +9,12 @@
 
 #include "memory"
 
+/// === 前方宣言 === ///
+
+class BulletManager;
+
+class Player;
+
 ///=====================================================/// 
 /// エネミークラス
 ///=====================================================///
@@ -22,8 +28,8 @@ private:
 	//行動状態
 	enum STATE {
 		ENTRY,
-		STANDBY,
 		MOVE,
+		ATTACK,
 		EXIT,
 		DEAD
 	};
@@ -36,12 +42,7 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize(Camera* ptr);
-
-	/// <summary>
-	/// 初期化
-	/// </summary>
-	void Initialize(Camera* ptr, ObjectData objectData);
+	void Initialize(Camera* cameraPtr, BulletManager* bulletPtr, Player* playerPtr, ObjectData objectData);
 
 	/// <summary>
 	/// 更新
@@ -79,9 +80,19 @@ private:
 	void Move();
 
 	/// <summary>
+	/// 攻撃処理
+	/// </summary>
+	void Attack();
+
+	/// <summary>
 	/// 離脱時処理
 	/// </summary>
 	void Exit();
+
+	/// <summary>
+	/// 点滅処理
+	/// </summary>
+	void Blink();
 
 	///-------------------------------------------/// 
 	/// メンバ変数
@@ -90,6 +101,12 @@ private:
 
 	//カメラ
 	Camera* camera_;
+
+	//バレットマネージャー
+	BulletManager* bulletManager_;
+
+	//プレイヤー
+	Player* player_;
 
 	//オブジェクト
 	std::unique_ptr<Object3D> object_ = nullptr;
@@ -115,10 +132,13 @@ private:
 	//離脱座標
 	Vector3 exitPos_;
 
+	//前フレームの座標
 	Vector3 prePos_;
 
+	//移動目標座標
 	Vector3 targetPos_;
 
+	//回転目標角度
 	Vector3 targetRot_;
 
 	//削除可能フラグ
@@ -127,16 +147,35 @@ private:
 	//アニメーションタイマー
 	float animTimer_;
 
+	//攻撃タイマー
+	float attackTimer_;
+
+	//点滅タイマー
+	float blinkTimer_;
+
 	//エントリー時アニメーション終了時間
 	float entryAnimMaxTime_;
 
+	//移動時のアニメーション終了時間
 	float moveAnimMaxTime_;
+
+	//攻撃時のアニメーション終了時間
+	float attackAnimMaxTime_;
+
+	//攻撃間隔
+	float attackFrequency_;
 
 	//離脱時アニメーション終了時間
 	float exitAnimMaxTime_;
 
 	//死亡時アニメーション終了時間
 	float deadAnimMaxTime_;
+
+	//点滅フラグ
+	bool isBlink_;
+
+	//点滅間隔
+	float blinkFrequency_;
 
 	///-------------------------------------------///
 	/// ゲッター・セッター

@@ -16,7 +16,8 @@ public:
 
 	enum BULLETTYPE {
 		TANK,
-		JET
+		JET,
+		ENEMY
 	};
 
 	///-------------------------------------------/// 

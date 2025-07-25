@@ -2,6 +2,9 @@
 
 #include "3d/Collider/ColliderManager.h"
 
+#include "Bullet/BulletManager.h"
+#include "Player/Player.h"
+
 #include "LevelEditor/LevelDataLoader.h"
 
 #include "Math/Random.h"
@@ -11,13 +14,17 @@
 ///=====================================================/// 
 /// 初期化
 ///=====================================================///
-void EnemyManager::Initialize(Camera* ptr) {
+void EnemyManager::Initialize(Camera* cameraPtr, BulletManager* bulletPtr, Player* playerPtr) {
 
 	//レベルデータローダーのインスタンスを取得
 	levelDataLoader_ = LevelDataLoader::GetInstance();
 
 	//カメラポインタを取得
-	camera_ = ptr;
+	camera_ = cameraPtr;
+
+	bulletManager_ = bulletPtr;
+
+	player_ = playerPtr;
 
 	//タイマーの設定
 	spawnTimer_ = 0.0f;
@@ -93,7 +100,7 @@ void EnemyManager::SpawnUpdate() {
 			Vector3 standbyPos = objectDatas[i].position;
 
 			//スポーン方向
-			Vector3 spawnDirection = Normalize(Vector3(standbyPos.x,standbyPos.y,0.0f));
+			Vector3 spawnDirection = Normalize(Vector3(standbyPos.x, standbyPos.y, 0.0f));
 
 			//出現座標
 			Vector3 entryPos = spawnDirection * (spawnDistance_ * 10.0f) + standbyPos;
@@ -116,7 +123,7 @@ void EnemyManager::Spawn(Vector3 entryPos, Vector3 standbyPos, ObjectData object
 	std::unique_ptr<Enemy> newEnemy = std::make_unique<Enemy>();
 
 	//初期化
-	newEnemy->Initialize(camera_,objectData);
+	newEnemy->Initialize(camera_, bulletManager_, player_, objectData);
 
 	//初期座標を設定
 	newEnemy->SetPosition(entryPos);

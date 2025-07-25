@@ -11,6 +11,10 @@
 
 class LevelDataLoader;
 
+class BulletManager;
+
+class Player;
+
 ///=====================================================/// 
 /// エネミーマネージャークラス
 ///=====================================================///
@@ -25,7 +29,7 @@ public:
 	/// 初期化
 	/// </summary>
 	/// <param name="ptr">カメラポインタ</param>
-	void Initialize(Camera* ptr);
+	void Initialize(Camera* cameraPtr, BulletManager* bulletPtr, Player* playerPtr);
 
 	/// <summary>
 	/// 更新
@@ -66,6 +70,11 @@ private:
 
 	//カメラ
 	Camera* camera_;
+
+	//バレットマネージャー
+	BulletManager* bulletManager_;
+
+	Player* player_;
 
 	//レベルデータローダー
 	LevelDataLoader* levelDataLoader_;
