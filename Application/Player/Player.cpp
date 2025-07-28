@@ -26,9 +26,7 @@ void Player::Initialize(Camera* cameraPtr, BulletManager* bulletPtr) {
 	//レベルデータローダーを取得
 	levelDataLoader_ = LevelDataLoader::GetInstance();
 
-	levelDataLoader_->Load("JetPlayer.json");
-
-	objectData_ = levelDataLoader_->PickObjectData("JetPlayer.json", ObjectType::PLAYER);
+	objectData_ = levelDataLoader_->PickObjectData("PlayerObject/JetPlayer.json", ObjectType::PLAYER);
 
 	/// === オブジェクトの生成 === ///
 

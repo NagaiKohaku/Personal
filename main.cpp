@@ -20,6 +20,7 @@
 #include "3d/Collider/ColliderManager.h"
 
 #include "Scene/SceneManager.h"
+#include "LevelEditor/LevelDataLoader.h"
 
 //Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
@@ -108,6 +109,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//コライダーマネージャー
 	ColliderManager* colliderManager = ColliderManager::GetInstance();
 	colliderManager->Initialize();
+
+	//レベルデータローダー
+	LevelDataLoader* levelDataLoder = LevelDataLoader::GetInstance();
+	levelDataLoder->Initialize();
 
 	//シーンマネージャー
 	SceneManager* sceneManager = SceneManager::GetInstance();
