@@ -151,6 +151,11 @@ private:
 public:
 
 	/// <summary>
+	/// デストラクタ
+	/// </summary>
+	~ParticleEmitter();
+
+	/// <summary>
 	/// 初期化
 	/// </summary>
 	/// <param name="groupName">グループ名</param>

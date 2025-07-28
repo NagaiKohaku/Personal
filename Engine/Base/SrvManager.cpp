@@ -44,16 +44,24 @@ void SrvManager::PreDraw() {
 ///=====================================================///
 uint32_t SrvManager::Allocate() {
 
+	//NOTE:InstancingDataを使用する使用するオブジェクトが増えると解放されるまでに最大数に達するかも
+
 	//SRV番号が最大数を越えていないかの確認
-	assert(kMaxSRVCount_ > useIndex_);
+	assert(kMaxSRVCount_ > currentIndex_);
 
-	//現在のsrv番号を返す
-	int index = useIndex_;
+	//解放済みメモリがあれば
+	if (!freeIndices_.empty()) {
 
-	//1つずらした番号を確保する
-	useIndex_++;
+		//メモリ番号を再利用
+		uint32_t index = freeIndices_.front();
 
-	return index;
+		freeIndices_.pop();
+
+		return index;
+	}
+
+	//新しくメモリ確保
+	return currentIndex_++;
 }
 
 ///=====================================================/// 
@@ -62,11 +70,19 @@ uint32_t SrvManager::Allocate() {
 bool SrvManager::AllocateCheck() {
 
 	//SRV番号が最大数を越えていないかの確認
-	if (kMaxSRVCount_ > useIndex_) {
+	if (kMaxSRVCount_ > currentIndex_) {
 		return true;
 	}
 
 	return false;
+}
+
+///=====================================================/// 
+/// メモリ解放
+///=====================================================///
+void SrvManager::AllocateFree(uint32_t index) {
+
+	freeIndices_.push(index);
 }
 
 ///=====================================================/// 
