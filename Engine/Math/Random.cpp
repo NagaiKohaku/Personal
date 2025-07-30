@@ -1,5 +1,12 @@
 #include "Random.h"
 
+int RandomInt(int min, int max) {
+	std::random_device seedGenerator;
+	std::mt19937 randomEngine(seedGenerator());
+	std::uniform_int_distribution<> dist(min, max);
+	return dist(randomEngine);
+}
+
 float RandomFloat(float min, float max) {
 	std::random_device seedGenerator;
 	std::mt19937 randomEngine(seedGenerator());

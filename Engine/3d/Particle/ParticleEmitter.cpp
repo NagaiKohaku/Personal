@@ -26,6 +26,15 @@ const uint32_t ParticleEmitter::kNumMaxInstance = 1000;
 const float ParticleEmitter::kDeltaTime = 1.0f / 60.0f;
 
 ///=====================================================/// 
+/// デストラクタ
+///=====================================================///
+ParticleEmitter::~ParticleEmitter() {
+
+	//解放されるメモリ番号を登録
+	srvManager_->AllocateFree(srvIndex_);
+}
+
+///=====================================================/// 
 /// 初期化
 ///=====================================================///
 void ParticleEmitter::Initialize(const std::string& groupName, const std::string& fileName, Camera* camera) {

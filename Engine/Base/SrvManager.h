@@ -4,6 +4,7 @@
 
 #include "cstdint"
 #include "wrl.h"
+#include "queue"
 
 /// === 前方宣言 === ///
 class DirectXCommon;
@@ -18,7 +19,7 @@ class SrvManager {
 	///-------------------------------------------///
 public:
 
-	//最大SRV数(最大テクスチャ枚数)
+	//最大SRV数
 	static const uint32_t kMaxSRVCount_ = 512;
 
 	///-------------------------------------------/// 
@@ -53,6 +54,12 @@ public:
 	/// </summary>
 	/// <returns>フラグ</returns>
 	bool AllocateCheck();
+
+	/// <summary>
+	/// メモリ解放
+	/// </summary>
+	/// <param name="index">メモリ番号</param>
+	void AllocateFree(uint32_t index);
 
 	/// <summary>
 	/// SRV生成(テクスチャ用)
@@ -94,8 +101,11 @@ private:
 	//DirectX基底
 	DirectXCommon* directXCommon = nullptr;
 
+	//解放済みSRV番号
+	std::queue<uint32_t> freeIndices_;
+
 	//現在のSRV番号
-	uint32_t useIndex_ = 0;
+	uint32_t currentIndex_ = 0;
 
 	//SRV用のデスクリプタサイズ
 	uint32_t srvDescriptorSize_;

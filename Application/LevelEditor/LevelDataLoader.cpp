@@ -4,6 +4,7 @@
 
 #include "json.hpp"
 #include "fstream"
+#include "filesystem"
 
 ///=====================================================/// 
 /// シングルトンインスタンスの取得
@@ -11,6 +12,19 @@
 LevelDataLoader* LevelDataLoader::GetInstance() {
 	static LevelDataLoader instance;
 	return &instance;
+}
+
+void LevelDataLoader::Initialize() {
+
+	for (const auto& entry : std::filesystem::recursive_directory_iterator(directory_)) {
+
+		if (entry.is_regular_file() && entry.path().extension() == ".json") {
+
+			std::string relativePath = std::filesystem::relative(entry.path(), directory_).generic_string();
+
+			Load(relativePath);
+		}
+	}
 }
 
 ///=====================================================/// 
@@ -169,7 +183,7 @@ void LevelDataLoader::Load(const std::string& fileName) {
 ///=====================================================/// 
 /// オブジェクトの数を取得
 ///=====================================================///
-const int LevelDataLoader::GetObjectCount(const std::string& fileName, const ObjectType type) const {
+int LevelDataLoader::GetObjectCount(const std::string& fileName, const ObjectType type){
 
 	//ファイル名が存在しない場合は0を返す
 	if (levelData_.count(fileName) == 0) {
@@ -192,20 +206,35 @@ const int LevelDataLoader::GetObjectCount(const std::string& fileName, const Obj
 	return count;
 }
 
+int LevelDataLoader::GetObjectDataCount(const std::string& directoryName) {
+
+	int count = 0;
+
+	for (const auto& [key, value] : levelData_) {
+
+		if (key.starts_with(directoryName)) {
+
+			count++;
+		}
+	}
+
+	return count;
+}
+
 ///=====================================================/// 
 /// 指定したタイプのオブジェクトデータを取得
 ///=====================================================///
-const std::vector<ObjectData>& LevelDataLoader::PickObjectData(const std::string& fileName, const ObjectType type) const {
+std::vector<ObjectData> LevelDataLoader::PickObjectData(const std::string& fileName, const ObjectType type){
 
 	//ファイル名が存在しない場合は空のデータを返す
 	if (levelData_.count(fileName) == 0) {
 
-		static std::vector<ObjectData> emptyData;
+		std::vector<ObjectData> emptyData;
 
 		return emptyData;
 	}
 
-	static std::vector<ObjectData> pickedData;
+	std::vector<ObjectData> pickedData;
 
 	pickedData.clear();
 

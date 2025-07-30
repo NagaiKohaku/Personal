@@ -74,10 +74,14 @@ private:
 	//バレットマネージャー
 	BulletManager* bulletManager_;
 
+	//プレイヤー
 	Player* player_;
 
 	//レベルデータローダー
 	LevelDataLoader* levelDataLoader_;
+
+	//ディレクトリパス
+	std::string directoryPath_;
 
 	//エネミーリスト
 	std::list<std::unique_ptr<Enemy>> enemies_;

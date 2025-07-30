@@ -25,6 +25,16 @@ public:
 	static LevelDataLoader* GetInstance();
 
 	/// <summary>
+	/// 初期化
+	/// </summary>
+	void Initialize();
+
+	///-------------------------------------------/// 
+	/// クラス内処理関数
+	///-------------------------------------------///
+private:
+
+	/// <summary>
 	/// データの読み込み
 	/// </summary>
 	/// <param name="filePath">ファイルパス</param>
@@ -50,7 +60,7 @@ public:
 	/// レベルデータを取得
 	/// </summary>
 	/// <returns>レベルデータ</returns>
-	const std::map<std::string, std::vector<ObjectData>>& GetLevelData() const {
+	std::map<std::string, std::vector<ObjectData>>& GetLevelData(){
 		return levelData_;
 	}
 
@@ -60,7 +70,14 @@ public:
 	/// <param name="fileName">ファイル名</param>
 	/// <param name="type">タイプ</param>
 	/// <returns>オブジェクトの数</returns>
-	const int GetObjectCount(const std::string& fileName, const ObjectType type) const;
+	int GetObjectCount(const std::string& fileName, const ObjectType type);
+
+	/// <summary>
+	/// オブジェクトデータの要素数を取得
+	/// </summary>
+	/// <param name="directoryName">ディレクトリ名</param>
+	/// <returns>要素数</returns>
+	int GetObjectDataCount(const std::string& directoryName);
 
 	/// <summary>
 	/// 指定したタイプのオブジェクトデータを取得
@@ -68,5 +85,6 @@ public:
 	/// <param name="fileName">ファイル名</param>
 	/// <param name="type">タイプ</param>
 	/// <returns>オブジェクトデータ</returns>
-	const std::vector<ObjectData>& PickObjectData(const std::string& fileName, const ObjectType type) const;
+	std::vector<ObjectData> PickObjectData(const std::string& fileName, const ObjectType type);
+
 };

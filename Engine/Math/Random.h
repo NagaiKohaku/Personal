@@ -6,6 +6,8 @@
 #include "Math/Vector3.h"
 #include "Math/Vector4.h"
 
+int RandomInt(int min, int max);
+
 float RandomFloat(float min, float max);
 
 Vector2 RandomVector2(Vector2 min, Vector2 max);
