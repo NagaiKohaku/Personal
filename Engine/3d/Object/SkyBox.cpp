@@ -208,13 +208,11 @@ void SkyBox::Initialize(std::string filePath) {
 
 	//座標変換行列データの設定
 	WVPData_->WVP = MakeIdentity4x4();
-	WVPData_->World = MakeIdentity4x4();
-	WVPData_->WorldInverseTranspose = MakeIdentity4x4();
 
 	//トランスフォームの初期化
 	transform_.Initialize();
 
-	transform_.scale_ = { 10000.0f,10000.0f,10000.0f };
+	transform_.scale_ = { 100.0f,100.0f,100.0f };
 
 	//今持っているカメラをデフォルトカメラに設定
 	camera_ = skyBoxCommon_->GetCamera();
@@ -242,8 +240,6 @@ void SkyBox::Update() {
 
 	//座標変換行列データの設定
 	WVPData_->WVP = worldViewProjectionMatrix;
-	WVPData_->World = transform_.GetWorldMatrix();
-	WVPData_->WorldInverseTranspose = Inverse4x4(transform_.GetWorldMatrix());
 }
 
 ///=====================================================/// 

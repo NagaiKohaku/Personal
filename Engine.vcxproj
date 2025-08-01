@@ -137,6 +137,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Application\Camera\FollowCamera.cpp" />
     <ClCompile Include="Application\Bullet\JetBullet.cpp" />
     <ClCompile Include="Application\Ground\LineGround.cpp" />
+    <ClCompile Include="Application\Ground\Ground.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Engine\Math\Easing.cpp" />
     <ClCompile Include="Engine\Math\MakeMatrixMath.cpp" />
@@ -252,61 +253,62 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\3d\Mesh\SphereMesh.h" />
     <ClInclude Include="Application\LevelEditor\ObjectData.h" />
     <ClInclude Include="Application\Ground\LineGround.h" />
+    <ClInclude Include="Application\Ground\Ground.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Application\LevelEditor\add_collider.py">
+    <None Include="Application\LevelEditor\Python\add_collider.py">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </None>
-    <None Include="Application\LevelEditor\add_disabled.py">
+    <None Include="Application\LevelEditor\Python\add_disabled.py">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </None>
-    <None Include="Application\LevelEditor\add_filename.py">
+    <None Include="Application\LevelEditor\Python\add_filename.py">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </None>
-    <None Include="Application\LevelEditor\add_objectgroup.py">
+    <None Include="Application\LevelEditor\Python\add_objectgroup.py">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </None>
-    <None Include="Application\LevelEditor\collider.py">
+    <None Include="Application\LevelEditor\Python\collider.py">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </None>
-    <None Include="Application\LevelEditor\create_ico_sphere.py">
+    <None Include="Application\LevelEditor\Python\create_ico_sphere.py">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </None>
-    <None Include="Application\LevelEditor\disabled.py">
+    <None Include="Application\LevelEditor\Python\disabled.py">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </None>
-    <None Include="Application\LevelEditor\draw_collider.py">
+    <None Include="Application\LevelEditor\Python\draw_collider.py">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </None>
-    <None Include="Application\LevelEditor\export_scene.py">
+    <None Include="Application\LevelEditor\Python\export_scene.py">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </None>
-    <None Include="Application\LevelEditor\file_name.py">
+    <None Include="Application\LevelEditor\Python\file_name.py">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </None>
-    <None Include="Application\LevelEditor\my_menu.py">
+    <None Include="Application\LevelEditor\Python\my_menu.py">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </None>
-    <None Include="Application\LevelEditor\objectgroup.py">
+    <None Include="Application\LevelEditor\Python\objectgroup.py">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </None>
-    <None Include="Application\LevelEditor\stretch_vertex.py">
+    <None Include="Application\LevelEditor\Python\stretch_vertex.py">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </None>
-    <None Include="Application\LevelEditor\__init__.py">
+    <None Include="Application\LevelEditor\Python\__init__.py">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </None>

@@ -263,6 +263,7 @@
       <Filter>Application\Ground</Filter>
     </ClCompile>
     <ClCompile Include="Application\Bullet\EnemyBullet.cpp" />
+    <ClCompile Include="Application\Ground\Ground.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application\Bullet\BulletBase.h">
@@ -497,6 +498,7 @@
       <Filter>Application\Ground</Filter>
     </ClInclude>
     <ClInclude Include="Application\Bullet\EnemyBullet.h" />
+    <ClInclude Include="Application\Ground\Ground.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resource\Shader\DebugObject.hlsli">
@@ -514,49 +516,49 @@
     <None Include="Resource\Shader\Particle.hlsli">
       <Filter>Resource\Shader</Filter>
     </None>
-    <None Include="Application\LevelEditor\__init__.py">
+    <None Include="Application\LevelEditor\Python\__init__.py">
       <Filter>Application\LevelEditor</Filter>
     </None>
-    <None Include="Application\LevelEditor\add_collider.py">
+    <None Include="Application\LevelEditor\Python\add_collider.py">
       <Filter>Application\LevelEditor</Filter>
     </None>
-    <None Include="Application\LevelEditor\add_filename.py">
+    <None Include="Application\LevelEditor\Python\add_filename.py">
       <Filter>Application\LevelEditor</Filter>
     </None>
-    <None Include="Application\LevelEditor\collider.py">
+    <None Include="Application\LevelEditor\Python\collider.py">
       <Filter>Application\LevelEditor</Filter>
     </None>
-    <None Include="Application\LevelEditor\create_ico_sphere.py">
+    <None Include="Application\LevelEditor\Python\create_ico_sphere.py">
       <Filter>Application\LevelEditor</Filter>
     </None>
-    <None Include="Application\LevelEditor\draw_collider.py">
+    <None Include="Application\LevelEditor\Python\draw_collider.py">
       <Filter>Application\LevelEditor</Filter>
     </None>
-    <None Include="Application\LevelEditor\export_scene.py">
+    <None Include="Application\LevelEditor\Python\export_scene.py">
       <Filter>Application\LevelEditor</Filter>
     </None>
-    <None Include="Application\LevelEditor\file_name.py">
+    <None Include="Application\LevelEditor\Python\file_name.py">
       <Filter>Application\LevelEditor</Filter>
     </None>
-    <None Include="Application\LevelEditor\my_menu.py">
+    <None Include="Application\LevelEditor\Python\my_menu.py">
       <Filter>Application\LevelEditor</Filter>
     </None>
-    <None Include="Application\LevelEditor\stretch_vertex.py">
+    <None Include="Application\LevelEditor\Python\stretch_vertex.py">
       <Filter>Application\LevelEditor</Filter>
     </None>
     <None Include="Resource\Shader\CopyImage.hlsli">
       <Filter>Resource\Shader\OffScreen</Filter>
     </None>
-    <None Include="Application\LevelEditor\add_disabled.py">
+    <None Include="Application\LevelEditor\Python\add_disabled.py">
       <Filter>Application\LevelEditor</Filter>
     </None>
-    <None Include="Application\LevelEditor\add_objectgroup.py">
+    <None Include="Application\LevelEditor\Python\add_objectgroup.py">
       <Filter>Application\LevelEditor</Filter>
     </None>
-    <None Include="Application\LevelEditor\disabled.py">
+    <None Include="Application\LevelEditor\Python\disabled.py">
       <Filter>Application\LevelEditor</Filter>
     </None>
-    <None Include="Application\LevelEditor\objectgroup.py">
+    <None Include="Application\LevelEditor\Python\objectgroup.py">
       <Filter>Application\LevelEditor</Filter>
     </None>
   </ItemGroup>

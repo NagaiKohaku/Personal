@@ -35,6 +35,7 @@ private:
 		float padding[3];
 		Matrix4x4 uvTransform;
 		float shininess;
+		float environmentCoefficient;
 	};
 
 	struct ModelData {
@@ -167,11 +168,15 @@ public:
 	/// <returns>色</returns>
 	const Vector4& GetColor() { return materialData_->color; }
 
+	const Matrix4x4& GetUVTransform() { return materialData_->uvTransform; }
+
 	/// <summary>
 	/// 光沢度を取得
 	/// </summary>
 	/// <returns>光沢度</returns>
 	const float GetShininess() { return materialData_->shininess; }
+
+	const float GetEnvironmentCoefficient() { return materialData_->environmentCoefficient; }
 
 	/// <summary>
 	/// 色の設定
@@ -179,11 +184,15 @@ public:
 	/// <param name="color">色</param>
 	void SetColor(const Vector4& color) { materialData_->color = color; }
 
+	void SetUVTransform(const Matrix4x4& uvTransform) { materialData_->uvTransform = uvTransform; }
+
 	/// <summary>
 	/// 光沢度の設定
 	/// </summary>
 	/// <param name="shininess">光沢度</param>
 	void SetShininess(const float& shininess) { materialData_->shininess = shininess; }
+
+	void SetEnvironmentCoefficient(const float& coefficient) { materialData_->environmentCoefficient = coefficient; }
 
 	/// <summary>
 	/// テクスチャファイルパスの設定
