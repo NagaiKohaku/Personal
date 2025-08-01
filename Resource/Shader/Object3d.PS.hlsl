@@ -9,6 +9,7 @@ struct Material
     int enableLighting;
     float4x4 uvTransform;
     float shininess;
+    float environmentCoefficient;
 };
 
 //•½sŒõŒ¹ƒ‰ƒCƒg
@@ -270,7 +271,7 @@ float3 EnvironmentMapReflection(VertexShaderOutput input)
 
     float4 environmentColor = gCubeTexture.Sample(gSampler, reflectionVector);
 
-    return environmentColor.rgb;
+    return environmentColor.rgb * gMaterial.environmentCoefficient;
 }
 
 //“àÏ

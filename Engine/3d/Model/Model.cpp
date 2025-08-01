@@ -53,6 +53,7 @@ void Model::Initialize(const std::string& directoryPath, const std::string& file
 	materialData_->enableLighting = true;
 	materialData_->uvTransform = MakeIdentity4x4();
 	materialData_->shininess = 50.0f;
+	materialData_->environmentCoefficient = 1.0f;
 
 	//テクスチャの読み込み
 	TextureManager::GetInstance()->LoadTexture(textureFilePath_);
@@ -99,6 +100,7 @@ void Model::Initialize(MeshType type, const std::string& textureFilePath) {
 	materialData_->enableLighting = true;
 	materialData_->uvTransform = MakeIdentity4x4();
 	materialData_->shininess = 50.0f;
+	materialData_->environmentCoefficient = 1.0f;
 
 	//テクスチャファイルパスの設定
 	textureFilePath_ = textureFilePath;
@@ -149,6 +151,7 @@ void Model::Initialize(MeshType type, Model* model) {
 	materialData_->enableLighting = true;
 	materialData_->uvTransform = MakeIdentity4x4();
 	materialData_->shininess = 50.0f;
+	materialData_->environmentCoefficient = 1.0f;
 }
 
 ///=====================================================/// 

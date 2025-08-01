@@ -8,14 +8,16 @@ void PlaneMesh::Initialize() {
 
 	/// === 頂点リソースの生成 === ///
 
+	vertexCount_ = 4;
+
 	//頂点リソースの生成
-	vertexResource_ = directXCommon_->CreateBufferResource(sizeof(VertexData) * 4);
+	vertexResource_ = directXCommon_->CreateBufferResource(sizeof(VertexData) * vertexCount_);
 
 	//頂点バッファビューの作成
 	vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
 
 	//使用するリソースのサイズを設定
-	vertexBufferView_.SizeInBytes = sizeof(VertexData) * 4;
+	vertexBufferView_.SizeInBytes = sizeof(VertexData) * vertexCount_;
 
 	//1頂点当たりのサイズを設定
 	vertexBufferView_.StrideInBytes = sizeof(VertexData);

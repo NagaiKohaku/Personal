@@ -73,6 +73,13 @@ void Camera::Initialize() {
 ///=====================================================///
 void Camera::Update() {
 
+	if (Input::GetInstance()->isPushKey(DIK_LCONTROL)) {
+		if (Input::GetInstance()->IsTriggerPushKey(DIK_Q)) {
+
+			isDebugCamera_ = !isDebugCamera_;
+		}
+	}
+
 	if (isDebugCamera_) {
 
 		/// === デバッグカメラ状態の場合 === ///
