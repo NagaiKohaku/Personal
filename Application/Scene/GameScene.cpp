@@ -69,7 +69,7 @@ void GameScene::Initialize() {
 
 	skyBox_ = std::make_unique<SkyBox>();
 
-	skyBox_->Initialize("skyBox.dds");
+	skyBox_->Initialize("raceTrackSkyBox.dds");
 
 }
 
