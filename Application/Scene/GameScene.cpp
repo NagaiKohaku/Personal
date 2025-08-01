@@ -30,7 +30,7 @@ void GameScene::Initialize() {
 	camera_->Initialize();
 
 	//デバッグカメラを使用しない
-	camera_->SetDebugCameraFlag(true);
+	camera_->SetDebugCameraFlag(false);
 
 	//カメラの座標
 	camera_->GetWorldTransform().translate_ = { 0.0f,3.0f,0.0f };
@@ -62,10 +62,6 @@ void GameScene::Initialize() {
 
 	//追尾カメラの初期化
 	followCamera_->Initialize(camera_.get(), player_.get());
-
-	lineGround_ = std::make_unique<LineGround>();
-
-	lineGround_->Initialize();
 
 	ground_ = std::make_unique<Ground>();
 
@@ -106,8 +102,6 @@ void GameScene::Update() {
 	//弾の更新
 	bulletManager_->Update();
 
-	lineGround_->Update();
-
 	ground_->Update();
 
 	skyBox_->Update();
@@ -126,8 +120,6 @@ void GameScene::Draw() {
 
 	//弾の描画
 	bulletManager_->Draw();
-
-	//lineGround_->Draw();
 
 	ground_->Draw();
 
