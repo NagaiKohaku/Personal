@@ -71,11 +71,16 @@ void GameScene::Initialize() {
 
 	groundManager_->Initialize();
 
+	//フェードの生成
+	fade_ = std::make_unique<Fade>();
+
+	//フェードの初期化
+	fade_->Initialize();
+
+	//フェードイン開始
+	fade_->StartFadeIn();
+
 	//NOTE:地面とSkyBoxはテクスチャが見にくいためいったんコメントアウト
-
-	ground_ = std::make_unique<Ground>();
-
-	ground_->Initialize();
 
 	//skyBox_ = std::make_unique<SkyBox>();
 
@@ -116,9 +121,9 @@ void GameScene::Update() {
 
 	groundManager_->Update();
 
-	//NOTE:地面とSkyBoxはテクスチャが見にくいためいったんコメントアウト
+	fade_->Update();
 
-	ground_->Update();
+	//NOTE:地面とSkyBoxはテクスチャが見にくいためいったんコメントアウト
 
 	//skyBox_->Update();
 }
@@ -141,9 +146,9 @@ void GameScene::Draw() {
 
 	groundManager_->Draw();
 
-	//NOTE:地面とSkyBoxはテクスチャが見にくいためいったんコメントアウト
+	fade_->Draw();
 
-	ground_->Draw();
+	//NOTE:地面とSkyBoxはテクスチャが見にくいためいったんコメントアウト
 
 	//skyBox_->Draw();
 }

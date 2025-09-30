@@ -140,6 +140,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Application\Ground\LineGround.cpp" />
     <ClCompile Include="Application\Ground\Ground.cpp" />
     <ClCompile Include="Application\Ground\GroundManager.cpp" />
+    <ClCompile Include="Application\Fade\Fade.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Engine\Math\Easing.cpp" />
     <ClCompile Include="Engine\Math\MakeMatrixMath.cpp" />
@@ -176,6 +177,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\3d\Object\SkyBoxCommon.cpp" />
     <ClCompile Include="Engine\3d\Mesh\SphereMesh.cpp" />
     <ClCompile Include="Application\Shadow.cpp" />
+    <ClCompile Include="Application\Scene\TitleScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application\LevelEditor\LevelDataLoader.h" />
@@ -260,6 +262,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Application\Ground\Ground.h" />
     <ClInclude Include="Application\Ground\GroundManager.h" />
     <ClInclude Include="Application\Shadow.h" />
+    <ClInclude Include="Application\Scene\TitleScene.h" />
+    <ClInclude Include="Application\Fade\Fade.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Application\LevelEditor\Python\add_collider.py">

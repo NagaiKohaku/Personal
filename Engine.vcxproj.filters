@@ -267,6 +267,8 @@
     <ClCompile Include="Application\Ground\Building.cpp" />
     <ClCompile Include="Application\Ground\GroundManager.cpp" />
     <ClCompile Include="Application\Shadow.cpp" />
+    <ClCompile Include="Application\Scene\TitleScene.cpp" />
+    <ClCompile Include="Application\Fade\Fade.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application\Bullet\BulletBase.h">
@@ -505,6 +507,8 @@
     <ClInclude Include="Application\Ground\Building.h" />
     <ClInclude Include="Application\Ground\GroundManager.h" />
     <ClInclude Include="Application\Shadow.h" />
+    <ClInclude Include="Application\Scene\TitleScene.h" />
+    <ClInclude Include="Application\Fade\Fade.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resource\Shader\DebugObject.hlsli">

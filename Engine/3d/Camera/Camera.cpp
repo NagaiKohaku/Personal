@@ -51,7 +51,7 @@ void Camera::Initialize() {
 	viewProjectionMatrix_ = viewMatrix_ * projectionMatrix_;
 
 	//Z軸のオフセットの設定
-	offsetZ_ = -15.0f;
+	offsetZ_ = 0.0f;
 
 	//デバッグカメラのZ軸のオフセットの設定
 	debugCameraOffsetZ_ = -15.0f;
@@ -157,24 +157,24 @@ void Camera::Update() {
 
 		/// === 通常カメラの場合 === ///
 
+			//角度行列を生成
+		Matrix4x4 matRot_ =
+			(MakeRotateXMatrix(transform_.rotate_.x) *
+				MakeRotateYMatrix(transform_.rotate_.y)) *
+			MakeRotateZMatrix(transform_.rotate_.z);
+
+		//追従対象からカメラまでのオフセット
+		Vector3 offset = { 0.0f,0.0f,offsetZ_ };
+
+		//オフセットをカメラの回転に合わせる
+		offset = TransformNormal(offset, matRot_);
+
+		transform_.SetOffset(offset);
+
 		//追従対象がいる場合
 		if (trackingObject_) {
 
 			/// === 追従カメラの場合 === ///
-
-			//角度行列を生成
-			Matrix4x4 matRot_ =
-				(MakeRotateXMatrix(transform_.rotate_.x) *
-					MakeRotateYMatrix(transform_.rotate_.y)) *
-				MakeRotateZMatrix(transform_.rotate_.z);
-
-			//追従対象からカメラまでのオフセット
-			Vector3 offset = { 0.0f,0.0f,offsetZ_ };
-
-			//オフセットをカメラの回転に合わせる
-			offset = TransformNormal(offset, matRot_);
-
-			transform_.SetOffset(offset);
 
 			//カメラ座標を追従対象を中心にオフセット分ずらす
 			transform_.translate_ = trackingObject_->GetWorldTransform().GetWorldTranslate();

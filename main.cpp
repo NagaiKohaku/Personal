@@ -119,7 +119,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	sceneManager->Initialize();
 
 	//シーンを設定
-	sceneManager->ChangeScene(SceneManager::kGame);
+	sceneManager->ChangeScene(SceneManager::kTitle);
 
 	///-------------------------------------------/// 
 	/// メインループ
