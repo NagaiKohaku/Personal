@@ -63,15 +63,19 @@ void GameScene::Initialize() {
 	//追尾カメラの初期化
 	followCamera_->Initialize(camera_.get(), player_.get());
 
-	lineGround_ = std::make_unique<LineGround>();
+	//lineGround_ = std::make_unique<LineGround>();
 
-	lineGround_->Initialize();
+	//lineGround_->Initialize();
+
+	groundManager_ = std::make_unique<GroundManager>();
+
+	groundManager_->Initialize();
 
 	//NOTE:地面とSkyBoxはテクスチャが見にくいためいったんコメントアウト
 
-	//ground_ = std::make_unique<Ground>();
+	ground_ = std::make_unique<Ground>();
 
-	//ground_->Initialize();
+	ground_->Initialize();
 
 	//skyBox_ = std::make_unique<SkyBox>();
 
@@ -108,11 +112,13 @@ void GameScene::Update() {
 	//弾の更新
 	bulletManager_->Update();
 
-	lineGround_->Update();
+	//lineGround_->Update();
+
+	groundManager_->Update();
 
 	//NOTE:地面とSkyBoxはテクスチャが見にくいためいったんコメントアウト
 
-	//ground_->Update();
+	ground_->Update();
 
 	//skyBox_->Update();
 }
@@ -131,11 +137,13 @@ void GameScene::Draw() {
 	//弾の描画
 	bulletManager_->Draw();
 
-	lineGround_->Draw();
+	//lineGround_->Draw();
+
+	groundManager_->Draw();
 
 	//NOTE:地面とSkyBoxはテクスチャが見にくいためいったんコメントアウト
 
-	//ground_->Draw();
+	ground_->Draw();
 
 	//skyBox_->Draw();
 }

@@ -4,6 +4,8 @@
 #include "3d/Particle/EmitterGroup.h"
 #include "3d/Camera/Camera.h"
 
+#include "Shadow.h"
+
 #include "3d/Collider/AABBCollider.h"
 #include "3d/Collider/SphereCollider.h"
 
@@ -115,6 +117,8 @@ private:
 	std::unique_ptr<Object3D> rightWing_;
 
 	std::unique_ptr<Object3D> leftWing_;
+
+	std::unique_ptr<Shadow> shadow_;
 
 	std::vector<ObjectData> objectData_;
 

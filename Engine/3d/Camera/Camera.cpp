@@ -39,7 +39,7 @@ void Camera::Initialize() {
 	nearClip_ = 0.1f;
 
 	//FarClipの設定
-	farClip_ = 100.0f;
+	farClip_ = 1000.0f;
 
 	//ビュー行列の生成
 	viewMatrix_ = Inverse4x4(transform_.GetWorldMatrix());

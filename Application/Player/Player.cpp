@@ -68,6 +68,10 @@ void Player::Initialize(Camera* cameraPtr, BulletManager* bulletPtr) {
 
 	leftTrail_->Emit();
 
+	shadow_ = std::make_unique<Shadow>();
+
+	shadow_->Initialize();
+
 	/// === コライダーの生成 === ///
 
 	//生成
@@ -163,6 +167,8 @@ void Player::Update() {
 
 	leftTrail_->Update();
 
+	shadow_->Update(core_->GetWorldTransform().translate_);
+
 	//コライダーの更新
 	collider_->Update();
 
@@ -184,6 +190,8 @@ void Player::Draw() {
 	rightTrail_->Draw();
 
 	leftTrail_->Draw();
+
+	shadow_->Draw();
 
 	//コライダーの描画
 	collider_->Draw();

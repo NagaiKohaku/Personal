@@ -56,6 +56,10 @@ void Enemy::Initialize(Camera* cameraPtr, BulletManager* bulletPtr, Player* play
 	//死亡時エミッターのエミッター情報読み込み
 	explosiveEmitter_->LoadEmitter("BlockExplosive");
 
+	shadow_ = std::make_unique<Shadow>();
+
+	shadow_->Initialize();
+
 	/// === 他変数の初期化 === ///
 
 	//行動状態はエントリー状態で初期化
@@ -152,6 +156,8 @@ void Enemy::Update() {
 
 	//コライダーの処理
 	collider_->Update();
+
+	shadow_->Update(object_->GetWorldTransform().translate_);
 }
 
 ///=====================================================/// 
@@ -167,6 +173,8 @@ void Enemy::Draw() {
 
 	//死亡時エミッターの描画
 	explosiveEmitter_->Draw();
+
+	shadow_->Draw();
 }
 
 ///=====================================================/// 
