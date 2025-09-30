@@ -4,6 +4,8 @@
 #include "3d/Particle/EmitterGroup.h"
 #include "3d/Camera/Camera.h"
 
+#include "Shadow.h"
+
 #include "3d/Collider/AABBCollider.h"
 #include "3d/Collider/SphereCollider.h"
 
@@ -116,6 +118,8 @@ private:
 
 	//死亡時エミッター
 	std::unique_ptr<EmitterGroup> explosiveEmitter_;
+
+	std::unique_ptr<Shadow> shadow_;
 
 	//行動状態
 	STATE state_;

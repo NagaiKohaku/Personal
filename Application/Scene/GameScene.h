@@ -16,6 +16,8 @@
 #include "Camera/FollowCamera.h"
 #include "Ground/LineGround.h"
 #include "Ground/Ground.h"
+#include "Ground/Building.h"
+#include "Ground/GroundManager.h"
 
 #include "memory"
 #include "list"
@@ -86,4 +88,6 @@ private:
 
 	//SkyBox
 	std::unique_ptr<SkyBox> skyBox_;
+
+	std::unique_ptr<GroundManager> groundManager_;
 };

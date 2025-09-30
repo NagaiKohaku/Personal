@@ -24,7 +24,7 @@ void DirectionalLight::Initialize() {
 	lightData_->color = { 1.0f,1.0f,1.0f,1.0f };
 
 	//向きの設定
-	lightData_->direction = { 0.0f,-1.0f,0.0f };
+	lightData_->direction = { -0.5f,-0.5f,-0.5f };
 
 	//照度の設定
 	lightData_->intensity = 1.0f;

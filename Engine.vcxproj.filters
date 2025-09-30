@@ -264,6 +264,9 @@
     </ClCompile>
     <ClCompile Include="Application\Bullet\EnemyBullet.cpp" />
     <ClCompile Include="Application\Ground\Ground.cpp" />
+    <ClCompile Include="Application\Ground\Building.cpp" />
+    <ClCompile Include="Application\Ground\GroundManager.cpp" />
+    <ClCompile Include="Application\Shadow.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application\Bullet\BulletBase.h">
@@ -499,6 +502,9 @@
     </ClInclude>
     <ClInclude Include="Application\Bullet\EnemyBullet.h" />
     <ClInclude Include="Application\Ground\Ground.h" />
+    <ClInclude Include="Application\Ground\Building.h" />
+    <ClInclude Include="Application\Ground\GroundManager.h" />
+    <ClInclude Include="Application\Shadow.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resource\Shader\DebugObject.hlsli">
