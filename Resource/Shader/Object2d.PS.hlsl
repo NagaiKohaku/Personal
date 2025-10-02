@@ -43,6 +43,7 @@ PixelShaderOutPut main(VertexShaderOutput input)
 
     //マテリアル情報とテクスチャの色を合わせる
     output.color = gMaterial.color * textureColor;
+    output.color.a = gMaterial.color.a;
  
     return output;
 }

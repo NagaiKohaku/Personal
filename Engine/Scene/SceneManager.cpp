@@ -4,6 +4,7 @@
 #include "BaseScene.h"
 
 #include "Scene/GameScene.h"
+#include "Scene/TitleScene.h"
 #include "Scene/ParticleEditorScene.h"
 
 ///=====================================================/// 
@@ -93,7 +94,7 @@ std::unique_ptr<BaseScene> SceneManager::CreateScene(SceneType sceneType) {
 		//タイトルシーン
 	case SceneType::kTitle:
 
-		//return std::make_unique<TitleScene>();
+		return std::make_unique<TitleScene>();
 
 		//ゲームシーン
 	case SceneType::kGame:

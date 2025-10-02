@@ -1,9 +1,10 @@
 #pragma once
 
+#include <Ground/Ground.h>
+#include <Ground/Building.h>
+
 #include "memory"
 #include "vector"
-
-class Building;
 
 class GroundManager {
 
@@ -24,6 +25,9 @@ public:
 	void ImGui();
 
 private:
+
+	//地面
+	std::unique_ptr<Ground> ground_;
 
 	// 建物
 	std::vector<std::unique_ptr<Building>> building_;

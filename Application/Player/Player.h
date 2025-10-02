@@ -47,6 +47,8 @@ public:
 	/// <param name="bulletPtr">バレットマネージャーポインタ</param>
 	void Initialize(Camera* cameraPtr, BulletManager* bulletPtr);
 
+	void Initialize(Camera* cameraPtr);
+
 	/// <summary>
 	/// 更新
 	/// </summary>
@@ -168,6 +170,8 @@ private:
 	//移動量
 	Vector3 velocity_;
 
+	bool isTitleScene_;
+
 	///-------------------------------------------///
 	/// ゲッター・セッター
 	///-------------------------------------------///
@@ -191,4 +195,5 @@ public:
 	/// <returns>移動状態</returns>
 	MOVESTATE GetMoveState() { return moveState_; }
 
+	void SetPosition(Vector3 pos) { core_->GetWorldTransform().translate_ = pos; }
 };

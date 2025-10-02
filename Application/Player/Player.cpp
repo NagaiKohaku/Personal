@@ -129,6 +129,99 @@ void Player::Initialize(Camera* cameraPtr, BulletManager* bulletPtr) {
 	//座標の設定
 	core_->GetWorldTransform().translate_ = initialPos_;
 
+	isTitleScene_ = false;
+
+}
+
+void Player::Initialize(Camera* cameraPtr) {
+
+	camera_ = cameraPtr;
+
+	//レベルデータローダーを取得
+	levelDataLoader_ = LevelDataLoader::GetInstance();
+
+	objectData_ = levelDataLoader_->PickObjectData("PlayerObject/JetPlayer.json", ObjectType::PLAYER);
+
+	/// === オブジェクトの生成 === ///
+
+	//生成
+	core_ = std::make_unique<Object3D>();
+
+	//初期化
+	core_->Initialize(objectData_[0]);
+
+	rightWing_ = std::make_unique<Object3D>();
+
+	rightWing_->Initialize(objectData_[1]);
+
+	rightWing_->GetWorldTransform().SetParent(&core_->GetWorldTransform());
+
+	leftWing_ = std::make_unique<Object3D>();
+
+	leftWing_->Initialize(objectData_[2]);
+
+	leftWing_->GetWorldTransform().SetParent(&core_->GetWorldTransform());
+
+	rightTrail_ = std::make_unique<EmitterGroup>();
+
+	rightTrail_->Initialize(camera_);
+
+	rightTrail_->LoadEmitter("Trail");
+
+	rightTrail_->GetWorldTransform().SetParent(&rightWing_->GetWorldTransform());
+
+	rightTrail_->Emit();
+
+	leftTrail_ = std::make_unique<EmitterGroup>();
+
+	leftTrail_->Initialize(camera_);
+
+	leftTrail_->LoadEmitter("Trail");
+
+	leftTrail_->GetWorldTransform().SetParent(&leftWing_->GetWorldTransform());
+
+	leftTrail_->Emit();
+
+	shadow_ = std::make_unique<Shadow>();
+
+	shadow_->Initialize();
+
+	/// === 他変数の設定 === ///
+
+	//攻撃タイマーの設定
+	attackTimer_ = 0.0f;
+
+	//戦車状態の攻撃間隔
+	tankAttackInterval_ = 1.0f;
+
+	//飛行機状態の攻撃間隔
+	jetAttackInterval_ = 0.1f;
+
+	//移動速度の設定
+	moveSpeed_ = 1.0f;
+
+	//移動強度の設定
+	moveStrength_ = 10.0f;
+
+	//回転強度の設定
+	rotStrength_ = 10.0f;
+
+	//移動範囲の設定
+	moveRange_ = { 7.0f,4.0f,0.0f };
+
+	//戦車状態の回転範囲の設定
+	driveRotRange_ = { 0.0f,0.5f,0.0f };
+
+	//飛行機状態の回転範囲の設定
+	flightRotRange_ = { 0.5f,0.0f,0.3f };
+
+	//初期座標の設定
+	initialPos_ = { 0.0f,2.0f,0.0f };
+
+	//座標の設定
+	core_->GetWorldTransform().translate_ = initialPos_;
+
+	isTitleScene_ = true;
 }
 
 ///=====================================================/// 
@@ -137,7 +230,7 @@ void Player::Initialize(Camera* cameraPtr, BulletManager* bulletPtr) {
 void Player::Update() {
 
 	//地面に接していたら
-	if (core_->GetWorldTransform().translate_.y == 1.0f) {
+	if (core_->GetWorldTransform().translate_.y <= 1.0f) {
 
 		//戦車状態に変更
 		moveState_ = TANK;
@@ -150,11 +243,14 @@ void Player::Update() {
 	//移動
 	Move();
 
-	//攻撃
-	Attack();
+	if (!isTitleScene_) {
 
-	//衝突判定
-	IsCollision();
+		//攻撃
+		Attack();
+
+		//衝突判定
+		IsCollision();
+	}
 
 	//プレイヤーの更新
 	core_->Update();
@@ -169,10 +265,13 @@ void Player::Update() {
 
 	shadow_->Update(core_->GetWorldTransform().translate_);
 
-	//コライダーの更新
-	collider_->Update();
+	if (!isTitleScene_) {
 
-	reticle_->Update();
+		//コライダーの更新
+		collider_->Update();
+
+		reticle_->Update();
+	}
 }
 
 ///=====================================================/// 
@@ -193,11 +292,14 @@ void Player::Draw() {
 
 	shadow_->Draw();
 
-	//コライダーの描画
-	collider_->Draw();
+	if (!isTitleScene_) {
 
-	//レティクルの描画
-	reticle_->Draw();
+		//コライダーの描画
+		collider_->Draw();
+
+		//レティクルの描画
+		reticle_->Draw();
+	}
 }
 
 ///=====================================================/// 
@@ -208,28 +310,31 @@ void Player::Move() {
 	//移動量をリセット
 	velocity_ = { 0.0f,0.0f,0.0f };
 
-	//Wキーが押されたら上方向に移動
-	if (Input::GetInstance()->isPushKey(DIK_W)) {
+	if (!isTitleScene_) {
 
-		velocity_.y += moveSpeed_;
-	}
+		//Wキーが押されたら上方向に移動
+		if (Input::GetInstance()->isPushKey(DIK_W)) {
 
-	//Sキーが押されたら下方向に移動
-	if (Input::GetInstance()->isPushKey(DIK_S)) {
+			velocity_.y += moveSpeed_;
+		}
 
-		velocity_.y -= moveSpeed_;
-	}
+		//Sキーが押されたら下方向に移動
+		if (Input::GetInstance()->isPushKey(DIK_S)) {
 
-	//Aキーが押されたら左方向に移動
-	if (Input::GetInstance()->isPushKey(DIK_A)) {
+			velocity_.y -= moveSpeed_;
+		}
 
-		velocity_.x -= moveSpeed_;
-	}
+		//Aキーが押されたら左方向に移動
+		if (Input::GetInstance()->isPushKey(DIK_A)) {
 
-	//Dキーが押されたら右方向に移動
-	if (Input::GetInstance()->isPushKey(DIK_D)) {
+			velocity_.x -= moveSpeed_;
+		}
 
-		velocity_.x += moveSpeed_;
+		//Dキーが押されたら右方向に移動
+		if (Input::GetInstance()->isPushKey(DIK_D)) {
+
+			velocity_.x += moveSpeed_;
+		}
 	}
 
 	//移動量の長さが0でなければ
@@ -316,7 +421,7 @@ void Player::TankMove() {
 
 	rightWing_->GetWorldTransform().rotate_ = EaseOut(
 		rightWingRot,
-		Vector3(0.0f, 0.0f, std::numbers::pi_v<float> / 2.0f + std::numbers::pi_v<float> * 2.0f),
+		Vector3(0.0f, 0.0f, std::numbers::pi_v<float> / 2.0f + std::numbers::pi_v<float> *2.0f),
 		0.1f,
 		2.0f
 	);
@@ -327,7 +432,7 @@ void Player::TankMove() {
 
 	leftWing_->GetWorldTransform().rotate_ = EaseOut(
 		leftWingRot,
-		Vector3(0.0f, 0.0f, -std::numbers::pi_v<float> / 2.0f - std::numbers::pi_v<float> * 2.0f),
+		Vector3(0.0f, 0.0f, -std::numbers::pi_v<float> / 2.0f - std::numbers::pi_v<float> *2.0f),
 		0.1f,
 		2.0f
 	);

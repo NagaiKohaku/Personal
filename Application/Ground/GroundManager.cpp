@@ -1,5 +1,6 @@
 #include "GroundManager.h"
 
+#include "Ground/Ground.h"
 #include "Ground/Building.h"
 #include "3d/Object/Object3D.h"
 #include "3d/Model/Model.h"
@@ -20,6 +21,12 @@ void GroundManager::Initialize() {
 
 	startPosZ_ = 1000.0f;
 
+	//地面の生成
+	ground_ = std::make_unique<Ground>();
+
+	ground_->Initialize();
+
+	//建物の生成
 	for (int i = 0; i < 100; i++) {
 		for (int j = 0; j < 2; j++) {
 
@@ -46,7 +53,7 @@ void GroundManager::Initialize() {
 			building_.push_back(std::move(building));
 		}
 
-		if (startPosZ_ - i * (radius_ * 2.0f + distance_) <= -7.0f) {
+		if (startPosZ_ - i * (radius_ * 2.0f + distance_) <= -startPosZ_) {
 
 			break;
 		}
@@ -58,9 +65,12 @@ void GroundManager::Finalize() {
 }
 
 void GroundManager::Update() {
+
+	ground_->Update();
+
 	for (auto& building : building_) {
 
-		if (building->GetWorldTransform().translate_.z < -7.0f) {
+		if (building->GetWorldTransform().translate_.z < -startPosZ_) {
 
 			building->SetPosZ(startPosZ_);
 		}
@@ -70,6 +80,9 @@ void GroundManager::Update() {
 }
 
 void GroundManager::Draw() {
+
+	ground_->Draw();
+
 	for (auto& building : building_) {
 		building->Draw();
 	}
