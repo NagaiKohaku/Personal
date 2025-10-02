@@ -5,6 +5,7 @@
 #include "3d/Camera/Camera.h"
 #include "3d/Object/Object3D.h"
 #include "2d/Object/Object2D.h"
+#include "3d/Particle/EmitterGroup.h"
 #include "Player/Player.h"
 #include "Ground/GroundManager.h"
 #include "Fade/Fade.h"
@@ -64,6 +65,21 @@ private:
 
 	//タイトル
 	std::unique_ptr<Object2D> titleSprite_;
+
+	//スペースキー
+	std::unique_ptr<Object2D> spaceKeySprite_;
+
+	//左矢印
+	std::unique_ptr<Object2D> leftArrowSprite_;
+
+	//右矢印
+	std::unique_ptr<Object2D> rightArrowSprite_;
+
+	//衝撃波エミッター(左)
+	std::unique_ptr<EmitterGroup> shockWaveLeftEmitter_;
+
+	//衝撃波エミッター(右)
+	std::unique_ptr<EmitterGroup> shockWaveRightEmitter_;
 
 	//フェード
 	std::unique_ptr<Fade> fade_;
