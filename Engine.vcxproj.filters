@@ -262,13 +262,27 @@
     <ClCompile Include="Application\Ground\LineGround.cpp">
       <Filter>Application\Ground</Filter>
     </ClCompile>
-    <ClCompile Include="Application\Bullet\EnemyBullet.cpp" />
-    <ClCompile Include="Application\Ground\Ground.cpp" />
-    <ClCompile Include="Application\Ground\Building.cpp" />
-    <ClCompile Include="Application\Ground\GroundManager.cpp" />
-    <ClCompile Include="Application\Shadow.cpp" />
-    <ClCompile Include="Application\Scene\TitleScene.cpp" />
-    <ClCompile Include="Application\Fade\Fade.cpp" />
+    <ClCompile Include="Application\Ground\GroundManager.cpp">
+      <Filter>Application\Ground</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\Ground\Ground.cpp">
+      <Filter>Application\Ground</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\Ground\Building.cpp">
+      <Filter>Application\Ground</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\Bullet\EnemyBullet.cpp">
+      <Filter>Application\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\Shadow.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\Scene\TitleScene.cpp">
+      <Filter>Application\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\Fade\Fade.cpp">
+      <Filter>Application\Fade</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application\Bullet\BulletBase.h">
@@ -502,13 +516,27 @@
     <ClInclude Include="Application\Ground\LineGround.h">
       <Filter>Application\Ground</Filter>
     </ClInclude>
-    <ClInclude Include="Application\Bullet\EnemyBullet.h" />
-    <ClInclude Include="Application\Ground\Ground.h" />
-    <ClInclude Include="Application\Ground\Building.h" />
-    <ClInclude Include="Application\Ground\GroundManager.h" />
-    <ClInclude Include="Application\Shadow.h" />
-    <ClInclude Include="Application\Scene\TitleScene.h" />
-    <ClInclude Include="Application\Fade\Fade.h" />
+    <ClInclude Include="Application\Ground\GroundManager.h">
+      <Filter>Application\Ground</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Ground\Ground.h">
+      <Filter>Application\Ground</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Ground\Building.h">
+      <Filter>Application\Ground</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Bullet\EnemyBullet.h">
+      <Filter>Application\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Shadow.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Scene\TitleScene.h">
+      <Filter>Application\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Fade\Fade.h">
+      <Filter>Application\Fade</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resource\Shader\DebugObject.hlsli">
@@ -653,6 +681,9 @@
     </Filter>
     <Filter Include="Application\Ground">
       <UniqueIdentifier>{5ac4747f-252b-4240-8029-b712f904bbc7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Application\Fade">
+      <UniqueIdentifier>{0963c5a7-d809-451d-8551-d24adee757bb}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
