@@ -554,50 +554,50 @@
     <None Include="Resource\Shader\Particle.hlsli">
       <Filter>Resource\Shader</Filter>
     </None>
-    <None Include="Application\LevelEditor\Python\__init__.py">
-      <Filter>Application\LevelEditor</Filter>
-    </None>
-    <None Include="Application\LevelEditor\Python\add_collider.py">
-      <Filter>Application\LevelEditor</Filter>
-    </None>
-    <None Include="Application\LevelEditor\Python\add_filename.py">
-      <Filter>Application\LevelEditor</Filter>
-    </None>
-    <None Include="Application\LevelEditor\Python\collider.py">
-      <Filter>Application\LevelEditor</Filter>
-    </None>
-    <None Include="Application\LevelEditor\Python\create_ico_sphere.py">
-      <Filter>Application\LevelEditor</Filter>
-    </None>
-    <None Include="Application\LevelEditor\Python\draw_collider.py">
-      <Filter>Application\LevelEditor</Filter>
-    </None>
-    <None Include="Application\LevelEditor\Python\export_scene.py">
-      <Filter>Application\LevelEditor</Filter>
-    </None>
-    <None Include="Application\LevelEditor\Python\file_name.py">
-      <Filter>Application\LevelEditor</Filter>
-    </None>
-    <None Include="Application\LevelEditor\Python\my_menu.py">
-      <Filter>Application\LevelEditor</Filter>
-    </None>
-    <None Include="Application\LevelEditor\Python\stretch_vertex.py">
-      <Filter>Application\LevelEditor</Filter>
-    </None>
     <None Include="Resource\Shader\CopyImage.hlsli">
       <Filter>Resource\Shader\OffScreen</Filter>
     </None>
+    <None Include="Application\LevelEditor\Python\__init__.py">
+      <Filter>Application\LevelEditor\Python</Filter>
+    </None>
+    <None Include="Application\LevelEditor\Python\add_collider.py">
+      <Filter>Application\LevelEditor\Python</Filter>
+    </None>
     <None Include="Application\LevelEditor\Python\add_disabled.py">
-      <Filter>Application\LevelEditor</Filter>
+      <Filter>Application\LevelEditor\Python</Filter>
+    </None>
+    <None Include="Application\LevelEditor\Python\add_filename.py">
+      <Filter>Application\LevelEditor\Python</Filter>
     </None>
     <None Include="Application\LevelEditor\Python\add_objectgroup.py">
-      <Filter>Application\LevelEditor</Filter>
+      <Filter>Application\LevelEditor\Python</Filter>
+    </None>
+    <None Include="Application\LevelEditor\Python\collider.py">
+      <Filter>Application\LevelEditor\Python</Filter>
+    </None>
+    <None Include="Application\LevelEditor\Python\create_ico_sphere.py">
+      <Filter>Application\LevelEditor\Python</Filter>
     </None>
     <None Include="Application\LevelEditor\Python\disabled.py">
-      <Filter>Application\LevelEditor</Filter>
+      <Filter>Application\LevelEditor\Python</Filter>
+    </None>
+    <None Include="Application\LevelEditor\Python\draw_collider.py">
+      <Filter>Application\LevelEditor\Python</Filter>
+    </None>
+    <None Include="Application\LevelEditor\Python\export_scene.py">
+      <Filter>Application\LevelEditor\Python</Filter>
+    </None>
+    <None Include="Application\LevelEditor\Python\file_name.py">
+      <Filter>Application\LevelEditor\Python</Filter>
+    </None>
+    <None Include="Application\LevelEditor\Python\my_menu.py">
+      <Filter>Application\LevelEditor\Python</Filter>
     </None>
     <None Include="Application\LevelEditor\Python\objectgroup.py">
-      <Filter>Application\LevelEditor</Filter>
+      <Filter>Application\LevelEditor\Python</Filter>
+    </None>
+    <None Include="Application\LevelEditor\Python\stretch_vertex.py">
+      <Filter>Application\LevelEditor\Python</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -684,6 +684,9 @@
     </Filter>
     <Filter Include="Application\Fade">
       <UniqueIdentifier>{0963c5a7-d809-451d-8551-d24adee757bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Application\LevelEditor\Python">
+      <UniqueIdentifier>{ff0bdec3-f368-4996-962b-c1daceca313b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
