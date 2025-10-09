@@ -1,7 +1,9 @@
 name: DebugBuild
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      master
 
 env:
   #リポジトリのルートディレクトリを基点としたソリューションファイルのパス
