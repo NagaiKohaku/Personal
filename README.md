@@ -1,1 +1,1 @@
-[![DebugBuild](https://github.com/NagaiKohaku/Personal/actions/workflows/DebugBuild.yml/badge.svg)](https://github.com/NagaiKohaku/Personal/actions/workflows/DebugBuild.yml)
+[![DebugBuild](https://github.com/NagaiKohaku/Personal/actions/workflows/DebugBuild.yml/badge.svg?branch=master)](https://github.com/NagaiKohaku/Personal/actions/workflows/DebugBuild.yml)
