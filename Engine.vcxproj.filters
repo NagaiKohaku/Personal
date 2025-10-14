@@ -49,6 +49,7 @@
     <FxCompile Include="Resource\Shader\OffScreen\Vignette.PS.hlsl">
       <Filter>Resource\Shader\OffScreen</Filter>
     </FxCompile>
+    <FxCompile Include="Resource\Shader\OffScreen\Dissolve.PS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />

@@ -3,6 +3,8 @@
 /// ===シーン=== ///
 #include "BaseScene.h"
 
+#include "3d/Collider/ColliderManager.h"
+
 #include "Scene/GameScene.h"
 #include "Scene/TitleScene.h"
 #include "Scene/ParticleEditorScene.h"
@@ -74,6 +76,8 @@ void SceneManager::ImGui() {
 /// シーンの変更
 ///=====================================================///
 void SceneManager::ChangeScene(SceneType sceneType) {
+
+	ColliderManager::GetInstance()->ClearColliders();
 
 	// 新しいシーンを生成
 	currentScene_ = CreateScene(sceneType);

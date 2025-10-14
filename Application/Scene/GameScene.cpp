@@ -1,6 +1,8 @@
 #include "GameScene.h"
 
 #include "Base/OffScreen.h"
+#include "Base/Input.h"
+#include "Scene/SceneManager.h"
 
 #include "2d/Sprite/SpriteManager.h"
 #include "3d/Model/ModelManager.h"
@@ -11,6 +13,7 @@
 #include "3d/Object/SkyBoxCommon.h"
 
 #include "LevelEditor/LevelDataLoader.h"
+#include "Fade/Fade.h"
 
 #include "imgui.h"
 
@@ -71,14 +74,22 @@ void GameScene::Initialize() {
 
 	groundManager_->Initialize();
 
-	//フェードの生成
-	fade_ = std::make_unique<Fade>();
+	SpriteManager::GetInstance()->LoadSprite("ToTitle", "ToTitle");
 
-	//フェードの初期化
-	fade_->Initialize();
+	titleSprite_ = std::make_unique<Object2D>();
+
+	titleSprite_->Initialize();
+
+	titleSprite_->SetSprite("ToTitle");
+
+	titleSprite_->SetSize({ 1280.0f,720.0f });
+
+	titleSprite_->GetSprite()->SetAnchorPoint({ 0.5f,0.5f });
+
+	titleSprite_->SetTranslate({ 640.0f,320.0f });
 
 	//フェードイン開始
-	fade_->StartFadeIn();
+	Fade::GetInstance()->StartFadeIn();
 
 	//NOTE:地面とSkyBoxはテクスチャが見にくいためいったんコメントアウト
 
@@ -121,7 +132,19 @@ void GameScene::Update() {
 
 	groundManager_->Update();
 
-	fade_->Update();
+	titleSprite_->Update();
+
+	if (Input::GetInstance()->IsTriggerPushKey(DIK_T)) {
+
+		Fade::GetInstance()->StartFadeOut();
+	}
+
+	if (Fade::GetInstance()->GetState() == Fade::FADE_OUT_END) {
+
+		Fade::GetInstance()->SetState(Fade::NONE);
+
+		SceneManager::GetInstance()->ChangeScene(SceneManager::kTitle);
+	}
 
 	//NOTE:地面とSkyBoxはテクスチャが見にくいためいったんコメントアウト
 
@@ -146,7 +169,7 @@ void GameScene::Draw() {
 
 	groundManager_->Draw();
 
-	fade_->Draw();
+	titleSprite_->Draw(LayerType::UI);
 
 	//NOTE:地面とSkyBoxはテクスチャが見にくいためいったんコメントアウト
 

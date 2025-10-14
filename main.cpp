@@ -21,6 +21,8 @@
 
 #include "Scene/SceneManager.h"
 #include "LevelEditor/LevelDataLoader.h"
+#include "Fade/Fade.h"
+
 
 //Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
@@ -114,6 +116,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	LevelDataLoader* levelDataLoder = LevelDataLoader::GetInstance();
 	levelDataLoder->Initialize();
 
+	//フェード
+	Fade* fade = Fade::GetInstance();
+	fade->Initialize();
+
 	//シーンマネージャー
 	SceneManager* sceneManager = SceneManager::GetInstance();
 	sceneManager->Initialize();
@@ -155,11 +161,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//3dオブジェクト基底の更新
 		object3DCommon->Update();
 
+		//コライダーマネージャーの更新
+		colliderManager->Update();
+
 		//シーンの更新
 		sceneManager->Update();
 
-		//コライダーマネージャーの更新
-		colliderManager->Update();
+		//フェードの更新
+		fade->Update();
 
 		//音声の更新
 		audio->Update();
@@ -181,6 +190,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		//シーンの描画
 		sceneManager->Draw();
+
+		//フェードの描画
+		fade->Draw();
 
 		//OffScreen用のレンダラーの描画
 		renderer->OffScreenDraw();

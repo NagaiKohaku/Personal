@@ -4,6 +4,7 @@
 
 #include <3d/Model/ModelManager.h>
 #include <2d/Sprite/SpriteManager.h>
+#include <Fade/Fade.h>
 
 #include <Base/Input.h>
 
@@ -126,11 +127,7 @@ void TitleScene::Initialize() {
 
 	/// === その他 === ///
 
-	fade_ = std::make_unique<Fade>();
-
-	fade_->Initialize();
-
-	fade_->StartFadeIn();
+	Fade::GetInstance()->StartFadeIn();
 
 	animPos_.emplace_back(Vector3(0.0f, 1.0f, 0.0f));
 
@@ -207,11 +204,11 @@ void TitleScene::Update() {
 
 	rightArrowSprite_->Update();
 
-	fade_->Update();
-
 	if (isFade_) {
 
-		if (fade_->GetState() == Fade::FadeState::NONE) {
+		if (Fade::GetInstance()->GetState() == Fade::FadeState::FADE_OUT_END) {
+
+			Fade::GetInstance()->SetState(Fade::FadeState::NONE);
 
 			SceneManager::GetInstance()->ChangeScene(SceneManager::kGame);
 		}
@@ -235,8 +232,6 @@ void TitleScene::Draw() {
 	leftArrowSprite_->Draw(LayerType::UI);
 
 	rightArrowSprite_->Draw(LayerType::UI);
-
-	fade_->Draw();
 }
 
 void TitleScene::ImGui() {
@@ -269,6 +264,13 @@ void TitleScene::Start() {
 
 			shockWaveRightEmitter_->GetWorldTransform().translate_ = player_->GetWorldPos() + Vector3(1.75f, 0.0f, 0.0f);
 			shockWaveRightEmitter_->Emit();
+
+			if (Fade::GetInstance()->GetState() != Fade::FADE_OUT) {
+				if (Fade::GetInstance()->GetState() != Fade::FADE_OUT_END) {
+
+					Fade::GetInstance()->StartFadeOut();
+				}
+			}
 		}
 
 		if (animNum_ >= static_cast<int>(animPos_.size())) {
@@ -278,8 +280,6 @@ void TitleScene::Start() {
 			isStart_ = false;
 
 			isFade_ = true;
-
-			fade_->StartFadeOut();
 
 			return;
 		}
@@ -321,6 +321,7 @@ void TitleScene::Start() {
 		};
 
 		camera_->SetRotate(toPlayerRot);
+
 	} else {
 
 		Vector3 cameraRot = camera_->GetWorldTransform().rotate_;

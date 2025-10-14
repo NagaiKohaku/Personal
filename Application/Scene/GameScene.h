@@ -18,7 +18,6 @@
 #include "Ground/Ground.h"
 #include "Ground/Building.h"
 #include "Ground/GroundManager.h"
-#include "Fade/Fade.h"
 
 #include "memory"
 #include "list"
@@ -84,11 +83,10 @@ private:
 	//ライン描画の地面
 	std::unique_ptr<LineGround> lineGround_;
 
-	//フェード
-	std::unique_ptr<Fade> fade_;
-
 	//SkyBox
 	std::unique_ptr<SkyBox> skyBox_;
 
 	std::unique_ptr<GroundManager> groundManager_;
+
+	std::unique_ptr<Object2D> titleSprite_;
 };

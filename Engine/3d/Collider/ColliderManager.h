@@ -48,6 +48,8 @@ public:
 	/// <param name="collider">コライダー</param>
 	void RemoveCollider(Collider* collider);
 
+	void ClearColliders() { colliders_.clear(); }
+
 	///-------------------------------------------/// 
 	/// クラス内処理関数
 	///-------------------------------------------///

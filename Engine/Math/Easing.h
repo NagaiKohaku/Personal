@@ -1,4 +1,6 @@
 #pragma once
+
+#include "Vector2.h"
 #include "Vector3.h"
 #include "Vector4.h"
 
@@ -10,6 +12,15 @@
 /// <param name="t"></param>
 /// <returns></returns>
 float Lerp(float n1, float n2, float t);
+
+/// <summary>
+/// ラープ関数 : Vector2
+/// </summary>
+/// <param name="v1"></param>
+/// <param name="v2"></param>
+/// <param name="t"></param>
+/// <returns></returns>
+Vector2 Lerp(const Vector2& v1, const Vector2& v2, float t);
 
 /// <summary>
 /// ラープ関数 : Vector3
@@ -57,6 +68,16 @@ Vector3 EaseIn(const Vector3& v1, const Vector3& v2, float t, float mag);
 /// <param name="mag"></param>
 /// <returns></returns>
 Vector4 EaseIn(const Vector4& v1, const Vector4& v2, float t, float mag);
+
+/// <summary>
+/// EaseOut関数
+/// </summary>
+/// <param name="v1"></param>
+/// <param name="v2"></param>
+/// <param name="t"></param>
+/// <param name="mag"></param>
+/// <returns></returns>
+Vector2 EaseOut(const Vector2& v1, const Vector2& v2, float t, float mag);
 
 /// <summary>
 /// EaseOut関数
