@@ -16,6 +16,15 @@ float Lerp(float n1, float n2, float t) {
 	return result;
 }
 
+Vector2 Lerp(const Vector2& v1, const Vector2& v2, float t) {
+	Vector2 result;
+
+	result.x = (1.0f - t) * v1.x + t * v2.x;
+	result.y = (1.0f - t) * v1.y + t * v2.y;
+
+	return result;
+}
+
 Vector3 Lerp(const Vector3& v1, const Vector3& v2, float t) {
 	Vector3 result;
 
@@ -86,6 +95,17 @@ Vector4 EaseIn(const Vector4& v1, const Vector4& v2, float t, float mag) {
 ///=====================================================/// 
 ///EaseOut関数
 ///=====================================================///
+Vector2 EaseOut(const Vector2& v1, const Vector2& v2, float t, float mag) {
+
+	float easeT = 1.0f - powf(1.0f - t, mag);
+
+	Vector2 result;
+
+	result = Lerp(v1, v2, easeT);
+
+	return result;
+}
+
 Vector3 EaseOut(const Vector3& v1, const Vector3& v2, float t, float mag) {
 
 	float easeT = 1.0f - powf(1.0f - t,mag);

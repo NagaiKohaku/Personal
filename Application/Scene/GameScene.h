@@ -87,4 +87,6 @@ private:
 	std::unique_ptr<SkyBox> skyBox_;
 
 	std::unique_ptr<GroundManager> groundManager_;
+
+	std::unique_ptr<Object2D> titleSprite_;
 };

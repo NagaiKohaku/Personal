@@ -206,7 +206,9 @@ void TitleScene::Update() {
 
 	if (isFade_) {
 
-		if (Fade::GetInstance()->GetState() == Fade::FadeState::NONE) {
+		if (Fade::GetInstance()->GetState() == Fade::FadeState::FADE_OUT_END) {
+
+			Fade::GetInstance()->SetState(Fade::FadeState::NONE);
 
 			SceneManager::GetInstance()->ChangeScene(SceneManager::kGame);
 		}
@@ -262,6 +264,13 @@ void TitleScene::Start() {
 
 			shockWaveRightEmitter_->GetWorldTransform().translate_ = player_->GetWorldPos() + Vector3(1.75f, 0.0f, 0.0f);
 			shockWaveRightEmitter_->Emit();
+
+			if (Fade::GetInstance()->GetState() != Fade::FADE_OUT) {
+				if (Fade::GetInstance()->GetState() != Fade::FADE_OUT_END) {
+
+					Fade::GetInstance()->StartFadeOut();
+				}
+			}
 		}
 
 		if (animNum_ >= static_cast<int>(animPos_.size())) {
@@ -271,8 +280,6 @@ void TitleScene::Start() {
 			isStart_ = false;
 
 			isFade_ = true;
-
-			Fade::GetInstance()->StartFadeOut();
 
 			return;
 		}
@@ -314,6 +321,7 @@ void TitleScene::Start() {
 		};
 
 		camera_->SetRotate(toPlayerRot);
+
 	} else {
 
 		Vector3 cameraRot = camera_->GetWorldTransform().rotate_;

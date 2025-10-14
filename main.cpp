@@ -161,11 +161,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//3dオブジェクト基底の更新
 		object3DCommon->Update();
 
-		//シーンの更新
-		sceneManager->Update();
-
 		//コライダーマネージャーの更新
 		colliderManager->Update();
+
+		//シーンの更新
+		sceneManager->Update();
 
 		//フェードの更新
 		fade->Update();

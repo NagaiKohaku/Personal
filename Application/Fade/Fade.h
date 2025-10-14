@@ -1,8 +1,10 @@
 #pragma once
 
 #include <2d/Object/Object2D.h>
+#include <Math/WorldTransform.h>
 
 #include <memory>
+#include <vector>
 
 class Fade {
 
@@ -11,7 +13,17 @@ class Fade {
 	enum FadeState {
 		NONE,
 		FADE_IN,
-		FADE_OUT
+		FADE_IN_END,
+		FADE_OUT,
+		FADE_OUT_END
+	};
+
+	struct FadeSprite {
+		std::unique_ptr<Object2D> sprite;
+		Vector2 startSize;
+		Vector2 endSize;
+		float startTime;
+		float endTime;
 	};
 
 	/// <summary>
@@ -60,13 +72,19 @@ class Fade {
 	/// </summary>
 	FadeState GetState() const { return state_; }
 
+	void SetState(FadeState state) { state_ = state; }
+
+private:
+
+	void CreateFadeSprite();
+
 private:
 
 	//フェード状態
 	FadeState state_ = FadeState::NONE;
 
 	//フェードスプライト
-	std::unique_ptr<Object2D> fadeSprite_;
+	std::vector<FadeSprite> fadeSprites_;
 
 	//アルファ値
 	float alpha_ = 0.0f;
