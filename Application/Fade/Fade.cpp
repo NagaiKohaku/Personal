@@ -2,6 +2,11 @@
 
 #include <2d/Sprite/SpriteManager.h>
 
+Fade* Fade::GetInstance() {
+	static Fade instance;
+	return &instance;
+}
+
 /// <summary>
 /// 初期化
 /// </summary>

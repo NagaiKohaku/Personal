@@ -15,6 +15,12 @@ class Fade {
 	};
 
 	/// <summary>
+	/// シングルトンインスタンスの取得
+	/// </summary>
+	/// <returns>インスタンス</returns>
+	static Fade* GetInstance();
+
+	/// <summary>
 	/// 初期化
 	/// </summary>
 	void Initialize();

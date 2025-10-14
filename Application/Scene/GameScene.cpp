@@ -11,6 +11,7 @@
 #include "3d/Object/SkyBoxCommon.h"
 
 #include "LevelEditor/LevelDataLoader.h"
+#include "Fade/Fade.h"
 
 #include "imgui.h"
 
@@ -71,14 +72,8 @@ void GameScene::Initialize() {
 
 	groundManager_->Initialize();
 
-	//フェードの生成
-	fade_ = std::make_unique<Fade>();
-
-	//フェードの初期化
-	fade_->Initialize();
-
 	//フェードイン開始
-	fade_->StartFadeIn();
+	Fade::GetInstance()->StartFadeIn();
 
 	//NOTE:地面とSkyBoxはテクスチャが見にくいためいったんコメントアウト
 
@@ -121,8 +116,6 @@ void GameScene::Update() {
 
 	groundManager_->Update();
 
-	fade_->Update();
-
 	//NOTE:地面とSkyBoxはテクスチャが見にくいためいったんコメントアウト
 
 	//skyBox_->Update();
@@ -145,8 +138,6 @@ void GameScene::Draw() {
 	//lineGround_->Draw();
 
 	groundManager_->Draw();
-
-	fade_->Draw();
 
 	//NOTE:地面とSkyBoxはテクスチャが見にくいためいったんコメントアウト
 

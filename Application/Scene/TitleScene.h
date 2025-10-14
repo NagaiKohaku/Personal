@@ -8,7 +8,6 @@
 #include "3d/Particle/EmitterGroup.h"
 #include "Player/Player.h"
 #include "Ground/GroundManager.h"
-#include "Fade/Fade.h"
 
 #include "memory"
 #include "vector"
@@ -80,9 +79,6 @@ private:
 
 	//衝撃波エミッター(右)
 	std::unique_ptr<EmitterGroup> shockWaveRightEmitter_;
-
-	//フェード
-	std::unique_ptr<Fade> fade_;
 
 	std::vector<Vector3> animPos_;
 
