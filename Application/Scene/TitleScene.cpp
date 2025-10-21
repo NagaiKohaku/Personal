@@ -127,6 +127,10 @@ void TitleScene::Initialize() {
 
 	/// === その他 === ///
 
+	Fade::GetInstance()->SetCamera(camera_.get());
+
+	Fade::GetInstance()->SetPlayer(player_.get());
+
 	Fade::GetInstance()->StartFadeIn();
 
 	animPos_.emplace_back(Vector3(0.0f, 1.0f, 0.0f));
@@ -151,6 +155,10 @@ void TitleScene::Initialize() {
 }
 
 void TitleScene::Finalize() {
+
+	Fade::GetInstance()->SetCamera(nullptr);
+
+	Fade::GetInstance()->SetPlayer(nullptr);
 
 }
 

@@ -78,7 +78,7 @@ void Object3D::Initialize() {
 	camera_ = object3DCommon_->GetDefaultCamera();
 
 	//デバッグモードの初期化
-	isDebug_ = true;
+	isDebug_ = false;
 }
 
 void Object3D::Initialize(ObjectData objectData) {
@@ -148,7 +148,7 @@ void Object3D::Initialize(ObjectData objectData) {
 	camera_ = object3DCommon_->GetDefaultCamera();
 
 	//デバッグモードの初期化
-	isDebug_ = true;
+	isDebug_ = false;
 }
 
 ///=====================================================/// 

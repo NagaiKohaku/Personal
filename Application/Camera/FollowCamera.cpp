@@ -14,7 +14,7 @@ void FollowCamera::Initialize(Camera* camera, Player* player) {
 	player_ = player;
 
 	//オフセットを設定
-	offset_ = { 0.0f,3.0f,-20.0f };
+	offset_ = { 0.0f,3.0f,0.0f };
 
 	//追尾範囲を設定
 	followRange_ = 10.0f;
@@ -24,6 +24,8 @@ void FollowCamera::Initialize(Camera* camera, Player* player) {
 
 	//カメラの座標を設定
 	camera_->GetWorldTransform().translate_ = offset_;
+
+	camera_->SetOffsetZ(-20.0f);
 }
 
 ///=====================================================/// 
@@ -32,6 +34,10 @@ void FollowCamera::Initialize(Camera* camera, Player* player) {
 void FollowCamera::Update() {
 
 	if (camera_->IsDebugCamera()) {
+		return;
+	}
+
+	if (!isActive_) {
 		return;
 	}
 

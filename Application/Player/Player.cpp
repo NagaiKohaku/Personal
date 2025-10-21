@@ -129,7 +129,7 @@ void Player::Initialize(Camera* cameraPtr, BulletManager* bulletPtr) {
 	//座標の設定
 	core_->GetWorldTransform().translate_ = initialPos_;
 
-	isTitleScene_ = false;
+	isMoveActive = true;
 
 }
 
@@ -207,7 +207,7 @@ void Player::Initialize(Camera* cameraPtr) {
 	rotStrength_ = 10.0f;
 
 	//移動範囲の設定
-	moveRange_ = { 7.0f,4.0f,0.0f };
+	moveRange_ = { 7.0f,4.0f,1.0f };
 
 	//戦車状態の回転範囲の設定
 	driveRotRange_ = { 0.0f,0.5f,0.0f };
@@ -221,7 +221,7 @@ void Player::Initialize(Camera* cameraPtr) {
 	//座標の設定
 	core_->GetWorldTransform().translate_ = initialPos_;
 
-	isTitleScene_ = true;
+	isMoveActive = false;
 }
 
 ///=====================================================/// 
@@ -243,7 +243,7 @@ void Player::Update() {
 	//移動
 	Move();
 
-	if (!isTitleScene_) {
+	if (isMoveActive) {
 
 		//攻撃
 		Attack();
@@ -265,7 +265,7 @@ void Player::Update() {
 
 	shadow_->Update(core_->GetWorldTransform().translate_);
 
-	if (!isTitleScene_) {
+	if (isMoveActive) {
 
 		//コライダーの更新
 		collider_->Update();
@@ -292,7 +292,7 @@ void Player::Draw() {
 
 	shadow_->Draw();
 
-	if (!isTitleScene_) {
+	if (isMoveActive) {
 
 		//コライダーの描画
 		collider_->Draw();
@@ -310,7 +310,7 @@ void Player::Move() {
 	//移動量をリセット
 	velocity_ = { 0.0f,0.0f,0.0f };
 
-	if (!isTitleScene_) {
+	if (isMoveActive) {
 
 		//Wキーが押されたら上方向に移動
 		if (Input::GetInstance()->isPushKey(DIK_W)) {

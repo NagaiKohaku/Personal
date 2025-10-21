@@ -3,6 +3,9 @@
 #include <2d/Object/Object2D.h>
 #include <Math/WorldTransform.h>
 
+#include <3d/Camera/Camera.h>
+#include <Player/Player.h>
+
 #include <memory>
 #include <vector>
 
@@ -72,7 +75,15 @@ class Fade {
 	/// </summary>
 	FadeState GetState() const { return state_; }
 
+	Camera* GetCamera() { return camera_; }
+
+	Player* GetPlayer() { return player_; }
+
 	void SetState(FadeState state) { state_ = state; }
+
+	void SetCamera(Camera* ptr) { camera_ = ptr; }
+
+	void SetPlayer(Player* ptr) { player_ = ptr; }
 
 private:
 
@@ -85,6 +96,14 @@ private:
 
 	//フェードスプライト
 	std::vector<FadeSprite> fadeSprites_;
+
+	//カメラ
+	Camera* camera_;
+
+	//プレイヤー
+	Player* player_;
+
+	Vector2 playerPos2D_;
 
 	//アルファ値
 	float alpha_ = 0.0f;

@@ -26,6 +26,10 @@ public:
 	/// </summary>
 	void Update();
 
+public:
+
+	void SetIsActive(bool flag) { isActive_ = flag; }
+
 	///-------------------------------------------/// 
 	/// メンバ変数
 	///-------------------------------------------///
@@ -45,4 +49,7 @@ private:
 
 	//追尾強度
 	float followStrength_;
+
+	//有効化フラグ
+	bool isActive_;
 };

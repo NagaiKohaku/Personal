@@ -1,6 +1,8 @@
 #include "Fade.h"
 
+#include <Base/WinApp.h>
 #include <2d/Sprite/SpriteManager.h>
+#include <Math/MakeMatrixMath.h>
 
 #include <Math/Random.h>
 #include <Math/Easing.h>
@@ -42,7 +44,7 @@ void Fade::Initialize() {
 
 	Vector2 startSize = { 0.0f,0.0f };
 
-	Vector2 endSize = { 2000.0f,2000.0f };
+	Vector2 endSize = { 3000.0f,3000.0f };
 
 	float startTime = static_cast<float>(fadeSprites_.back().endTime) - 0.8f;
 
@@ -59,6 +61,27 @@ void Fade::Update() {
 	FadeInUpdate();
 
 	FadeOutUpdate();
+
+	if (camera_ != nullptr) {
+		if (player_ != nullptr) {
+
+			//ビューポート行列
+			Matrix4x4 viewport = MakeViewportMatrix(0, 0, WinApp::kClientWidth, WinApp::kClientHeight, 0, 1);
+
+			//カメラのビュープロジェクション行列とビューポート行列を掛ける
+			Matrix4x4 viewProjectionViewport = camera_->GetViewProjectionMatrix() * viewport;
+
+			//3Dオブジェクトの座標をスクリーン座標に変換する
+			Vector3 screenPos = Transform(player_->GetWorldPos(), viewProjectionViewport);
+
+			if (screenPos.x != 0.0f) {
+				if (screenPos.y != 0.0f) {
+
+					playerPos2D_ = { screenPos.x,screenPos.y };
+				}
+			}
+		}
+	}
 
 	for (auto& fadeSprite : fadeSprites_) {
 
@@ -87,9 +110,10 @@ void Fade::StartFadeIn() {
 
 	timer_ = 0.0f;
 
-	for(auto& fadeSprite : fadeSprites_) {
+	for (auto& fadeSprite : fadeSprites_) {
+		fadeSprite.sprite->SetTranslate(Vector2(640.0f,360.0f));
 		fadeSprite.sprite->SetSize(fadeSprite.endSize);
-
+		timer_ = fadeSprite.endTime;
 	}
 }
 
@@ -100,26 +124,29 @@ void Fade::FadeInUpdate() {
 
 	if (state_ == FadeState::FADE_IN) {
 
-		timer_ += 1.0f / 60.0f;
+		timer_ -= 1.0f / 60.0f;
 
 		for (auto& fadeSprite : fadeSprites_) {
 
-			if (timer_ >= fadeSprite.startTime) {
+			if (timer_ <= fadeSprite.endTime && timer_ >= fadeSprite.startTime) {
 
 				float t = (timer_ - fadeSprite.startTime) / (fadeSprite.endTime - fadeSprite.startTime);
 
-				if (t >= 1.0f) {
+				if (t <= 0.0f) {
 
-					t = 1.0f;
+					t = 0.0f;
 				}
 
-				Vector2 size = EaseOut(fadeSprite.endSize, fadeSprite.startSize, t, 2.0f);
+				Vector2 size = EaseIn(fadeSprite.startSize, fadeSprite.endSize, t, 2.0f);
 
 				fadeSprite.sprite->SetSize(size);
+
+				fadeSprite.sprite->SetTranslate(playerPos2D_);
+
 			}
 		}
 
-		if (timer_ >= fadeSprites_.back().endTime) {
+		if (timer_ <= fadeSprites_.front().startTime) {
 
 			timer_ = 0.0f;
 
@@ -138,6 +165,7 @@ void Fade::StartFadeOut() {
 	timer_ = 0.0f;
 
 	for (auto& fadeSprite : fadeSprites_) {
+		fadeSprite.sprite->SetTranslate(Vector2(640.0f, 360.0f));
 		fadeSprite.sprite->SetSize(fadeSprite.startSize);
 	}
 }
@@ -165,6 +193,9 @@ void Fade::FadeOutUpdate() {
 				Vector2 size = EaseOut(fadeSprite.startSize, fadeSprite.endSize, t, 2.0f);
 
 				fadeSprite.sprite->SetSize(size);
+
+				fadeSprite.sprite->SetTranslate(playerPos2D_);
+
 			}
 		}
 
@@ -197,7 +228,7 @@ void Fade::CreateFadeSprite() {
 
 	Vector2 startSize = { 0.0f,0.0f };
 
-	Vector2 endSize = { 2560.0f,2560.0f };
+	Vector2 endSize = { 3000.0f,3000.0f };
 
 	if (fadeSprites_.size() == 0) {
 

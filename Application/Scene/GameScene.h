@@ -20,12 +20,22 @@
 #include "Ground/GroundManager.h"
 
 #include "memory"
+#include "vector"
 #include "list"
 
 ///=====================================================/// 
 /// ゲームシーン
 ///=====================================================///
 class GameScene : public BaseScene {
+
+public:
+
+	struct AnimPoint {
+		Vector3 playerPos;
+		Vector3 cameraRot;
+		float time;
+		float mag;
+	};
 
 	///-------------------------------------------/// 
 	/// メンバ関数
@@ -56,6 +66,8 @@ public:
 	/// デバッグ
 	/// </summary>
 	void ImGui() override;
+
+	void Start();
 
 	///-------------------------------------------/// 
 	/// メンバ変数
@@ -89,4 +101,12 @@ private:
 	std::unique_ptr<GroundManager> groundManager_;
 
 	std::unique_ptr<Object2D> titleSprite_;
+
+	float timer_;
+
+	int animNum_;
+
+	bool isStart_;
+
+	std::vector<AnimPoint> animPoints_;
 };
