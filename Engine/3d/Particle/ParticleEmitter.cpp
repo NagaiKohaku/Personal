@@ -393,6 +393,10 @@ void ParticleEmitter::Draw(LayerType layer) {
 		return;
 	}
 
+	if (numInstance_ <= 0) {
+		return;
+	}
+
 	command = [this]() {
 
 		//パーティクルの描画前処理

@@ -70,6 +70,17 @@ Vector3 SLerp(const Vector3& v1, const Vector3& v2, float t) {
 ///=====================================================/// 
 ///EaseIn関数
 ///=====================================================///
+Vector2 EaseIn(const Vector2& v1, const Vector2& v2, float t, float mag) {
+
+	float easeT = powf(t, mag);
+
+	Vector2 result;
+
+	result = Lerp(v1, v2, easeT);
+
+	return result;
+}
+
 Vector3 EaseIn(const Vector3& v1, const Vector3& v2, float t, float mag) {
 
 	float easeT = powf(t, mag);

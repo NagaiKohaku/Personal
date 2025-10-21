@@ -57,6 +57,16 @@ Vector3 SLerp(const Vector3& v1, const Vector3& v2, float t);
 /// <param name="t"></param>
 /// <param name="mag"></param>
 /// <returns></returns>
+Vector2 EaseIn(const Vector2& v1, const Vector2& v2, float t, float mag);
+
+/// <summary>
+/// EaseIn関数
+/// </summary>
+/// <param name="v1"></param>
+/// <param name="v2"></param>
+/// <param name="t"></param>
+/// <param name="mag"></param>
+/// <returns></returns>
 Vector3 EaseIn(const Vector3& v1, const Vector3& v2, float t, float mag);
 
 /// <summary>

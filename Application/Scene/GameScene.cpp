@@ -14,6 +14,7 @@
 
 #include "LevelEditor/LevelDataLoader.h"
 #include "Fade/Fade.h"
+#include "Math/Easing.h"
 
 #include "imgui.h"
 
@@ -57,6 +58,8 @@ void GameScene::Initialize() {
 	//プレイヤーの初期化
 	player_->Initialize(camera_.get(), bulletManager_.get());
 
+	player_->SetIsMoveActive(false);
+
 	//エネミーマネージャーの初期化
 	enemyManager_->Initialize(camera_.get(), bulletManager_.get(), player_.get());
 
@@ -65,6 +68,8 @@ void GameScene::Initialize() {
 
 	//追尾カメラの初期化
 	followCamera_->Initialize(camera_.get(), player_.get());
+
+	followCamera_->SetIsActive(false);
 
 	//lineGround_ = std::make_unique<LineGround>();
 
@@ -88,7 +93,21 @@ void GameScene::Initialize() {
 
 	titleSprite_->SetTranslate({ 640.0f,320.0f });
 
-	//フェードイン開始
+	timer_ = 0.0f;
+
+	animNum_ = 0;
+
+	isStart_ = true;
+
+	animPoints_.push_back({ Vector3(0.0f,20.0f,-600.0f),Vector3(0.0f,-std::numbers::pi_v<float>,0.0f),0.0f,1.0f });
+	animPoints_.push_back({ Vector3(0.0f,20.0f,-600.0f),Vector3(0.0f,-std::numbers::pi_v<float>,0.0f),1.0f,1.0f });
+	animPoints_.push_back({ Vector3(0.0f,2.0f,0.0f),Vector3(0.2f,-std::numbers::pi_v<float>,0.0f),2.0f,3.0f });
+	animPoints_.push_back({ Vector3(0.0f,2.0f,0.0f),Vector3(0.2f,0.0f,0.0f),4.0f,4.0f });
+
+	Fade::GetInstance()->SetCamera(camera_.get());
+
+	Fade::GetInstance()->SetPlayer(player_.get());
+
 	Fade::GetInstance()->StartFadeIn();
 
 	//NOTE:地面とSkyBoxはテクスチャが見にくいためいったんコメントアウト
@@ -104,6 +123,10 @@ void GameScene::Initialize() {
 ///=====================================================///
 void GameScene::Finalize() {
 
+	Fade::GetInstance()->SetCamera(nullptr);
+
+	Fade::GetInstance()->SetPlayer(nullptr);
+
 	//音声データの解放
 	Audio::GetInstance()->Finalize();
 }
@@ -112,6 +135,8 @@ void GameScene::Finalize() {
 /// 更新
 ///=====================================================///
 void GameScene::Update() {
+
+	Start();
 
 	//追尾カメラの更新
 	followCamera_->Update();
@@ -197,4 +222,49 @@ void GameScene::ImGui() {
 
 	//ImGuiの終了
 	ImGui::End();
+}
+
+void GameScene::Start() {
+
+	if (!isStart_) {
+		return;
+	}
+
+	timer_ += 1.0f / 60.0f;
+
+	if (animNum_ == 0) {
+
+		player_->SetPosition(animPoints_[animNum_].playerPos);
+
+		camera_->GetWorldTransform().rotate_ = animPoints_[animNum_].cameraRot;
+
+		animNum_++;
+	} else {
+
+		float t = (timer_ - animPoints_[animNum_ - 1].time) / (animPoints_[animNum_].time - animPoints_[animNum_ - 1].time);
+
+		if (t >= 1.0f) {
+
+			t = 1.0f;
+		}
+
+		player_->SetPosition(EaseOut(animPoints_[animNum_ - 1].playerPos, animPoints_[animNum_].playerPos, t, animPoints_[animNum_].mag));
+
+		camera_->GetWorldTransform().rotate_ = EaseOut(animPoints_[animNum_ - 1].cameraRot, animPoints_[animNum_].cameraRot, t, animPoints_[animNum_].mag);
+
+		if (t == 1.0f) {
+
+			animNum_++;
+		}
+
+		if (animNum_ == static_cast<int>(animPoints_.size())) {
+
+			isStart_ = false;
+
+			followCamera_->SetIsActive(true);
+
+			player_->SetIsMoveActive(true);
+		}
+	}
+
 }
