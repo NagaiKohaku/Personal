@@ -3,8 +3,7 @@
 #include "Base/WinApp.h"
 #include "Base/DirectXCommon.h"
 #include "Base/Renderer.h"
-#include "2d/Object/Object2DCommon.h"
-#include "2d/Sprite/Sprite.h"
+
 #include "2d/Sprite/SpriteManager.h"
 
 #include "Math/MakeMatrixMath.h"
@@ -13,7 +12,7 @@
 #include "cassert"
 
 ///=====================================================/// 
-/// 初期化
+/// Object2Dの初期化
 ///=====================================================///
 void Object2D::Initialize() {
 
@@ -48,7 +47,7 @@ void Object2D::Initialize() {
 }
 
 ///=====================================================/// 
-/// 更新
+/// Object2Dのスプライトおよび座標変換行列(WVP)を更新
 ///=====================================================///
 void Object2D::Update() {
 
@@ -83,7 +82,7 @@ void Object2D::Update() {
 }
 
 ///=====================================================/// 
-/// 描画
+/// Object2Dを指定したレイヤーに描画登録
 ///=====================================================///
 void Object2D::Draw(LayerType layer) {
 
@@ -108,7 +107,7 @@ void Object2D::Draw(LayerType layer) {
 }
 
 ///=====================================================/// 
-/// ImGuiの表示
+/// ImGuiを使用してObject2Dのパラメータを表示
 ///=====================================================///
 void Object2D::DisplayImGui() {
 
@@ -132,7 +131,7 @@ void Object2D::DisplayImGui() {
 }
 
 ///=====================================================/// 
-/// スプライトの設定
+/// 名前で指定したスプライトをObject2Dに設定
 ///=====================================================///
 void Object2D::SetSprite(const std::string& spriteName) {
 

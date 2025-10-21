@@ -3,7 +3,7 @@
 #include "2d/Sprite/SpriteCommon.h"
 
 ///=====================================================/// 
-/// シングルトンインスタンスの取得
+/// SpriteManagerのシングルトンインスタンスを取得
 ///=====================================================///
 SpriteManager* SpriteManager::GetInstance() {
 	static SpriteManager instance;
@@ -11,7 +11,7 @@ SpriteManager* SpriteManager::GetInstance() {
 }
 
 ///=====================================================/// 
-/// 初期化
+/// SpriteManagerを初期化
 ///=====================================================///
 void SpriteManager::Initialize() {
 
@@ -20,7 +20,7 @@ void SpriteManager::Initialize() {
 }
 
 ///=====================================================/// 
-/// スプライトの読み込み
+/// 指定した名前のスプライトを検索し、未登録であれば読み込む
 ///=====================================================///
 void SpriteManager::LoadSprite(const std::string& spriteName,const std::string& spriteFileName) {
 
@@ -42,15 +42,24 @@ void SpriteManager::LoadSprite(const std::string& spriteName,const std::string& 
 }
 
 ///=====================================================///
-/// スプライトの検索
+/// 指定した名前のスプライトを検索して新しいインスタンスを生成
 ///=====================================================///
-Sprite* SpriteManager::FindSprite(const std::string& spriteName) {
+std::unique_ptr<Sprite> SpriteManager::FindSprite(const std::string& spriteName) {
 
 	//引数の名前のスプライトが登録されているかを確認
 	if (sprites_.contains(spriteName)) {
 
-		//登録されていたスプライトを返す
-		return sprites_.at(spriteName).get();
+		//登録済みのスプライトからテクスチャパスを取得
+		std::string texturePath = sprites_.at(spriteName)->GetTexturePath();
+
+		//スプライトを生成
+		std::unique_ptr<Sprite> newSprite = std::make_unique<Sprite>();
+
+		//初期化
+		newSprite->Initialize(texturePath);
+
+		//新しく生成したスプライトを返す
+		return std::move(newSprite);
 	}
 
 	//登録されていなかったのでfalseを返す
