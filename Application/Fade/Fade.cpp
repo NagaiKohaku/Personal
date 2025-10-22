@@ -7,6 +7,9 @@
 #include <Math/Random.h>
 #include <Math/Easing.h>
 
+/// <summary>
+/// シングルトンインスタンスの取得
+/// </summary>
 Fade* Fade::GetInstance() {
 	static Fade instance;
 	return &instance;
@@ -17,40 +20,22 @@ Fade* Fade::GetInstance() {
 /// </summary>
 void Fade::Initialize() {
 
+	/// === テクスチャのロード === ///
+
 	SpriteManager::GetInstance()->LoadSprite("Ring", "BigRing");
 
 	SpriteManager::GetInstance()->LoadSprite("Circle", "BigCircle");
 
+	/// === フェードに使うスプライトの生成 === ///
+
 	for (int i = 0; i < 3; i++) {
 
-		CreateFadeSprite();
+		CreateRingSprite();
 	}
 
-	std::unique_ptr<Object2D> newObject;
+	/// === 円形のスプライトの生成 === ///
 
-	newObject = std::make_unique<Object2D>();
-
-	newObject->Initialize();
-
-	newObject->SetSprite("Circle");
-
-	newObject->GetSprite()->SetAnchorPoint({ 0.5f,0.5f });
-
-	newObject->GetSprite()->SetColor({ 1.0f,1.0f,1.0f,1.0f });
-
-	newObject->SetSize({ 0.0f,0.0f });
-
-	newObject->SetTranslate({ 640.0f,360.0f });
-
-	Vector2 startSize = { 0.0f,0.0f };
-
-	Vector2 endSize = { 3000.0f,3000.0f };
-
-	float startTime = static_cast<float>(fadeSprites_.back().endTime) - 0.8f;
-
-	float endTime = startTime + 1.0f;
-
-	fadeSprites_.push_back({ std::move(newObject),startSize,endSize,startTime,endTime });
+	CreateCircleSprite();
 }
 
 /// <summary>
@@ -58,8 +43,10 @@ void Fade::Initialize() {
 /// </summary>
 void Fade::Update() {
 
+	//フェードインの更新
 	FadeInUpdate();
 
+	//フェードアウトの更新
 	FadeOutUpdate();
 
 	if (camera_ != nullptr) {
@@ -85,6 +72,7 @@ void Fade::Update() {
 
 	for (auto& fadeSprite : fadeSprites_) {
 
+		//スプライトの更新
 		fadeSprite.sprite->Update();
 	}
 
@@ -97,6 +85,7 @@ void Fade::Draw() {
 
 	for (auto& fadeSprite : fadeSprites_) {
 
+		//スプライトの描画
 		fadeSprite.sprite->Draw(LayerType::UI);
 	}
 }
@@ -106,13 +95,20 @@ void Fade::Draw() {
 /// </summary>
 void Fade::StartFadeIn() {
 
+	//フェードイン状態にして更新開始
 	state_ = FadeState::FADE_IN;
 
+	//タイマーのリセット
 	timer_ = 0.0f;
 
+	//スプライトの初期座標・初期サイズの設定
 	for (auto& fadeSprite : fadeSprites_) {
+
 		fadeSprite.sprite->SetTranslate(Vector2(640.0f,360.0f));
+
 		fadeSprite.sprite->SetSize(fadeSprite.endSize);
+
+		//減算で計算するので、最後のスプライトの終了時間を設定
 		timer_ = fadeSprite.endTime;
 	}
 }
@@ -124,11 +120,13 @@ void Fade::FadeInUpdate() {
 
 	if (state_ == FadeState::FADE_IN) {
 
+		//タイマーを減算
 		timer_ -= 1.0f / 60.0f;
 
 		for (auto& fadeSprite : fadeSprites_) {
 
-			if (timer_ <= fadeSprite.endTime && timer_ >= fadeSprite.startTime) {
+			//開始時間・終了時間の間のみ更新
+			if (timer_ >= fadeSprite.startTime && timer_ <= fadeSprite.endTime) {
 
 				float t = (timer_ - fadeSprite.startTime) / (fadeSprite.endTime - fadeSprite.startTime);
 
@@ -139,13 +137,16 @@ void Fade::FadeInUpdate() {
 
 				Vector2 size = EaseIn(fadeSprite.startSize, fadeSprite.endSize, t, 2.0f);
 
+				//サイズを設定
 				fadeSprite.sprite->SetSize(size);
 
+				//座標を設定
 				fadeSprite.sprite->SetTranslate(playerPos2D_);
 
 			}
 		}
 
+		//タイマーが終了時間になったらフェードイン終了
 		if (timer_ <= fadeSprites_.front().startTime) {
 
 			timer_ = 0.0f;
@@ -160,10 +161,13 @@ void Fade::FadeInUpdate() {
 /// </summary>
 void Fade::StartFadeOut() {
 
+	//フェードアウト状態にして更新開始
 	state_ = FadeState::FADE_OUT;
 
+	//タイマーのリセット
 	timer_ = 0.0f;
 
+	//スプライトの初期座標・初期サイズの設定
 	for (auto& fadeSprite : fadeSprites_) {
 		fadeSprite.sprite->SetTranslate(Vector2(640.0f, 360.0f));
 		fadeSprite.sprite->SetSize(fadeSprite.startSize);
@@ -177,11 +181,12 @@ void Fade::FadeOutUpdate() {
 
 	if (state_ == FadeState::FADE_OUT) {
 
+		//タイマーを加算
 		timer_ += 1.0f / 60.0f;
 
 		for (auto& fadeSprite : fadeSprites_) {
 
-			if (timer_ >= fadeSprite.startTime) {
+			if (timer_ >= fadeSprite.startTime && timer_ <= fadeSprite.endTime) {
 
 				float t = (timer_ - fadeSprite.startTime) / (fadeSprite.endTime - fadeSprite.startTime);
 
@@ -192,13 +197,16 @@ void Fade::FadeOutUpdate() {
 
 				Vector2 size = EaseOut(fadeSprite.startSize, fadeSprite.endSize, t, 2.0f);
 
+				//サイズを設定
 				fadeSprite.sprite->SetSize(size);
 
+				//座標を設定
 				fadeSprite.sprite->SetTranslate(playerPos2D_);
 
 			}
 		}
 
+		//タイマーが終了時間になったらフェードアウト終了
 		if (timer_ >= fadeSprites_.back().endTime) {
 
 			timer_ = 0.0f;
@@ -208,7 +216,10 @@ void Fade::FadeOutUpdate() {
 	}
 }
 
-void Fade::CreateFadeSprite() {
+/// <summary>
+/// リングスプライトの生成
+/// </summary>
+void Fade::CreateRingSprite() {
 
 	std::unique_ptr<Object2D> newObject;
 
@@ -245,4 +256,36 @@ void Fade::CreateFadeSprite() {
 
 		fadeSprites_.push_back({ std::move(newObject),startSize,endSize,startTime,endTime });
 	}
+}
+
+/// <summary>
+/// 円形スプライトの生成
+/// </summary>
+void Fade::CreateCircleSprite() {
+
+	std::unique_ptr<Object2D> newObject;
+
+	newObject = std::make_unique<Object2D>();
+
+	newObject->Initialize();
+
+	newObject->SetSprite("Circle");
+
+	newObject->GetSprite()->SetAnchorPoint({ 0.5f,0.5f });
+
+	newObject->GetSprite()->SetColor({ 1.0f,1.0f,1.0f,1.0f });
+
+	newObject->SetSize({ 0.0f,0.0f });
+
+	newObject->SetTranslate({ 640.0f,360.0f });
+
+	Vector2 startSize = { 0.0f,0.0f };
+
+	Vector2 endSize = { 3000.0f,3000.0f };
+
+	float startTime = static_cast<float>(fadeSprites_.back().endTime) - 0.8f;
+
+	float endTime = startTime + 1.0f;
+
+	fadeSprites_.push_back({ std::move(newObject),startSize,endSize,startTime,endTime });
 }

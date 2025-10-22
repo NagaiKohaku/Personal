@@ -70,25 +70,59 @@ class Fade {
 	/// </summary>
 	void FadeOutUpdate();
 
+	///=====================================================/// 
+	/// ゲッター・セッター
+	///=====================================================///
+public:
+
 	/// <summary>
 	/// フェード状態の取得
 	/// </summary>
 	FadeState GetState() const { return state_; }
 
+	/// <summary>
+	/// カメラの取得
+	/// </summary>
 	Camera* GetCamera() { return camera_; }
 
+	/// <summary>
+	/// プレイヤーの取得
+	/// </summary>
 	Player* GetPlayer() { return player_; }
 
+	/// <summary>
+	/// フェード状態の設定
+	/// </summary>
 	void SetState(FadeState state) { state_ = state; }
 
+	/// <summary>
+	/// カメラの設定
+	/// </summary>
 	void SetCamera(Camera* ptr) { camera_ = ptr; }
 
+	/// <summary>
+	/// プレイヤーの設定
+	/// </summary>
 	void SetPlayer(Player* ptr) { player_ = ptr; }
 
+	///=====================================================/// 
+	/// クラス内関数
+	///=====================================================///
 private:
 
-	void CreateFadeSprite();
+	/// <summary>
+	/// リングスプライトの生成
+	/// </summary>
+	void CreateRingSprite();
 
+	/// <summary>
+	/// 円形スプライトの生成
+	/// </summary>
+	void CreateCircleSprite();
+
+	///=====================================================/// 
+	/// メンバ変数
+	///=====================================================///
 private:
 
 	//フェード状態
@@ -103,6 +137,7 @@ private:
 	//プレイヤー
 	Player* player_;
 
+	//プレイヤーの2D座標
 	Vector2 playerPos2D_;
 
 	//アルファ値
