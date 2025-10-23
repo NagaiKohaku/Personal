@@ -12,8 +12,20 @@
 #include "string"
 #include "wrl.h"
 
+/// <summary>
+/// メッシュ基底クラス（Mesh Base）です。
+/// </summary>
+/// <remarks>
+/// - 頂点(VertexData)とインデックスデータを保持し、GPUバッファとバッファビューを管理します。
+/// - 派生クラスで Initialize() を実装することで具体的な形状のメッシュを作成できます。
+/// - Draw() で頂点・インデックスバッファを入力アセンブリにバインドし描画可能な状態にします。
+/// - CopyMeshData() により外部データでメッシュの頂点・インデックス情報を更新可能です。
+/// </remarks>
 class MeshBase {
 
+	///-------------------------------------------/// 
+	/// 構造体
+	///-------------------------------------------///
 public:
 
 	//頂点データ
@@ -23,45 +35,96 @@ public:
 		Vector3 normal;
 	};
 
+	///-------------------------------------------/// 
+	/// メンバ関数
+	///-------------------------------------------///
 public:
 
 	/// <summary>
-	/// デストラクタ
+	/// 純粋仮想デストラクタ
 	/// </summary>
 	virtual ~MeshBase() = default;
 
 	/// <summary>
-	/// 初期化処理
+	/// メッシュを初期化する純粋仮想関数。
 	/// </summary>
+	/// <remarks>
+	/// - 派生クラスで必ず実装する必要があります。
+	/// - 頂点・インデックスリソースの生成や初期データ設定などを行います。
+	/// </remarks>
 	virtual void Initialize() = 0;
 
 	/// <summary>
-	/// 描画処理
+	/// GPUにメッシュのデータを送信します。
 	/// </summary>
-	void Draw();
+	/// <remarks>
+	/// - 頂点バッファとインデックスバッファを入力アセンブリステージにバインドします。
+	/// </remarks>
+	void SendDataForGPU();
 
+	/// <summary>
+	/// 外部から頂点データとインデックスデータをコピーしてメッシュを更新します。
+	/// </summary>
+	/// <param name="indices">コピーするインデックスデータの配列</param>
+	/// <param name="vertices">コピーする頂点データの配列</param>
+	/// <remarks>
+	/// - 引数のデータを内部バッファ(vertexData_ / indexData_)に直接コピーします。
+	/// </remarks>
 	void CopyMeshData(std::vector<uint32_t> indices, std::vector<VertexData> vertices);
 
+	///-------------------------------------------/// 
+	/// ゲッター・セッター
+	///-------------------------------------------///
 public:
 
+	/// <summary>
+	/// 頂点数を取得
+	/// </summary>
+	/// <returns>頂点数</returns>
 	uint32_t GetVertexCount() const { return vertexCount_; }
 
+	/// <summary>
+	/// インデックス数を取得
+	/// </summary>
+	/// <returns>インデックス数</returns>
 	uint32_t GetIndexCount() const { return indexCount_; }
 
+	/// <summary>
+	/// 頂点データを取得
+	/// </summary>
+	/// <returns>頂点データ</returns>
 	VertexData* GetVertexData() const { return vertexData_; }
 
+	/// <summary>
+	/// インデックスデータを取得
+	/// </summary>
+	/// <returns>インデックスデータ</returns>
 	uint32_t* GetIndexData() const { return indexData_; }
 
+	/// <summary>
+	/// 頂点数を設定
+	/// </summary>
+	/// <param name="count">頂点数</param>
 	void SetVertexCount(uint32_t count) { vertexCount_ = count; }
 
+	/// <summary>
+	/// インデックス数を設定
+	/// </summary>
+	/// <param name="count">インデックス数</param>
 	void SetIndexCount(uint32_t count) { indexCount_ = count; }
 
+	///-------------------------------------------/// 
+	/// メンバ変数
+	///-------------------------------------------///
 protected:
 
+	//DirectX基底
 	DirectXCommon* directXCommon_ = nullptr;
 
+	//頂点数
 	uint32_t vertexCount_ = 0;
 
+	//インデックス数
 	uint32_t indexCount_ = 0;
 
 	/// === バッファリソース === ///

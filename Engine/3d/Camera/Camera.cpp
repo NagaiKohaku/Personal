@@ -3,7 +3,6 @@
 #include "Base/WinApp.h"
 #include "Base/Input.h"
 #include "Base/OffScreen.h"
-#include "3d/Object/Object3D.h"
 #include "3d/Object/Object3DCommon.h"
 #include "3d/Object/DebugObjectCommon.h"
 #include "3d/Object/SkyBoxCommon.h"
@@ -15,7 +14,7 @@
 #include "numbers"
 
 ///=====================================================/// 
-/// 初期化
+/// カメラの各種パラメータを初期化
 ///=====================================================///
 void Camera::Initialize() {
 
@@ -69,7 +68,7 @@ void Camera::Initialize() {
 }
 
 ///=====================================================/// 
-/// 更新処理
+/// カメラの状態を更新
 ///=====================================================///
 void Camera::Update() {
 

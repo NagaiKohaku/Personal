@@ -1,16 +1,20 @@
 #pragma once
 
+#include "3d/Model/ModelCommon.h"
 #include "3d/Model/Model.h"
 
 #include "memory"
 #include "map"
 
-/// === 前方宣言 === ///
-class ModelCommon;
-
-///=====================================================/// 
-/// モデルマネージャクラス
-///=====================================================///
+/// <summary>
+/// ゲーム内で使用するモデルを管理するクラスです。
+/// </summary>
+/// <remarks>
+/// - ModelCommon を利用して DirectX 用の共通リソースにアクセスします。
+/// - プリミティブメッシュを初期化時に生成します。
+/// - OBJファイルやプリミティブメッシュからモデルを生成し、管理コンテナに登録します。
+/// - 登録されたモデルは unique_ptr で保持され、モデル名をキーに検索可能です。
+/// </remarks>
 class ModelManager {
 
 	///-------------------------------------------/// 
@@ -19,44 +23,69 @@ class ModelManager {
 public:
 
 	/// <summary>
-	/// シングルトンインスタンスを取得
+	/// ModelManagerのシングルトンインスタンスを取得します。
 	/// </summary>
-	/// <returns>インスタンス</returns>
+	/// <remarks>
+	/// 返り値に静的インスタンスを返します。
+	/// </remarks>
 	static ModelManager* GetInstance();
 
 	/// <summary>
-	/// 初期化
+	/// モデルマネージャを初期化し、基本的なプリミティブモデルを生成します。
 	/// </summary>
+	/// <remarks>
+	/// - ModelCommon のインスタンスを取得します。
+	/// - Plane, Ring, Cylinder, Sphere, Cube の各プリミティブモデルを生成します。
+	/// - 各モデルには共通の白テクスチャを設定します。
+	/// </remarks>
 	void Initialize();
 
 	/// <summary>
-	/// モデルの読み込み
+	/// 指定されたモデル名とファイル名からモデルを読み込み、管理コンテナに登録します。
 	/// </summary>
-	/// <param name="modelName">モデル名</param>
-	/// <param name="modelFileName">モデルのファイル名</param>
+	/// <param name="modelName">管理用のモデル名</param>
+	/// <param name="modelFileName">モデルファイルの名前</param>
+	/// <remarks>
+	/// - すでに同名のモデルが読み込まれている場合は処理をスキップします。
+	/// - ModelクラスのInitialize関数を使用して objファイルを読み込みます。
+	/// - 読み込んだモデルはunique_ptrで管理され、マップコンテナに登録されます。
+	/// </remarks>
 	void LoadModel(const std::string& modelName, const std::string& modelFileName);
 
 	/// <summary>
-	/// モデルの読み込み(ディレクトリ別)
+	/// 指定されたモデル名、ディレクトリ、ファイル名からモデルを読み込み、管理コンテナに登録します。
 	/// </summary>
-	/// <param name="modelName"></param>
-	/// <param name="modelDirectory"></param>
-	/// <param name="modelFileName"></param>
+	/// <param name="modelName">管理用のモデル名</param>
+	/// <param name="modelDirectory">モデルファイルが格納されているディレクトリ名</param>
+	/// <param name="modelFileName">モデルファイルの名前</param>
+	/// <remarks>
+	/// - すでに同名のモデルが読み込まれている場合は処理をスキップします。
+	/// - ModelクラスのInitialize関数を使用して objファイルを読み込みます。
+	/// - 読み込んだモデルはunique_ptrで管理され、マップコンテナに登録されます。
+	/// </remarks>
 	void LoadModel(const std::string& modelName, const std::string& modelDirectory, const std::string& modelFileName);
 
 	/// <summary>
-	/// メッシュモデルの生成
+	/// 指定したタイプのメッシュモデルを生成し、テクスチャを設定して管理コンテナに登録します。
 	/// </summary>
-	/// <param name="type"></param>
-	/// <param name="modelName"></param>
-	/// <param name="textureFilePath"></param>
+	/// <param name="modelName">管理用のモデル名</param>
+	/// <param name="type">生成するメッシュの種類</param>
+	/// <param name="textureFilePath">モデルに適用するテクスチャファイルのパス</param>
+	/// <remarks>
+	/// - すでに同名のモデルが読み込まれている場合は処理をスキップします。
+	/// - ModelクラスのInitialize関数を使用して objファイルを読み込みます。
+	/// - 読み込んだモデルはunique_ptrで管理され、マップコンテナに登録されます。
+	/// </remarks>
 	void CreateMeshModel(const std::string& modelName, MeshType type, const std::string& textureFilePath);
 
 	/// <summary>
-	/// モデルの検索
+	/// 登録済みモデルを検索し、見つかった場合は同じメッシュタイプで新しいモデルインスタンスを生成して返します。
 	/// </summary>
-	/// <param name="modelName">モデル名</param>
-	/// <returns>モデルデータ</returns>
+	/// <param name="modelName">検索するモデルの名前</param>
+	/// <returns>名前が合致したモデルをコピーしたインスタンス</returns>
+	/// <remarks>
+	/// - 返されるモデルは新規生成されるため、呼び出し元が独自に管理できます。
+	/// </remarks>
 	std::unique_ptr<Model> FindModel(const std::string& modelName);
 
 	///-------------------------------------------/// 

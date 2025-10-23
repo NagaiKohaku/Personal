@@ -5,7 +5,7 @@
 #include "cstdlib"
 
 ///=====================================================/// 
-/// 初期化
+/// AABBCollider を初期化
 ///=====================================================///
 void AABBCollider::Initialize(WorldTransform* parent) {
 
@@ -35,7 +35,7 @@ void AABBCollider::Initialize(WorldTransform* parent) {
 }
 
 ///=====================================================/// 
-/// 更新
+/// AABBCollider を更新
 ///=====================================================///
 void AABBCollider::Update() {
 
@@ -44,7 +44,7 @@ void AABBCollider::Update() {
 }
 
 ///=====================================================/// 
-/// 描画
+/// AABBCollider を描画
 ///=====================================================///
 void AABBCollider::Draw() {
 

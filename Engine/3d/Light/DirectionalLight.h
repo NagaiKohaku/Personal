@@ -1,18 +1,20 @@
 #pragma once
 
+#include "Base/DirectXCommon.h"
+
 #include "Math/Vector3.h"
 #include "Math/Vector4.h"
 
 #include "d3dx12.h"
 #include "wrl.h"
 
-/// === 前方宣言 === ///
-
-class DirectXCommon;
-
-///=====================================================/// 
-/// 平行光源ライトクラス
-///=====================================================///
+/// <summary>
+/// 平行光源（Directional Light）を管理するクラスです。
+/// </summary>
+/// <remarks>
+/// - DirectX 共通基底を使用して GPU バッファリソースを作成します。
+/// - 光源データ（色、方向、照度）を LightData 構造体で保持します。
+/// </remarks>
 class DirectionalLight {
 
 	///-------------------------------------------/// 
@@ -33,18 +35,29 @@ private:
 public:
 
 	/// <summary>
-	/// 初期化
+	/// ディレクショナルライトを初期化します。
 	/// </summary>
+	/// <remarks>
+	/// - DirectXの共通基底インスタンスを取得
+	/// - GPU用のバッファリソースを生成し、光源データをマッピングします。
+	/// - 光源の色、向き、照度を初期設定
+	/// </remarks>
 	void Initialize();
 
 	/// <summary>
-	/// 更新
+	/// ディレクショナルライトの更新処理を行います。
 	/// </summary>
+	/// <remarks>
+	/// - ライトの向きを正規化して、常に単位ベクトルに保ちます。
+	/// </remarks>
 	void Update();
 
 	/// <summary>
-	/// データをGPUに送信
+	/// GPUにディレクショナルライトのデータを送信します。
 	/// </summary>
+	/// <remarks>
+	/// - コマンドリストのルートパラメータ4にライトデータを設定します。
+	/// </remarks>
 	void SendDataForGPU();
 
 	/// <summary>

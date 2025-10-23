@@ -1,9 +1,7 @@
 #include "ModelManager.h"
 
-#include "3d/Model/ModelCommon.h"
-
 ///=====================================================/// 
-/// シングルトンインスタンスを取得
+/// ModelManagerのシングルトンインスタンスを取得
 ///=====================================================///
 ModelManager* ModelManager::GetInstance() {
 	static ModelManager instance;
@@ -11,7 +9,7 @@ ModelManager* ModelManager::GetInstance() {
 }
 
 ///=====================================================/// 
-/// 初期化処理
+/// モデルマネージャを初期化し、基本的なプリミティブモデルを生成
 ///=====================================================///
 void ModelManager::Initialize() {
 
@@ -37,9 +35,9 @@ void ModelManager::Initialize() {
 
 }
 
-///=====================================================/// 
-/// モデルの読み込み
-///=====================================================///
+///=============================================================/// 
+/// 指定されたモデル名とファイル名からモデルを読み込み、管理コンテナに登録
+///=============================================================///
 void ModelManager::LoadModel(const std::string& modelName, const std::string& modelFileName) {
 
 	//読み込み済みモデルの検索
@@ -59,6 +57,9 @@ void ModelManager::LoadModel(const std::string& modelName, const std::string& mo
 	models_.insert(std::make_pair(modelName, std::move(model)));
 }
 
+///==========================================================================/// 
+/// 指定されたモデル名、ディレクトリ、ファイル名からモデルを読み込み、管理コンテナに登録
+///==========================================================================///
 void ModelManager::LoadModel(const std::string& modelName, const std::string& modelDirectory, const std::string& modelFileName) {
 
 	//読み込み済みモデルの検索
@@ -78,9 +79,9 @@ void ModelManager::LoadModel(const std::string& modelName, const std::string& mo
 	models_.insert(std::make_pair(modelName, std::move(model)));
 }
 
-///=====================================================/// 
-/// メッシュモデルの生成
-///=====================================================///
+///==================================================================/// 
+/// 指定したタイプのメッシュモデルを生成し、テクスチャを設定して管理コンテナに登録
+///==================================================================///
 void ModelManager::CreateMeshModel(const std::string& modelName, MeshType type, const std::string& textureFilePath) {
 
 	//読み込み済みモデルの検索
@@ -100,7 +101,7 @@ void ModelManager::CreateMeshModel(const std::string& modelName, MeshType type, 
 }
 
 ///=====================================================/// 
-/// モデルの検索
+/// 登録済みモデルを検索
 ///=====================================================///
 std::unique_ptr<Model> ModelManager::FindModel(const std::string& modelName) {
 

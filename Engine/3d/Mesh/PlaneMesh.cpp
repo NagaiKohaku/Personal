@@ -2,6 +2,9 @@
 
 #include "Base/DirectXCommon.h"
 
+///=====================================================/// 
+/// PlaneMeshの初期化
+///=====================================================///
 void PlaneMesh::Initialize() {
 
 	directXCommon_ = DirectXCommon::GetInstance();

@@ -2,7 +2,6 @@
 
 #include "Base/DirectXCommon.h"
 #include "2d/Sprite/TextureManager.h"
-#include "3d/Model/ModelCommon.h"
 
 #include "Math/MakeMatrixMath.h"
 
@@ -13,7 +12,7 @@
 #include "3d/Mesh/ModelMesh.h"
 
 ///=====================================================/// 
-/// 初期化処理(モデル)
+/// モデルを初期化 (モデルデータ読み込み)
 ///=====================================================///
 void Model::Initialize(const std::string& directoryPath, const std::string& filename) {
 
@@ -60,7 +59,7 @@ void Model::Initialize(const std::string& directoryPath, const std::string& file
 }
 
 ///=====================================================///
-/// 初期化処理(メッシュ)
+/// モデルを初期化 (メッシュクラスから生成)
 /// =====================================================///
 void Model::Initialize(MeshType type, const std::string& textureFilePath) {
 
@@ -110,7 +109,7 @@ void Model::Initialize(MeshType type, const std::string& textureFilePath) {
 }
 
 ///=====================================================/// 
-/// 初期化処理(コピー)
+/// モデルを初期化 (既存モデルからコピー)
 ///=====================================================///
 void Model::Initialize(MeshType type, Model* model) {
 
@@ -155,12 +154,12 @@ void Model::Initialize(MeshType type, Model* model) {
 }
 
 ///=====================================================/// 
-/// 描画
+/// モデルを描画
 ///=====================================================///
 void Model::Draw() {
 
 	//メッシュの設定
-	mesh_->Draw();
+	mesh_->SendDataForGPU();
 
 	//マテリアルデータの設定
 	modelCommon_->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource_.Get()->GetGPUVirtualAddress());
@@ -174,34 +173,34 @@ void Model::Draw() {
 }
 
 ///=====================================================/// 
-/// メッシュの描画
+/// モデルのメッシュデータを GPU に転送
 ///=====================================================///
-void Model::DrawMesh() {
+void Model::SendMeshDataForGPU() {
 
 	//メッシュの設定
-	mesh_->Draw();
+	mesh_->SendDataForGPU();
 }
 
 ///=====================================================/// 
-/// マテリアルの描画
+/// モデルのマテリアルデータを GPU に転送
 ///=====================================================///
-void Model::DrawMaterial() {
+void Model::SendMaterialDataForGPU() {
 
 	//マテリアルデータの設定
 	modelCommon_->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource_.Get()->GetGPUVirtualAddress());
 }
 
 ///=====================================================/// 
-/// テクスチャの描画
+/// モデルのテクスチャデータを GPU に転送
 ///=====================================================///
-void Model::DrawTexture() {
+void Model::SendTextureDataForGPU() {
 
 	//テクスチャデータの設定
 	modelCommon_->GetDxCommon()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSrvHandleGPU(textureFilePath_));
 }
 
 ///=====================================================/// 
-/// モデルデータのコピー
+/// 指定したモデルのデータをコピー
 ///=====================================================///
 void Model::Copy(Model* model) {
 
@@ -211,7 +210,7 @@ void Model::Copy(Model* model) {
 }
 
 ///=====================================================/// 
-/// objファイルの読み込み
+/// OBJファイルを読み込み、モデルデータに格納
 ///=====================================================///
 void Model::LoadObjFile(const std::string& directoryPath, const std::string& filename) {
 
@@ -361,7 +360,7 @@ void Model::LoadObjFile(const std::string& directoryPath, const std::string& fil
 }
 
 ///=====================================================/// 
-/// マテリアルデータの読み込み
+/// MTLファイルを読み込み、モデルのテクスチャパスを設定
 ///=====================================================///
 void Model::LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename) {
 

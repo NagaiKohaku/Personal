@@ -398,11 +398,11 @@ void ParticleEmitter::Draw(LayerType layer) {
 		//パーティクルの描画前処理
 		ParticleCommon::GetInstance()->CommonDrawSetting();
 
-		model_->DrawMesh();
+		model_->SendMeshDataForGPU();
 
-		model_->DrawMaterial();
+		model_->SendMaterialDataForGPU();
 
-		model_->DrawTexture();
+		model_->SendTextureDataForGPU();
 
 		directXCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(1, srvManager_->GetGPUDescriptorHandle(srvIndex_));
 

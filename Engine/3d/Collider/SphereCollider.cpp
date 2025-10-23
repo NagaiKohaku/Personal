@@ -6,7 +6,7 @@
 #include "numbers"
 
 ///=====================================================/// 
-/// 初期化
+/// SphereCollider を初期化
 ///=====================================================///
 void SphereCollider::Initialize(WorldTransform* parent) {
 
@@ -37,7 +37,7 @@ void SphereCollider::Initialize(WorldTransform* parent) {
 }
 
 ///=====================================================/// 
-/// 更新
+/// SphereCollider を毎フレーム更新
 ///=====================================================///
 void SphereCollider::Update() {
 
@@ -52,7 +52,7 @@ void SphereCollider::Update() {
 }
 
 ///=====================================================/// 
-/// 描画
+/// SphereCollider を描画
 ///=====================================================///
 void SphereCollider::Draw() {
 
@@ -61,7 +61,7 @@ void SphereCollider::Draw() {
 }
 
 ///=====================================================/// 
-/// 削除処理
+/// SphereCollider をコライダーマネージャーから削除
 ///=====================================================///
 void SphereCollider::Remove() {
 
