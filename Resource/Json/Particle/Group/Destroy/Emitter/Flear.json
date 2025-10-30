@@ -1,0 +1,225 @@
+{
+    "color": {
+        "acceleration": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+        ],
+        "accelerationRandomRange": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+        ],
+        "easingState": [
+            2
+        ],
+        "easingStrength": [
+            12.0
+        ],
+        "endColor": [
+            1.0,
+            0.25882354378700256,
+            0.0,
+            1.0
+        ],
+        "endRandomRange": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+        ],
+        "startColor": [
+            1.0,
+            0.25882354378700256,
+            0.0,
+            1.0
+        ],
+        "startRandomRange": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+        ],
+        "updateState": [
+            2
+        ],
+        "velocity": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+        ],
+        "velocityRandomRange": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+        ]
+    },
+    "frequency": 0.0,
+    "isBillboard": true,
+    "isInfinity": false,
+    "isLoop": false,
+    "lifeTime": 3.0,
+    "lifeTimeRandomRange": 0.0,
+    "maxCount": 32,
+    "modelFileName": "",
+    "modelName": "Plane",
+    "name": "Flear",
+    "position": {
+        "acceleration": [
+            0.0,
+            -30.0,
+            60.0
+        ],
+        "accelerationRandomRange": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "easingState": [
+            0
+        ],
+        "easingStrength": [
+            1.0
+        ],
+        "endNum": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "endRandomRange": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "startNum": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "startRandomRange": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "updateState": [
+            1
+        ],
+        "velocity": [
+            0.0,
+            10.0,
+            -20.0
+        ],
+        "velocityRandomRange": [
+            7.0,
+            5.0,
+            0.0
+        ]
+    },
+    "rotation": {
+        "acceleration": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "accelerationRandomRange": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "easingState": [
+            0
+        ],
+        "easingStrength": [
+            1.0
+        ],
+        "endNum": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "endRandomRange": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "startNum": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "startRandomRange": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "updateState": [
+            0
+        ],
+        "velocity": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "velocityRandomRange": [
+            0.0,
+            0.0,
+            0.0
+        ]
+    },
+    "scale": {
+        "acceleration": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "accelerationRandomRange": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "easingState": [
+            2
+        ],
+        "easingStrength": [
+            12.0
+        ],
+        "endNum": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "endRandomRange": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "startNum": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "startRandomRange": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "updateState": [
+            2
+        ],
+        "velocity": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "velocityRandomRange": [
+            0.0,
+            0.0,
+            0.0
+        ]
+    },
+    "textureFileName": "white_128x128.png"
+}

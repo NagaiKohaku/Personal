@@ -4,7 +4,7 @@
 #include "3d/Particle/EmitterGroup.h"
 #include "3d/Camera/Camera.h"
 
-#include "Shadow.h"
+#include "Shadow/Shadow.h"
 
 #include "3d/Collider/AABBCollider.h"
 #include "3d/Collider/SphereCollider.h"
@@ -32,7 +32,7 @@ public:
 	//移動状態
 	enum MOVESTATE {
 		TANK,
-		JET
+		JET,
 	};
 
 	///-------------------------------------------/// 
@@ -99,6 +99,8 @@ private:
 	/// </summary>
 	void IsCollision();
 
+	void Dead();
+
 	///-------------------------------------------/// 
 	/// メンバ変数
 	///-------------------------------------------///
@@ -127,6 +129,10 @@ private:
 	std::unique_ptr<EmitterGroup> rightTrail_;
 
 	std::unique_ptr<EmitterGroup> leftTrail_;
+
+	std::unique_ptr<EmitterGroup> explosiveEmitter_;
+
+	std::unique_ptr<EmitterGroup> destroyEmitter_;
 
 	//コライダー
 	std::unique_ptr<SphereCollider> collider_ = nullptr;
@@ -172,6 +178,10 @@ private:
 
 	bool isMoveActive;
 
+	bool isDead_;
+
+	bool isDestroy_;
+
 	///-------------------------------------------///
 	/// ゲッター・セッター
 	///-------------------------------------------///
@@ -194,6 +204,8 @@ public:
 	/// </summary>
 	/// <returns>移動状態</returns>
 	MOVESTATE GetMoveState() { return moveState_; }
+
+	bool GetIsDead() { return isDead_; }
 
 	void SetPosition(Vector3 pos) { core_->GetWorldTransform().translate_ = pos; }
 

@@ -4,11 +4,15 @@
 
 #include "Math/Easing.h"
 
+/// <summary>
+/// 初期化
+/// </summary>
 void Shadow::Initialize() {
-	// オブジェクトの生成
+
+	/// === オブジェクトの生成 === ///
+
 	shadow_ = std::make_unique<Object3D>();
 
-	// オブジェクトの初期化
 	shadow_->Initialize();
 
 	shadow_->SetModel("Sphere");
@@ -17,7 +21,10 @@ void Shadow::Initialize() {
 
 	shadow_->GetModel()->SetColor({ 0.0f,0.0f,0.0f,1.0f });
 
+	//反射係数の設定
 	shadow_->GetModel()->SetEnvironmentCoefficient(0.0f);
+
+	/// === 他変数の設定 === ///
 
 	maxLength_ = 10.0f;
 
@@ -26,28 +33,37 @@ void Shadow::Initialize() {
 	isDraw_ = true;
 }
 
+/// <summary>
+/// 更新
+/// </summary>
 void Shadow::Update(Vector3 pos) {
 
+	//引数の座標を設定
 	shadow_->GetWorldTransform().translate_ = { pos.x,0.1f,pos.z };
 
+	//進捗の計算
 	float length = maxLength_ - pos.y;
 
+	//距離からサイズを計算
 	float scale = Lerp(0.0f, maxScale_, length / maxLength_);
 
+	//完全に消えないようにする
 	if (scale <= 0.1f) {
 		scale = 0.1f;
 	}
 
+	//サイズを設定
 	shadow_->GetWorldTransform().scale_ = { scale,0.01f,scale };
 
 	// オブジェクトの更新
 	shadow_->Update();
 
+	//地面に潜ったら描画しないようにする
 	if (pos.y <= 0.0f) {
 
 		isDraw_ = false;
-	}
-	else {
+	} else {
+
 		isDraw_ = true;
 	}
 }

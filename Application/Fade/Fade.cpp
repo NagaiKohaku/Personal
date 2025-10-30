@@ -49,18 +49,18 @@ void Fade::Update() {
 	//フェードアウトの更新
 	FadeOutUpdate();
 
+	//カメラとプレイヤーが設定されていれば更新
 	if (camera_ != nullptr) {
 		if (player_ != nullptr) {
 
-			//ビューポート行列
+			//プレイヤーの位置を2D座標に変換
 			Matrix4x4 viewport = MakeViewportMatrix(0, 0, WinApp::kClientWidth, WinApp::kClientHeight, 0, 1);
 
-			//カメラのビュープロジェクション行列とビューポート行列を掛ける
 			Matrix4x4 viewProjectionViewport = camera_->GetViewProjectionMatrix() * viewport;
 
-			//3Dオブジェクトの座標をスクリーン座標に変換する
 			Vector3 screenPos = Transform(player_->GetWorldPos(), viewProjectionViewport);
 
+			//座標が吹っ飛んでいなければ座標を設定
 			if (screenPos.x != 0.0f) {
 				if (screenPos.y != 0.0f) {
 
@@ -233,7 +233,7 @@ void Fade::CreateRingSprite() {
 
 	newObject->GetSprite()->SetColor({ 1.0f,1.0f,1.0f,1.0f });
 
-	newObject->SetSize({ 256.0f,256.0f });
+	newObject->SetSize({ 0.0f,0.0f });
 
 	newObject->SetTranslate({ 640.0f,360.0f });
 
@@ -241,8 +241,10 @@ void Fade::CreateRingSprite() {
 
 	Vector2 endSize = { 3000.0f,3000.0f };
 
+	//最初のスプライトだったら
 	if (fadeSprites_.size() == 0) {
 
+		//0からタイマーを開始
 		float startTime = 0.0f;
 
 		float endTime = startTime + 1.0f;
@@ -250,6 +252,7 @@ void Fade::CreateRingSprite() {
 		fadeSprites_.push_back({ std::move(newObject),startSize,endSize,startTime,endTime });
 	} else {
 
+		//最初以外であれば前のスプライトの終了時間から開始
 		float startTime = static_cast<float>(fadeSprites_.back().endTime) - 0.8f;
 
 		float endTime = startTime + 1.0f;

@@ -275,7 +275,7 @@
     <ClCompile Include="Application\Bullet\EnemyBullet.cpp">
       <Filter>Application\Bullet</Filter>
     </ClCompile>
-    <ClCompile Include="Application\Shadow.cpp">
+    <ClCompile Include="Application\Shadow\Shadow.cpp">
       <Filter>Application</Filter>
     </ClCompile>
     <ClCompile Include="Application\Scene\TitleScene.cpp">
@@ -284,6 +284,7 @@
     <ClCompile Include="Application\Fade\Fade.cpp">
       <Filter>Application\Fade</Filter>
     </ClCompile>
+    <ClCompile Include="Application\Shake\Shake.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application\Bullet\BulletBase.h">
@@ -529,7 +530,7 @@
     <ClInclude Include="Application\Bullet\EnemyBullet.h">
       <Filter>Application\Bullet</Filter>
     </ClInclude>
-    <ClInclude Include="Application\Shadow.h">
+    <ClInclude Include="Application\Shadow\Shadow.h">
       <Filter>Application</Filter>
     </ClInclude>
     <ClInclude Include="Application\Scene\TitleScene.h">
@@ -538,6 +539,7 @@
     <ClInclude Include="Application\Fade\Fade.h">
       <Filter>Application\Fade</Filter>
     </ClInclude>
+    <ClInclude Include="Application\Shake\Shake.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resource\Shader\DebugObject.hlsli">

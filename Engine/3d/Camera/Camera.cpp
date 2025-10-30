@@ -10,6 +10,8 @@
 
 #include "Math/MakeMatrixMath.h"
 
+#include "Shake/Shake.h"
+
 #include "imgui.h"
 
 #include "numbers"
@@ -193,6 +195,8 @@ void Camera::Update() {
 
 		//ビュープロジェクション行列の計算
 		viewProjectionMatrix_ = viewMatrix_ * projectionMatrix_;
+
+		Shake::GetInstance()->Update();
 	}
 }
 

@@ -3,6 +3,7 @@
 #include "Base/OffScreen.h"
 #include "Base/Input.h"
 #include "Scene/SceneManager.h"
+#include "Base/OffScreen.h"
 
 #include "2d/Sprite/SpriteManager.h"
 #include "3d/Model/ModelManager.h"
@@ -14,6 +15,7 @@
 
 #include "LevelEditor/LevelDataLoader.h"
 #include "Fade/Fade.h"
+#include "Shake/Shake.h"
 #include "Math/Easing.h"
 
 #include "imgui.h"
@@ -27,10 +29,8 @@ void GameScene::Initialize() {
 
 	/// === カメラの設定 === ///
 
-	//カメラを生成
 	camera_ = std::make_unique<Camera>();
 
-	//カメラの初期化
 	camera_->Initialize();
 
 	//デバッグカメラを使用しない
@@ -39,59 +39,123 @@ void GameScene::Initialize() {
 	//カメラの座標
 	camera_->GetWorldTransform().translate_ = { 0.0f,3.0f,0.0f };
 
-	/// === オブジェクトマネージャーの生成 === ///
+	//シェイクにカメラをセット
+	Shake::GetInstance()->SetCamera(camera_.get());
 
-	//エネミーマネージャーの生成
+	/// === エネミーマネージャーの生成 === ///
+
 	enemyManager_ = std::make_unique<EnemyManager>();
 
-	//バレットマネージャーの生成
+	/// === バレットマネージャーの生成 === ///
+
 	bulletManager_ = std::make_unique<BulletManager>();
 
-	//バレットマネージャーの初期化
 	bulletManager_->Initialize();
 
-	/// === オブジェクトの生成 === ///
-
-	//プレイヤーの生成
-	player_ = std::make_unique<Player>();
-
-	//プレイヤーの初期化
-	player_->Initialize(camera_.get(), bulletManager_.get());
-
-	player_->SetIsMoveActive(false);
-
-	//エネミーマネージャーの初期化
-	enemyManager_->Initialize(camera_.get(), bulletManager_.get(), player_.get());
-
-	//追尾カメラの生成
-	followCamera_ = std::make_unique<FollowCamera>();
-
-	//追尾カメラの初期化
-	followCamera_->Initialize(camera_.get(), player_.get());
-
-	followCamera_->SetIsActive(false);
-
-	//lineGround_ = std::make_unique<LineGround>();
-
-	//lineGround_->Initialize();
+	/// === グラウンドマネージャーの生成 === ///
 
 	groundManager_ = std::make_unique<GroundManager>();
 
 	groundManager_->Initialize();
 
-	SpriteManager::GetInstance()->LoadSprite("ToTitle", "ToTitle");
+	/// === プレイヤーの生成 === ///
 
-	titleSprite_ = std::make_unique<Object2D>();
+	player_ = std::make_unique<Player>();
 
-	titleSprite_->Initialize();
+	player_->Initialize(camera_.get(), bulletManager_.get());
 
-	titleSprite_->SetSprite("ToTitle");
+	//最初は動けないようにする
+	player_->SetIsMoveActive(false);
 
-	titleSprite_->SetSize({ 1280.0f,720.0f });
+	//エネミーマネージャーの初期化
+	enemyManager_->Initialize(camera_.get(), bulletManager_.get(), player_.get());
 
-	titleSprite_->GetSprite()->SetAnchorPoint({ 0.5f,0.5f });
+	/// === 追尾カメラの生成 === ///
 
-	titleSprite_->SetTranslate({ 640.0f,320.0f });
+	followCamera_ = std::make_unique<FollowCamera>();
+
+	followCamera_->Initialize(camera_.get(), player_.get());
+
+	//最初は無効化する
+	followCamera_->SetIsActive(false);
+
+	/// === スプライトの読み込み === ///
+
+	SpriteManager::GetInstance()->LoadSprite("GameOver", "RoadFlightGameOver");
+
+	SpriteManager::GetInstance()->LoadSprite("SpaceKey", "space");
+
+	SpriteManager::GetInstance()->LoadSprite("Arrow", "triangleArrow");
+
+	SpriteManager::GetInstance()->LoadSprite("ArrowFlip", "triangleArrowFlip");
+
+	/// === ゲームオーバースプライトの生成 === ///
+
+	gameOverSprite_ = std::make_unique<Object2D>();
+
+	gameOverSprite_->Initialize();
+
+	gameOverSprite_->SetSprite("GameOver");
+
+	gameOverSprite_->GetSprite()->SetAnchorPoint({ 0.5f,0.5f });
+
+	gameOverSprite_->SetTranslate({ 640.0f,100.0f });
+
+	gameOverSprite_->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
+
+	/// === スペースキースプライトの生成 === ///
+
+	spaceKeySprite_ = std::make_unique<Object2D>();
+
+	spaceKeySprite_->Initialize();
+
+	spaceKeySprite_->SetSprite("SpaceKey");
+
+	spaceKeySprite_->GetSprite()->SetAnchorPoint({ 0.5f,0.5f });
+
+	spaceKeySprite_->GetSprite()->SetColor({ 1.0f,1.0f,1.0f,1.0f });
+
+	spaceKeySprite_->SetTranslate({ 640.0f,600.0f });
+
+	spaceKeySprite_->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
+
+	Vector2 spaceKeyPos = spaceKeySprite_->GetTranslate();
+
+	Vector2 spaceKeySize = spaceKeySprite_->GetSize();
+
+	/// === 左矢印スプライトの生成 === ///
+
+	leftArrowSprite_ = std::make_unique<Object2D>();
+
+	leftArrowSprite_->Initialize();
+
+	leftArrowSprite_->SetSprite("Arrow");
+
+	leftArrowSprite_->GetSprite()->SetAnchorPoint({ 0.5f,0.5f });
+
+	leftArrowSprite_->GetSprite()->SetColor({ 1.0f,1.0f,1.0f,1.0f });
+
+	leftArrowSprite_->SetTranslate({ spaceKeyPos.x - spaceKeySize.x / 2.0f - 64.0f,spaceKeyPos.y });
+
+	leftArrowSprite_->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
+
+	/// === 右矢印の生成 === ///
+
+	rightArrowSprite_ = std::make_unique<Object2D>();
+
+	rightArrowSprite_->Initialize();
+
+	rightArrowSprite_->SetSprite("ArrowFlip");
+
+	rightArrowSprite_->GetSprite()->SetAnchorPoint({ 0.5f,0.5f });
+
+	rightArrowSprite_->GetSprite()->SetColor({ 1.0f,1.0f,1.0f,1.0f });
+
+	rightArrowSprite_->SetTranslate({ spaceKeyPos.x + spaceKeySize.x / 2.0f + 64.0f,spaceKeyPos.y });
+
+	rightArrowSprite_->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
+
+	/// === 他変数の設定 === ///
 
 	timer_ = 0.0f;
 
@@ -99,6 +163,7 @@ void GameScene::Initialize() {
 
 	isStart_ = true;
 
+	//キーフレームの設定
 	animPoints_.push_back({ Vector3(0.0f,20.0f,-600.0f),Vector3(0.0f,-std::numbers::pi_v<float>,0.0f),0.0f,1.0f });
 	animPoints_.push_back({ Vector3(0.0f,20.0f,-600.0f),Vector3(0.0f,-std::numbers::pi_v<float>,0.0f),1.0f,1.0f });
 	animPoints_.push_back({ Vector3(0.0f,2.0f,0.0f),Vector3(0.2f,-std::numbers::pi_v<float>,0.0f),2.0f,3.0f });
@@ -110,12 +175,6 @@ void GameScene::Initialize() {
 
 	Fade::GetInstance()->StartFadeIn();
 
-	//NOTE:地面とSkyBoxはテクスチャが見にくいためいったんコメントアウト
-
-	//skyBox_ = std::make_unique<SkyBox>();
-
-	//skyBox_->Initialize("raceTrackSkyBox.dds");
-
 }
 
 ///=====================================================/// 
@@ -123,9 +182,12 @@ void GameScene::Initialize() {
 ///=====================================================///
 void GameScene::Finalize() {
 
+	//演出系の参照リセット
 	Fade::GetInstance()->SetCamera(nullptr);
 
 	Fade::GetInstance()->SetPlayer(nullptr);
+
+	Shake::GetInstance()->SetCamera(nullptr);
 
 	//音声データの解放
 	Audio::GetInstance()->Finalize();
@@ -136,7 +198,8 @@ void GameScene::Finalize() {
 ///=====================================================///
 void GameScene::Update() {
 
-	Start();
+	//スタート時のアニメーションの更新
+	StartAnimation();
 
 	//追尾カメラの更新
 	followCamera_->Update();
@@ -153,27 +216,63 @@ void GameScene::Update() {
 	//弾の更新
 	bulletManager_->Update();
 
-	//lineGround_->Update();
-
+	//グラウンドマネージャーの更新
 	groundManager_->Update();
 
-	titleSprite_->Update();
+	//ゲームオーバースプライトの更新
+	gameOverSprite_->Update();
 
-	if (Input::GetInstance()->IsTriggerPushKey(DIK_T)) {
+	//スペースキースプライトの更新
+	spaceKeySprite_->Update();
 
-		Fade::GetInstance()->StartFadeOut();
+	//左矢印スプライトの更新
+	leftArrowSprite_->Update();
+
+	//右矢印スプライトの更新
+	rightArrowSprite_->Update();
+
+	//プレイヤーが倒されたとき
+	if (!isGameOver_) {
+		if (player_->GetIsDead()) {
+
+			//ゲームオーバー演出を始める
+			isGameOver_ = true;
+
+			//スプライトを映す
+			gameOverSprite_->GetSprite()->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+
+			spaceKeySprite_->GetSprite()->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+
+			leftArrowSprite_->GetSprite()->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+
+			rightArrowSprite_->GetSprite()->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+
+			//シェイクを始める
+			Shake::GetInstance()->Start(1.0f, 0.5f);
+
+			//色を反転させる
+			OffScreen::GetInstance()->SetColorReverseRatio(1.0f);
+		}
+	} else {
+
+		//ゲームオーバー時スペースキーが押されたら
+		if (Input::GetInstance()->IsTriggerPushKey(DIK_SPACE)) {
+
+			//フェードアウトを始める
+			Fade::GetInstance()->StartFadeOut();
+		}
 	}
 
+
+	//フェードアウトが終わったら
 	if (Fade::GetInstance()->GetState() == Fade::FADE_OUT_END) {
 
+		//フェードの状態をリセット
 		Fade::GetInstance()->SetState(Fade::NONE);
 
+		//タイトルシーンに遷移
 		SceneManager::GetInstance()->ChangeScene(SceneManager::kTitle);
 	}
-
-	//NOTE:地面とSkyBoxはテクスチャが見にくいためいったんコメントアウト
-
-	//skyBox_->Update();
 }
 
 ///=====================================================/// 
@@ -190,15 +289,20 @@ void GameScene::Draw() {
 	//弾の描画
 	bulletManager_->Draw();
 
-	//lineGround_->Draw();
-
+	//グラウンドマネージャーの描画
 	groundManager_->Draw();
 
-	titleSprite_->Draw(LayerType::UI);
+	//ゲームオーバースプライトの描画
+	gameOverSprite_->Draw(LayerType::UI);
 
-	//NOTE:地面とSkyBoxはテクスチャが見にくいためいったんコメントアウト
+	//スペースキースプライトの描画
+	spaceKeySprite_->Draw(LayerType::UI);
 
-	//skyBox_->Draw();
+	//左矢印スプライトの描画
+	leftArrowSprite_->Draw(LayerType::UI);
+
+	//右矢印スプライトの描画
+	rightArrowSprite_->Draw(LayerType::UI);
 }
 
 ///=====================================================/// 
@@ -224,45 +328,60 @@ void GameScene::ImGui() {
 	ImGui::End();
 }
 
-void GameScene::Start() {
+///=====================================================/// 
+/// スタート時のアニメーション
+///=====================================================///
+void GameScene::StartAnimation() {
 
+	//スタート時以外はスキップ
 	if (!isStart_) {
 		return;
 	}
 
+	//タイマーを進ませる
 	timer_ += 1.0f / 60.0f;
 
 	if (animNum_ == 0) {
 
+		//最初のキーは初期位置設定用
 		player_->SetPosition(animPoints_[animNum_].playerPos);
 
 		camera_->GetWorldTransform().rotate_ = animPoints_[animNum_].cameraRot;
 
+		//キーを進ませる
 		animNum_++;
 	} else {
 
+		//進捗を計算
 		float t = (timer_ - animPoints_[animNum_ - 1].time) / (animPoints_[animNum_].time - animPoints_[animNum_ - 1].time);
 
+		//1以上になったらそろえる
 		if (t >= 1.0f) {
 
 			t = 1.0f;
 		}
 
+		//キーフレーム間を補間
 		player_->SetPosition(EaseOut(animPoints_[animNum_ - 1].playerPos, animPoints_[animNum_].playerPos, t, animPoints_[animNum_].mag));
 
 		camera_->GetWorldTransform().rotate_ = EaseOut(animPoints_[animNum_ - 1].cameraRot, animPoints_[animNum_].cameraRot, t, animPoints_[animNum_].mag);
 
+		//キーを進ませる
 		if (t == 1.0f) {
 
 			animNum_++;
 		}
 
+		//最後のキーが終わったら
 		if (animNum_ == static_cast<int>(animPoints_.size())) {
 
+			//スタート時の演出を終わる
 			isStart_ = false;
 
+			//追従カメラを有効化
 			followCamera_->SetIsActive(true);
 
+			//プレイヤーが動けるようにする
 			player_->SetIsMoveActive(true);
 		}
 	}

@@ -176,8 +176,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\3d\Object\SkyBox.cpp" />
     <ClCompile Include="Engine\3d\Object\SkyBoxCommon.cpp" />
     <ClCompile Include="Engine\3d\Mesh\SphereMesh.cpp" />
-    <ClCompile Include="Application\Shadow.cpp" />
+    <ClCompile Include="Application\Shadow\Shadow.cpp" />
     <ClCompile Include="Application\Scene\TitleScene.cpp" />
+    <ClCompile Include="Application\Shake\Shake.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application\LevelEditor\LevelDataLoader.h" />
@@ -261,9 +262,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Application\Ground\LineGround.h" />
     <ClInclude Include="Application\Ground\Ground.h" />
     <ClInclude Include="Application\Ground\GroundManager.h" />
-    <ClInclude Include="Application\Shadow.h" />
+    <ClInclude Include="Application\Shadow\Shadow.h" />
     <ClInclude Include="Application\Scene\TitleScene.h" />
     <ClInclude Include="Application\Fade\Fade.h" />
+    <ClInclude Include="Application\Shake\Shake.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Application\LevelEditor\Python\add_collider.py">

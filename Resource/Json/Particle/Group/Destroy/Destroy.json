@@ -1,0 +1,11 @@
+[
+    {
+        "name": "Destroy"
+    },
+    {
+        "emitter": "Wave"
+    },
+    {
+        "emitter": "Flear"
+    }
+]

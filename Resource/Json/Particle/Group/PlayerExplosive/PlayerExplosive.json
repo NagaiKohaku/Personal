@@ -1,0 +1,14 @@
+[
+    {
+        "name": "PlayerExplosive"
+    },
+    {
+        "emitter": "Wave"
+    },
+    {
+        "emitter": "Flear"
+    },
+    {
+        "emitter": "Smoke"
+    }
+]
