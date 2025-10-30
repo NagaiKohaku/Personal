@@ -116,6 +116,12 @@ public:
 	/// <returns>フラグ</returns>
 	bool IsDebugCamera() const { return isDebugCamera_; }
 
+	void SetViewMatrix(Matrix4x4 matrix) { viewMatrix_ = matrix; }
+
+	void SetProjectionMatrix(Matrix4x4 matrix) { projectionMatrix_ = matrix; }
+
+	void SetViewProjectionMatrix(Matrix4x4 matrix) { viewProjectionMatrix_ = matrix; }
+
 	/// <summary>
 	/// fovYの設定
 	/// </summary>

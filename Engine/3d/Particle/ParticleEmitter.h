@@ -225,6 +225,12 @@ public:
 	/// <param name="list">テクスチャリスト</param>
 	void SetTextureList(std::vector<std::string> list) { textureList_ = list; }
 
+	/// <summary>
+	/// 発生フラグの設定
+	/// </summary>
+	/// <param name="flag">発生フラグ</param>
+	void SetIsEmit(bool flag) { isEmit_ = flag; }
+
 	///-------------------------------------------/// 
 	/// クラス内処理関数
 	///-------------------------------------------///

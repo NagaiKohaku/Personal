@@ -22,6 +22,7 @@
 #include "Scene/SceneManager.h"
 #include "LevelEditor/LevelDataLoader.h"
 #include "Fade/Fade.h"
+#include "Shake/Shake.h"
 
 
 //Windowsアプリでのエントリーポイント(main関数)
@@ -119,6 +120,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//フェード
 	Fade* fade = Fade::GetInstance();
 	fade->Initialize();
+
+	//シェイク
+	Shake* shake = Shake::GetInstance();
+	shake->Initialize();
 
 	//シーンマネージャー
 	SceneManager* sceneManager = SceneManager::GetInstance();

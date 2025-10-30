@@ -28,8 +28,12 @@
 ///=====================================================///
 class GameScene : public BaseScene {
 
+	///-------------------------------------------/// 
+	/// 構造体
+	///-------------------------------------------///
 public:
 
+	//アニメーションのキーフレーム
 	struct AnimPoint {
 		Vector3 playerPos;
 		Vector3 cameraRot;
@@ -67,7 +71,10 @@ public:
 	/// </summary>
 	void ImGui() override;
 
-	void Start();
+	/// <summary>
+	/// スタート時のアニメーション
+	/// </summary>
+	void StartAnimation();
 
 	///-------------------------------------------/// 
 	/// メンバ変数
@@ -92,21 +99,39 @@ private:
 	//バレットマネージャー
 	std::unique_ptr<BulletManager> bulletManager_;
 
+	//グラウンドマネージャー
+	std::unique_ptr<GroundManager> groundManager_;
+
 	//ライン描画の地面
 	std::unique_ptr<LineGround> lineGround_;
 
 	//SkyBox
 	std::unique_ptr<SkyBox> skyBox_;
 
-	std::unique_ptr<GroundManager> groundManager_;
+	//ゲームオーバースプライト
+	std::unique_ptr<Object2D> gameOverSprite_;
 
-	std::unique_ptr<Object2D> titleSprite_;
+	//スペースキー
+	std::unique_ptr<Object2D> spaceKeySprite_;
 
+	//左矢印
+	std::unique_ptr<Object2D> leftArrowSprite_;
+
+	//右矢印
+	std::unique_ptr<Object2D> rightArrowSprite_;
+
+	//アニメーションのタイマー
 	float timer_;
 
+	//キーフレームの番号
 	int animNum_;
 
+	//キーフレーム
+	std::vector<AnimPoint> animPoints_;
+
+	//スタート時の演出をするかのフラグ
 	bool isStart_;
 
-	std::vector<AnimPoint> animPoints_;
+	//ゲームオーバーになったかのフラグ
+	bool isGameOver_;
 };

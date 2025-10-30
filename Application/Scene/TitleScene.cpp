@@ -2,9 +2,12 @@
 
 #include <Scene/SceneManager.h>
 
+#include <Base/OffScreen.h>
+
 #include <3d/Model/ModelManager.h>
 #include <2d/Sprite/SpriteManager.h>
 #include <Fade/Fade.h>
+#include <Shake/Shake.h>
 
 #include <Base/Input.h>
 
@@ -31,6 +34,8 @@ void TitleScene::Initialize() {
 	camera_->SetOffsetZ(-20.0f);
 
 	cameraRotate_ = { 0.3f,0.0f,0.0f };
+
+	Shake::GetInstance()->SetCamera(camera_.get());
 
 	/// === モデルの読み込み === ///
 
@@ -94,7 +99,7 @@ void TitleScene::Initialize() {
 
 	leftArrowSprite_->GetSprite()->SetColor({ 1.0f,1.0f,1.0f,1.0f });
 
-	leftArrowSprite_->SetTranslate({ spaceKeyPos.x - spaceKeySize.x / 2.0f,spaceKeyPos.y });
+	leftArrowSprite_->SetTranslate({ spaceKeyPos.x - spaceKeySize.x / 2.0f - 64.0f,spaceKeyPos.y });
 
 	rightArrowSprite_ = std::make_unique<Object2D>();
 
@@ -106,7 +111,7 @@ void TitleScene::Initialize() {
 
 	rightArrowSprite_->GetSprite()->SetColor({ 1.0f,1.0f,1.0f,1.0f });
 
-	rightArrowSprite_->SetTranslate({ spaceKeyPos.x + spaceKeySize.x / 2.0f,spaceKeyPos.y });
+	rightArrowSprite_->SetTranslate({ spaceKeyPos.x + spaceKeySize.x / 2.0f + 64.0f,spaceKeyPos.y });
 
 	/// === エミッターの生成 === ///
 
@@ -160,6 +165,8 @@ void TitleScene::Finalize() {
 
 	Fade::GetInstance()->SetPlayer(nullptr);
 
+	Shake::GetInstance()->SetCamera(nullptr);
+
 }
 
 void TitleScene::Update() {
@@ -170,9 +177,18 @@ void TitleScene::Update() {
 
 			if (!isFade_) {
 
+				animTimer_ = 0.0f;
+
 				isStart_ = true;
 			}
 		}
+	}
+
+	if (OffScreen::GetInstance()->GetColorReverseRatio() > 0.0f) {
+
+		float currentNum = OffScreen::GetInstance()->GetColorReverseRatio();
+
+		OffScreen::GetInstance()->SetColorReverseRatio(Lerp(currentNum, 0.0f, 0.1f));
 	}
 
 	if (!isFade_) {

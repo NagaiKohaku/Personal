@@ -70,6 +70,10 @@ void OffScreen::Initialize() {
 	//書き込むためのアドレスを取得する
 	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));
 
+	materialData_->projectionInverse = MakeIdentity4x4();
+
+	materialData_->colorReverseRatio = 0.0f;
+
 	/// === Viewの生成 === ///
 
 	//RTVの生成
@@ -246,49 +250,66 @@ void OffScreen::ImGui() {
 
 	ImGui::Begin("OffScreen");
 
-	if (ImGui::Button("None")) {
+	if (ImGui::BeginTabBar("OffScreenTab")) {
 
-		//現在のシェーダーをCopyImageに設定
-		currentShaderName_ = L"CopyImage";
+		if (ImGui::BeginTabItem("パラメータ")) {
 
-		//パイプラインを再生成
-		CreatePipeline();
-	}
+			ImGui::DragFloat("反転比率", &materialData_->colorReverseRatio, 0.01f, 0.0f, 1.0f);
 
-	if (ImGui::Button("GrayScale")) {
+			ImGui::EndTabItem();
+		}
 
-		//現在のシェーダーをGrayScaleに設定
-		currentShaderName_ = L"GrayScale";
+		if (ImGui::BeginTabItem("シェーダー")) {
 
-		//パイプラインを再生成
-		CreatePipeline();
-	}
+			if (ImGui::Button("None")) {
 
-	if (ImGui::Button("Vignette")) {
+				//現在のシェーダーをCopyImageに設定
+				currentShaderName_ = L"CopyImage";
 
-		//現在のシェーダーをVignetteに設定
-		currentShaderName_ = L"Vignette";
+				//パイプラインを再生成
+				CreatePipeline();
+			}
 
-		//パイプラインを再生成
-		CreatePipeline();
-	}
+			if (ImGui::Button("GrayScale")) {
 
-	if (ImGui::Button("Smooth")) {
+				//現在のシェーダーをGrayScaleに設定
+				currentShaderName_ = L"GrayScale";
 
-		//現在のシェーダーをSmoothに設定
-		currentShaderName_ = L"Smooth";
+				//パイプラインを再生成
+				CreatePipeline();
+			}
 
-		//パイプラインを再生成
-		CreatePipeline();
-	}
+			if (ImGui::Button("Vignette")) {
 
-	if (ImGui::Button("OutLine")) {
+				//現在のシェーダーをVignetteに設定
+				currentShaderName_ = L"Vignette";
 
-		//現在のシェーダーをOutLineに設定
-		currentShaderName_ = L"OutLine";
+				//パイプラインを再生成
+				CreatePipeline();
+			}
 
-		//パイプラインを再生成
-		CreatePipeline();
+			if (ImGui::Button("Smooth")) {
+
+				//現在のシェーダーをSmoothに設定
+				currentShaderName_ = L"Smooth";
+
+				//パイプラインを再生成
+				CreatePipeline();
+			}
+
+			if (ImGui::Button("OutLine")) {
+
+				//現在のシェーダーをOutLineに設定
+				currentShaderName_ = L"OutLine";
+
+				//パイプラインを再生成
+				CreatePipeline();
+			}
+
+			ImGui::EndTabItem();
+		}
+
+		ImGui::EndTabBar();
 	}
 
 	ImGui::End();

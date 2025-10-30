@@ -79,6 +79,13 @@ void SceneManager::ChangeScene(SceneType sceneType) {
 
 	ColliderManager::GetInstance()->ClearColliders();
 
+	if (currentScene_) {
+
+		BaseScene* preScene = currentScene_.get();
+
+		preScene->Finalize();
+	}
+
 	// 新しいシーンを生成
 	currentScene_ = CreateScene(sceneType);
 	

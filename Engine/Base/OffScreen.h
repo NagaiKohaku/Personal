@@ -35,6 +35,7 @@ private:
 	//マテリアル
 	struct Material {
 		Matrix4x4 projectionInverse;
+		float colorReverseRatio;
 	};
 
 	///-------------------------------------------/// 
@@ -219,5 +220,9 @@ public:
 	/// </summary>
 	/// <param name="ptr">カメラポインタ</param>
 	void SetDefaultCamera(Camera* ptr);
+
+	void SetColorReverseRatio(float num) { materialData_->colorReverseRatio = num; }
+
+	float GetColorReverseRatio() { return materialData_->colorReverseRatio; }
 
 };

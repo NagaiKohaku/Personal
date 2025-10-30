@@ -586,7 +586,7 @@ void ParticleEmitter::ImGui() {
 		if (ImGui::CollapsingHeader("生成色")) {
 			ImGui::Columns(2, "ColorColumns", false);
 
-			const char* stateItems[] = { "Start","Velocity","Easing" };
+			const char* stateItems[] = { "StartAnimation","Velocity","Easing" };
 
 			int currentState = static_cast<int>(colorUpdateState_);
 
@@ -1051,7 +1051,7 @@ void ParticleEmitter::ImGuiParameter(std::string labelName, EmitterParameter& pa
 
 	/// === 更新ステート === ///
 
-	const char* stateItems[] = { "Start","Velocity","Easing" };
+	const char* stateItems[] = { "StartAnimation","Velocity","Easing" };
 
 	int currentState = static_cast<int>(updateState);
 

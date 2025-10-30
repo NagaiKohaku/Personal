@@ -7,6 +7,8 @@
 #include "LevelEditor/LevelDataLoader.h"
 #include "Bullet/BulletManager.h"
 
+#include "Shake/Shake.h"
+
 #include "Math/Easing.h"
 
 #include "algorithm"
@@ -67,6 +69,27 @@ void Player::Initialize(Camera* cameraPtr, BulletManager* bulletPtr) {
 	leftTrail_->GetWorldTransform().SetParent(&leftWing_->GetWorldTransform());
 
 	leftTrail_->Emit();
+
+	explosiveEmitter_ = std::make_unique<EmitterGroup>();
+
+	//死亡時エミッターの生成
+	explosiveEmitter_ = std::make_unique<EmitterGroup>();
+
+	//死亡時エミッターの初期化
+	explosiveEmitter_->Initialize(camera_);
+
+	//死亡時エミッターのエミッター情報読み込み
+	explosiveEmitter_->LoadEmitter("PlayerExplosive");
+
+	explosiveEmitter_->GetWorldTransform().SetParent(&core_->GetWorldTransform());
+
+	destroyEmitter_ = std::make_unique<EmitterGroup>();
+
+	destroyEmitter_->Initialize(camera_);
+
+	destroyEmitter_->LoadEmitter("Destroy");
+
+	destroyEmitter_->GetWorldTransform().SetParent(&core_->GetWorldTransform());
 
 	shadow_ = std::make_unique<Shadow>();
 
@@ -131,6 +154,7 @@ void Player::Initialize(Camera* cameraPtr, BulletManager* bulletPtr) {
 
 	isMoveActive = true;
 
+	isDead_ = false;
 }
 
 void Player::Initialize(Camera* cameraPtr) {
@@ -182,6 +206,27 @@ void Player::Initialize(Camera* cameraPtr) {
 
 	leftTrail_->Emit();
 
+	explosiveEmitter_ = std::make_unique<EmitterGroup>();
+
+	//死亡時エミッターの生成
+	explosiveEmitter_ = std::make_unique<EmitterGroup>();
+
+	//死亡時エミッターの初期化
+	explosiveEmitter_->Initialize(camera_);
+
+	//死亡時エミッターのエミッター情報読み込み
+	explosiveEmitter_->LoadEmitter("PlayerExplosive");
+
+	explosiveEmitter_->GetWorldTransform().SetParent(&core_->GetWorldTransform());
+
+	destroyEmitter_ = std::make_unique<EmitterGroup>();
+
+	destroyEmitter_->Initialize(camera_);
+
+	destroyEmitter_->LoadEmitter("Destroy");
+
+	destroyEmitter_->GetWorldTransform().SetParent(&core_->GetWorldTransform());
+
 	shadow_ = std::make_unique<Shadow>();
 
 	shadow_->Initialize();
@@ -222,6 +267,8 @@ void Player::Initialize(Camera* cameraPtr) {
 	core_->GetWorldTransform().translate_ = initialPos_;
 
 	isMoveActive = false;
+
+	isDead_ = false;
 }
 
 ///=====================================================/// 
@@ -229,19 +276,22 @@ void Player::Initialize(Camera* cameraPtr) {
 ///=====================================================///
 void Player::Update() {
 
-	//地面に接していたら
-	if (core_->GetWorldTransform().translate_.y <= 1.0f) {
+	if (!isDead_) {
 
-		//戦車状態に変更
-		moveState_ = TANK;
-	} else {
+		//地面に接していたら
+		if (core_->GetWorldTransform().translate_.y <= 1.0f) {
 
-		//飛行機状態に変更
-		moveState_ = JET;
+			//戦車状態に変更
+			moveState_ = TANK;
+		} else {
+
+			//飛行機状態に変更
+			moveState_ = JET;
+		}
+
+		//移動
+		Move();
 	}
-
-	//移動
-	Move();
 
 	if (isMoveActive) {
 
@@ -250,6 +300,11 @@ void Player::Update() {
 
 		//衝突判定
 		IsCollision();
+	}
+
+	if (isDead_) {
+
+		Dead();
 	}
 
 	//プレイヤーの更新
@@ -262,6 +317,10 @@ void Player::Update() {
 	rightTrail_->Update();
 
 	leftTrail_->Update();
+
+	explosiveEmitter_->Update();
+
+	destroyEmitter_->Update();
 
 	shadow_->Update(core_->GetWorldTransform().translate_);
 
@@ -279,18 +338,25 @@ void Player::Update() {
 ///=====================================================///
 void Player::Draw() {
 
-	//プレイヤーの描画
-	core_->Draw(LayerType::Object);
+	if (!isDestroy_) {
 
-	rightWing_->Draw(LayerType::Object);
+		//プレイヤーの描画
+		core_->Draw(LayerType::Object);
 
-	leftWing_->Draw(LayerType::Object);
+		rightWing_->Draw(LayerType::Object);
+
+		leftWing_->Draw(LayerType::Object);
+
+		shadow_->Draw();
+	}
 
 	rightTrail_->Draw();
 
 	leftTrail_->Draw();
 
-	shadow_->Draw();
+	explosiveEmitter_->Draw();
+
+	destroyEmitter_->Draw();
 
 	if (isMoveActive) {
 
@@ -575,4 +641,53 @@ void Player::JetAttack() {
 ///=====================================================///
 void Player::IsCollision() {
 
+	//接触状態であれば
+	if (collider_->GetIsTrigger()) {
+
+		//接触相手のタグがPLAYERBULLETであれば
+		if (collider_->CheckHitTag(Collider::Tag::ENEMYBULLET)) {
+
+			isMoveActive = false;
+
+			isDead_ = true;
+
+			explosiveEmitter_->Emit();
+		}
+	}
+
+}
+
+void Player::Dead() {
+
+	core_->GetWorldTransform().rotate_.x = -3.14f;
+
+	leftWing_->GetWorldTransform().rotate_.x = -3.14f;
+
+	rightWing_->GetWorldTransform().rotate_.x -= 3.14f;
+
+	core_->GetWorldTransform().translate_ += Vector3(0.0f, -0.03f, 0.0f);
+
+	core_->GetWorldTransform().rotate_ += Vector3(0.0f, 0.0f, 0.1f);
+
+	if (core_->GetWorldTransform().translate_.y <= 1.0f) {
+
+		core_->GetWorldTransform().translate_.y = 1.0f;
+
+		if (!isDestroy_) {
+
+			isDestroy_ = true;
+
+			leftTrail_->Stop();
+
+			rightTrail_->Stop();
+
+			explosiveEmitter_->Stop();
+
+			destroyEmitter_->Emit();
+
+			Shake::GetInstance()->Start(1.0f, 0.5f);
+
+			//Emit
+		}
+	}
 }
