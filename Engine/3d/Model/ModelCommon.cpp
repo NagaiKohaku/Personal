@@ -1,9 +1,7 @@
 #include "ModelCommon.h"
 
-#include "Base/DirectXCommon.h"
-
 ///=====================================================/// 
-/// シングルトンインスタンスを取得
+/// ModelCommonのシングルトンインスタンスを取得
 ///=====================================================///
 ModelCommon* ModelCommon::GetInstance() {
 	static ModelCommon instance;
@@ -11,7 +9,7 @@ ModelCommon* ModelCommon::GetInstance() {
 }
 
 ///=====================================================/// 
-/// 初期化
+/// ModelCommonの初期化
 ///=====================================================///
 void ModelCommon::Initialize() {
 

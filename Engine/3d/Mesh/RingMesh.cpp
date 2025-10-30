@@ -1,5 +1,8 @@
 #include "RingMesh.h"
 
+///=====================================================/// 
+/// RingMeshの初期化
+///=====================================================///
 void RingMesh::Initialize() {
 
 	directXCommon_ = DirectXCommon::GetInstance();

@@ -5,7 +5,7 @@
 #include "algorithm"
 
 ///=====================================================/// 
-/// シングルトンインスタンスの取得
+/// ColliderManagerのシングルトンインスタンスを取得
 ///=====================================================///
 ColliderManager* ColliderManager::GetInstance() {
 	static ColliderManager instance;
@@ -13,7 +13,7 @@ ColliderManager* ColliderManager::GetInstance() {
 }
 
 ///=====================================================/// 
-/// 初期化
+/// ColliderManager を初期化
 ///=====================================================///
 void ColliderManager::Initialize() {
 
@@ -22,7 +22,7 @@ void ColliderManager::Initialize() {
 }
 
 ///=====================================================/// 
-/// 更新
+/// ColliderManager を更新
 ///=====================================================///
 void ColliderManager::Update() {
 
@@ -31,13 +31,7 @@ void ColliderManager::Update() {
 }
 
 ///=====================================================/// 
-/// 描画
-///=====================================================///
-void ColliderManager::Draw() {
-}
-
-///=====================================================/// 
-/// コライダーの追加
+/// コライダーを登録
 ///=====================================================///
 void ColliderManager::AddCollider(Collider* collider) {
 
@@ -46,7 +40,7 @@ void ColliderManager::AddCollider(Collider* collider) {
 }
 
 ///=====================================================/// 
-/// コライダーの削除
+/// 指定されたコライダーを登録リストから削除
 ///=====================================================///
 void ColliderManager::RemoveCollider(Collider* collider) {
 
@@ -62,7 +56,7 @@ void ColliderManager::RemoveCollider(Collider* collider) {
 }
 
 ///=====================================================/// 
-/// 全コライダーの接触判定
+/// 登録されている全てのコライダー同士の衝突判定
 ///=====================================================///
 void ColliderManager::CheckAllCollision() {
 
@@ -91,7 +85,7 @@ void ColliderManager::CheckAllCollision() {
 }
 
 ///=====================================================/// 
-/// 2つのコライダーの接触判定
+/// 2つのコライダー同士の衝突判定
 ///=====================================================///
 bool ColliderManager::CheckPair(Collider* first, Collider* second) {
 
@@ -119,7 +113,7 @@ bool ColliderManager::CheckPair(Collider* first, Collider* second) {
 }
 
 ///=====================================================/// 
-/// AABBとAABBの接触判定
+/// 2つのAABBCollider同士の衝突判定
 ///=====================================================///
 bool ColliderManager::IsCollisionAABBWithAABB(Collider* first, Collider* second) {
 
@@ -157,7 +151,7 @@ bool ColliderManager::IsCollisionAABBWithAABB(Collider* first, Collider* second)
 }
 
 ///=====================================================/// 
-/// SphereとSphereの接触判定
+/// 2つのSphereCollider同士の衝突判定
 ///=====================================================///
 bool ColliderManager::IsCollisionSphereWithSphere(Collider* first, Collider* second) {
 
@@ -189,7 +183,7 @@ bool ColliderManager::IsCollisionSphereWithSphere(Collider* first, Collider* sec
 }
 
 ///=====================================================/// 
-/// AABBとSphereの接触判定
+/// AABBCollider と SphereCollider の衝突判定
 ///=====================================================///
 bool ColliderManager::IsCollisionAABBWithSphere(Collider* aabb, Collider* sphere) {
 

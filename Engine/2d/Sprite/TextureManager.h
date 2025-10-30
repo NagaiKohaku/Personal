@@ -2,6 +2,8 @@
 
 #include "Base/DirectXCommon.h"
 
+#include "Base/SrvManager.h"
+
 #include "DirectXTex.h"
 #include "d3d12.h"
 #include "d3dx12.h"
@@ -11,13 +13,13 @@
 #include "vector"
 #include "wrl.h"
 
-/// === 前方宣言 === ///
-
-class SrvManager;
-
-///=====================================================/// 
-/// テクスチャマネージャークラス
-///=====================================================///
+/// <summary>
+/// テクスチャ管理を行うシングルトンクラス。
+/// </summary>
+/// <remarks>
+/// - テクスチャの読み込み・GPU展開・SRV管理を一元管理
+/// - 重複ロードを防ぎ、効率的にGPUリソースを利用
+/// </remarks>
 class TextureManager {
 
 	///-------------------------------------------/// 
@@ -50,26 +52,46 @@ private:
 public:
 
 	/// <summary>
-	/// シングルトンインスタンスを取得
+	/// TextureManagerのシングルトンインスタンスを取得します。
 	/// </summary>
-	/// <returns>インスタンス</returns>
+	/// <remarks>
+	/// 返り値に静的インスタンスを返します。
+	/// </remarks>
 	static TextureManager* GetInstance();
 
 	/// <summary>
-	/// 初期化
+	/// TextureManagerを初期化します。
 	/// </summary>
+	/// <remarks>
+	/// - DirectX基盤のインスタンスを取得
+	/// - SRVマネージャーのインスタンスを取得
+	/// - テクスチャデータを格納するコンテナの容量を最大SRV数分だけ事前に確保します。
+	/// </remarks>
 	void Initialize();
 
 	/// <summary>
-	/// テクスチャの読み込み
+	/// 指定されたファイルパスのテクスチャを読み込み、GPU上に展開します。
 	/// </summary>
-	/// <param name="modelName">ファイルパス</param>
+	/// <param name="filePath"> 読み込むテクスチャファイルのパス </param>
+	/// <remarks>
+	/// - DirectXTexを使用してテクスチャを読み込み、ミップマップを生成します（非圧縮テクスチャのみ）。
+	/// - GPU上にリソースを確保し、SRVを生成します。
+	/// - 読み込んだ情報は内部のテクスチャデータを格納するマップコンテナに登録され、同一ファイルの重複ロードを防ぎます。
+	/// </remarks>
 	void LoadTexture(const std::string& filePath);
 
 	/// <summary>
-	/// キューブテクスチャの読み込み
+	/// 指定されたファイルパスのキューブマップテクスチャを読み込み、GPU上に展開します。
 	/// </summary>
-	/// <param name="filePath">ファイルパス</param>
+	/// <param name="filePath"> 読み込むキューブマップテクスチャファイルのパス </param>
+	/// <remarks>
+	/// - DDS形式の場合は DirectXTex の LoadFromDDSFile() を使用して読み込みます。
+	/// - その他の形式（PNGなど）の場合は LoadFromWICFile() を使用して読み込みます。
+	/// - 非圧縮テクスチャの場合はミップマップを自動生成します。
+	/// - テクスチャの内容をGPUにアップロードし、SRVを生成します。
+	/// - SRVはキューブマップとして作成されます。
+	/// - 読み込んだ情報は内部のテクスチャデータを格納するマップコンテナに登録され、同一ファイルの重複ロードを防ぎます。
+	/// </remarks>
 	void LoadCubeTexture(const std::string& filePath);
 
 	///-------------------------------------------/// 
@@ -78,20 +100,25 @@ public:
 private:
 
 	/// <summary>
-	/// テクスチャリソースの生成
+	/// 指定されたテクスチャメタデータを基に、DirectX 12 のテクスチャリソースを生成します。
 	/// </summary>
-	/// <param name="metadata">メタデータ</param>
-	/// <returns>テクスチャリソース</returns>
+	/// <param name="metadata"> テクスチャのメタデータ </param>
+	/// <returns> 生成されたID3D12Resourceを保持するComPtrオブジェクト </returns>
 	Microsoft::WRL::ComPtr<ID3D12Resource> CreateTextureResource(const DirectX::TexMetadata& metadata);
 
+	/// <summary>
+	/// 指定されたメタデータを基に、キューブマップ用のテクスチャリソースを生成します。
+	/// </summary>
+	/// <param name="metadata"> テクスチャのメタデータ </param>
+	/// <returns> 生成されたキューブマップ用ID3D12Resourceを保持するComPtrオブジェクト </returns>
 	Microsoft::WRL::ComPtr<ID3D12Resource> CreateCubeTextureResource(const DirectX::TexMetadata& metadata);
 
 	/// <summary>
-	/// テクスチャデータをGPUに転送
+	/// テクスチャデータをGPUにアップロードし、GPUで使用可能な状態にします。
 	/// </summary>
-	/// <param name="textureData">テクスチャデータ</param>
-	/// <param name="mipImages">ミップレベル</param>
-	/// <returns>リソース</returns>
+	/// <param name="textureData"> GPU上に作成されたテクスチャリソース </param>
+	/// <param name="mipImages"> 読み込んだ画像およびミップマップ情報を保持するScratchImage構造体 </param>
+	/// <returns> GPU転送用の中間リソース </returns>
 	[[nodiscard]]
 	Microsoft::WRL::ComPtr<ID3D12Resource> UploadTextureData(
 		Microsoft::WRL::ComPtr<ID3D12Resource> textureData,
@@ -99,11 +126,11 @@ private:
 	);
 
 	/// <summary>
-	/// テクスチャデータをGPUに転送
+	/// キューブマップ用のテクスチャデータをGPUにアップロードし、使用可能な状態にします。
 	/// </summary>
-	/// <param name="textureData">テクスチャデータ</param>
-	/// <param name="mipImages">ミップレベル</param>
-	/// <returns>リソース</returns>
+	/// <param name="textureData"> GPU上に作成されたキューブマップテクスチャリソース </param>
+	/// <param name="mipImages"> 読み込んだキューブマップ画像およびミップマップ情報を保持するScratchImage構造体 </param>
+	/// <returns> GPU転送用の中間リソース </returns>
 	[[nodiscard]]
 	Microsoft::WRL::ComPtr<ID3D12Resource> UploadCubeTextureData(
 		Microsoft::WRL::ComPtr<ID3D12Resource> textureData,

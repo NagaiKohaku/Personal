@@ -1,6 +1,5 @@
 #include "TextureManager.h"
 
-#include "Base/SrvManager.h"
 
 #include "Other/Log.h"
 
@@ -10,7 +9,7 @@
 uint32_t TextureManager::kSRVIndexTop = 1;
 
 ///=====================================================/// 
-/// シングルトンインスタンスを取得
+/// TextureManagerのシングルトンインスタンスを取得
 ///=====================================================///
 TextureManager* TextureManager::GetInstance() {
 	static TextureManager instance;
@@ -18,7 +17,7 @@ TextureManager* TextureManager::GetInstance() {
 }
 
 ///=====================================================/// 
-/// 初期化
+/// TextureManagerを初期化
 ///=====================================================///
 void TextureManager::Initialize() {
 
@@ -33,7 +32,7 @@ void TextureManager::Initialize() {
 }
 
 ///=====================================================/// 
-/// テクスチャの読み込み
+/// 指定されたファイルパスのテクスチャを読み込み、GPU上に展開
 ///=====================================================///
 void TextureManager::LoadTexture(const std::string& filePath) {
 
@@ -103,6 +102,9 @@ void TextureManager::LoadTexture(const std::string& filePath) {
 	directXCommon_->GetDevice()->CreateShaderResourceView(textureData.resource.Get(), &srvDesc, textureData.srvHandleCPU);
 }
 
+///==============================================================/// 
+/// 指定されたファイルパスのキューブマップテクスチャを読み込み、GPU上に展開
+///==============================================================///
 void TextureManager::LoadCubeTexture(const std::string& filePath) {
 
 	//読み込み済みテクスチャを検索
@@ -218,9 +220,9 @@ D3D12_GPU_DESCRIPTOR_HANDLE TextureManager::GetSrvHandleGPU(const std::string& f
 	return textureData_[filePath].srvHandleGPU;
 }
 
-///=====================================================/// 
-/// テクスチャリソースの生成
-///=====================================================///
+///===================================================================/// 
+/// 指定されたテクスチャメタデータを基に、DirectX 12 のテクスチャリソースを生成
+///===================================================================///
 Microsoft::WRL::ComPtr<ID3D12Resource> TextureManager::CreateTextureResource(const DirectX::TexMetadata& metadata) {
 
 	//metadataをもとにResourceの設定
@@ -255,6 +257,9 @@ Microsoft::WRL::ComPtr<ID3D12Resource> TextureManager::CreateTextureResource(con
 	return resource;
 }
 
+///===================================================================/// 
+/// 指定されたメタデータを基に、キューブマップ用のテクスチャリソースを生成
+///===================================================================///
 Microsoft::WRL::ComPtr<ID3D12Resource> TextureManager::CreateCubeTextureResource(const DirectX::TexMetadata& metadata) {
 
 	D3D12_RESOURCE_DESC resourceDesc = {};
@@ -291,9 +296,9 @@ Microsoft::WRL::ComPtr<ID3D12Resource> TextureManager::CreateCubeTextureResource
 	return resource;
 }
 
-///=====================================================/// 
-/// テクスチャデータをGPUに転送
-///=====================================================///
+///=========================================================/// 
+/// テクスチャデータをGPUにアップロードし、GPUで使用可能な状態にする
+///=========================================================///
 [[nodiscard]]
 Microsoft::WRL::ComPtr<ID3D12Resource> TextureManager::UploadTextureData(
 	Microsoft::WRL::ComPtr<ID3D12Resource> textureData,
@@ -349,6 +354,9 @@ Microsoft::WRL::ComPtr<ID3D12Resource> TextureManager::UploadTextureData(
 	return intermediateResource;
 }
 
+///==================================================================/// 
+/// キューブマップ用のテクスチャデータをGPUにアップロードし、使用可能な状態にする
+///==================================================================///
 [[nodiscard]]
 Microsoft::WRL::ComPtr<ID3D12Resource> TextureManager::UploadCubeTextureData(
 	Microsoft::WRL::ComPtr<ID3D12Resource> textureData,

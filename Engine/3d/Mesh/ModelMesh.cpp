@@ -2,6 +2,9 @@
 
 #include "Base/DirectXCommon.h"
 
+///=====================================================/// 
+/// ModelMeshの初期化
+///=====================================================///
 void ModelMesh::Initialize() {
 
 	directXCommon_ = DirectXCommon::GetInstance();

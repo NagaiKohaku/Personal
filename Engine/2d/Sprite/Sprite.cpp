@@ -2,7 +2,7 @@
 
 #include "Base/WinApp.h"
 #include "Base/DirectXCommon.h"
-#include "2d/Sprite/SpriteCommon.h"
+
 #include "2d/Sprite/TextureManager.h"
 
 #include "Math/MakeMatrixMath.h"
@@ -112,11 +112,15 @@ void Sprite::Initialize(const std::string& fileName) {
 ///=====================================================///
 void Sprite::Update() {
 
+	/// === アンカーポイントに基づいて四隅の頂点位置を計算 === ///
+
 	//アンカーポイントから四点を計算
 	float left = 0.0f - anchorPoint_.x;
 	float right = 1.0f - anchorPoint_.x;
 	float top = 0.0f - anchorPoint_.y;
 	float bottom = 1.0f - anchorPoint_.y;
+
+	/// === X軸・Y軸反転フラグを反映 === ///
 
 	//X軸の反転
 	if (isFlipX_) {
@@ -130,6 +134,8 @@ void Sprite::Update() {
 		bottom = -bottom;
 	}
 
+	/// === テクスチャUV座標を計算 === ///
+
 	//テクスチャのメタデータを取得
 	const DirectX::TexMetadata& metadata = TextureManager::GetInstance()->GetMetaData(texturePath_);
 
@@ -139,16 +145,20 @@ void Sprite::Update() {
 	float texTop = textureLeftTop_.y / metadata.height;
 	float texBottom = (textureLeftTop_.y + textureSize_.y) / metadata.height;
 
-	//頂点リソースのデータを書き込む
+	/// === 計算した頂点位置とUVをvertexData_に書き込む === ///
+
 	//左下
 	vertexData_[0].position = { left,bottom,0.0f,1.0f };
 	vertexData_[0].texcoord = { texLeft,texBottom };
+
 	//左上
 	vertexData_[1].position = { left,top,0.0f,1.0f };
 	vertexData_[1].texcoord = { texLeft,texTop };
+
 	//右下
 	vertexData_[2].position = { right,bottom,0.0f,1.0f };
 	vertexData_[2].texcoord = { texRight,texBottom };
+
 	//右上
 	vertexData_[3].position = { right,top,0.0f,1.0f };
 	vertexData_[3].texcoord = { texRight,texTop };
@@ -173,6 +183,24 @@ void Sprite::Draw() {
 
 	//描画命令
 	spriteCommon_->GetDxCommon()->GetCommandList()->DrawIndexedInstanced(6, 1, 0, 0, 0);
+}
+
+///=====================================================/// 
+/// テクスチャの変更
+///=====================================================///
+void Sprite::ChangeTexture(const std::string& fileName) {
+
+	//ファイルパスからテクスチャを読み込む
+	TextureManager::GetInstance()->LoadTexture(fileName);
+
+	//メタデータを取得
+	const DirectX::TexMetadata& metadata = TextureManager::GetInstance()->GetMetaData(fileName);
+
+	//テクスチャパスを現在のものに変更
+	texturePath_ = fileName;
+
+	//スプライトのサイズをテクスチャのサイズに合わせる
+	AdjustTextureSize();
 }
 
 ///=====================================================/// 
@@ -206,22 +234,4 @@ void Sprite::AdjustTextureSize() {
 
 	//スプライトのサイズをテクスチャのサイズに設定
 	size_ = textureSize_;
-}
-
-///=====================================================/// 
-/// テクスチャの変更
-///=====================================================///
-void Sprite::ChangeTexture(const std::string& filePath) {
-
-	//ファイルパスからテクスチャを読み込む
-	TextureManager::GetInstance()->LoadTexture(filePath);
-
-	//メタデータを取得
-	const DirectX::TexMetadata& metadata = TextureManager::GetInstance()->GetMetaData(filePath);
-
-	//テクスチャパスを現在のものに変更
-	texturePath_ = filePath;
-
-	//スプライトのサイズをテクスチャのサイズに合わせる
-	AdjustTextureSize();
 }

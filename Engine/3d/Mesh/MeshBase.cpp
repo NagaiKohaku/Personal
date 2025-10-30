@@ -1,6 +1,9 @@
 #include "MeshBase.h"
 
-void MeshBase::Draw() {
+///=====================================================/// 
+/// GPUにメッシュのデータを送信
+///=====================================================///
+void MeshBase::SendDataForGPU() {
 
 	//頂点データをGPUに転送
 	directXCommon_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView_);
@@ -9,6 +12,9 @@ void MeshBase::Draw() {
 	directXCommon_->GetCommandList()->IASetIndexBuffer(&indexBufferView_);
 }
 
+///=====================================================/// 
+/// 外部から頂点データとインデックスデータをコピーしてメッシュを更新
+///=====================================================///
 void MeshBase::CopyMeshData(std::vector<uint32_t> indices, std::vector<VertexData> vertices) {
 	//vertexData_に頂点データをコピー
 	std::memcpy(vertexData_, vertices.data(), sizeof(VertexData) * vertices.size());

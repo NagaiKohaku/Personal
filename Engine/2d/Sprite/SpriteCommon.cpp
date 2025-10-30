@@ -1,9 +1,8 @@
 #include "SpriteCommon.h"
 
-#include "Base/DirectXCommon.h"
 
 ///=====================================================/// 
-/// シングルトンインスタンスを取得
+/// SpriteCommonのシングルトンインスタンスを取得
 ///=====================================================///
 SpriteCommon* SpriteCommon::GetInstance() {
 	static SpriteCommon instance;
@@ -11,7 +10,7 @@ SpriteCommon* SpriteCommon::GetInstance() {
 }
 
 ///=====================================================/// 
-/// 初期化
+/// SpriteCommonを初期化
 ///=====================================================///
 void SpriteCommon::Initialize() {
 

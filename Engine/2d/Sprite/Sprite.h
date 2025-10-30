@@ -1,5 +1,7 @@
 #pragma once
 
+#include "2d/Sprite/SpriteCommon.h"
+
 #include "Math/Vector2.h"
 #include "Math/Vector3.h"
 #include "Math/Vector4.h"
@@ -12,12 +14,14 @@
 #include "wrl.h"
 #include "string"
 
-/// === 前方宣言 === ///
-class SpriteCommon;
-
-///=====================================================/// 
-/// スプライトクラス
-///=====================================================///
+/// <summary>
+/// 2Dスプライトを表すクラス。
+/// </summary>
+/// <remarks>
+/// - テクスチャ読み込み・頂点/インデックス/マテリアルバッファ管理
+/// - 座標、回転、サイズ、アンカーポイントの管理
+/// - X/Y軸反転対応
+/// </remarks>
 class Sprite {
 
 	///-------------------------------------------/// 
@@ -46,31 +50,58 @@ private:
 public:
 
 	/// <summary>
-	/// 初期化
+	/// スプライトの描画に必要なリソースを初期化します。
 	/// </summary>
-	/// <param name="modelName">ファイルパス</param>
-	void Initialize(const std::string& filePath);
+	/// <param name="fileName">ファイル名(.png切り捨て)</param>
+	/// <remarks>
+	/// - SpriteCommonのインスタンス取得
+	/// - 頂点バッファの作成およびマッピング
+	/// - 頂点インデックスバッファの作成および初期化
+	/// - マテリアルリソースの作成および初期化
+	/// - テクスチャを読み込み、サイズを調整
+	/// - 座標、回転、アンカーポイント、反転フラグなどの変数を初期化
+	/// </remarks>
+	void Initialize(const std::string& fileName);
 
 	/// <summary>
-	/// 更新
+	/// スプライトの頂点データを更新します。
 	/// </summary>
+	/// <remarks>
+	/// - アンカーポイントに基づいて四隅の頂点位置を計算
+	/// - X軸・Y軸反転フラグを反映
+	/// - テクスチャUV座標を計算
+	/// - 計算した頂点位置とUVをvertexData_に書き込む
+	/// </remarks>
 	void Update();
 
 	/// <summary>
-	/// 描画
+	/// スプライトを描画します。
 	/// </summary>
+	/// <remarks>
+	/// - 頂点バッファを設定
+	/// - インデックスバッファを設定
+	/// - マテリアルを設定
+	/// - テクスチャを設定
+	/// - インデックス付き描画を実行
+	/// </remarks>
 	void Draw();
 
 	/// <summary>
-	/// ImGuiの表示
+	/// スプライトのテクスチャを指定したファイルに変更します。
 	/// </summary>
-	void DisplayImGui();
+	/// <param name="fileName">ファイル名(.png切り捨て)</param>
+	/// <remarks>
+	/// - fileNameで指定したテクスチャをTextureManagerから読み込む
+	/// - 読み込んだテクスチャのメタデータを取得
+	/// - texturePath_を更新
+	/// - スプライトのサイズをテクスチャのサイズに合わせる
+	/// </remarks>
+	void ChangeTexture(const std::string& fileName);
 
 	/// <summary>
-	/// テクスチャの変更
+	/// ImGuiを使用してスプライトの描画パラメータを編集します。
 	/// </summary>
-	/// <param name="modelName"></param>
-	void ChangeTexture(const std::string& filePath);
+	void DisplayImGui();
 
 	///-------------------------------------------/// 
 	/// クラス内処理関数
@@ -78,8 +109,13 @@ public:
 private:
 
 	/// <summary>
-	/// スプライトのサイズをテクスチャのサイズに合わせる
+	/// スプライトのサイズを現在のテクスチャの解像度に合わせます。
 	/// </summary>
+	/// <remarks>
+	/// - texturePath_からテクスチャのメタデータを取得
+	/// - メタデータからテクスチャの高さ・幅を取得
+	/// - スプライトのサイズをテクスチャのサイズに合わせる
+	/// </remarks>
 	void AdjustTextureSize();
 
 	///-------------------------------------------/// 
@@ -153,6 +189,12 @@ private:
 	/// セッター・ゲッター
 	///-------------------------------------------///
 public:
+
+	/// <summary>
+	/// テクスチャのファイルパスを取得
+	/// </summary>
+	/// <returns>テクスチャのファイルパス</returns>
+	const std::string GetTexturePath() const { return texturePath_; }
 
 	/// <summary>
 	/// 座標を取得
