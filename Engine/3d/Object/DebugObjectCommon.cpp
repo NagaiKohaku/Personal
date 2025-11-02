@@ -7,7 +7,7 @@
 #include "cassert"
 
 ///=====================================================/// 
-/// シングルトンインスタンスの取得
+/// DebugObjectCommonのシングルトンインスタンスを取得
 ///=====================================================///
 DebugObjectCommon* DebugObjectCommon::GetInstance() {
     static DebugObjectCommon instance;
@@ -15,7 +15,7 @@ DebugObjectCommon* DebugObjectCommon::GetInstance() {
 }
 
 ///=====================================================/// 
-/// 初期化
+/// DebugObjectCommonの初期化
 ///=====================================================///
 void DebugObjectCommon::Initialize() {
 
@@ -28,14 +28,7 @@ void DebugObjectCommon::Initialize() {
 }
 
 ///=====================================================/// 
-/// 更新
-///=====================================================///
-void DebugObjectCommon::Update() {
-
-}
-
-///=====================================================/// 
-/// 描画前処理
+/// デバッグオブジェクトの描画に必要な共通設定
 ///=====================================================///
 void DebugObjectCommon::CommonDrawSetting() {
 
@@ -51,7 +44,7 @@ void DebugObjectCommon::CommonDrawSetting() {
 }
 
 ///=====================================================/// 
-/// ルートシグネチャの生成
+/// デバッグオブジェクト描画用のルートシグネチャを作成
 ///=====================================================///
 void DebugObjectCommon::CreateRootSignature() {
 
@@ -136,7 +129,7 @@ void DebugObjectCommon::CreateRootSignature() {
 }
 
 ///=====================================================/// 
-/// グラフィックパイプラインの生成
+/// デバッグオブジェクト描画用のグラフィックパイプラインステートを作成
 ///=====================================================///
 void DebugObjectCommon::CreateGraphicsPipeline() {
 

@@ -2,7 +2,6 @@
 
 #include "3d/Model/Model.h"
 
-
 #include "Math/Matrix4x4.h"
 #include "Math/WorldTransform.h"
 
@@ -14,9 +13,12 @@ class DebugObjectCommon;
 
 class Camera;
 
-///=====================================================/// 
-/// デバッグオブジェクト3Dクラス
-///=====================================================///
+/// <summary>
+/// 3D空間上のデバッグ用オブジェクトを管理・描画するクラスです。
+/// </summary>
+/// <remarks>
+/// - 主に開発時の可視化やデバッグ目的で使用されます。  
+/// </remarks>
 class DebugObject3D {
 
 	///-------------------------------------------/// 
@@ -37,18 +39,30 @@ private:
 public:
 
 	/// <summary>
-	/// 初期化処理
+	/// 3Dデバッグオブジェクトを初期化します。
 	/// </summary>
+	/// <remarks>
+	/// - DebugObjectCommonのインスタンスを取得します。  
+	/// - 座標変換行列リソースを作成し、GPUにマッピングします。  
+	/// - Transformクラスの初期化を行い、位置・回転・スケールの初期値を設定します。  
+	/// </remarks>
 	void Initialize();
 
 	/// <summary>
-	/// 更新処理
+	/// 3Dデバッグオブジェクトのトランスフォームを更新します。
 	/// </summary>
+	/// <remarks>
+	/// - Transformクラスの位置・回転・スケールを更新します。  
+	/// - カメラが存在する場合はワールドビュープロジェクション行列を計算します。  
+	/// </remarks>
 	void Update();
 
 	/// <summary>
-	/// 描画処理
+	/// 3Dデバッグオブジェクトを描画します。
 	/// </summary>
+	/// <remarks>
+	/// - Rendererクラスに描画コマンドを登録します。  
+	/// </remarks>
 	void Draw();
 
 	///-------------------------------------------/// 

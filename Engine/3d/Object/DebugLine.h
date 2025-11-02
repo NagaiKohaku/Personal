@@ -18,9 +18,13 @@ class DebugObjectCommon;
 
 class Camera;
 
-///=====================================================/// 
-/// デバッグラインクラス
-///=====================================================///
+/// <summary>
+/// デバッグ用のラインを描画するクラス。
+/// </summary>
+/// <remarks>
+/// - 主にシーン内のベクトル方向や衝突判定の可視化など、デバッグ目的で使用します。  
+/// - 頂点／インデックスバッファ、マテリアル、座標変換行列などのリソースを内部で生成・管理します。  
+/// </remarks>
 class DebugLine {
 
 	///-------------------------------------------/// 
@@ -54,28 +58,46 @@ private:
 public:
 
 	/// <summary>
-	/// 初期化(方向)
+	/// 指定した方向にデバッグラインを初期化します。
 	/// </summary>
-	/// <param name="direction">ラインの方向</param>
-	/// <param name="color">ラインの色</param>
-	void Initialize(Vector3 direction,Vector4 color);
+	/// <param name="direction">ラインの方向ベクトル</param>
+	/// <param name="color">ラインの描画色</param>
+	/// <remarks>
+	/// - この関数ではライン用の頂点・インデックスバッファ、マテリアル、変換行列リソースを生成します。  
+	/// - 頂点は (0,0,0) を始点、方向ベクトルを終点として設定されます。  
+	/// </remarks>
+	void Initialize(Vector3 direction, Vector4 color);
 
 	/// <summary>
-	/// 初期化処理(始点・終点)
+	/// 指定した始点と終点の位置にデバッグラインを初期化します。
 	/// </summary>
-	/// <param name="start">始点</param>
-	/// <param name="end">終点</param>
-	/// <param name="color">色</param>
+	/// <param name="start">ラインの始点</param>
+	/// <param name="end">ラインの終点</param>
+	/// <param name="color">ラインの描画色</param>
+	/// <remarks>
+	/// - この関数ではライン用の頂点・インデックスバッファ、マテリアル、変換行列リソースを生成します。  
+	/// - 始点と終点の中点をラインの中心として設定します。
+	/// </remarks>
 	void Initialize(Vector3 start, Vector3 end, Vector4 color);
 
 	/// <summary>
-	/// 更新処理
+	/// デバッグラインのワールド変換および座標変換行列を更新します。
 	/// </summary>
+	/// <remarks>
+	/// - ワールドトランスフォームを更新し、現在の位置・回転・スケールを反映します。
+	/// - カメラが設定されている場合は、ワールドビュープロジェクション行列（WVP）を生成します。
+	/// </remarks>
 	void Update();
 
 	/// <summary>
-	/// 描画処理
+	/// デバッグラインを描画キューに登録します。
 	/// </summary>
+	/// <param name="layerType">描画レイヤーの種類</param>
+	/// <remarks>
+	/// - Renderクラスへ描画処理コマンドを登録します。  
+	/// - コマンド内容は、頂点／インデックスバッファの設定、マテリアルおよび座標変換行列の送信、描画命令の発行です。  
+	/// - layerTypeがDebugの場合はスワップチェーンへ直接描画し、それ以外の場合はオフスクリーンレンダーターゲットへ描画します。  
+	/// </remarks>
 	void Draw(LayerType layerType = Debug);
 
 	///-------------------------------------------/// 
@@ -116,6 +138,10 @@ private:
 	///-------------------------------------------///
 public:
 
+	/// <summary>
+	/// ワールドトランスフォームの取得
+	/// </summary>
+	/// <returns>ワールドトランスフォーム</returns>
 	WorldTransform& GetWorldTransform() { return transform_; }
 
 	/// <summary>

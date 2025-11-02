@@ -23,6 +23,8 @@ struct PixelShaderOutPut
     float4 color : SV_TARGET0;
 };
 
+float4 FXAA_PS(VertexShaderOutput input);
+
 PixelShaderOutPut main(VertexShaderOutput input)
 {
     //出力
@@ -42,8 +44,30 @@ PixelShaderOutPut main(VertexShaderOutput input)
     }
 
     //マテリアル情報とテクスチャの色を合わせる
-    output.color = gMaterial.color * textureColor;
-    output.color.a = gMaterial.color.a;
+    output.color = FXAA_PS(input);
  
     return output;
+}
+
+float4 FXAA_PS(VertexShaderOutput input)
+{
+
+    float2 inverseScreenSize = float2(1.0f / 1280.0f, 1.0f / 720.0f);
+
+    float2 uv = input.texcoord;
+
+    // 周囲4ピクセル＋中心をサンプル
+    float4 center = gTexture.Sample(gSampler, uv);
+    float4 nw = gTexture.Sample(gSampler, uv + float2(-1, -1) * inverseScreenSize);
+    float4 ne = gTexture.Sample(gSampler, uv + float2(1, -1) * inverseScreenSize);
+    float4 sw = gTexture.Sample(gSampler, uv + float2(-1, 1) * inverseScreenSize);
+    float4 se = gTexture.Sample(gSampler, uv + float2(1, 1) * inverseScreenSize);
+
+    // Premultiplied Alphaでブレンド
+    float3 rgb = (center.rgb * center.a + nw.rgb * nw.a + ne.rgb * ne.a + sw.rgb * sw.a + se.rgb * se.a) /
+                 (center.a + nw.a + ne.a + sw.a + se.a + 1e-6);
+
+    float alpha = center.a * gMaterial.color.a;
+
+    return float4(rgb, alpha);
 }
