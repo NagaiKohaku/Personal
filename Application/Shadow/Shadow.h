@@ -1,6 +1,6 @@
 #pragma once
 
-#include "memory";
+#include "memory"
 
 #include "3d/Object/Object3D.h"
 
