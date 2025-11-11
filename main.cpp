@@ -18,6 +18,7 @@
 #include "3d/Model/ModelManager.h"
 #include "3d/Particle/ParticleCommon.h"
 #include "3d/Collider/ColliderManager.h"
+#include "ObjectManager.h"
 
 #include "Scene/SceneManager.h"
 #include "LevelEditor/LevelDataLoader.h"
@@ -109,6 +110,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Renderer* renderer = Renderer::GetInstance();
 	renderer->Initialize();
 
+	//オブジェクトマネージャー
+	ObjectManager* objectManager = ObjectManager::GetInstance();
+	objectManager->Initialize();
+
 	//コライダーマネージャー
 	ColliderManager* colliderManager = ColliderManager::GetInstance();
 	colliderManager->Initialize();
@@ -166,6 +171,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//3dオブジェクト基底の更新
 		object3DCommon->Update();
 
+		//オブジェクトマネージャーの更新
+		objectManager->Update();
+
 		//コライダーマネージャーの更新
 		colliderManager->Update();
 
@@ -192,6 +200,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		//SRVマネージャーの描画前処理
 		srvManager->PreDraw();
+
+		//オブジェクトマネージャーの描画
+		objectManager->Draw();
 
 		//シーンの描画
 		sceneManager->Draw();
@@ -222,7 +233,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 #ifdef _DEBUG
 
 		//ImGuiの描画
-		imGuiManager->Draw();
+		//imGuiManager->Draw();
 
 #endif // _DEBUG
 

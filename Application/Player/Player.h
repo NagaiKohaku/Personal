@@ -9,7 +9,7 @@
 #include "3d/Collider/AABBCollider.h"
 #include "3d/Collider/SphereCollider.h"
 
-#include "Reticle.h"
+#include "LockOn.h"
 
 #include "memory"
 
@@ -138,7 +138,7 @@ private:
 	std::unique_ptr<SphereCollider> collider_ = nullptr;
 
 	//レティクル
-	std::unique_ptr<Reticle> reticle_ = nullptr;
+	std::unique_ptr<LockOn> lockOn_ = nullptr;
 
 	//移動状態
 	MOVESTATE moveState_;
@@ -160,6 +160,9 @@ private:
 
 	//回転強度
 	float rotStrength_;
+
+	//ロックオン範囲
+	float lockOnRange_;
 
 	//移動範囲
 	Vector3 moveRange_;

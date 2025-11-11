@@ -3,7 +3,7 @@
 #include "Base/OffScreen.h"
 #include "Base/Input.h"
 #include "Scene/SceneManager.h"
-#include "Base/OffScreen.h"
+#include "ObjectManager.h"
 
 #include "2d/Sprite/SpriteManager.h"
 #include "3d/Model/ModelManager.h"
@@ -60,7 +60,9 @@ void GameScene::Initialize() {
 
 	/// === プレイヤーの生成 === ///
 
-	player_ = std::make_unique<Player>();
+	ObjectManager::GetInstance()->SpawnPlayer();
+
+	player_ = ObjectManager::GetInstance()->GetPlayer();
 
 	player_->Initialize(camera_.get(), bulletManager_.get());
 
@@ -68,13 +70,13 @@ void GameScene::Initialize() {
 	player_->SetIsMoveActive(false);
 
 	//エネミーマネージャーの初期化
-	enemyManager_->Initialize(camera_.get(), bulletManager_.get(), player_.get());
+	enemyManager_->Initialize(camera_.get(), bulletManager_.get(), player_);
 
 	/// === 追尾カメラの生成 === ///
 
 	followCamera_ = std::make_unique<FollowCamera>();
 
-	followCamera_->Initialize(camera_.get(), player_.get());
+	followCamera_->Initialize(camera_.get(), player_);
 
 	//最初は無効化する
 	followCamera_->SetIsActive(false);
@@ -166,12 +168,12 @@ void GameScene::Initialize() {
 	//キーフレームの設定
 	animPoints_.push_back({ Vector3(0.0f,20.0f,-600.0f),Vector3(0.0f,-std::numbers::pi_v<float>,0.0f),0.0f,1.0f });
 	animPoints_.push_back({ Vector3(0.0f,20.0f,-600.0f),Vector3(0.0f,-std::numbers::pi_v<float>,0.0f),1.0f,1.0f });
-	animPoints_.push_back({ Vector3(0.0f,2.0f,0.0f),Vector3(0.2f,-std::numbers::pi_v<float>,0.0f),2.0f,3.0f });
-	animPoints_.push_back({ Vector3(0.0f,2.0f,0.0f),Vector3(0.2f,0.0f,0.0f),4.0f,4.0f });
+	animPoints_.push_back({ Vector3(0.0f,0.75f,0.0f),Vector3(0.2f,-std::numbers::pi_v<float>,0.0f),2.0f,3.0f });
+	animPoints_.push_back({ Vector3(0.0f,1.0f,0.0f),Vector3(0.2f,0.0f,0.0f),4.0f,4.0f });
 
 	Fade::GetInstance()->SetCamera(camera_.get());
 
-	Fade::GetInstance()->SetPlayer(player_.get());
+	Fade::GetInstance()->SetPlayer(player_);
 
 	Fade::GetInstance()->StartFadeIn();
 
@@ -181,6 +183,8 @@ void GameScene::Initialize() {
 /// 終了処理
 ///=====================================================///
 void GameScene::Finalize() {
+
+	ObjectManager::GetInstance()->ClearAll();
 
 	//演出系の参照リセット
 	Fade::GetInstance()->SetCamera(nullptr);
@@ -197,6 +201,10 @@ void GameScene::Finalize() {
 /// 更新
 ///=====================================================///
 void GameScene::Update() {
+
+	if (Fade::GetInstance()->GetState() == Fade::FADE_IN_END) {
+		Fade::GetInstance()->SetState(Fade::NONE);
+	}
 
 	//スタート時のアニメーションの更新
 	StartAnimation();
@@ -263,6 +271,13 @@ void GameScene::Update() {
 		}
 	}
 
+	if (ObjectManager::GetInstance()->GetKillCount() >= 30) {
+
+		if (Fade::GetInstance()->GetState() == Fade::NONE) {
+			//フェードアウトを始める
+			Fade::GetInstance()->StartFadeOut();
+		}
+	}
 
 	//フェードアウトが終わったら
 	if (Fade::GetInstance()->GetState() == Fade::FADE_OUT_END) {

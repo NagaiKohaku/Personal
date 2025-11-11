@@ -6,6 +6,7 @@
 #include "Player/Player.h"
 
 #include "LevelEditor/LevelDataLoader.h"
+#include "ObjectManager.h"
 
 #include "Math/Random.h"
 
@@ -90,7 +91,7 @@ void EnemyManager::SpawnUpdate() {
 
 		int randomNum = RandomInt(1,levelDataLoader_->GetObjectDataCount(directoryPath_));
 
-		Vector3 randomPos = RandomVector3(Vector3(-10.0f, 0.0f, 0.0f), Vector3(10.0f, 10.0f, 0.0f));
+		Vector3 randomPos = RandomVector3(Vector3(-10.0f, 0.0f, 0.0f), Vector3(10.0f, 8.0f, 0.0f));
 
 		std::string filePath = "EnemyFormation0" + std::to_string(randomNum) + ".json";
 
@@ -122,28 +123,29 @@ void EnemyManager::SpawnUpdate() {
 void EnemyManager::Spawn(Vector3 entryPos, Vector3 standbyPos, ObjectData objectData) {
 
 	//エネミーを生成
-	std::unique_ptr<Enemy> newEnemy = std::make_unique<Enemy>();
+	ObjectManager::GetInstance()->SpawnEnemy();
+
+	//エネミーリストに追加
+	enemies_.push_back(ObjectManager::GetInstance()->GetEnemies().back());
 
 	//初期化
-	newEnemy->Initialize(camera_, bulletManager_, player_, objectData);
+	enemies_.back()->Initialize(camera_, bulletManager_, player_, objectData);
 
 	//初期座標を設定
-	newEnemy->SetPosition(entryPos);
+	enemies_.back()->SetPosition(entryPos);
 
 	//エントリー座標を設定
-	newEnemy->SetEntryPos(entryPos);
+	enemies_.back()->SetEntryPos(entryPos);
 
 	//待機座標を設定
-	newEnemy->SetStandbyPos(standbyPos);
+	enemies_.back()->SetStandbyPos(standbyPos);
 
 	//離脱開始座標を設定
-	newEnemy->SetExitStartPos(Vector3(standbyPos.x, standbyPos.y, standbyPos.z - 5.0f));
+	enemies_.back()->SetExitStartPos(Vector3(standbyPos.x, standbyPos.y, standbyPos.z - 5.0f));
 
 	//離脱座標を設定
-	newEnemy->SetExitPos(entryPos);
+	enemies_.back()->SetExitPos(entryPos);
 
-	//リストに登録
-	enemies_.push_back(std::move(newEnemy));
 }
 
 ///=====================================================/// 
@@ -152,10 +154,25 @@ void EnemyManager::Spawn(Vector3 entryPos, Vector3 standbyPos, ObjectData object
 void EnemyManager::DeleteEnemy() {
 
 	//エネミーの削除
-	enemies_.remove_if([](const std::unique_ptr<Enemy>& enemy) {
+	enemies_.remove_if([](Enemy* enemy) {
 		if (enemy->GetCanRemove()) {
+			enemy->SetIsRemove(true);
 			return true;
 		}
 		return false;
 		});
+}
+
+///=====================================================/// 
+/// エネミーリストのゲッター
+///=====================================================///
+std::list<Enemy*> EnemyManager::GetEnemyList() {
+
+	std::list<Enemy*> enemyList;
+
+	for (auto& enemy : enemies_) {
+		enemyList.push_back(enemy);
+	}
+
+	return enemyList;
 }

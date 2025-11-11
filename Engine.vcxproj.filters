@@ -285,6 +285,8 @@
       <Filter>Application\Fade</Filter>
     </ClCompile>
     <ClCompile Include="Application\Shake\Shake.cpp" />
+    <ClCompile Include="Application\ObjectManager.cpp" />
+    <ClCompile Include="Application\Player\LockOn.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application\Bullet\BulletBase.h">
@@ -540,6 +542,8 @@
       <Filter>Application\Fade</Filter>
     </ClInclude>
     <ClInclude Include="Application\Shake\Shake.h" />
+    <ClInclude Include="Application\ObjectManager.h" />
+    <ClInclude Include="Application\Player\LockOn.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resource\Shader\DebugObject.hlsli">

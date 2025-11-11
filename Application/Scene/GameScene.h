@@ -91,7 +91,7 @@ private:
 	std::vector<std::unique_ptr<DebugLine>> lines_;
 
 	//プレイヤー
-	std::unique_ptr<Player> player_;
+	Player* player_;
 
 	//エネミーマネージャー
 	std::unique_ptr<EnemyManager> enemyManager_;

@@ -1,5 +1,8 @@
 #include "MakeMatrixMath.h"
 
+#include "Base/WinApp.h"
+#include "3d/Camera/Camera.h"
+
 #define _USE_MATH_DEFINES
 
 #include "cmath"
@@ -310,4 +313,18 @@ Vector3 Transform(const Vector3& v, const Matrix4x4& m) {
 	}
 
 	return Vector3{ x, y, z };
+}
+
+Vector3 Vector3ToScreenSpace(Camera* camera, Vector3 pos) {
+
+	//ビューポート行列
+	Matrix4x4 viewport = MakeViewportMatrix(0, 0, WinApp::kClientWidth, WinApp::kClientHeight, 0, 1);
+
+	//カメラのビュープロジェクション行列とビューポート行列を掛ける
+	Matrix4x4 viewProjectionViewport = camera->GetViewProjectionMatrix() * viewport;
+
+	//3Dオブジェクトの座標をスクリーン座標に変換する
+	Vector3 screenPos = Transform(pos, viewProjectionViewport);
+
+	return screenPos;
 }

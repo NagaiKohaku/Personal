@@ -2,7 +2,6 @@
 
 #include "Base/WinApp.h"
 #include "3d/Camera/Camera.h"
-#include "Player/Player.h"
 #include "2d/Sprite/SpriteManager.h"
 #include "Math/MakeMatrixMath.h"
 #include "Math/Easing.h"
@@ -12,13 +11,10 @@
 ///=====================================================/// 
 /// 初期化
 ///=====================================================///
-void Reticle::Initialize(Camera* cameraPtr, Player* playerPtr) {
+void Reticle::Initialize(Camera* cameraPtr) {
 
 	//カメラポインタを取得
 	camera_ = cameraPtr;
-
-	//プレイヤーポインタを取得
-	player_ = playerPtr;
 
 	//ReticleSpriteを読み込む
 	SpriteManager::GetInstance()->LoadSprite("Reticle", "Reticle");
@@ -53,24 +49,17 @@ void Reticle::Initialize(Camera* cameraPtr, Player* playerPtr) {
 
 	/// === 他変数の設定 === ///
 
-	//プレイヤーからのオフセットを設定
-	offset_ = { 0.0f,0.0f,30.0f };
-
-	//移動範囲を設定
-	moveRange_ = { 7.0f,5.0f,0.0f };
-
-	//移動強度を設定
-	moveStrength_ = 5.0f;
-
 	//2Dレティクルの描画フラグを設定
 	isDraw2D_ = true;
 
 	//3Dレティクルの描画フラグを設定
 	isDraw3D_ = false;
 
-	//初期座標を設定
-	object3D_->GetWorldTransform().translate_ = player_->GetWorldPos() + offset_;
+	//アニメーションタイマーを初期化
+	animTimer_ = 0.0f;
 
+	//アニメーション最大時間を設定
+	animMaxTime_ = 0.5f;
 }
 
 ///=====================================================/// 
@@ -78,50 +67,29 @@ void Reticle::Initialize(Camera* cameraPtr, Player* playerPtr) {
 ///=====================================================///
 void Reticle::Update() {
 
-	/// === 3Dオブジェクトの移動 === ///
+	/// === 起動アニメーションの更新 === ///
 
-	//プレイヤーの座標
-	Vector3 playerPos = player_->GetWorldPos();
+	if( animTimer_ <= animMaxTime_) {
 
-	//プレイヤーの移動方向
-	Vector3 moveDirection = Normalize(player_->GetVelocity());
+		animTimer_ += 1.0f / 60.0f;
+	} else {
 
-	//プレイヤーが動いていれば
-	if (Length(moveDirection) != 0.0f) {
-
-		//プレイヤーの現在位置からオフセット分移動した座標
-		Vector3 offsetPos = player_->GetWorldPos() + offset_;
-
-		//移動後の座標
-		Vector3 movePos = offsetPos + (moveDirection * Length(moveRange_));
-
-		//制限範囲からでないようにする
-		movePos = {
-			std::clamp(movePos.x, playerPos.x - moveRange_.x, playerPos.x + moveRange_.x),
-			std::clamp(movePos.y, playerPos.y - moveRange_.y, playerPos.y + moveRange_.y),
-			movePos.z,
-		};
-
-		//線形補間で移動
-		object3D_->GetWorldTransform().translate_ = Lerp(object3D_->GetWorldTransform().translate_, movePos, moveStrength_ / 100.0f);
+		animTimer_ = animMaxTime_;
 	}
 
-	//地面の中に埋まらないようにする
-	object3D_->GetWorldTransform().translate_.y = fmaxf(1.0f, object3D_->GetWorldTransform().translate_.y);
+	Vector4 color = Lerp(Vector4(0.0f, 1.0f, 1.0f, 0.0f), Vector4(1.0f, 1.0f, 1.0f, 1.0f), animTimer_ / animMaxTime_ );
+
+	object2D_->GetSprite()->SetColor(color);
+
+	/// === 3Dオブジェクトの移動 === ///
 
 	//3Dオブジェクトの更新
 	object3D_->Update();
 
 	/// === 2Dオブジェクトの移動 === ///
 
-	//ビューポート行列
-	Matrix4x4 viewport = MakeViewportMatrix(0, 0, WinApp::kClientWidth, WinApp::kClientHeight, 0, 1);
-
-	//カメラのビュープロジェクション行列とビューポート行列を掛ける
-	Matrix4x4 viewProjectionViewport = camera_->GetViewProjectionMatrix() * viewport;
-
 	//3Dオブジェクトの座標をスクリーン座標に変換する
-	Vector3 screenPos = Transform(object3D_->GetWorldTransform().translate_, viewProjectionViewport);
+	Vector3 screenPos = Vector3ToScreenSpace(camera_,object3D_->GetWorldTransform().translate_);
 
 	//スクリーン座標を設定する
 	object2D_->SetTranslate({ screenPos.x,screenPos.y });

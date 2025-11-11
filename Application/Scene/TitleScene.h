@@ -57,7 +57,7 @@ private:
 	std::unique_ptr<Camera> camera_;
 
 	//プレイヤー
-	std::unique_ptr<Player> player_;
+	Player* player_;
 
 	//グラウンドマネージャー
 	std::unique_ptr<GroundManager> groundManager_;

@@ -2,6 +2,7 @@
 
 #include "Bullet/BulletManager.h"
 #include "Player/Player.h"
+#include "ObjectManager.h"
 
 #include "Math/Easing.h"
 #include "Math/Random.h"
@@ -65,12 +66,22 @@ void Enemy::Initialize(Camera* cameraPtr, BulletManager* bulletPtr, Player* play
 	//行動状態はエントリー状態で初期化
 	state_ = ENTRY;
 
+	//体力の初期化
+	hp_ = 3;
+
 	//アニメーションタイマーの初期化
 	animTimer_ = 0.0f;
 
 	attackTimer_ = 0.0f;
 
 	blinkTimer_ = 0.0f;
+
+	//被弾揺れタイマーの初期化
+	shakeTimer_ = 0.5f;
+
+	shakeMaxTime_ = 0.5f;
+
+	shakeLength_ = 0.5f;
 
 	//アニメーション終了時間の初期化
 	entryAnimMaxTime_ = 1.0f;
@@ -92,6 +103,9 @@ void Enemy::Initialize(Camera* cameraPtr, BulletManager* bulletPtr, Player* play
 	//点滅間隔の初期化
 	blinkFrequency_ = 2.0f;
 
+	canRemove_ = false;
+
+	isRemove_ = false;
 }
 
 ///=====================================================/// 
@@ -158,6 +172,9 @@ void Enemy::Update() {
 	collider_->Update();
 
 	shadow_->Update(object_->GetWorldTransform().translate_);
+
+	//被弾揺れ処理
+	Shake();
 }
 
 ///=====================================================/// 
@@ -185,8 +202,26 @@ void Enemy::IsCollision() {
 	//接触状態であれば
 	if (collider_->GetIsTrigger()) {
 
-		//接触相手のタグがPLAYERBULLETであれば
-		if (collider_->CheckHitTag(Collider::Tag::PLAYERBULLET)) {
+		//接触相手のタグが弱攻撃であれば
+		if (collider_->CheckHitTag(Collider::Tag::PLAYERBULLETLIGHT)) {
+
+			hp_ -= 1;
+
+			//被弾揺れタイマーを初期化
+			shakeTimer_ = 0.0f;
+		}
+
+		//接触相手のタグが中攻撃であれば
+		if (collider_->CheckHitTag(Collider::Tag::PLAYERBULLETMEDIUM)) {
+			hp_ -= 3;
+
+			//被弾揺れタイマーを初期化
+			shakeTimer_ = 0.0f;
+		}
+
+		if (hp_ == 0) {
+
+			hp_--;
 
 			//死亡状態に変更
 			state_ = DEAD;
@@ -199,6 +234,11 @@ void Enemy::IsCollision() {
 
 			//アニメーションタイマーの初期化
 			animTimer_ = 0.0f;
+
+			//被弾揺れタイマーを初期化
+			shakeTimer_ = 0.0f;
+
+			ObjectManager::GetInstance()->AddKillCount();
 		}
 	}
 }
@@ -429,4 +469,35 @@ void Enemy::Blink() {
 
 	//色情報を設定
 	object_->GetModel()->SetColor(color);
+}
+
+void Enemy::Shake() {
+
+	if (shakeTimer_ < shakeMaxTime_) {
+
+		shakeTimer_ += 1.0f / 60.0f;
+	} else {
+
+		return;
+	}
+
+	float t = shakeTimer_ / shakeMaxTime_;
+
+	float shakeLength = Lerp(shakeLength_, 0.0f, t);
+
+	WorldTransform worldTransform = object_->GetWorldTransform();
+
+	Vector3 randomOffset = {
+		RandomFloat(-shakeLength, shakeLength),
+		RandomFloat(-shakeLength, shakeLength),
+		RandomFloat(-shakeLength, shakeLength)
+	};
+
+	worldTransform.translate_ = worldTransform.translate_ + randomOffset;
+
+	worldTransform.UpdateMatrix();
+
+	object_->GetWorldTransform().SetWorldMatrix(worldTransform.GetWorldMatrix());
+
+	object_->TransformUpdate();
 }

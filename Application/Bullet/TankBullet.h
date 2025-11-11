@@ -61,13 +61,5 @@ private:
 	//コライダー
 	std::unique_ptr<SphereCollider> collider_;
 
-	//爆発時の最大生存時間
-	float lifeTimeMaxExplosive_;
-
-	//爆発範囲
-	float explosiveSize_;
-
-	//爆発フラグ
-	bool isExplosive_;
 };
 

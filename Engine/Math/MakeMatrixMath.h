@@ -1,7 +1,10 @@
 #pragma once
 
+#include "Math/Vector2.h"
 #include "Math/Vector3.h"
 #include "Math/Matrix4x4.h"
+
+class Camera;
 
 /// <summary>
 /// 平行移動行列
@@ -123,3 +126,12 @@ Vector3 TransformNormal(const Vector3& v, const Matrix4x4& m);
 /// <param name="m"></param>
 /// <returns></returns>
 Vector3 Transform(const Vector3& v, const Matrix4x4& m);
+
+
+/// <summary>
+/// ワールド座標をスクリーン座標に変換
+/// </summary>
+/// <param name="camera"></param>
+/// <param name="pos"></param>
+/// <returns></returns>
+Vector3 Vector3ToScreenSpace(Camera* camera, Vector3 pos);

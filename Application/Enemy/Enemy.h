@@ -56,6 +56,12 @@ public:
 	/// </summary>
 	void Draw();
 
+	/// <summary>
+	/// 死亡状態のチェック
+	/// </summary>
+	/// <returns></returns>
+	bool CheckIsDead() { return state_ == DEAD; }
+
 	///-------------------------------------------/// 
 	/// クラス内処理関数
 	///-------------------------------------------///
@@ -95,6 +101,11 @@ private:
 	/// 点滅処理
 	/// </summary>
 	void Blink();
+
+	/// <summary>
+	/// 被弾揺れ処理
+	/// <summary>
+	void Shake();
 
 	///-------------------------------------------/// 
 	/// メンバ変数
@@ -145,8 +156,14 @@ private:
 	//回転目標角度
 	Vector3 targetRot_;
 
+	//体力
+	int hp_;
+
 	//削除可能フラグ
 	bool canRemove_;
+
+	//削除中フラグ
+	bool isRemove_;
 
 	//アニメーションタイマー
 	float animTimer_;
@@ -156,6 +173,15 @@ private:
 
 	//点滅タイマー
 	float blinkTimer_;
+
+	//被弾揺れタイマー
+	float shakeTimer_;
+
+	//被弾揺れ最大時間
+	float shakeMaxTime_;
+
+	//被弾揺れの長さ
+	float shakeLength_;
 
 	//エントリー時アニメーション終了時間
 	float entryAnimMaxTime_;
@@ -217,9 +243,27 @@ public:
 	void SetExitPos(Vector3 pos) { exitPos_ = pos; }
 
 	/// <summary>
+	/// 削除中フラグのセッター
+	/// </summary>
+	/// <param name="flag">フラグ</param>
+	void SetIsRemove(bool flag) { isRemove_ = flag; }
+
+	/// <summary>
+	/// ワールド座標を取得
+	/// </summary>
+	/// <returns>ワールド座標</returns>
+	Vector3 GetWorldPos() { return object_->GetWorldTransform().GetWorldTranslate(); }
+
+	/// <summary>
 	/// 削除可能フラグのゲッター
 	/// </summary>
 	/// <returns>フラグ</returns>
 	bool GetCanRemove() { return canRemove_; }
+
+	/// <summary>
+	/// 削除中フラグのゲッター
+	/// </summary>
+	/// <returns>フラグ</returns>
+	bool GetIsRemove() { return isRemove_; }
 
 };

@@ -40,7 +40,7 @@ void TankBullet::Initialize(Vector3 pos, Vector3 direction) {
 	collider_->Initialize(&object_->GetWorldTransform());
 
 	//タグの設定
-	collider_->SetTag(Collider::Tag::PLAYERBULLET);
+	collider_->SetTag(Collider::Tag::PLAYERBULLETMEDIUM);
 
 	//大きさの設定
 	collider_->SetRadius(1.0f);
@@ -56,40 +56,12 @@ void TankBullet::Initialize(Vector3 pos, Vector3 direction) {
 	//最大寿命の設定
 	lifeTimeMax_ = 2.0f;
 
-	//爆発時の最大寿命の設定
-	lifeTimeMaxExplosive_ = 0.5f;
-
-	//爆発範囲の設定
-	explosiveSize_ = 4.0f;
-
-	//爆発フラグの設定
-	isExplosive_ = false;
 }
 
 ///=====================================================/// 
 /// 更新
 ///=====================================================///
 void TankBullet::Update() {
-
-	//弾の寿命を更新
-	lifeTimer_ += 1.0f / 60.0f;
-
-	//爆発していれば
-	if (isExplosive_) {
-
-		//タイマーが爆発時の最大寿命を越えていたら
-		if (lifeTimer_ >= lifeTimeMaxExplosive_) {
-
-			isDead_ = true;
-		}
-	} else {
-
-		//タイマーが最大寿命を越えていたら
-		if (lifeTimer_ >= lifeTimeMax_) {
-
-			isDead_ = true;
-		}
-	}
 
 	//弾の移動
 	Move();
@@ -109,11 +81,8 @@ void TankBullet::Update() {
 ///=====================================================///
 void TankBullet::Draw() {
 
-	if (!isExplosive_) {
-
-		//オブジェクトの描画
-		object_->Draw(LayerType::Object);
-	}
+	//オブジェクトの描画
+	object_->Draw(LayerType::Object);
 
 	//コライダーの描画
 	collider_->Draw();
@@ -139,17 +108,7 @@ void TankBullet::IsCollision() {
 		//接触相手のタグがENEMYであれば
 		if (collider_->CheckHitTag(Collider::Tag::ENEMY)) {
 
-			//移動量を0にする
-			velocity_ = { 0.0f,0.0f,0.0f };
-
-			//コライダーを大きくする
-			collider_->SetRadius(explosiveSize_);
-
-			//爆発フラグをtrueにする
-			isExplosive_ = true;
-
-			//タイマーをリセットする
-			lifeTimer_ = 0.0f;
+			isDead_ = true;
 		}
 	}
 }

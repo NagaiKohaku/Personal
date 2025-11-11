@@ -3,6 +3,7 @@
 #include <Scene/SceneManager.h>
 
 #include <Base/OffScreen.h>
+#include <ObjectManager.h>
 
 #include <3d/Model/ModelManager.h>
 #include <2d/Sprite/SpriteManager.h>
@@ -49,7 +50,9 @@ void TitleScene::Initialize() {
 
 	/// === 3Dオブジェクトの設定 === ///
 
-	player_ = std::make_unique<Player>();
+	ObjectManager::GetInstance()->SpawnPlayer();
+
+	player_ = ObjectManager::GetInstance()->GetPlayer();
 
 	player_->Initialize(camera_.get());
 
@@ -134,7 +137,7 @@ void TitleScene::Initialize() {
 
 	Fade::GetInstance()->SetCamera(camera_.get());
 
-	Fade::GetInstance()->SetPlayer(player_.get());
+	Fade::GetInstance()->SetPlayer(player_);
 
 	Fade::GetInstance()->StartFadeIn();
 
@@ -160,6 +163,8 @@ void TitleScene::Initialize() {
 }
 
 void TitleScene::Finalize() {
+
+	ObjectManager::GetInstance()->ClearAll();
 
 	Fade::GetInstance()->SetCamera(nullptr);
 
