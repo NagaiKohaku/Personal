@@ -9,8 +9,6 @@
 
 class Camera;
 
-class Player;
-
 ///=====================================================/// 
 /// レティクルクラス
 ///=====================================================///
@@ -25,8 +23,7 @@ public:
 	/// 初期化
 	/// </summary>
 	/// <param name="cameraPtr">カメラポインタ</param>
-	/// <param name="playerPtr">プレイヤーポインタ</param>
-	void Initialize(Camera* cameraPtr,Player* playerPtr);
+	void Initialize(Camera* cameraPtr);
 
 	/// <summary>
 	/// 更新
@@ -38,6 +35,8 @@ public:
 	/// </summary>
 	void Draw();
 
+	void ResetAnimTimer() { animTimer_ = 0.0f; }
+
 	///-------------------------------------------/// 
 	/// メンバ変数
 	///-------------------------------------------///
@@ -46,29 +45,23 @@ private:
 	//カメラ
 	Camera* camera_;
 
-	//プレイヤー
-	Player* player_;
-
 	//2Dレティクル
 	std::unique_ptr<Object2D> object2D_;
 
 	//3Dレティクル
 	std::unique_ptr<Object3D> object3D_;
 
-	//オフセット
-	Vector3 offset_;
-
-	//移動範囲
-	Vector3 moveRange_;
-
-	//移動強度
-	float moveStrength_;
-
 	//2Dレティクルの描画フラグ
 	bool isDraw2D_;
 
 	//3Dレティクルの描画フラグ
 	bool isDraw3D_;
+
+	//アニメーションタイマー
+	float animTimer_;
+
+	//アニメーション最大時間
+	float animMaxTime_;
 
 	///-------------------------------------------///
 	/// ゲッター・セッター
@@ -81,4 +74,9 @@ public:
 	/// <returns>座標</returns>
 	Vector3 GetWorldPos() const { return object3D_->GetWorldTransform().GetWorldTranslate(); }
 
+	/// <summary>
+	/// ターゲット座標の設定
+	/// </summary>
+	/// <param name="targetPos">座標</param>
+	void SetTargetPos(Vector3 targetPos) { object3D_->GetWorldTransform().translate_ = targetPos; }
 };

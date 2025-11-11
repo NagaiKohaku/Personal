@@ -35,7 +35,7 @@ void SpriteManager::LoadSprite(const std::string& spriteName,const std::string& 
 	std::unique_ptr<Sprite> newSprite = std::make_unique<Sprite>();
 
 	//スプライトを読み込む
-	newSprite->Initialize("Resource/Sprite/" + spriteFileName + ".png");
+	newSprite->Initialize(spriteFileName);
 
 	//リストに登録
 	sprites_.insert(std::make_pair(spriteName, std::move(newSprite)));
@@ -50,7 +50,7 @@ std::unique_ptr<Sprite> SpriteManager::FindSprite(const std::string& spriteName)
 	if (sprites_.contains(spriteName)) {
 
 		//登録済みのスプライトからテクスチャパスを取得
-		std::string texturePath = sprites_.at(spriteName)->GetTexturePath();
+		std::string texturePath = sprites_.at(spriteName)->GetFileName();
 
 		//スプライトを生成
 		std::unique_ptr<Sprite> newSprite = std::make_unique<Sprite>();

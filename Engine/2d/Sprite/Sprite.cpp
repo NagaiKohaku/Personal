@@ -9,6 +9,9 @@
 
 #include "imgui.h"
 
+#include "fstream"
+#include "filesystem"
+
 ///=====================================================/// 
 /// 初期化
 ///=====================================================///
@@ -76,11 +79,18 @@ void Sprite::Initialize(const std::string& fileName) {
 
 	/// === テクスチャの読み込み === ///
 
-	//テクスチャパスの設定
-	texturePath_ = fileName;
+	fileName_ = fileName;
 
-	//テクスチャをロードしてテクスチャ番号を取得
-	TextureManager::GetInstance()->LoadTexture(texturePath_);
+	currentTextureIndex_ = 0;
+
+	for (const auto& entry : std::filesystem::directory_iterator("Resource/Sprite/" + fileName_ + "/")) {
+		if (entry.path().extension() == ".png") {
+
+			TextureManager::GetInstance()->LoadTexture("Resource/Sprite/" + fileName_ + "/" + entry.path().filename().string());
+
+			texturePaths_.push_back(entry.path().filename().string());
+		}
+	}
 
 	//サイズをテクスチャの解像度に合わせる
 	AdjustTextureSize();
@@ -136,8 +146,10 @@ void Sprite::Update() {
 
 	/// === テクスチャUV座標を計算 === ///
 
+	std::string fileName = "Resource/Sprite/" + fileName_ + "/" + texturePaths_[currentTextureIndex_];
+
 	//テクスチャのメタデータを取得
-	const DirectX::TexMetadata& metadata = TextureManager::GetInstance()->GetMetaData(texturePath_);
+	const DirectX::TexMetadata& metadata = TextureManager::GetInstance()->GetMetaData(fileName);
 
 	//テクスチャの四点を計算
 	float texLeft = textureLeftTop_.x / metadata.width;
@@ -169,6 +181,8 @@ void Sprite::Update() {
 ///=====================================================///
 void Sprite::Draw() {
 
+	std::string fileName = "Resource/Sprite/" + fileName_ + "/" + texturePaths_[currentTextureIndex_];
+
 	//頂点データの設定
 	spriteCommon_->GetDxCommon()->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView_);
 
@@ -179,28 +193,24 @@ void Sprite::Draw() {
 	spriteCommon_->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
 
 	//テクスチャの設定
-	spriteCommon_->GetDxCommon()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSrvHandleGPU(texturePath_));
+	spriteCommon_->GetDxCommon()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSrvHandleGPU(fileName));
 
 	//描画命令
 	spriteCommon_->GetDxCommon()->GetCommandList()->DrawIndexedInstanced(6, 1, 0, 0, 0);
 }
 
 ///=====================================================/// 
-/// テクスチャの変更
+/// 現在のテクスチャを次のものに切り替え
 ///=====================================================///
-void Sprite::ChangeTexture(const std::string& fileName) {
+void Sprite::NextTexture() {
 
-	//ファイルパスからテクスチャを読み込む
-	TextureManager::GetInstance()->LoadTexture(fileName);
+	//テクスチャ番号をインクリメント
+	currentTextureIndex_++;
 
-	//メタデータを取得
-	const DirectX::TexMetadata& metadata = TextureManager::GetInstance()->GetMetaData(fileName);
-
-	//テクスチャパスを現在のものに変更
-	texturePath_ = fileName;
-
-	//スプライトのサイズをテクスチャのサイズに合わせる
-	AdjustTextureSize();
+	//範囲外なら0に戻す
+	if (currentTextureIndex_ >= static_cast<int>(texturePaths_.size())) {
+		currentTextureIndex_ = 0;
+	}
 }
 
 ///=====================================================/// 
@@ -225,8 +235,10 @@ void Sprite::DisplayImGui() {
 ///=====================================================///
 void Sprite::AdjustTextureSize() {
 
+	std::string fileName = "Resource/Sprite/" + fileName_ + "/" + texturePaths_[currentTextureIndex_];
+
 	//テクスチャのメタデータを取得
-	const DirectX::TexMetadata& metadata = TextureManager::GetInstance()->GetMetaData(texturePath_);
+	const DirectX::TexMetadata& metadata = TextureManager::GetInstance()->GetMetaData(fileName);
 
 	//テクスチャのサイズを取得
 	textureSize_.x = static_cast<float>(metadata.width);

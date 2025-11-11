@@ -84,7 +84,7 @@ private:
 	std::string directoryPath_;
 
 	//エネミーリスト
-	std::list<std::unique_ptr<Enemy>> enemies_;
+	std::list<Enemy*> enemies_;
 
 	//スポーンタイマー
 	float spawnTimer_;
@@ -103,4 +103,13 @@ private:
 
 	//スポーン座標オフセット
 	Vector3 spawnOffset_;
+
+public:
+
+	/// <summary>
+	/// エネミーリストのゲッター
+	/// </summary>
+	/// <returns>エネミーリスト</returns>
+	std::list<Enemy*> GetEnemyList();
+
 };

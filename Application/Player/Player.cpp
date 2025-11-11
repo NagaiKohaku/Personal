@@ -5,11 +5,15 @@
 #include "Base/Input.h"
 
 #include "LevelEditor/LevelDataLoader.h"
+#include "ObjectManager.h"
 #include "Bullet/BulletManager.h"
+
+#include "Enemy/Enemy.h"
 
 #include "Shake/Shake.h"
 
 #include "Math/Easing.h"
+#include "Math/MakeMatrixMath.h"
 
 #include "algorithm"
 #include "numbers"
@@ -112,10 +116,10 @@ void Player::Initialize(Camera* cameraPtr, BulletManager* bulletPtr) {
 	/// === レティクルの生成 === ///
 
 	//生成
-	reticle_ = std::make_unique<Reticle>();
+	lockOn_ = std::make_unique<LockOn>();
 
 	//初期化
-	reticle_->Initialize(camera_, this);
+	lockOn_->Initialize(camera_, this);
 
 	/// === 他変数の設定 === ///
 
@@ -136,6 +140,9 @@ void Player::Initialize(Camera* cameraPtr, BulletManager* bulletPtr) {
 
 	//回転強度の設定
 	rotStrength_ = 10.0f;
+
+	//ロックオン範囲の設定
+	lockOnRange_ = 300.0f;
 
 	//移動範囲の設定
 	moveRange_ = { 7.0f,4.0f,0.0f };
@@ -329,7 +336,7 @@ void Player::Update() {
 		//コライダーの更新
 		collider_->Update();
 
-		reticle_->Update();
+		lockOn_->Update();
 	}
 }
 
@@ -364,7 +371,7 @@ void Player::Draw() {
 		collider_->Draw();
 
 		//レティクルの描画
-		reticle_->Draw();
+		lockOn_->Draw();
 	}
 }
 
@@ -587,21 +594,45 @@ void Player::Attack() {
 ///=====================================================///
 void Player::TankAttack() {
 
+	std::list<Enemy*> enemyList = ObjectManager::GetInstance()->GetEnemies();
+
 	//タイマーが攻撃間隔を超えたら
 	if (attackTimer_ >= tankAttackInterval_) {
+
+		for (auto& enemy : enemyList) {
+
+			if (enemy->CheckIsDead()) {
+
+				continue;
+			}
+
+			Vector3 enemyScreenPos = Vector3ToScreenSpace(camera_, enemy->GetWorldPos());
+
+			Vector3 mainReticleScreenPos = Vector3ToScreenSpace(camera_, lockOn_->GetMainReticlePos());
+
+			if (Length(enemyScreenPos - mainReticleScreenPos) <= lockOnRange_) {
+
+				lockOn_->AddLockOnEnemy(enemy);
+			}
+		}
 
 		//スペースキーが押されていたら
 		if (Input::GetInstance()->isPushKey(DIK_SPACE)) {
 
-			//オブジェクトからレティクルへの方向
-			Vector3 direction = reticle_->GetWorldPos() - core_->GetWorldTransform().GetWorldTranslate();
+			std::vector<Vector3> reticlePositions = lockOn_->GetLockOnReticlePos();
 
-			//バレットマネージャーに弾を追加
-			bulletManager_->AddBullet(
-				core_->GetWorldTransform().translate_,
-				Normalize(direction),
-				BulletManager::BULLETTYPE::TANK
-			);
+			for(auto& pos : reticlePositions) {
+
+				//オブジェクトからレティクルへの方向
+				Vector3 direction = pos - core_->GetWorldTransform().GetWorldTranslate();
+
+				//バレットマネージャーに弾を追加
+				bulletManager_->AddBullet(
+					core_->GetWorldTransform().translate_,
+					Normalize(direction),
+					BulletManager::BULLETTYPE::TANK
+				);
+			}
 
 			//攻撃のタイマーをリセット
 			attackTimer_ = 0.0f;
@@ -621,7 +652,7 @@ void Player::JetAttack() {
 		if (Input::GetInstance()->isPushKey(DIK_SPACE)) {
 
 			//オブジェクトからレティクルへの方向
-			Vector3 direction = reticle_->GetWorldPos() - core_->GetWorldTransform().GetWorldTranslate();
+			Vector3 direction = lockOn_->GetMainReticlePos() - core_->GetWorldTransform().GetWorldTranslate();
 
 			//バレットマネージャーに弾を追加
 			bulletManager_->AddBullet(

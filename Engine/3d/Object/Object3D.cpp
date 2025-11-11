@@ -187,6 +187,29 @@ void Object3D::Update() {
 	}
 }
 
+void Object3D::TransformUpdate() {
+
+	//ワールドビュープロジェクション行列
+	Matrix4x4 worldViewProjectionMatrix = transform_.GetWorldMatrix();
+
+	if (camera_) {
+
+		/// === カメラ情報があったら === ///
+
+		//カメラのビュープロジェクション行列を取得
+		const Matrix4x4& viewProjectionMatrix = camera_->GetViewProjectionMatrix();
+
+		//ワールドビュープロジェクション行列の計算
+		worldViewProjectionMatrix *= viewProjectionMatrix;
+	}
+
+	//座標変換行列データの設定
+	WVPData_->WVP = worldViewProjectionMatrix;
+	WVPData_->World = transform_.GetWorldMatrix();
+	WVPData_->WorldInverseTranspose = Inverse4x4(transform_.GetWorldMatrix());
+
+}
+
 ///=====================================================/// 
 /// 3Dオブジェクトの描画
 ///=====================================================///

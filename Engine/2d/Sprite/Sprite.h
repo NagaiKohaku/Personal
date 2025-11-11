@@ -87,16 +87,12 @@ public:
 	void Draw();
 
 	/// <summary>
-	/// スプライトのテクスチャを指定したファイルに変更します。
+	/// 現在のテクスチャを次のものに切り替えます。
 	/// </summary>
-	/// <param name="fileName">ファイル名(.png切り捨て)</param>
 	/// <remarks>
-	/// - fileNameで指定したテクスチャをTextureManagerから読み込む
-	/// - 読み込んだテクスチャのメタデータを取得
-	/// - texturePath_を更新
-	/// - スプライトのサイズをテクスチャのサイズに合わせる
+	/// - テクスチャ番号をインクリメント
 	/// </remarks>
-	void ChangeTexture(const std::string& fileName);
+	void NextTexture();
 
 	/// <summary>
 	/// ImGuiを使用してスプライトの描画パラメータを編集します。
@@ -158,8 +154,14 @@ private:
 
 	/// === その他変数 === ///
 
-	//テクスチャパス
-	std::string texturePath_;
+	//ファイル名
+	std::string fileName_;
+
+	//テクスチャリスト
+	std::vector<std::string> texturePaths_;
+
+	//現在のテクスチャ番号
+	int currentTextureIndex_ = 0;
 
 	//座標
 	Vector2 translation_;
@@ -194,7 +196,7 @@ public:
 	/// テクスチャのファイルパスを取得
 	/// </summary>
 	/// <returns>テクスチャのファイルパス</returns>
-	const std::string GetTexturePath() const { return texturePath_; }
+	const std::string GetFileName() const { return fileName_; }
 
 	/// <summary>
 	/// 座標を取得

@@ -13,6 +13,8 @@
 #include "DirectXTex.h"
 #include "d3d12.h"
 
+#include "3d/Model/Model.h"
+
 #include "wrl.h"
 #include "string"
 #include "vector"
@@ -21,8 +23,6 @@
 /// === 前方宣言 === ///
 
 class Object3DCommon;
-
-class Model;
 
 class Camera;
 
@@ -87,6 +87,8 @@ public:
 	/// - デバッグ表示用に作成された3方向の軸ラインもそれぞれ更新します。
 	/// </remarks>
 	void Update();
+
+	void TransformUpdate();
 
 	/// <summary>
 	/// 3Dオブジェクトの描画を行います。

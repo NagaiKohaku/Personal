@@ -40,7 +40,7 @@ void JetBullet::Initialize(Vector3 pos, Vector3 direction) {
 	collider_->Initialize(&object_->GetWorldTransform());
 
 	//タグの設定
-	collider_->SetTag(Collider::Tag::PLAYERBULLET);
+	collider_->SetTag(Collider::Tag::PLAYERBULLETLIGHT);
 
 	//大きさの設定
 	collider_->SetRadius(0.5f);
