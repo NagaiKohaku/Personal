@@ -26,7 +26,7 @@ const uint32_t ParticleEmitter::kNumMaxInstance = 1000;
 const float ParticleEmitter::kDeltaTime = 1.0f / 60.0f;
 
 ///=====================================================/// 
-/// デストラクタ
+/// パーティクルエミッターのデストラクタ
 ///=====================================================///
 ParticleEmitter::~ParticleEmitter() {
 
@@ -35,7 +35,7 @@ ParticleEmitter::~ParticleEmitter() {
 }
 
 ///=====================================================/// 
-/// 初期化
+/// パーティクルエミッターを初期化
 ///=====================================================///
 void ParticleEmitter::Initialize(const std::string& groupName, const std::string& fileName, Camera* camera) {
 
@@ -137,7 +137,7 @@ void ParticleEmitter::Initialize(const std::string& groupName, const std::string
 }
 
 ///=====================================================/// 
-/// 更新
+/// パーティクルエミッターの更新処理
 ///=====================================================///
 void ParticleEmitter::Update() {
 
@@ -382,7 +382,7 @@ void ParticleEmitter::Update() {
 }
 
 ///=====================================================/// 
-/// 描画
+/// パーティクルエミッターの描画処理
 ///=====================================================///
 void ParticleEmitter::Draw(LayerType layer) {
 
@@ -693,7 +693,7 @@ void ParticleEmitter::ImGui() {
 }
 
 ///=====================================================/// 
-/// パーティクルの生成
+/// パーティクルの生成を開始
 ///=====================================================///
 void ParticleEmitter::Emit() {
 
@@ -705,7 +705,7 @@ void ParticleEmitter::Emit() {
 }
 
 ///=====================================================/// 
-/// パラメータ情報のエクスポート
+/// エミッターの設定情報をJSONファイルに書き出し
 ///=====================================================///
 void ParticleEmitter::ExportEmitterData(const std::string& groupName) {
 
@@ -810,7 +810,7 @@ void ParticleEmitter::ExportEmitterData(const std::string& groupName) {
 }
 
 ///=====================================================/// 
-/// パラメータ情報のインポート
+/// JSONファイルからエミッターの設定情報を読み込み
 ///=====================================================///
 void ParticleEmitter::ImportEmitterData(const std::string& groupName, const std::string& fileName) {
 
@@ -924,7 +924,7 @@ void ParticleEmitter::ImportEmitterData(const std::string& groupName, const std:
 }
 
 ///=====================================================/// 
-/// 新しいパーティクルの生成
+/// 新しいパーティクルを生成し、初期パラメータを設定
 ///=====================================================///
 ParticleEmitter::Particle ParticleEmitter::MakeNewParticle() {
 
@@ -978,7 +978,7 @@ ParticleEmitter::Particle ParticleEmitter::MakeNewParticle() {
 }
 
 ///=====================================================/// 
-/// パラメータの更新
+/// パーティクルの各パラメータ（位置・回転・スケールなど）を更新
 ///=====================================================///
 void ParticleEmitter::UpdateParameter(Vector3& num, ParticleParameter& parameter, UpdateState& updateState, EasingState& easingState, float& easingStrength, float& currentTime, float& lifeTime) {
 
@@ -1147,6 +1147,9 @@ void ParticleEmitter::ImGuiParameter(std::string labelName, EmitterParameter& pa
 	}
 }
 
+///=====================================================/// 
+/// ImGuiなどで使用するユニークラベル名を生成
+///=====================================================///
 std::string ParticleEmitter::CreateLabelName(std::string labelName, const char* label) {
 
 	return "##" + labelName + label;

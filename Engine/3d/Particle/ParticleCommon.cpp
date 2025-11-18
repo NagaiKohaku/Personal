@@ -7,7 +7,7 @@
 #include "cassert"
 
 ///=====================================================/// 
-/// シングルトンインスタンスの取得
+/// ParticleCommonのシングルトンインスタンスを取得
 ///=====================================================///
 ParticleCommon* ParticleCommon::GetInstance() {
 	static ParticleCommon instance;
@@ -15,7 +15,7 @@ ParticleCommon* ParticleCommon::GetInstance() {
 }
 
 ///=====================================================/// 
-/// 初期化
+/// ParticleCommonの初期化
 ///=====================================================///
 void ParticleCommon::Initialize() {
 
@@ -30,7 +30,7 @@ void ParticleCommon::Initialize() {
 }
 
 ///=====================================================/// 
-/// 描画前処理
+/// パーティクルの描画に必要な共通設定
 ///=====================================================///
 void ParticleCommon::CommonDrawSetting() {
 
@@ -46,7 +46,7 @@ void ParticleCommon::CommonDrawSetting() {
 }
 
 ///=====================================================/// 
-/// ルートシグネチャの生成
+/// パーティクル描画用のルートシグネチャを作成
 ///=====================================================///
 void ParticleCommon::CreateRootSignature() {
 
@@ -133,7 +133,7 @@ void ParticleCommon::CreateRootSignature() {
 }
 
 ///=====================================================/// 
-/// グラフィックパイプラインの生成
+/// パーティクル描画用のグラフィックパイプラインステートを作成
 ///=====================================================///
 void ParticleCommon::CreateGraphicsPipeline() {
 

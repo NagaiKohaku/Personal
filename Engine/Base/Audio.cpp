@@ -4,7 +4,7 @@
 #include "cassert"
 
 ///=====================================================/// 
-/// シングルトンインスタンス
+/// Audioのシングルトンインスタンスを取得
 ///=====================================================///
 Audio* Audio::GetInstance() {
 	static Audio instance;
@@ -12,7 +12,7 @@ Audio* Audio::GetInstance() {
 }
 
 ///=====================================================/// 
-/// 初期化
+/// XAudio2の初期化
 ///=====================================================///
 void Audio::Initialize() {
 
@@ -23,7 +23,7 @@ void Audio::Initialize() {
 }
 
 ///=====================================================/// 
-/// 更新
+/// 登録されている全オーディオの状態を更新
 ///=====================================================///
 void Audio::Update() {
 
@@ -44,30 +44,40 @@ void Audio::Update() {
 }
 
 ///=====================================================/// 
-/// 終了処理
+/// オーディオシステムの終了処理
 ///=====================================================///
 void Audio::Finalize() {
 
-	//登録されている全要素を参照
+	//登録されている全サウンドを参照
 	for (auto& [name, object] : sounds_) {
 
 		//生成されている全インスタンスを参照
-		for (int i = 0; i < object.instance.size(); i++) {
+		for (int i = 0; i < static_cast<int>(object.instance.size()); i++) {
 
+			//再生中の音声を停止
 			xAudio2_->CommitChanges(object.instance[i].pSourceVoice->Stop());
 
 			//音声インスタンスを削除
 			object.instance.erase(object.instance.begin() + i);
+
+			//eraseで要素が詰められるのでインデックスを戻す
+			i--;
 		}
 
+		//サウンドリソースを解放
 		SoundUnLoad(name);
 	}
 
+	//サウンド管理データをクリア
 	sounds_.clear();
 
+	//XAudio2インスタンスをリセット
 	xAudio2_.Reset();
 }
 
+///=====================================================/// 
+/// 指定した名前でサウンドを読み込み、管理リストに登録
+///=====================================================///
 void Audio::SoundLoad(std::string soundName, std::string fileName) {
 
 	//既に登録されているかを確認
@@ -93,74 +103,75 @@ void Audio::SoundLoad(std::string soundName, std::string fileName) {
 }
 
 ///=====================================================/// 
-/// 音声の再生
+/// 指定したサウンドを再生
 ///=====================================================///
 void Audio::StartSound(std::string soundName, bool isLoop) {
 
-	//登録されている音源かどうかを確認
+	//登録されていないサウンドの場合は早期リターン
 	if (!sounds_.contains(soundName)) {
-
-		//登録されていなかったら早期リターン
 		return;
 	}
 
 	HRESULT result;
 
+	//新しいサウンドインスタンスを作成
 	SoundInstance newInstance;
-
 	newInstance = CreateSoundInstance(sounds_[soundName].data, isLoop);
 
+	//サウンドバッファをソースボイスに送信
 	result = newInstance.pSourceVoice->SubmitSourceBuffer(&newInstance.buf);
 
+	//サウンド再生開始
 	result = newInstance.pSourceVoice->Start();
 
+	//管理用リストに追加
 	sounds_[soundName].instance.push_back(newInstance);
 }
 
 ///=====================================================/// 
-/// 音声の停止
+/// 指定したサウンドを停止
 ///=====================================================///
 void Audio::StopSound(std::string soundName) {
 
-	//登録されている音源かどうかを確認
+	//登録されていないサウンドの場合は早期リターン
 	if (!sounds_.contains(soundName)) {
-
-		//登録されていなかったら早期リターン
 		return;
 	}
 
 	HRESULT result;
 
+	//登録されているすべてのインスタンスを停止
 	for (int i = 0; i < sounds_[soundName].instance.size(); i++) {
 
+		//サウンドを停止
 		xAudio2_->CommitChanges(sounds_[soundName].instance[i].pSourceVoice->Stop());
 
+		//ソースバッファをフラッシュ
 		result = sounds_[soundName].instance[i].pSourceVoice->FlushSourceBuffers();
 	}
 }
 
 ///=====================================================/// 
-/// 音声データの解放
+/// 指定したサウンドをアンロード（メモリ解放）
 ///=====================================================///
 void Audio::SoundUnLoad(std::string soundName) {
 
-	//登録されている音源かどうかを確認
+	// 登録されていない場合は早期リターン
 	if (!sounds_.contains(soundName)) {
-
-		//登録されていなかったら早期リターン
 		return;
 	}
 
-	//メモリを解放
+	// 音源データのメモリを解放
 	delete[] sounds_[soundName].data.pBuffer;
 
-	sounds_[soundName].data.pBuffer = 0;
+	// 解放後、構造体の内容を初期化
+	sounds_[soundName].data.pBuffer = nullptr;
 	sounds_[soundName].data.bufferSize = 0;
 	sounds_[soundName].data.wfex = {};
 }
 
 ///=====================================================/// 
-/// 音声が流れているか
+/// 指定したサウンドインスタンスが再生中かどうかを確認
 ///=====================================================///
 bool Audio::isPlayed(SoundInstance soundInstance) {
 
@@ -176,7 +187,7 @@ bool Audio::isPlayed(SoundInstance soundInstance) {
 }
 
 ///=====================================================/// 
-/// 音声データの読み込み
+/// 指定したWAVファイルの読み込み
 ///=====================================================///
 Audio::SoundData Audio::LoadWavFile(std::string fileName) {
 
@@ -312,18 +323,18 @@ Audio::SoundData Audio::LoadWavFile(std::string fileName) {
 }
 
 ///=====================================================/// 
-/// 音声オブジェクトの生成
+/// 指定された音声データから再生用のSoundInstanceを生成
 ///=====================================================///
 Audio::SoundInstance Audio::CreateSoundInstance(SoundData soundData, bool isLoop) {
 
 	HRESULT result;
 
-	//波形フォーマットをもとにSoundVoiceの生成
+	//SourceVoiceの生成
 	IXAudio2SourceVoice* pSourceVoice = nullptr;
 	result = xAudio2_->CreateSourceVoice(&pSourceVoice, &soundData.wfex);
 	assert(SUCCEEDED(result));
 
-	//再生する波形データの設定
+	//音声バッファの設定
 	XAUDIO2_BUFFER buf{};
 	buf.pAudioData = soundData.pBuffer;
 	buf.AudioBytes = soundData.bufferSize;
@@ -333,8 +344,8 @@ Audio::SoundInstance Audio::CreateSoundInstance(SoundData soundData, bool isLoop
 		buf.LoopCount = XAUDIO2_LOOP_INFINITE;
 	}
 
+	//SoundInstance構造体に情報をセット
 	SoundInstance resultInstance;
-
 	resultInstance.pSourceVoice = pSourceVoice;
 	resultInstance.buf = buf;
 	resultInstance.soundData = soundData;
