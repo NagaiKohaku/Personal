@@ -11,31 +11,26 @@ void BulletManager::Initialize() {
 }
 
 ///=====================================================/// 
-/// 更新
+/// 登録されているすべての弾を更新
 ///=====================================================///
 void BulletManager::Update() {
 
 	//弾の削除
-	bullets_.remove_if([](std::unique_ptr<BulletBase>& bullet) {
-
-		//弾が死んでいるかチェック
-		if (bullet->IsDead()) {
-
-			return true;
-		}
-
-		return false;
-		});
+	RemoveBullet();
 
 	//弾の更新
 	for (auto& bullet : bullets_) {
+
 		bullet->Update();
 	}
 }
 
+///=====================================================/// 
+/// すべての弾の座標情報を更新
+///=====================================================///
 void BulletManager::TransformUpdate() {
 
-	//弾の座標のみ更新
+	//弾の座標情報のみ更新
 	for (auto& bullet : bullets_) {
 
 		bullet->TransformUpdate();
@@ -43,7 +38,7 @@ void BulletManager::TransformUpdate() {
 }
 
 ///=====================================================/// 
-/// 描画
+/// 登録されているすべての弾を描画
 ///=====================================================///
 void BulletManager::Draw() {
 
@@ -55,7 +50,7 @@ void BulletManager::Draw() {
 }
 
 ///=====================================================/// 
-/// 弾の追加
+/// 新しい弾を生成して管理リストに追加
 ///=====================================================///
 void BulletManager::AddBullet(Vector3 pos, Vector3 direction, BULLETTYPE type) {
 
@@ -65,12 +60,12 @@ void BulletManager::AddBullet(Vector3 pos, Vector3 direction, BULLETTYPE type) {
 	//弾の初期化
 	bullet->Initialize(pos,direction);
 
-	//弾を追加
+	//弾を管理リストに追加
 	bullets_.push_back(std::move(bullet));
 }
 
 ///=====================================================/// 
-/// 弾インスタンスの生成
+/// 指定された種類に応じた弾のインスタンスを生成
 ///=====================================================///
 std::unique_ptr<BulletBase> BulletManager::CreateBullet(BULLETTYPE type) {
 
@@ -93,4 +88,22 @@ std::unique_ptr<BulletBase> BulletManager::CreateBullet(BULLETTYPE type) {
 	}
 
 	return std::move(newBullet);
+}
+
+///=====================================================/// 
+/// 削除対象の弾をリストから削除します。
+///=====================================================///
+void BulletManager::RemoveBullet() {
+
+	//弾の削除
+	bullets_.remove_if([](std::unique_ptr<BulletBase>& bullet) {
+
+		//弾が死んでいるかチェック
+		if (bullet->IsDead()) {
+
+			return true;
+		}
+
+		return false;
+		});
 }

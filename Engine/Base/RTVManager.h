@@ -7,9 +7,16 @@
 /// === 前方宣言 === ///
 class DirectXCommon;
 
-///=====================================================/// 
-/// RenderTargetViewマネージャークラス
-///=====================================================///
+/// <summary>
+/// 描画用レンダーターゲットビュー(RTV)の管理を行うクラスです。
+/// </summary>
+/// <remarks>
+/// - シングルトンパターンで実装され、アプリケーション全体で 1 つのインスタンスを共有します。  
+/// - RTV用のデスクリプタヒープを生成し、各RTVに対するCPU/GPUデスクリプタを管理します。  
+/// - 最大数を設定しており、使用可能かどうかをチェックしながらRTV番号を割り当てます。  
+/// - 指定したリソースに対してRTVを作成し、描画パイプラインで使用可能にします。  
+/// - CPUおよびGPU用のデスクリプタハンドルを取得可能で、描画コマンド設定時に利用できます。  
+/// </remarks>
 class RTVManager {
 
 	///-------------------------------------------/// 
@@ -26,14 +33,21 @@ public:
 public:
 
 	/// <summary>
-	/// シングルトンインスタンス
+	/// RTVManagerのシングルトンインスタンスを取得します。
 	/// </summary>
-	/// <returns>インスタンス</returns>
+	/// <remarks>
+	/// 返り値に静的インスタンスを返します。
+	/// </remarks>
 	static RTVManager* GetInstance();
 
 	/// <summary>
-	/// 初期化処理
+	/// RTV用のデスクリプタヒープを初期化します。
 	/// </summary>
+	/// <remarks>
+	/// - DirectXCommonのインスタンスを取得します。  
+	/// - 指定した最大数のRTV用デスクリプタヒープを生成します。  
+	/// - ヒープ内の1つ分のデスクリプタサイズを取得して保持します。  
+	/// </remarks>
 	void Initialize();
 
 	/// <summary>
@@ -42,22 +56,33 @@ public:
 	void PreDraw();
 
 	/// <summary>
-	/// メモリ確保
+	/// RTVの番号を割り当てます。
 	/// </summary>
-	/// <returns>確保したメモリ番号</returns>
+	/// <returns>割り当てられたRTV番号</returns>
+	/// <remarks>
+	/// - 現在使用中のRTV番号が最大数を超えていないか確認します。  
+	/// - 現在のRTV番号を返却し、次回の割り当て用にインデックスを増加させます。  
+	/// </remarks>
 	uint32_t Allocate();
 
 	/// <summary>
-	/// メモリ確保可能チェック
+	/// RTVを割り当て可能かどうかを確認します。
 	/// </summary>
-	/// <returns>フラグ</returns>
+	/// <returns>true: 割り当て可能 / false: 割り当て不可</returns>
+	/// <remarks>
+	/// - 現在の使用中インデックスが最大数を超えていないかをチェックします。  
+	/// - 最大数に達していなければ true を返し、超えていれば false を返します。  
+	/// </remarks>
 	bool AllocateCheck();
 
 	/// <summary>
-	/// RTV生成
+	/// 指定したリソースにRTVを作成します。
 	/// </summary>
-	/// <param name="rtvIndex">RTV番号</param>
-	/// <param name="pResource">リソース</param>
+	/// <remarks>
+	/// - 指定したRTVインデックスに対応するハンドルを取得します。  
+	/// - RTVのフォーマットをSRGBに設定し、2Dテクスチャとしてビューを作成します。  
+	/// - DirectXのCreateRenderTargetView関数を使ってリソースにRTVを割り当てます。  
+	/// </remarks>
 	void CreateRenderTargetView(uint32_t rtvIndex, ID3D12Resource* pResource);
 
 	///-------------------------------------------/// 

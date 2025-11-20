@@ -6,7 +6,7 @@
 #include "wrl.h"
 
 ///=====================================================/// 
-/// シングルトンインスタンス
+/// WinAppのシングルトンインスタンスを取得
 ///=====================================================///
 WinApp* WinApp::GetInstance() {
 	static WinApp instance;
@@ -19,7 +19,7 @@ WinApp* WinApp::GetInstance() {
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 ///=====================================================/// 
-/// ウィンドウ操作
+/// OSから送られてくるウィンドウメッセージを処理
 ///=====================================================///
 LRESULT CALLBACK WinApp::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
 
@@ -44,7 +44,7 @@ LRESULT CALLBACK WinApp::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM l
 }
 
 ///=====================================================/// 
-/// 初期化処理
+/// ウィンドウを初期化して表示
 ///=====================================================///
 void WinApp::Initialize() {
 
@@ -106,7 +106,7 @@ void WinApp::Initialize() {
 }
 
 ///=====================================================/// 
-/// 終了処理
+/// ウィンドウを閉じ、COMを解放
 ///=====================================================///
 void WinApp::Finalize() {
 
@@ -116,7 +116,7 @@ void WinApp::Finalize() {
 }
 
 ///=====================================================/// 
-/// メッセージ処理
+/// ウィンドウに送られてきたメッセージを取得して処理
 ///=====================================================///
 bool WinApp::ProcessMessage() {
 

@@ -31,7 +31,7 @@ const float ParticleEmitter::kDeltaTime = 1.0f / 60.0f;
 ParticleEmitter::~ParticleEmitter() {
 
 	//解放されるメモリ番号を登録
-	srvManager_->AllocateFree(srvIndex_);
+	srvManager_->RecordFreeIndex(srvIndex_);
 }
 
 ///=====================================================/// 

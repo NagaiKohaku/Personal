@@ -5,7 +5,7 @@
 #include "cassert"
 
 ///=====================================================/// 
-/// シングルトンインスタンス
+/// SrvManagerのシングルトンインスタンスを取得
 ///=====================================================///
 SrvManager* SrvManager::GetInstance() {
 	static SrvManager instance;
@@ -13,7 +13,7 @@ SrvManager* SrvManager::GetInstance() {
 }
 
 ///=====================================================/// 
-/// 初期化処理
+/// SRV用のデスクリプタヒープを初期化
 ///=====================================================///
 void SrvManager::Initialize() {
 
@@ -28,7 +28,7 @@ void SrvManager::Initialize() {
 }
 
 ///=====================================================/// 
-/// 描画前処理
+/// 描画前にSRV用のデスクリプタヒープをコマンドリストに設定
 ///=====================================================///
 void SrvManager::PreDraw() {
 
@@ -40,11 +40,11 @@ void SrvManager::PreDraw() {
 }
 
 ///=====================================================/// 
-/// メモリ確保
+/// SRV番号を割り当て
 ///=====================================================///
 uint32_t SrvManager::Allocate() {
 
-	//NOTE:InstancingDataを使用する使用するオブジェクトが増えると解放されるまでに最大数に達するかも
+	//NOTE:InstancingDataを使用するオブジェクトが増えると解放されるまでに最大数に達するかも
 
 	//SRV番号が最大数を越えていないかの確認
 	assert(kMaxSRVCount_ > currentIndex_);
@@ -65,7 +65,7 @@ uint32_t SrvManager::Allocate() {
 }
 
 ///=====================================================/// 
-/// メモリ確保可能チェック
+/// SRVを割り当て可能かどうかを確認
 ///=====================================================///
 bool SrvManager::AllocateCheck() {
 
@@ -78,15 +78,16 @@ bool SrvManager::AllocateCheck() {
 }
 
 ///=====================================================/// 
-/// メモリ解放
+/// 解放されたメモリ番号を記録
 ///=====================================================///
-void SrvManager::AllocateFree(uint32_t index) {
+void SrvManager::RecordFreeIndex(uint32_t index) {
 
+	//解放されたメモリ番号を記録
 	freeIndices_.push(index);
 }
 
 ///=====================================================/// 
-/// SRV生成(テクスチャ用)
+/// 2Dテクスチャ用のシェーダーリソースビュー(SRV)を生成
 ///=====================================================///
 void SrvManager::CreateSRVForTexture2D(uint32_t srvIndex, ID3D12Resource* pResource, DXGI_FORMAT Format, UINT MipLevels) {
 
@@ -104,7 +105,7 @@ void SrvManager::CreateSRVForTexture2D(uint32_t srvIndex, ID3D12Resource* pResou
 }
 
 ///=====================================================/// 
-///SRV生成(Structured Buffer用)
+/// 構造化バッファ用のシェーダーリソースビュー(SRV)を生成
 ///=====================================================///
 void SrvManager::CreateSRVForStructuredBuffer(uint32_t srvIndex, ID3D12Resource* pResource, UINT numElements, UINT structureByteStride) {
 
@@ -125,7 +126,7 @@ void SrvManager::CreateSRVForStructuredBuffer(uint32_t srvIndex, ID3D12Resource*
 }
 
 ///=====================================================/// 
-/// SRV生成(レンダーターゲット用)
+/// レンダーターゲット用のシェーダーリソースビュー(SRV)を生成
 ///=====================================================///
 void SrvManager::CreateRenderTargetSRV(uint32_t srvIndex, ID3D12Resource* pResource) {
 
@@ -143,7 +144,7 @@ void SrvManager::CreateRenderTargetSRV(uint32_t srvIndex, ID3D12Resource* pResou
 }
 
 ///=====================================================/// 
-/// SRV生成(DepthTexture用)
+/// 深度テクスチャ用のシェーダーリソースビュー(SRV)を生成
 ///=====================================================///
 void SrvManager::CreateDepthTextureSRV(uint32_t srvIndex, ID3D12Resource* pResource) {
 
