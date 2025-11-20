@@ -13,16 +13,16 @@
             0.0
         ],
         "easingState": [
-            0
+            2
         ],
         "easingStrength": [
-            1.0
+            8.0
         ],
         "endColor": [
             1.0,
-            1.0,
-            1.0,
-            1.0
+            0.250980406999588,
+            0.0,
+            0.0
         ],
         "endRandomRange": [
             0.0,
@@ -31,9 +31,9 @@
             0.0
         ],
         "startColor": [
-            0.125490203499794,
-            0.125490203499794,
-            0.125490203499794,
+            1.0,
+            0.25882354378700256,
+            0.0,
             1.0
         ],
         "startRandomRange": [
@@ -43,7 +43,7 @@
             0.0
         ],
         "updateState": [
-            0
+            2
         ],
         "velocity": [
             0.0,
@@ -58,16 +58,16 @@
             0.0
         ]
     },
-    "frequency": 0.03999999910593033,
+    "frequency": 0.0,
     "isBillboard": true,
-    "isInfinity": true,
+    "isInfinity": false,
     "isLoop": false,
     "lifeTime": 2.0,
     "lifeTimeRandomRange": 0.0,
-    "maxCount": 1,
+    "maxCount": 32,
     "modelFileName": "",
     "modelName": "Plane",
-    "name": "Smoke",
+    "name": "Flear",
     "position": {
         "acceleration": [
             0.0,
@@ -80,7 +80,7 @@
             0.0
         ],
         "easingState": [
-            0
+            2
         ],
         "easingStrength": [
             1.0
@@ -91,9 +91,9 @@
             0.0
         ],
         "endRandomRange": [
-            0.0,
-            0.0,
-            0.0
+            5.0,
+            5.0,
+            5.0
         ],
         "startNum": [
             0.0,
@@ -101,12 +101,12 @@
             1.0
         ],
         "startRandomRange": [
-            0.0,
-            0.0,
-            0.0
+            5.0,
+            5.0,
+            5.0
         ],
         "updateState": [
-            0
+            2
         ],
         "velocity": [
             0.0,
@@ -182,7 +182,7 @@
             0.0
         ],
         "easingState": [
-            0
+            2
         ],
         "easingStrength": [
             4.0
@@ -198,9 +198,9 @@
             0.0
         ],
         "startNum": [
-            1.0,
-            1.0,
-            1.0
+            0.5,
+            0.5,
+            0.5
         ],
         "startRandomRange": [
             0.0,

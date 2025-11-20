@@ -82,6 +82,16 @@ Vector4 EaseIn(const Vector4& v1, const Vector4& v2, float t, float mag);
 /// <summary>
 /// EaseOut関数
 /// </summary>
+/// <param name="n1"></param>
+/// <param name="n2"></param>
+/// <param name="t"></param>
+/// <param name="mag"></param>
+/// <returns></returns>
+float EaseOut(const float& n1, const float& n2, float t, float mag);
+
+/// <summary>
+/// EaseOut関数
+/// </summary>
 /// <param name="v1"></param>
 /// <param name="v2"></param>
 /// <param name="t"></param>

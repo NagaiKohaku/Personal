@@ -33,6 +33,15 @@ void BulletManager::Update() {
 	}
 }
 
+void BulletManager::TransformUpdate() {
+
+	//弾の座標のみ更新
+	for (auto& bullet : bullets_) {
+
+		bullet->TransformUpdate();
+	}
+}
+
 ///=====================================================/// 
 /// 描画
 ///=====================================================///

@@ -24,6 +24,7 @@
 #include "LevelEditor/LevelDataLoader.h"
 #include "Fade/Fade.h"
 #include "Shake/Shake.h"
+#include "Flash/Flash.h"
 
 
 //Windowsアプリでのエントリーポイント(main関数)
@@ -130,6 +131,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Shake* shake = Shake::GetInstance();
 	shake->Initialize();
 
+	//フラッシュ
+	Flash* flash = Flash::GetInstance();
+	flash->Initialize();
+
 	//シーンマネージャー
 	SceneManager* sceneManager = SceneManager::GetInstance();
 	sceneManager->Initialize();
@@ -158,7 +163,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//入力の更新
 		input->Update();
 
-#ifdef _DEBUG
+#ifdef _USE_IMGUI
 
 		//シーンのImGui
 		sceneManager->ImGui();
@@ -166,7 +171,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//オフスクリーンのImGui
 		offScreen->ImGui();
 
-#endif // _DEBUG
+#endif // _USE_IMGUI
 
 		//3dオブジェクト基底の更新
 		object3DCommon->Update();
@@ -182,6 +187,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		//フェードの更新
 		fade->Update();
+
+		//フラッシュの更新
+		flash->Update();
 
 		//音声の更新
 		audio->Update();
@@ -210,6 +218,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//フェードの描画
 		fade->Draw();
 
+		//フラッシュの描画
+		flash->Draw();
+
 		//OffScreen用のレンダラーの描画
 		renderer->OffScreenDraw();
 
@@ -230,12 +241,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//レンダラーの描画
 		renderer->SwapChainDraw();
 
-#ifdef _DEBUG
+#ifdef _USE_IMGUI
 
 		//ImGuiの描画
-		//imGuiManager->Draw();
+		imGuiManager->Draw();
 
-#endif // _DEBUG
+#endif // _USE_IMGUI
 
 		//DirectX基底の描画後処理
 		directXCommon->PostDraw();

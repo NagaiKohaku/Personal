@@ -44,7 +44,7 @@ PixelShaderOutPut main(VertexShaderOutput input)
     }
 
     //マテリアル情報とテクスチャの色を合わせる
-    output.color = FXAA_PS(input);
+    output.color = gMaterial.color * FXAA_PS(input);
  
     return output;
 }

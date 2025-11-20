@@ -16,6 +16,8 @@
 #include "LevelEditor/LevelDataLoader.h"
 #include "Fade/Fade.h"
 #include "Shake/Shake.h"
+#include "Flash/Flash.h"
+
 #include "Math/Easing.h"
 
 #include "imgui.h"
@@ -85,14 +87,19 @@ void GameScene::Initialize() {
 
 	SpriteManager::GetInstance()->LoadSprite("GameOver", "RoadFlightGameOver");
 
-	SpriteManager::GetInstance()->LoadSprite("SpaceKey", "space");
+	SpriteManager::GetInstance()->LoadSprite("GameOverSpace", "GameOverSpace");
 
-	SpriteManager::GetInstance()->LoadSprite("Arrow", "triangleArrow");
+	SpriteManager::GetInstance()->LoadSprite("GameOverArrow", "GameOverArrow");
 
-	SpriteManager::GetInstance()->LoadSprite("ArrowFlip", "triangleArrowFlip");
+	SpriteManager::GetInstance()->LoadSprite("GameClear", "RoadFlightGameClear");
+
+	SpriteManager::GetInstance()->LoadSprite("GameClearSpace", "GameClearSpace");
+
+	SpriteManager::GetInstance()->LoadSprite("GameClearArrow", "GameClearArrow");
 
 	/// === ゲームオーバースプライトの生成 === ///
 
+	//テキストスプライトの生成
 	gameOverSprite_ = std::make_unique<Object2D>();
 
 	gameOverSprite_->Initialize();
@@ -105,57 +112,135 @@ void GameScene::Initialize() {
 
 	gameOverSprite_->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
 
-	/// === スペースキースプライトの生成 === ///
+	//スペースキースプライトの生成
+	gameOverSpaceSprite_ = std::make_unique<Object2D>();
 
-	spaceKeySprite_ = std::make_unique<Object2D>();
+	gameOverSpaceSprite_->Initialize();
 
-	spaceKeySprite_->Initialize();
+	gameOverSpaceSprite_->SetSprite("GameOverSpace");
 
-	spaceKeySprite_->SetSprite("SpaceKey");
+	gameOverSpaceSprite_->GetSprite()->SetAnchorPoint({ 0.5f,0.5f });
 
-	spaceKeySprite_->GetSprite()->SetAnchorPoint({ 0.5f,0.5f });
+	gameOverSpaceSprite_->GetSprite()->SetColor({ 1.0f,1.0f,1.0f,1.0f });
 
-	spaceKeySprite_->GetSprite()->SetColor({ 1.0f,1.0f,1.0f,1.0f });
+	gameOverSpaceSprite_->SetTranslate({ 640.0f,600.0f });
 
-	spaceKeySprite_->SetTranslate({ 640.0f,600.0f });
+	gameOverSpaceSprite_->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
 
-	spaceKeySprite_->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
+	spaceKeyPos_ = gameOverSpaceSprite_->GetTranslate();
 
-	Vector2 spaceKeyPos = spaceKeySprite_->GetTranslate();
+	spaceKeySize_ = gameOverSpaceSprite_->GetSize();
 
-	Vector2 spaceKeySize = spaceKeySprite_->GetSize();
+	//左矢印スプライトの生成
+	gameOverLeftArrowSprite_ = std::make_unique<Object2D>();
 
-	/// === 左矢印スプライトの生成 === ///
+	gameOverLeftArrowSprite_->Initialize();
 
-	leftArrowSprite_ = std::make_unique<Object2D>();
+	gameOverLeftArrowSprite_->SetSprite("GameOverArrow");
 
-	leftArrowSprite_->Initialize();
+	gameOverLeftArrowSprite_->GetSprite()->SetAnchorPoint({ 0.5f,0.5f });
 
-	leftArrowSprite_->SetSprite("Arrow");
+	gameOverLeftArrowSprite_->GetSprite()->SetColor({ 1.0f,1.0f,1.0f,1.0f });
 
-	leftArrowSprite_->GetSprite()->SetAnchorPoint({ 0.5f,0.5f });
+	gameOverLeftArrowSprite_->SetTranslate({ spaceKeyPos_.x - spaceKeySize_.x / 2.0f - 64.0f,spaceKeyPos_.y });
 
-	leftArrowSprite_->GetSprite()->SetColor({ 1.0f,1.0f,1.0f,1.0f });
+	gameOverLeftArrowSprite_->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
 
-	leftArrowSprite_->SetTranslate({ spaceKeyPos.x - spaceKeySize.x / 2.0f - 64.0f,spaceKeyPos.y });
+	//右矢印スプライトの生成
+	gameOverRightArrowSprite_ = std::make_unique<Object2D>();
 
-	leftArrowSprite_->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
+	gameOverRightArrowSprite_->Initialize();
 
-	/// === 右矢印の生成 === ///
+	gameOverRightArrowSprite_->SetSprite("GameOverArrow");
 
-	rightArrowSprite_ = std::make_unique<Object2D>();
+	gameOverRightArrowSprite_->GetSprite()->SetIsFlipX(true);
 
-	rightArrowSprite_->Initialize();
+	gameOverRightArrowSprite_->GetSprite()->SetAnchorPoint({ 0.5f,0.5f });
 
-	rightArrowSprite_->SetSprite("ArrowFlip");
+	gameOverRightArrowSprite_->GetSprite()->SetColor({ 1.0f,1.0f,1.0f,1.0f });
 
-	rightArrowSprite_->GetSprite()->SetAnchorPoint({ 0.5f,0.5f });
+	gameOverRightArrowSprite_->SetTranslate({ spaceKeyPos_.x + spaceKeySize_.x / 2.0f + 64.0f,spaceKeyPos_.y });
 
-	rightArrowSprite_->GetSprite()->SetColor({ 1.0f,1.0f,1.0f,1.0f });
+	gameOverRightArrowSprite_->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
 
-	rightArrowSprite_->SetTranslate({ spaceKeyPos.x + spaceKeySize.x / 2.0f + 64.0f,spaceKeyPos.y });
+	/// === ゲームクリアスプライトの生成 === ///
 
-	rightArrowSprite_->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
+	//テキストスプライトの生成
+	gameClearSprite_ = std::make_unique<Object2D>();
+
+	gameClearSprite_->Initialize();
+
+	gameClearSprite_->SetSprite("GameClear");
+
+	gameClearSprite_->GetSprite()->SetAnchorPoint({ 0.5f,0.5f });
+
+	gameClearSprite_->SetTranslate({ 640.0f,100.0f });
+
+	gameClearSprite_->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
+
+	//スペースキースプライトの生成
+	gameClearSpaceSprite_ = std::make_unique<Object2D>();
+
+	gameClearSpaceSprite_->Initialize();
+
+	gameClearSpaceSprite_->SetSprite("GameClearSpace");
+
+	gameClearSpaceSprite_->GetSprite()->SetAnchorPoint({ 0.5f,0.5f });
+
+	gameClearSpaceSprite_->GetSprite()->SetColor({ 1.0f,1.0f,1.0f,1.0f });
+
+	gameClearSpaceSprite_->SetTranslate({ 640.0f,600.0f });
+
+	gameClearSpaceSprite_->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
+
+	//左矢印スプライトの生成
+	gameClearLeftArrowSprite_ = std::make_unique<Object2D>();
+
+	gameClearLeftArrowSprite_->Initialize();
+
+	gameClearLeftArrowSprite_->SetSprite("GameClearArrow");
+
+	gameClearLeftArrowSprite_->GetSprite()->SetAnchorPoint({ 0.5f,0.5f });
+
+	gameClearLeftArrowSprite_->GetSprite()->SetColor({ 1.0f,1.0f,1.0f,1.0f });
+
+	gameClearLeftArrowSprite_->SetTranslate({ spaceKeyPos_.x - spaceKeySize_.x / 2.0f - 64.0f,spaceKeyPos_.y });
+
+	gameClearLeftArrowSprite_->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
+
+	//右矢印スプライトの生成
+	gameClearRightArrowSprite_ = std::make_unique<Object2D>();
+
+	gameClearRightArrowSprite_->Initialize();
+
+	gameClearRightArrowSprite_->SetSprite("GameClearArrow");
+
+	gameClearRightArrowSprite_->GetSprite()->SetIsFlipX(true);
+
+	gameClearRightArrowSprite_->GetSprite()->SetAnchorPoint({ 0.5f,0.5f });
+
+	gameClearRightArrowSprite_->GetSprite()->SetColor({ 1.0f,1.0f,1.0f,1.0f });
+
+	gameClearRightArrowSprite_->SetTranslate({ spaceKeyPos_.x + spaceKeySize_.x / 2.0f + 64.0f,spaceKeyPos_.y });
+
+	gameClearRightArrowSprite_->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
+
+	/// === エミッターの生成 === ///
+
+	//衝撃波エミッター(左)
+	shockWaveLeftEmitter_ = std::make_unique<EmitterGroup>();
+
+	shockWaveLeftEmitter_->Initialize(camera_.get());
+
+	shockWaveLeftEmitter_->LoadEmitter("ShockWaveLeft");
+
+	//衝撃波エミッター(右)
+
+	shockWaveRightEmitter_ = std::make_unique<EmitterGroup>();
+
+	shockWaveRightEmitter_->Initialize(camera_.get());
+
+	shockWaveRightEmitter_->LoadEmitter("ShockWaveRight");
 
 	/// === 他変数の設定 === ///
 
@@ -165,11 +250,27 @@ void GameScene::Initialize() {
 
 	isStart_ = true;
 
+	isGameOver_ = false;
+
+	isClear_ = false;
+
+	isClearAnim_ = false;
+
+	arrowLength_ = 20.0f;
+
+	arrowTimer_ = 0.0f;
+
+	timerDirection_ = 1.0f;
+
 	//キーフレームの設定
-	animPoints_.push_back({ Vector3(0.0f,20.0f,-600.0f),Vector3(0.0f,-std::numbers::pi_v<float>,0.0f),0.0f,1.0f });
-	animPoints_.push_back({ Vector3(0.0f,20.0f,-600.0f),Vector3(0.0f,-std::numbers::pi_v<float>,0.0f),1.0f,1.0f });
-	animPoints_.push_back({ Vector3(0.0f,0.75f,0.0f),Vector3(0.2f,-std::numbers::pi_v<float>,0.0f),2.0f,3.0f });
-	animPoints_.push_back({ Vector3(0.0f,1.0f,0.0f),Vector3(0.2f,0.0f,0.0f),4.0f,4.0f });
+	startAnimPoints_.push_back({ Vector3(0.0f,20.0f,-600.0f),Vector3(0.0f,-std::numbers::pi_v<float>,0.0f),0.0f,1.0f });
+	startAnimPoints_.push_back({ Vector3(0.0f,20.0f,-600.0f),Vector3(0.0f,-std::numbers::pi_v<float>,0.0f),1.0f,1.0f });
+	startAnimPoints_.push_back({ Vector3(0.0f,0.75f,0.0f),Vector3(0.2f,-std::numbers::pi_v<float>,0.0f),2.0f,3.0f });
+	startAnimPoints_.push_back({ Vector3(0.0f,1.0f,0.0f),Vector3(0.2f,0.0f,0.0f),4.0f,4.0f });
+
+	clearAnimPoints_.push_back({ Vector3(0.0f,0.0f,0.0f),Vector3(0.2f,0.0f,0.0f),0.0f,1.0f });
+	clearAnimPoints_.push_back({ Vector3(0.0f,4.0f,0.0f),Vector3(0.2f,0.0f,0.0f),1.5f,2.0f });
+	clearAnimPoints_.push_back({ Vector3(0.0f,40.0f,600.0f),Vector3(0.2f,0.0f,0.0f),2.5f,2.0f });
 
 	Fade::GetInstance()->SetCamera(camera_.get());
 
@@ -209,35 +310,82 @@ void GameScene::Update() {
 	//スタート時のアニメーションの更新
 	StartAnimation();
 
+	//クリア時のアニメーションの更新
+	ClearAnimation();
+
 	//追尾カメラの更新
 	followCamera_->Update();
 
 	//カメラをデバッグ状態で更新
 	camera_->Update();
 
-	//プレイヤーの更新
-	player_->Update();
+	if (!isClear_) {
 
-	//エネミーの更新
-	enemyManager_->Update();
+		//プレイヤーの更新
+		player_->Update();
 
-	//弾の更新
-	bulletManager_->Update();
+		//エネミーの更新
+		enemyManager_->Update();
 
-	//グラウンドマネージャーの更新
-	groundManager_->Update();
+		//弾の更新
+		bulletManager_->Update();
+
+		//グラウンドマネージャーの更新
+		groundManager_->Update();
+	} else {
+
+		player_->TransformUpdate();
+
+		enemyManager_->TransformUpdate();
+
+		bulletManager_->TransformUpdate();
+
+		groundManager_->TransformUpdate();
+	}
+
+	arrowTimer_ += (1.0f / 60.0f) * timerDirection_;
+
+	if (arrowTimer_ >= 1.0f) {
+
+		arrowTimer_ = 1.0f;
+
+		timerDirection_ *= -1.0f;
+	}
+
+	if (arrowTimer_ <= 0.0f) {
+
+		arrowTimer_ = 0.0f;
+
+		timerDirection_ *= -1.0f;
+	}
+
+	float lerpNum = EaseOut(0.0f, arrowLength_, arrowTimer_ / 1.0f, 2.0f);
+
+	gameOverLeftArrowSprite_->SetTranslate({ spaceKeyPos_.x - spaceKeySize_.x / 2.0f - 64.0f - lerpNum,spaceKeyPos_.y });
+
+	gameOverRightArrowSprite_->SetTranslate({ spaceKeyPos_.x + spaceKeySize_.x / 2.0f + 64.0f + lerpNum,spaceKeyPos_.y });
+
+	gameClearLeftArrowSprite_->SetTranslate({ spaceKeyPos_.x - spaceKeySize_.x / 2.0f - 64.0f - lerpNum,spaceKeyPos_.y });
+
+	gameClearRightArrowSprite_->SetTranslate({ spaceKeyPos_.x + spaceKeySize_.x / 2.0f + 64.0f + lerpNum,spaceKeyPos_.y });
 
 	//ゲームオーバースプライトの更新
 	gameOverSprite_->Update();
+	gameOverSpaceSprite_->Update();
+	gameOverLeftArrowSprite_->Update();
+	gameOverRightArrowSprite_->Update();
 
-	//スペースキースプライトの更新
-	spaceKeySprite_->Update();
+	//ゲームクリアスプライトの更新
+	gameClearSprite_->Update();
+	gameClearSpaceSprite_->Update();
+	gameClearLeftArrowSprite_->Update();
+	gameClearRightArrowSprite_->Update();
 
-	//左矢印スプライトの更新
-	leftArrowSprite_->Update();
+	//右衝撃波エミッターの更新
+	shockWaveRightEmitter_->Update();
 
-	//右矢印スプライトの更新
-	rightArrowSprite_->Update();
+	//左衝撃波エミッターの更新
+	shockWaveLeftEmitter_->Update();
 
 	//プレイヤーが倒されたとき
 	if (!isGameOver_) {
@@ -249,11 +397,11 @@ void GameScene::Update() {
 			//スプライトを映す
 			gameOverSprite_->GetSprite()->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
 
-			spaceKeySprite_->GetSprite()->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+			gameOverSpaceSprite_->GetSprite()->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
 
-			leftArrowSprite_->GetSprite()->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+			gameOverLeftArrowSprite_->GetSprite()->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
 
-			rightArrowSprite_->GetSprite()->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+			gameOverRightArrowSprite_->GetSprite()->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
 
 			//シェイクを始める
 			Shake::GetInstance()->Start(1.0f, 0.5f);
@@ -271,11 +419,70 @@ void GameScene::Update() {
 		}
 	}
 
-	if (ObjectManager::GetInstance()->GetKillCount() >= 30) {
+	if (ObjectManager::GetInstance()->GetKillCount() >= 1) {
 
-		if (Fade::GetInstance()->GetState() == Fade::NONE) {
-			//フェードアウトを始める
-			Fade::GetInstance()->StartFadeOut();
+		if (Fade::GetInstance()->GetState() != Fade::FADE_OUT && Fade::GetInstance()->GetState() != Fade::FADE_OUT_END) {
+
+			if (!isClearAnim_) {
+
+				if (!isClear_) {
+
+					isClear_ = true;
+
+					animNum_ = 1;
+
+					timer_ = 0.0f;
+
+					clearAnimPoints_[0].playerPos = player_->GetWorldPos();
+
+					enemyManager_->StartClearUpdate();
+
+					player_->SetIsMoveActive(false);
+
+					//スプライトを映す
+					gameClearSprite_->GetSprite()->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+
+					gameClearSpaceSprite_->GetSprite()->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+
+					gameClearLeftArrowSprite_->GetSprite()->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+
+					gameClearRightArrowSprite_->GetSprite()->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+
+					//シェイクを始める
+					Shake::GetInstance()->Start(1.0f, 1.0f);
+
+					//画面をフラッシュさせる
+					Flash::GetInstance()->Start(0.5f, Vector4(0.0f, 0.0f, 0.0f, 1.0f));
+
+					//色を反転させる
+					OffScreen::GetInstance()->SetColorReverseRatio(0.75f);
+				}
+			}
+		}
+	}
+
+	if (isClear_) {
+
+		if (Input::GetInstance()->IsTriggerPushKey(DIK_SPACE)) {
+
+			isClearAnim_ = true;
+
+			isClear_ = false;
+
+			//スプライトを再度隠す
+			gameClearSprite_->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
+
+			gameClearSpaceSprite_->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
+
+			gameClearLeftArrowSprite_->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
+
+			gameClearRightArrowSprite_->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
+
+			//画面をフラッシュさせる
+			Flash::GetInstance()->Start(0.5f, Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+
+			//色を反転させる
+			OffScreen::GetInstance()->SetColorReverseRatio(0.0f);
 		}
 	}
 
@@ -307,17 +514,24 @@ void GameScene::Draw() {
 	//グラウンドマネージャーの描画
 	groundManager_->Draw();
 
-	//ゲームオーバースプライトの描画
+	//ゲームオーバースプライトの更新
 	gameOverSprite_->Draw(LayerType::UI);
+	gameOverSpaceSprite_->Draw(LayerType::UI);
+	gameOverLeftArrowSprite_->Draw(LayerType::UI);
+	gameOverRightArrowSprite_->Draw(LayerType::UI);
 
-	//スペースキースプライトの描画
-	spaceKeySprite_->Draw(LayerType::UI);
+	//ゲームクリアスプライトの更新
+	gameClearSprite_->Draw(LayerType::UI);
+	gameClearSpaceSprite_->Draw(LayerType::UI);
+	gameClearLeftArrowSprite_->Draw(LayerType::UI);
+	gameClearRightArrowSprite_->Draw(LayerType::UI);
 
-	//左矢印スプライトの描画
-	leftArrowSprite_->Draw(LayerType::UI);
+	//右衝撃波エミッターの描画
+	shockWaveRightEmitter_->Draw();
 
-	//右矢印スプライトの描画
-	rightArrowSprite_->Draw(LayerType::UI);
+	//左衝撃波エミッターの描画
+	shockWaveLeftEmitter_->Draw();
+
 }
 
 ///=====================================================/// 
@@ -359,16 +573,16 @@ void GameScene::StartAnimation() {
 	if (animNum_ == 0) {
 
 		//最初のキーは初期位置設定用
-		player_->SetPosition(animPoints_[animNum_].playerPos);
+		player_->SetPosition(startAnimPoints_[animNum_].playerPos);
 
-		camera_->GetWorldTransform().rotate_ = animPoints_[animNum_].cameraRot;
+		camera_->GetWorldTransform().rotate_ = startAnimPoints_[animNum_].cameraRot;
 
 		//キーを進ませる
 		animNum_++;
 	} else {
 
 		//進捗を計算
-		float t = (timer_ - animPoints_[animNum_ - 1].time) / (animPoints_[animNum_].time - animPoints_[animNum_ - 1].time);
+		float t = (timer_ - startAnimPoints_[animNum_ - 1].time) / (startAnimPoints_[animNum_].time - startAnimPoints_[animNum_ - 1].time);
 
 		//1以上になったらそろえる
 		if (t >= 1.0f) {
@@ -377,9 +591,9 @@ void GameScene::StartAnimation() {
 		}
 
 		//キーフレーム間を補間
-		player_->SetPosition(EaseOut(animPoints_[animNum_ - 1].playerPos, animPoints_[animNum_].playerPos, t, animPoints_[animNum_].mag));
+		player_->SetPosition(EaseOut(startAnimPoints_[animNum_ - 1].playerPos, startAnimPoints_[animNum_].playerPos, t, startAnimPoints_[animNum_].mag));
 
-		camera_->GetWorldTransform().rotate_ = EaseOut(animPoints_[animNum_ - 1].cameraRot, animPoints_[animNum_].cameraRot, t, animPoints_[animNum_].mag);
+		camera_->GetWorldTransform().rotate_ = EaseOut(startAnimPoints_[animNum_ - 1].cameraRot, startAnimPoints_[animNum_].cameraRot, t, startAnimPoints_[animNum_].mag);
 
 		//キーを進ませる
 		if (t == 1.0f) {
@@ -388,7 +602,7 @@ void GameScene::StartAnimation() {
 		}
 
 		//最後のキーが終わったら
-		if (animNum_ == static_cast<int>(animPoints_.size())) {
+		if (animNum_ == static_cast<int>(startAnimPoints_.size())) {
 
 			//スタート時の演出を終わる
 			isStart_ = false;
@@ -399,6 +613,58 @@ void GameScene::StartAnimation() {
 			//プレイヤーが動けるようにする
 			player_->SetIsMoveActive(true);
 		}
+	}
+
+}
+
+void GameScene::ClearAnimation() {
+
+	//クリア時以外はスキップ
+	if (!isClearAnim_) {
+		return;
+	}
+
+	//タイマーを進ませる
+	timer_ += 1.0f / 60.0f;
+
+	//進捗を計算
+	float t = (timer_ - clearAnimPoints_[animNum_ - 1].time) / (clearAnimPoints_[animNum_].time - clearAnimPoints_[animNum_ - 1].time);
+
+	//1以上になったらそろえる
+	if (t >= 1.0f) {
+
+		t = 1.0f;
+	}
+
+	//キーフレーム間を補間
+	player_->SetPosition(EaseOut(clearAnimPoints_[animNum_ - 1].playerPos, clearAnimPoints_[animNum_].playerPos, t, clearAnimPoints_[animNum_].mag));
+
+	shockWaveLeftEmitter_->GetWorldTransform().translate_ = player_->GetWorldPos() + Vector3(-1.75f, 0.0f, 0.0f);
+
+	shockWaveRightEmitter_->GetWorldTransform().translate_ = player_->GetWorldPos() + Vector3(1.75f, 0.0f, 0.0f);
+
+	//キーを進ませる
+	if (t == 1.0f) {
+
+		animNum_++;
+
+		if (animNum_ == static_cast<int>(clearAnimPoints_.size()) - 1) {
+
+			shockWaveLeftEmitter_->GetWorldTransform().translate_ = player_->GetWorldPos() + Vector3(-1.75f, 0.0f, 0.0f);
+			shockWaveLeftEmitter_->Emit();
+
+			shockWaveRightEmitter_->GetWorldTransform().translate_ = player_->GetWorldPos() + Vector3(1.75f, 0.0f, 0.0f);
+			shockWaveRightEmitter_->Emit();
+
+			//フェードアウトを始める
+			Fade::GetInstance()->StartFadeOut();
+		}
+	}
+
+	//最後のキーが終わったら
+	if (animNum_ == static_cast<int>(clearAnimPoints_.size())) {
+
+		isClearAnim_ = false;
 	}
 
 }

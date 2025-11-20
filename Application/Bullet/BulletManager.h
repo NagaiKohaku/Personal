@@ -36,6 +36,11 @@ public:
 	void Update();
 
 	/// <summary>
+	/// 座標のみ更新
+	/// </summary>
+	void TransformUpdate();
+
+	/// <summary>
 	/// 描画
 	/// </summary>
 	void Draw();

@@ -34,6 +34,11 @@ public:
 	void Update() override;
 
 	/// <summary>
+	/// 座標のみ更新
+	/// </summary>
+	void TransformUpdate() override;
+
+	/// <summary>
 	/// 描画
 	/// </summary>
 	void Draw() override;

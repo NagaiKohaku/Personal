@@ -79,6 +79,16 @@ void GroundManager::Update() {
 	}
 }
 
+void GroundManager::TransformUpdate() {
+
+	ground_->TransformUpdate();
+
+	for (auto& building : building_) {
+
+		building->TransformUpdate();
+	}
+}
+
 void GroundManager::Draw() {
 
 	ground_->Draw();

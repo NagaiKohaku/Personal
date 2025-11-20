@@ -26,6 +26,11 @@ void Building::Update() {
 	object_->GetWorldTransform().translate_.z -= speed_ * 1.0f / 60.0f;
 }
 
+void Building::TransformUpdate() {
+
+	object_->Update();
+}
+
 void Building::Draw() {
 
 	object_->Draw(LayerType::Object);

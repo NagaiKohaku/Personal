@@ -14,6 +14,9 @@ public:
 	// 更新
 	void Update();
 
+	// 座標のみ更新
+	void TransformUpdate();
+
 	// 描画
 	void Draw();
 

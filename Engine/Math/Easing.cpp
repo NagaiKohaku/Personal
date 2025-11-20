@@ -106,6 +106,17 @@ Vector4 EaseIn(const Vector4& v1, const Vector4& v2, float t, float mag) {
 ///=====================================================/// 
 ///EaseOut関数
 ///=====================================================///
+float EaseOut(const float& n1, const float& n2, float t, float mag) {
+
+	float easeT = 1.0f - powf(1.0f - t, mag);
+
+	float result;
+
+	result = Lerp(n1, n2, easeT);
+
+	return result;
+}
+
 Vector2 EaseOut(const Vector2& v1, const Vector2& v2, float t, float mag) {
 
 	float easeT = 1.0f - powf(1.0f - t, mag);

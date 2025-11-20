@@ -75,6 +75,12 @@ void EnemyBullet::Update() {
 	collider_->Update();
 }
 
+void EnemyBullet::TransformUpdate() {
+
+	//オブジェクトの座標のみ更新
+	object_->Update();
+}
+
 void EnemyBullet::Draw() {
 
 	//オブジェクトの描画

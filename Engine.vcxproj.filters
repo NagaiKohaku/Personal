@@ -287,6 +287,7 @@
     <ClCompile Include="Application\Shake\Shake.cpp" />
     <ClCompile Include="Application\ObjectManager.cpp" />
     <ClCompile Include="Application\Player\LockOn.cpp" />
+    <ClCompile Include="Application\Flash\Flash.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application\Bullet\BulletBase.h">
@@ -544,6 +545,7 @@
     <ClInclude Include="Application\Shake\Shake.h" />
     <ClInclude Include="Application\ObjectManager.h" />
     <ClInclude Include="Application\Player\LockOn.h" />
+    <ClInclude Include="Application\Flash\Flash.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resource\Shader\DebugObject.hlsli">

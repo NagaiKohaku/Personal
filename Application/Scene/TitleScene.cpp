@@ -42,11 +42,9 @@ void TitleScene::Initialize() {
 
 	SpriteManager::GetInstance()->LoadSprite("TitleSprite", "RoadflightTitle");
 
-	SpriteManager::GetInstance()->LoadSprite("SpaceKey", "space");
+	SpriteManager::GetInstance()->LoadSprite("TitleSpace", "GameOverSpace");
 
-	SpriteManager::GetInstance()->LoadSprite("Arrow", "triangleArrow");
-
-	SpriteManager::GetInstance()->LoadSprite("ArrowFlip", "triangleArrowFlip");
+	SpriteManager::GetInstance()->LoadSprite("TitleArrow", "GameOverArrow");
 
 	/// === 3Dオブジェクトの設定 === ///
 
@@ -76,11 +74,12 @@ void TitleScene::Initialize() {
 
 	titleSprite_->SetTranslate({ 640.0f,100.0f });
 
+	//スペースキースプライトの生成
 	spaceKeySprite_ = std::make_unique<Object2D>();
 
 	spaceKeySprite_->Initialize();
 
-	spaceKeySprite_->SetSprite("SpaceKey");
+	spaceKeySprite_->SetSprite("TitleSpace");
 
 	spaceKeySprite_->GetSprite()->SetAnchorPoint({ 0.5f,0.5f });
 
@@ -88,33 +87,37 @@ void TitleScene::Initialize() {
 
 	spaceKeySprite_->SetTranslate({ 640.0f,600.0f });
 
-	Vector2 spaceKeyPos = spaceKeySprite_->GetTranslate();
+	spaceKeyPos_ = spaceKeySprite_->GetTranslate();
 
-	Vector2 spaceKeySize = spaceKeySprite_->GetSize();
+	spaceKeySize_ = spaceKeySprite_->GetSize();
 
+	//左矢印スプライトの生成
 	leftArrowSprite_ = std::make_unique<Object2D>();
 
 	leftArrowSprite_->Initialize();
 
-	leftArrowSprite_->SetSprite("Arrow");
+	leftArrowSprite_->SetSprite("TitleArrow");
 
 	leftArrowSprite_->GetSprite()->SetAnchorPoint({ 0.5f,0.5f });
 
 	leftArrowSprite_->GetSprite()->SetColor({ 1.0f,1.0f,1.0f,1.0f });
 
-	leftArrowSprite_->SetTranslate({ spaceKeyPos.x - spaceKeySize.x / 2.0f - 64.0f,spaceKeyPos.y });
+	leftArrowSprite_->SetTranslate({ spaceKeyPos_.x - spaceKeySize_.x / 2.0f - 64.0f,spaceKeyPos_.y });
 
+	//右矢印スプライトの生成
 	rightArrowSprite_ = std::make_unique<Object2D>();
 
 	rightArrowSprite_->Initialize();
 
-	rightArrowSprite_->SetSprite("ArrowFlip");
+	rightArrowSprite_->SetSprite("TitleArrow");
+
+	rightArrowSprite_->GetSprite()->SetIsFlipX(true);
 
 	rightArrowSprite_->GetSprite()->SetAnchorPoint({ 0.5f,0.5f });
 
 	rightArrowSprite_->GetSprite()->SetColor({ 1.0f,1.0f,1.0f,1.0f });
 
-	rightArrowSprite_->SetTranslate({ spaceKeyPos.x + spaceKeySize.x / 2.0f + 64.0f,spaceKeyPos.y });
+	rightArrowSprite_->SetTranslate({ spaceKeyPos_.x + spaceKeySize_.x / 2.0f + 64.0f,spaceKeyPos_.y });
 
 	/// === エミッターの生成 === ///
 
@@ -156,6 +159,12 @@ void TitleScene::Initialize() {
 	animTimer_ = 0.0f;
 
 	animNum_ = 0;
+
+	arrowLength_ = 20.0f;
+
+	arrowTimer_ = 0.0f;
+
+	timerDirection_ = 1.0f;
 
 	isStart_ = false;
 
@@ -214,6 +223,28 @@ void TitleScene::Update() {
 
 		}
 	}
+
+	arrowTimer_ += (1.0f / 60.0f) * timerDirection_;
+
+	if (arrowTimer_ >= 1.0f) {
+
+		arrowTimer_ = 1.0f;
+
+		timerDirection_ *= -1.0f;
+	}
+
+	if (arrowTimer_ <= 0.0f) {
+
+		arrowTimer_ = 0.0f;
+
+		timerDirection_ *= -1.0f;
+	}
+
+	float lerpNum = EaseOut(0.0f, arrowLength_, arrowTimer_ / 1.0f, 2.0f);
+
+	leftArrowSprite_->SetTranslate({ spaceKeyPos_.x - spaceKeySize_.x / 2.0f - 64.0f - lerpNum,spaceKeyPos_.y });
+
+	rightArrowSprite_->SetTranslate({ spaceKeyPos_.x + spaceKeySize_.x / 2.0f + 64.0f + lerpNum,spaceKeyPos_.y });
 
 	camera_->Update();
 

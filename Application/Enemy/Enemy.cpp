@@ -57,6 +57,15 @@ void Enemy::Initialize(Camera* cameraPtr, BulletManager* bulletPtr, Player* play
 	//死亡時エミッターのエミッター情報読み込み
 	explosiveEmitter_->LoadEmitter("BlockExplosive");
 
+	//クリア時爆発エミッターの生成
+	clearExplosiveEmitter_ = std::make_unique<EmitterGroup>();
+
+	//クリア時爆発エミッターの初期化
+	clearExplosiveEmitter_->Initialize(camera_);
+
+	//クリア時爆発エミッターのエミッター情報読み込み
+	clearExplosiveEmitter_->LoadEmitter("ClearExplosive");
+
 	shadow_ = std::make_unique<Shadow>();
 
 	shadow_->Initialize();
@@ -168,6 +177,9 @@ void Enemy::Update() {
 	//エミッターの更新処理
 	explosiveEmitter_->Update();
 
+	//クリア時爆発エミッターの更新処理
+	clearExplosiveEmitter_->Update();
+
 	//コライダーの処理
 	collider_->Update();
 
@@ -175,6 +187,14 @@ void Enemy::Update() {
 
 	//被弾揺れ処理
 	Shake();
+}
+
+void Enemy::TransformUpdate() {
+
+	//オブジェクトの更新
+	object_->Update();
+
+	shadow_->Update(object_->GetWorldTransform().translate_);
 }
 
 ///=====================================================/// 
@@ -191,7 +211,41 @@ void Enemy::Draw() {
 	//死亡時エミッターの描画
 	explosiveEmitter_->Draw();
 
+	//クリア時爆発エミッターの描画
+	clearExplosiveEmitter_->Draw();
+
 	shadow_->Draw();
+}
+
+void Enemy::EmitClearExplosive() {
+
+	state_ = DEAD;
+
+	//クリア時爆発エミッターを起動
+	clearExplosiveEmitter_->Emit();
+
+	//エミッターを中心座標に移動させる
+	clearExplosiveEmitter_->GetWorldTransform().translate_ = object_->GetWorldTransform().translate_;
+}
+
+void Enemy::ClearUpdate() {
+
+	//下方向に移動させる
+	object_->GetWorldTransform().translate_ = object_->GetWorldTransform().translate_ + Vector3(RandomFloat(-0.2f, 0.2f), RandomFloat(-1.5f, 0.0f), 0.0f);
+
+	//ランダムに回転させる
+	object_->GetWorldTransform().rotate_ = object_->GetWorldTransform().rotate_ + Vector3(
+		RandomFloat(-1.0f, 1.0f),
+		RandomFloat(-1.0f, 1.0f),
+		RandomFloat(-1.0f, 1.0f)
+	);
+
+	//オブジェクトの更新
+	object_->Update();
+
+	shadow_->Update(object_->GetWorldTransform().translate_);
+
+	clearExplosiveEmitter_->Update();
 }
 
 ///=====================================================/// 
@@ -272,7 +326,7 @@ void Enemy::Dead() {
 	//Z軸で回転するように設定
 	targetRot_ = Lerp(
 		Vector3(0.0f, -std::numbers::pi_v<float>, 0.0f),
-		Vector3(0.0f, -std::numbers::pi_v<float> * 10.0f, std::numbers::pi_v<float> * 10.0f),
+		Vector3(0.0f, -std::numbers::pi_v<float> *10.0f, std::numbers::pi_v<float> *10.0f),
 		animRatio
 	);
 
@@ -458,7 +512,7 @@ void Enemy::Blink() {
 	blinkTimer_ += 1.0f / 60.0f;
 
 	//0.0f~1.0fの間を往復
-	float blink = (sinf(blinkTimer_ * 2.0f * std::numbers::pi_v<float> * blinkFrequency_) + 1.0f) * 0.5f;
+	float blink = (sinf(blinkTimer_ * 2.0f * std::numbers::pi_v<float> *blinkFrequency_) + 1.0f) * 0.5f;
 
 	//オブジェクトの色情報
 	Vector4 color = object_->GetModel()->GetColor();

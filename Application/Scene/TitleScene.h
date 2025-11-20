@@ -87,9 +87,19 @@ private:
 	//カメラの回転
 	Vector3 cameraRotate_;
 
+	Vector2 spaceKeyPos_;
+
+	Vector2 spaceKeySize_;
+
 	float animTimer_;
 
 	int animNum_;
+
+	float arrowLength_;
+
+	float arrowTimer_;
+
+	float timerDirection_;
 
 	bool isStart_;
 

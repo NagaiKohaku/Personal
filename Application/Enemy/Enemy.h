@@ -52,9 +52,18 @@ public:
 	void Update();
 
 	/// <summary>
+	/// 座標のみ更新
+	/// </summary>
+	void TransformUpdate();
+
+	/// <summary>
 	/// 描画
 	/// </summary>
 	void Draw();
+
+	void EmitClearExplosive();
+
+	void ClearUpdate();
 
 	/// <summary>
 	/// 死亡状態のチェック
@@ -129,6 +138,9 @@ private:
 
 	//死亡時エミッター
 	std::unique_ptr<EmitterGroup> explosiveEmitter_;
+
+	//クリア時爆発エミッター
+	std::unique_ptr<EmitterGroup> clearExplosiveEmitter_;
 
 	std::unique_ptr<Shadow> shadow_;
 

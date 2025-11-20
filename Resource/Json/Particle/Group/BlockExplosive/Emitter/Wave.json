@@ -16,7 +16,7 @@
             2
         ],
         "easingStrength": [
-            10.0
+            8.0
         ],
         "endColor": [
             1.0,
@@ -58,7 +58,7 @@
             0.0
         ]
     },
-    "frequency": 0.10000000149011612,
+    "frequency": 0.0,
     "isBillboard": true,
     "isInfinity": false,
     "isLoop": false,
@@ -98,7 +98,7 @@
         "startNum": [
             0.0,
             0.0,
-            0.0
+            1.0
         ],
         "startRandomRange": [
             0.0,
@@ -185,7 +185,7 @@
             2
         ],
         "easingStrength": [
-            13.0
+            12.0
         ],
         "endNum": [
             6.0,

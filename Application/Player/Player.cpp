@@ -340,6 +340,17 @@ void Player::Update() {
 	}
 }
 
+void Player::TransformUpdate() {
+
+	core_->Update();
+
+	rightWing_->Update();
+
+	leftWing_->Update();
+
+	shadow_->Update(core_->GetWorldTransform().translate_);
+}
+
 ///=====================================================/// 
 /// 描画
 ///=====================================================///
