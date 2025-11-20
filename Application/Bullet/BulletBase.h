@@ -32,6 +32,11 @@ public:
 	virtual void Update() = 0;
 
 	/// <summary>
+	/// 座標のみ更新
+	/// </summary>
+	virtual void TransformUpdate() = 0;
+
+	/// <summary>
 	/// 描画
 	/// </summary>
 	virtual void Draw() = 0;

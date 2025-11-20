@@ -37,9 +37,16 @@ public:
 	void Update();
 
 	/// <summary>
+	/// 座標のみ更新
+	/// </summary>
+	void TransformUpdate();
+
+	/// <summary>
 	/// 描画
 	/// </summary>
 	void Draw();
+
+	void StartClearUpdate();
 
 	///-------------------------------------------/// 
 	/// クラス内処理関数
@@ -103,6 +110,8 @@ private:
 
 	//スポーン座標オフセット
 	Vector3 spawnOffset_;
+
+	bool isSpawn_;
 
 public:
 

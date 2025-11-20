@@ -1,0 +1,11 @@
+[
+    {
+        "name": "ClearExplosive"
+    },
+    {
+        "emitter": "Wave"
+    },
+    {
+        "emitter": "Flear"
+    }
+]

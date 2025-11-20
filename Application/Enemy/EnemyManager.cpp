@@ -46,6 +46,8 @@ void EnemyManager::Initialize(Camera* cameraPtr, BulletManager* bulletPtr, Playe
 
 	//オフセットの設定
 	spawnOffset_ = { 0.0f,4.0f,30.0f };
+
+	isSpawn_ = true;
 }
 
 ///=====================================================/// 
@@ -53,16 +55,28 @@ void EnemyManager::Initialize(Camera* cameraPtr, BulletManager* bulletPtr, Playe
 ///=====================================================///
 void EnemyManager::Update() {
 
-	//スポーン更新
-	SpawnUpdate();
+	if (isSpawn_) {
 
-	//削除処理
-	DeleteEnemy();
+		//スポーン更新
+		SpawnUpdate();
+
+		//削除処理
+		DeleteEnemy();
+	}
 
 	for (auto& enemy : enemies_) {
 
 		//エネミーの更新
 		enemy->Update();
+	}
+}
+
+void EnemyManager::TransformUpdate() {
+
+	for (auto& enemy : enemies_) {
+
+		//エネミーの座標のみ更新
+		enemy->TransformUpdate();
 	}
 }
 
@@ -75,6 +89,21 @@ void EnemyManager::Draw() {
 
 		//エネミーの描画
 		enemy->Draw();
+	}
+}
+
+void EnemyManager::StartClearUpdate() {
+
+	isSpawn_ = false;
+
+	for (auto& enemy : enemies_) {
+
+		enemy->EmitClearExplosive();
+
+		for (int i = 0; i < 4; i++) {
+
+			enemy->ClearUpdate();
+		}
 	}
 }
 

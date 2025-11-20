@@ -45,6 +45,12 @@ void Ground::Update() {
 	object_->GetModel()->SetUVTransform((uvScaleMatrix * uvRotateMatrix) * uvTransformMatrix);
 }
 
+void Ground::TransformUpdate() {
+
+	// オブジェクトの座標のみ更新
+	object_->Update();
+}
+
 void Ground::Draw() {
 
 	// オブジェクトの描画

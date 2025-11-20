@@ -76,6 +76,11 @@ public:
 	/// </summary>
 	void StartAnimation();
 
+	/// <summary>
+	/// クリア時のアニメーション
+	/// </summary>
+	void ClearAnimation();
+
 	///-------------------------------------------/// 
 	/// メンバ変数
 	///-------------------------------------------///
@@ -102,6 +107,12 @@ private:
 	//グラウンドマネージャー
 	std::unique_ptr<GroundManager> groundManager_;
 
+	//衝撃波エミッター(左)
+	std::unique_ptr<EmitterGroup> shockWaveLeftEmitter_;
+
+	//衝撃波エミッター(右)
+	std::unique_ptr<EmitterGroup> shockWaveRightEmitter_;
+
 	//ライン描画の地面
 	std::unique_ptr<LineGround> lineGround_;
 
@@ -111,14 +122,36 @@ private:
 	//ゲームオーバースプライト
 	std::unique_ptr<Object2D> gameOverSprite_;
 
-	//スペースキー
-	std::unique_ptr<Object2D> spaceKeySprite_;
+	//ゲームオーバースペーススプライト
+	std::unique_ptr<Object2D> gameOverSpaceSprite_;
 
-	//左矢印
-	std::unique_ptr<Object2D> leftArrowSprite_;
+	//ゲームオーバー左矢印スプライト
+	std::unique_ptr<Object2D> gameOverLeftArrowSprite_;
 
-	//右矢印
-	std::unique_ptr<Object2D> rightArrowSprite_;
+	//ゲームオーバー右矢印スプライト
+	std::unique_ptr<Object2D> gameOverRightArrowSprite_;
+
+	//ゲームクリアスプライト
+	std::unique_ptr<Object2D> gameClearSprite_;
+
+	//ゲームクリアスペーススプライト
+	std::unique_ptr<Object2D> gameClearSpaceSprite_;
+
+	//ゲームクリア左矢印スプライト
+	std::unique_ptr<Object2D> gameClearLeftArrowSprite_;
+
+	//ゲームクリア右矢印スプライト
+	std::unique_ptr<Object2D> gameClearRightArrowSprite_;
+
+	Vector2 spaceKeyPos_;
+
+	Vector2 spaceKeySize_;
+
+	float arrowLength_;
+
+	float arrowTimer_;
+
+	float timerDirection_;
 
 	//アニメーションのタイマー
 	float timer_;
@@ -127,11 +160,18 @@ private:
 	int animNum_;
 
 	//キーフレーム
-	std::vector<AnimPoint> animPoints_;
+	std::vector<AnimPoint> startAnimPoints_;
+
+	std::vector<AnimPoint> clearAnimPoints_;
 
 	//スタート時の演出をするかのフラグ
 	bool isStart_;
 
 	//ゲームオーバーになったかのフラグ
 	bool isGameOver_;
+
+	//クリアになったかのフラグ
+	bool isClear_;
+
+	bool isClearAnim_;
 };

@@ -83,7 +83,7 @@
             2
         ],
         "easingStrength": [
-            13.0
+            12.0
         ],
         "endNum": [
             0.0,
@@ -98,7 +98,7 @@
         "startNum": [
             0.0,
             0.0,
-            0.0
+            1.0
         ],
         "startRandomRange": [
             0.0,
