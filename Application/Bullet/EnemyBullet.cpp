@@ -8,6 +8,20 @@ EnemyBullet::~EnemyBullet() {
 
 void EnemyBullet::Initialize(Vector3 pos, Vector3 direction) {
 
+	/// === パラメータの設定 === ///
+
+	//大きさの設定
+	size_ = 0.5f;
+
+	//移動速度の設定
+	speed_ = 0.5f;
+
+	//移動量の設定
+	velocity_ = direction * speed_;
+
+	//最大寿命の設定
+	lifeTimeMax_ = 2.0f;
+
 	/// === オブジェクトの生成 === ///
 
 	//生成
@@ -20,7 +34,7 @@ void EnemyBullet::Initialize(Vector3 pos, Vector3 direction) {
 	object_->GetWorldTransform().translate_ = pos;
 
 	//サイズの設定
-	object_->GetWorldTransform().scale_ = { 0.5f,0.5f,0.5f };
+	object_->GetWorldTransform().scale_ = { size_,size_,size_ };
 
 	//モデルの設定
 	object_->SetModel("Sphere");
@@ -37,18 +51,7 @@ void EnemyBullet::Initialize(Vector3 pos, Vector3 direction) {
 	collider_->SetTag(Collider::Tag::ENEMYBULLET);
 
 	//大きさの設定
-	collider_->SetRadius(0.5f);
-
-	/// === 他変数の設定 === ///
-
-	//移動速度の設定
-	speed_ = 0.5f;
-
-	//移動量の設定
-	velocity_ = direction * speed_;
-
-	//最大寿命の設定
-	lifeTimeMax_ = 2.0f;
+	collider_->SetRadius(size_);
 }
 
 void EnemyBullet::Update() {

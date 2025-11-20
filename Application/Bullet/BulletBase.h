@@ -49,6 +49,9 @@ protected:
 	//オブジェクト
 	std::unique_ptr<Object3D> object_ = nullptr;
 
+	//大きさ
+	float size_ = 1.0f;
+
 	//移動速度
 	float speed_ = 0.0f;
 

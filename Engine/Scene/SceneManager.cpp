@@ -10,7 +10,7 @@
 #include "Scene/ParticleEditorScene.h"
 
 ///=====================================================/// 
-/// シングルトンインスタンス
+/// SceneManagerのシングルトンインスタンスを取得
 ///=====================================================///
 SceneManager* SceneManager::GetInstance() {
 	static SceneManager instance;
@@ -18,7 +18,7 @@ SceneManager* SceneManager::GetInstance() {
 }
 
 ///=====================================================/// 
-/// 初期化
+/// 現在設定されているシーンの初期化処理を実行
 ///=====================================================///
 void SceneManager::Initialize() {
 
@@ -31,7 +31,7 @@ void SceneManager::Initialize() {
 }
 
 ///=====================================================/// 
-/// 更新処理
+/// 現在設定されているシーンの更新処理を実行
 ///=====================================================///
 void SceneManager::Update() {
 
@@ -45,7 +45,7 @@ void SceneManager::Update() {
 }
 
 ///=====================================================/// 
-/// 描画処理
+/// 現在設定されているシーンの描画処理を実行
 ///=====================================================///
 void SceneManager::Draw() {
 
@@ -59,7 +59,7 @@ void SceneManager::Draw() {
 }
 
 ///=====================================================/// 
-/// ImGui処理
+/// 現在設定されているシーンのImGui処理を実行
 ///=====================================================///
 void SceneManager::ImGui() {
 
@@ -73,12 +73,14 @@ void SceneManager::ImGui() {
 }
 
 ///=====================================================/// 
-/// シーンの変更
+/// 現在のシーンを指定された種類の新しいシーンに切り替える
 ///=====================================================///
 void SceneManager::ChangeScene(SceneType sceneType) {
 
+	//コライダーをすべて破棄
 	ColliderManager::GetInstance()->ClearColliders();
 
+	//シーンがすでにある場合は終了処理を実行
 	if (currentScene_) {
 
 		BaseScene* preScene = currentScene_.get();
@@ -94,7 +96,7 @@ void SceneManager::ChangeScene(SceneType sceneType) {
 }
 
 ///=====================================================/// 
-/// シーンの生成
+/// 指定された種類に応じたシーンオブジェクトを生成して返す
 ///=====================================================///
 std::unique_ptr<BaseScene> SceneManager::CreateScene(SceneType sceneType) {
 
@@ -114,6 +116,7 @@ std::unique_ptr<BaseScene> SceneManager::CreateScene(SceneType sceneType) {
 
 	case SceneType::kParticleEditor:
 
+		//パーティクルエディターシーン
 		return std::make_unique<ParticleEditorScene>();
 
 	default:
