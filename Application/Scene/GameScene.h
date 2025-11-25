@@ -143,6 +143,8 @@ private:
 	//ゲームクリア右矢印スプライト
 	std::unique_ptr<Object2D> gameClearRightArrowSprite_;
 
+	std::unique_ptr<Object2D> helpSprite_;
+
 	Vector2 spaceKeyPos_;
 
 	Vector2 spaceKeySize_;

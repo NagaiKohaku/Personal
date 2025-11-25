@@ -62,8 +62,8 @@
     "isBillboard": true,
     "isInfinity": false,
     "isLoop": false,
-    "lifeTime": 3.0,
-    "lifeTimeRandomRange": 0.0,
+    "lifeTime": 10.0,
+    "lifeTimeRandomRange": 10.0,
     "maxCount": 32,
     "modelFileName": "",
     "modelName": "Plane",
@@ -71,8 +71,8 @@
     "position": {
         "acceleration": [
             0.0,
-            -30.0,
-            60.0
+            -100.0,
+            -30.0
         ],
         "accelerationRandomRange": [
             0.0,
@@ -101,7 +101,7 @@
             0.0
         ],
         "startRandomRange": [
-            0.0,
+            1.5,
             0.0,
             0.0
         ],
@@ -110,13 +110,13 @@
         ],
         "velocity": [
             0.0,
-            10.0,
-            -20.0
+            30.0,
+            0.0
         ],
         "velocityRandomRange": [
-            7.0,
+            15.0,
             5.0,
-            0.0
+            20.0
         ]
     },
     "rotation": {

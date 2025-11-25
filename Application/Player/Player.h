@@ -139,6 +139,8 @@ private:
 
 	std::unique_ptr<EmitterGroup> destroyEmitter_;
 
+	std::unique_ptr<EmitterGroup> muzzleFlashEmitter_;
+
 	//コライダー
 	std::unique_ptr<SphereCollider> collider_ = nullptr;
 

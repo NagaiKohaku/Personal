@@ -95,6 +95,14 @@ void Player::Initialize(Camera* cameraPtr, BulletManager* bulletPtr) {
 
 	destroyEmitter_->GetWorldTransform().SetParent(&core_->GetWorldTransform());
 
+	muzzleFlashEmitter_ = std::make_unique<EmitterGroup>();
+
+	muzzleFlashEmitter_->Initialize(camera_);
+
+	muzzleFlashEmitter_->LoadEmitter("MuzzleFlash");
+
+	muzzleFlashEmitter_->GetWorldTransform().SetParent(&core_->GetWorldTransform());
+
 	shadow_ = std::make_unique<Shadow>();
 
 	shadow_->Initialize();
@@ -234,6 +242,14 @@ void Player::Initialize(Camera* cameraPtr) {
 
 	destroyEmitter_->GetWorldTransform().SetParent(&core_->GetWorldTransform());
 
+	muzzleFlashEmitter_ = std::make_unique<EmitterGroup>();
+
+	muzzleFlashEmitter_->Initialize(camera_);
+
+	muzzleFlashEmitter_->LoadEmitter("MuzzleFlash");
+
+	muzzleFlashEmitter_->GetWorldTransform().SetParent(&core_->GetWorldTransform());
+
 	shadow_ = std::make_unique<Shadow>();
 
 	shadow_->Initialize();
@@ -329,6 +345,8 @@ void Player::Update() {
 
 	destroyEmitter_->Update();
 
+	muzzleFlashEmitter_->Update();
+
 	shadow_->Update(core_->GetWorldTransform().translate_);
 
 	if (isMoveActive) {
@@ -375,6 +393,8 @@ void Player::Draw() {
 	explosiveEmitter_->Draw();
 
 	destroyEmitter_->Draw();
+
+	muzzleFlashEmitter_->Draw();
 
 	if (isMoveActive) {
 
@@ -630,6 +650,8 @@ void Player::TankAttack() {
 		//スペースキーが押されていたら
 		if (Input::GetInstance()->isPushKey(DIK_SPACE)) {
 
+			muzzleFlashEmitter_->Emit();
+
 			std::vector<Vector3> reticlePositions = lockOn_->GetLockOnReticlePos();
 
 			for(auto& pos : reticlePositions) {
@@ -661,6 +683,8 @@ void Player::JetAttack() {
 
 		//スペースキーが押されていたら
 		if (Input::GetInstance()->isPushKey(DIK_SPACE)) {
+
+			muzzleFlashEmitter_->Emit();
 
 			//オブジェクトからレティクルへの方向
 			Vector3 direction = lockOn_->GetMainReticlePos() - core_->GetWorldTransform().GetWorldTranslate();

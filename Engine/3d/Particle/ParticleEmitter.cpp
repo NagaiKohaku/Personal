@@ -329,6 +329,15 @@ void ParticleEmitter::Update() {
 				particle->currentTime += kDeltaTime;
 			}
 
+			//地面以下に行かないようにする
+			if (particle->transform.translate_.y <= 0.0f) {
+
+				particle->transform.translate_.y = 0.0f;
+
+				particle->positionPara.velocity.x = 0.0f;
+				particle->positionPara.velocity.z = -80.0f;
+			}
+
 			//パーティクルのワールド行列を更新
 			particle->transform.UpdateMatrix();
 

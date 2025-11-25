@@ -13,16 +13,16 @@
             0.0
         ],
         "easingState": [
-            2
+            0
         ],
         "easingStrength": [
-            4.0
+            0.0
         ],
         "endColor": [
             1.0,
-            0.250980406999588,
-            0.0,
-            0.0
+            1.0,
+            1.0,
+            0.9215686321258545
         ],
         "endRandomRange": [
             0.0,
@@ -32,8 +32,8 @@
         ],
         "startColor": [
             1.0,
-            0.25882354378700256,
-            0.0,
+            1.0,
+            1.0,
             1.0
         ],
         "startRandomRange": [
@@ -43,7 +43,7 @@
             0.0
         ],
         "updateState": [
-            2
+            0
         ],
         "velocity": [
             0.0,
@@ -62,12 +62,12 @@
     "isBillboard": true,
     "isInfinity": false,
     "isLoop": false,
-    "lifeTime": 3.0,
-    "lifeTimeRandomRange": 3.0,
-    "maxCount": 32,
+    "lifeTime": 2.0,
+    "lifeTimeRandomRange": 1.0,
+    "maxCount": 3,
     "modelFileName": "",
     "modelName": "Plane",
-    "name": "Flear",
+    "name": "Flash",
     "position": {
         "acceleration": [
             0.0,
@@ -88,12 +88,12 @@
         "endNum": [
             0.0,
             0.0,
-            0.0
+            1.0
         ],
         "endRandomRange": [
-            5.0,
-            5.0,
-            5.0
+            2.0,
+            2.0,
+            0.0
         ],
         "startNum": [
             0.0,
@@ -185,7 +185,7 @@
             2
         ],
         "easingStrength": [
-            8.0
+            12.0
         ],
         "endNum": [
             0.0,
@@ -221,5 +221,5 @@
             0.0
         ]
     },
-    "textureFileName": "white_128x128.png"
+    "textureFileName": "circle.png"
 }

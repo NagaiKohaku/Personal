@@ -4,6 +4,8 @@
 #include "Player/Player.h"
 #include "ObjectManager.h"
 
+#include "Shake/Shake.h"
+
 #include "Math/Easing.h"
 #include "Math/Random.h"
 
@@ -66,6 +68,18 @@ void Enemy::Initialize(Camera* cameraPtr, BulletManager* bulletPtr, Player* play
 	//クリア時爆発エミッターのエミッター情報読み込み
 	clearExplosiveEmitter_->LoadEmitter("ClearExplosive");
 
+	destroyEmitter_ = std::make_unique<EmitterGroup>();
+
+	destroyEmitter_->Initialize(camera_);
+
+	destroyEmitter_->LoadEmitter("Destroy");
+
+	damageEmitter_ = std::make_unique<EmitterGroup>();
+
+	damageEmitter_->Initialize(camera_);
+
+	damageEmitter_->LoadEmitter("Damage");
+
 	shadow_ = std::make_unique<Shadow>();
 
 	shadow_->Initialize();
@@ -115,6 +129,8 @@ void Enemy::Initialize(Camera* cameraPtr, BulletManager* bulletPtr, Player* play
 	canRemove_ = false;
 
 	isRemove_ = false;
+
+	isInvisible_ = false;
 }
 
 ///=====================================================/// 
@@ -174,11 +190,26 @@ void Enemy::Update() {
 	//オブジェクトの更新
 	object_->Update();
 
+	Vector3 objectPos = object_->GetWorldTransform().translate_;
+
+	//エミッターを中心座標に移動させる
+	explosiveEmitter_->GetWorldTransform().translate_ = objectPos;
+
+	clearExplosiveEmitter_->GetWorldTransform().translate_ = objectPos;
+
+	destroyEmitter_->GetWorldTransform().translate_ = objectPos;
+
+	damageEmitter_->GetWorldTransform().translate_ = objectPos;
+
 	//エミッターの更新処理
 	explosiveEmitter_->Update();
 
 	//クリア時爆発エミッターの更新処理
 	clearExplosiveEmitter_->Update();
+
+	destroyEmitter_->Update();
+
+	damageEmitter_->Update();
 
 	//コライダーの処理
 	collider_->Update();
@@ -202,8 +233,11 @@ void Enemy::TransformUpdate() {
 ///=====================================================///
 void Enemy::Draw() {
 
-	//オブジェクトの描画
-	object_->Draw(LayerType::Object);
+	if (!isInvisible_) {
+
+		//オブジェクトの描画
+		object_->Draw(LayerType::Object);
+	}
 
 	//コライダーの描画
 	collider_->Draw();
@@ -213,6 +247,10 @@ void Enemy::Draw() {
 
 	//クリア時爆発エミッターの描画
 	clearExplosiveEmitter_->Draw();
+
+	destroyEmitter_->Draw();
+
+	damageEmitter_->Draw();
 
 	shadow_->Draw();
 }
@@ -259,6 +297,8 @@ void Enemy::IsCollision() {
 		//接触相手のタグが弱攻撃であれば
 		if (collider_->CheckHitTag(Collider::Tag::PLAYERBULLETLIGHT)) {
 
+			damageEmitter_->Emit();
+
 			hp_ -= 1;
 
 			//被弾揺れタイマーを初期化
@@ -267,32 +307,39 @@ void Enemy::IsCollision() {
 
 		//接触相手のタグが中攻撃であれば
 		if (collider_->CheckHitTag(Collider::Tag::PLAYERBULLETMEDIUM)) {
+
+			damageEmitter_->Emit();
+
 			hp_ -= 3;
 
 			//被弾揺れタイマーを初期化
 			shakeTimer_ = 0.0f;
 		}
 
-		if (hp_ == 0) {
+		if (hp_ <= 0) {
 
-			hp_--;
+			if (state_ != DEAD) {
 
-			//死亡状態に変更
-			state_ = DEAD;
+				hp_--;
 
-			//コライダーを削除
-			collider_->Remove();
+				//死亡状態に変更
+				state_ = DEAD;
 
-			//死亡時エミッターを起動
-			explosiveEmitter_->Emit();
+				//コライダーを削除
+				collider_->Remove();
 
-			//アニメーションタイマーの初期化
-			animTimer_ = 0.0f;
+				//死亡時エミッターを起動
+				explosiveEmitter_->Emit();
 
-			//被弾揺れタイマーを初期化
-			shakeTimer_ = 0.0f;
+				//アニメーションタイマーの初期化
+				animTimer_ = 0.0f;
 
-			ObjectManager::GetInstance()->AddKillCount();
+				//被弾揺れタイマーを初期化
+				shakeTimer_ = 0.0f;
+
+				ObjectManager::GetInstance()->AddKillCount();
+
+			}
 		}
 	}
 }
@@ -317,9 +364,6 @@ void Enemy::Dead() {
 
 	Vector3 objectPos = object_->GetWorldTransform().translate_;
 
-	//エミッターを中心座標に移動させる
-	explosiveEmitter_->GetWorldTransform().translate_ = objectPos;
-
 	//下方向に落ちていくように設定
 	targetPos_ = Lerp(objectPos, objectPos + Vector3(0.0f, -5.0f, -10.0f), animRatio);
 
@@ -329,6 +373,20 @@ void Enemy::Dead() {
 		Vector3(0.0f, -std::numbers::pi_v<float> *10.0f, std::numbers::pi_v<float> *10.0f),
 		animRatio
 	);
+
+	if (object_->GetWorldTransform().translate_.y <= 0.0f) {
+
+		if (!isInvisible_) {
+
+			isInvisible_ = true;
+
+			explosiveEmitter_->Stop();
+
+			destroyEmitter_->Emit();
+
+			Shake::GetInstance()->Start(0.5f, 0.5f);
+		}
+	}
 
 }
 
