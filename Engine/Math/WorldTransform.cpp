@@ -55,6 +55,8 @@ void WorldTransform::UpdateMatrix() {
 
 void WorldTransform::DisplayImGui() {
 
+#ifdef _USE_IMGUI
+
 	if (ImGui::TreeNode("WorldTransform")) {
 
 		Vector3 up = GetUp();
@@ -67,6 +69,8 @@ void WorldTransform::DisplayImGui() {
 
 		ImGui::TreePop();
 	}
+
+#endif // _USE_IMGUI
 
 }
 

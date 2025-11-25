@@ -249,6 +249,8 @@ void Object3D::Draw(LayerType layer) {
 ///=====================================================///
 void Object3D::DisplayImGui() {
 
+#ifdef _USE_IMGUI
+
 	Vector4 color = model_->GetColor();
 
 	float shininess = model_->GetShininess();
@@ -260,6 +262,9 @@ void Object3D::DisplayImGui() {
 
 	model_->SetColor(color);
 	model_->SetShininess(shininess);
+
+#endif // _USE_IMGUI
+
 }
 
 ///=====================================================/// 

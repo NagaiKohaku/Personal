@@ -539,6 +539,8 @@ void GameScene::Draw() {
 ///=====================================================///
 void GameScene::ImGui() {
 
+#ifdef _USE_IMGUI
+
 	//ImGuiを起動
 	ImGui::Begin("Scene");
 
@@ -555,6 +557,9 @@ void GameScene::ImGui() {
 
 	//ImGuiの終了
 	ImGui::End();
+
+#endif // _USE_IMGUI
+
 }
 
 ///=====================================================/// 

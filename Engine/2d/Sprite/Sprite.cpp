@@ -218,6 +218,8 @@ void Sprite::NextTexture() {
 ///=====================================================///
 void Sprite::DisplayImGui() {
 
+#ifdef _USE_IMGUI
+
 	ImGui::DragFloat2("Position", &translation_.x, 1.0f);
 	ImGui::SliderAngle("Rotation", &rotation_);
 	ImGui::DragFloat2("Size", &size_.x, 0.1f);
@@ -227,6 +229,8 @@ void Sprite::DisplayImGui() {
 	ImGui::Checkbox("IsFlipY", &isFlipY_);
 	ImGui::DragFloat2("TexLeftTop", &textureLeftTop_.x, 0.1f);
 	ImGui::DragFloat2("TexSize", &textureSize_.x, 0.1f);
+
+#endif // _USE_IMGUI
 
 }
 

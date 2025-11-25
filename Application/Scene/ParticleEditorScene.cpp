@@ -120,6 +120,8 @@ void ParticleEditorScene::Draw() {
 
 void ParticleEditorScene::ImGui() {
 
+#ifdef _USE_IMGUI
+
 	ImGui::Begin("ParticleEditor", nullptr, ImGuiWindowFlags_MenuBar);
 
 	if (ImGui::BeginMenuBar()) {
@@ -155,6 +157,9 @@ void ParticleEditorScene::ImGui() {
 	}
 
 	ImGui::End();
+
+#endif // _USE_IMGUI
+
 }
 
 void ParticleEditorScene::CreateGroup() {

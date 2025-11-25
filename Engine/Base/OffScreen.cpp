@@ -248,6 +248,8 @@ void OffScreen::DrawToSwapChain() {
 ///=====================================================///
 void OffScreen::ImGui() {
 
+#ifdef _USE_IMGUI
+
 	ImGui::Begin("OffScreen");
 
 	if (ImGui::BeginTabBar("OffScreenTab")) {
@@ -313,6 +315,9 @@ void OffScreen::ImGui() {
 	}
 
 	ImGui::End();
+
+#endif // _USE_IMGUI
+
 }
 
 ///=====================================================/// 

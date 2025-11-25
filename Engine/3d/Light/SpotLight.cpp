@@ -86,6 +86,8 @@ void SpotLight::SendDataForGPU() {
 ///=====================================================///
 void SpotLight::DisplayImGui() {
 
+#ifdef _USE_IMGUI
+
 	ImGui::Begin("SpotLight");
 
 	ImGui::ColorEdit4("Color", &lightData_->color.x);
@@ -105,4 +107,7 @@ void SpotLight::DisplayImGui() {
 	ImGui::DragFloat("FallOffStart", &lightData_->diffusionRate, 0.01f);
 
 	ImGui::End();
+
+#endif // _USE_IMGUI
+
 }

@@ -204,6 +204,8 @@ void Camera::Update() {
 ///=====================================================///
 void Camera::DisplayImGui() {
 
+#ifdef _USE_IMGUI
+
 	ImGui::Checkbox("DebugCamera", &isDebugCamera_);
 
 	if (isDebugCamera_) {
@@ -218,5 +220,7 @@ void Camera::DisplayImGui() {
 
 		ImGui::DragFloat("offsetZ", &offsetZ_, 0.1f);
 	}
+
+#endif // _USE_IMGUI
 
 }

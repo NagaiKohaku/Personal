@@ -63,6 +63,8 @@ void EmitterGroup::Draw() {
 ///=====================================================///
 void EmitterGroup::ImGui() {
 
+#ifdef _USE_IMGUI
+
 	std::string currentName = name_;
 
 	if (ImGui::BeginMenuBar()) {
@@ -125,6 +127,8 @@ void EmitterGroup::ImGui() {
 
 		ImGui::EndTabBar();
 	}
+
+#endif // _USE_IMGUI
 
 }
 

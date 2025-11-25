@@ -111,6 +111,8 @@ void Object2D::Draw(LayerType layer) {
 ///=====================================================///
 void Object2D::DisplayImGui() {
 
+#ifdef _USE_IMGUI
+
 	//スプライトの色を取得
 	Vector4 color = sprite_->GetColor();
 
@@ -128,6 +130,9 @@ void Object2D::DisplayImGui() {
 
 	//色情報を設定
 	sprite_->SetColor(color);
+
+#endif // _USE_IMGUI
+
 }
 
 ///=====================================================/// 

@@ -8,6 +8,7 @@
 #include "3d/Camera/Camera.h"
 #include "3d/Particle/ParticleCommon.h"
 #include "3d/Model/ModelManager.h"
+#include "3d/Collider/ColliderManager.h"
 
 #include "Math/MakeMatrixMath.h"
 #include "Math/Easing.h"
@@ -422,6 +423,8 @@ void ParticleEmitter::Draw(LayerType layer) {
 ///=====================================================///
 void ParticleEmitter::ImGui() {
 
+#ifdef _USE_IMGUI
+
 	std::string currentName = name_;
 
 	if (ImGui::BeginTabItem(name_.c_str())) {
@@ -690,6 +693,9 @@ void ParticleEmitter::ImGui() {
 
 		ImGui::EndTabItem();
 	}
+
+#endif // _USE_IMGUI
+
 }
 
 ///=====================================================/// 
@@ -1049,6 +1055,8 @@ void ParticleEmitter::UpdateParameter(Vector3& num, ParticleParameter& parameter
 ///=====================================================///
 void ParticleEmitter::ImGuiParameter(std::string labelName, EmitterParameter& parameter, UpdateState& updateState, EasingState& easingState, float& easingStrength) {
 
+#ifdef _USE_IMGUI
+
 	/// === 更新ステート === ///
 
 	const char* stateItems[] = { "StartAnimation","Velocity","Easing" };
@@ -1145,6 +1153,9 @@ void ParticleEmitter::ImGuiParameter(std::string labelName, EmitterParameter& pa
 
 		break;
 	}
+
+#endif // _USE_IMGUI
+
 }
 
 ///=====================================================/// 

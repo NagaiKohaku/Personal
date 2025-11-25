@@ -296,6 +296,8 @@ void TitleScene::Draw() {
 
 void TitleScene::ImGui() {
 
+#ifdef _USE_IMGUI
+
 	ImGui::Begin("TitleScene");
 
 	Vector4 color = titleSprite_->GetSprite()->GetColor();
@@ -305,6 +307,9 @@ void TitleScene::ImGui() {
 	titleSprite_->GetSprite()->SetColor(color);
 
 	ImGui::End();
+
+#endif // _USE_IMGUI
+
 }
 
 void TitleScene::Start() {
