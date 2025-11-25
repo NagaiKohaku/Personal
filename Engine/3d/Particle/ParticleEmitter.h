@@ -9,7 +9,6 @@
 #include "Math/AABB.h"
 #include "3d/Mesh/MeshBase.h"
 #include "3d/Model/Model.h"
-#include "3d/Collider/SphereCollider.h"
 
 
 #include "d3d12.h"
@@ -133,7 +132,6 @@ private:
 	//パーティクル
 	struct Particle {
 		WorldTransform transform;
-		std::unique_ptr<SphereCollider> collider;
 		Vector4 color;
 		ParticleParameter positionPara;
 		ParticleParameter rotationPara;
@@ -515,7 +513,4 @@ private:
 
 	//アクティブフラグ
 	bool isActive_;
-
-	//コライダーフラグ
-	bool isCollision_;
 };

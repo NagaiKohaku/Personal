@@ -97,6 +97,8 @@ void GameScene::Initialize() {
 
 	SpriteManager::GetInstance()->LoadSprite("GameClearArrow", "GameClearArrow");
 
+	SpriteManager::GetInstance()->LoadSprite("KillToTitle", "KillToTitle");
+
 	/// === ゲームオーバースプライトの生成 === ///
 
 	//テキストスプライトの生成
@@ -224,6 +226,16 @@ void GameScene::Initialize() {
 	gameClearRightArrowSprite_->SetTranslate({ spaceKeyPos_.x + spaceKeySize_.x / 2.0f + 64.0f,spaceKeyPos_.y });
 
 	gameClearRightArrowSprite_->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
+
+	helpSprite_ = std::make_unique<Object2D>();
+
+	helpSprite_->Initialize();
+
+	helpSprite_->SetSprite("KillToTitle");
+
+	helpSprite_->GetSprite()->SetAnchorPoint({ 0.5f,0.5f });
+
+	helpSprite_->SetTranslate({ 640.0f,360.0f });
 
 	/// === エミッターの生成 === ///
 
@@ -381,6 +393,8 @@ void GameScene::Update() {
 	gameClearLeftArrowSprite_->Update();
 	gameClearRightArrowSprite_->Update();
 
+	helpSprite_->Update();
+
 	//右衝撃波エミッターの更新
 	shockWaveRightEmitter_->Update();
 
@@ -419,7 +433,7 @@ void GameScene::Update() {
 		}
 	}
 
-	if (ObjectManager::GetInstance()->GetKillCount() >= 1) {
+	if (ObjectManager::GetInstance()->GetKillCount() >= 30) {
 
 		if (Fade::GetInstance()->GetState() != Fade::FADE_OUT && Fade::GetInstance()->GetState() != Fade::FADE_OUT_END) {
 
@@ -525,6 +539,11 @@ void GameScene::Draw() {
 	gameClearSpaceSprite_->Draw(LayerType::UI);
 	gameClearLeftArrowSprite_->Draw(LayerType::UI);
 	gameClearRightArrowSprite_->Draw(LayerType::UI);
+
+	if (!isClear_ && !isClearAnim_) {
+
+		helpSprite_->Draw(LayerType::UI);
+	}
 
 	//右衝撃波エミッターの描画
 	shockWaveRightEmitter_->Draw();

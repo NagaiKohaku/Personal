@@ -142,6 +142,10 @@ private:
 	//クリア時爆発エミッター
 	std::unique_ptr<EmitterGroup> clearExplosiveEmitter_;
 
+	std::unique_ptr<EmitterGroup> destroyEmitter_;
+
+	std::unique_ptr<EmitterGroup> damageEmitter_;
+
 	std::unique_ptr<Shadow> shadow_;
 
 	//行動状態
@@ -176,6 +180,9 @@ private:
 
 	//削除中フラグ
 	bool isRemove_;
+
+	//透明化フラグ
+	bool isInvisible_;
 
 	//アニメーションタイマー
 	float animTimer_;
