@@ -99,6 +99,9 @@ void GroundManager::Draw() {
 }
 
 void GroundManager::ImGui() {
+
+#ifdef _USE_IMGUI
+
 	ImGui::Begin("GroundManager");
 
 	for (auto& building : building_) {
@@ -110,4 +113,7 @@ void GroundManager::ImGui() {
 	}
 
 	ImGui::End();
+
+#endif // _USE_IMGUI
+
 }

@@ -51,6 +51,8 @@ void DirectionalLight::SendDataForGPU() {
 ///=====================================================///
 void DirectionalLight::DisplayImGui() {
 
+#ifdef _USE_IMGUI
+
 	ImGui::Begin("DirectionalLight");
 
 	ImGui::ColorEdit4("Color", &lightData_->color.x);
@@ -60,4 +62,7 @@ void DirectionalLight::DisplayImGui() {
 	ImGui::DragFloat("Intensity", &lightData_->intensity, 0.01f);
 
 	ImGui::End();
+
+#endif // _USE_IMGUI
+
 }

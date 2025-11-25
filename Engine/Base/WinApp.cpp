@@ -23,10 +23,14 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hwnd, UINT msg
 ///=====================================================///
 LRESULT CALLBACK WinApp::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
 
+#ifdef _USE_IMGUI
+
 	//ImGuiのウィンドウを操作するときに通る
 	if (ImGui_ImplWin32_WndProcHandler(hwnd, msg, wparam, lparam)) {
 		return true;
 	}
+
+#endif // _USE_IMGUI
 
 	//メッセージに応じてゲーム固有の処理を行う
 	switch (msg) {

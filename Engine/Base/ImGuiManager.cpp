@@ -16,6 +16,8 @@ ImGuiManager* ImGuiManager::GetInstance() {
 ///=====================================================///
 void ImGuiManager::Initialize() {
 
+#ifdef _USE_IMGUI
+
 	HRESULT hr;
 
 	//ウィンドウ管理のインスタンスを取得
@@ -61,12 +63,17 @@ void ImGuiManager::Initialize() {
 
 	//日本語フォントをデフォルトにする
 	io.FontDefault = japaneseFont;
+
+#endif // _USE_IMGUI
+
 }
 
 ///=====================================================/// 
 /// ImGuiのリソースを解放し、終了処理を行う
 ///=====================================================///
 void ImGuiManager::Finalize() {
+
+#ifdef _USE_IMGUI
 
 	//ImGuiの終了処理
 	ImGui_ImplDX12_Shutdown();
@@ -75,12 +82,17 @@ void ImGuiManager::Finalize() {
 
 	//デスクリプタヒープの解放
 	srvHeap_.Reset();
+
+#endif // _USE_IMGUI
+
 }
 
 ///==========================================================/// 
 /// mGuiの描画コマンドを生成し、DirectX 12のコマンドリストに積み込む
 ///==========================================================///
 void ImGuiManager::Draw() {
+
+#ifdef _USE_IMGUI
 
 	ID3D12GraphicsCommandList* commandList = directXCommon_->GetCommandList();
 
@@ -90,6 +102,9 @@ void ImGuiManager::Draw() {
 
 	//実際のcommandListのImGuiの描画コマンドを積む
 	ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), commandList);
+
+#endif // _USE_IMGUI
+
 }
 
 ///=====================================================/// 
@@ -97,10 +112,14 @@ void ImGuiManager::Draw() {
 ///=====================================================///
 void ImGuiManager::Begin() {
 
+#ifdef _USE_IMGUI
+
 	//ここからImGuiのフレームが始まる
 	ImGui_ImplDX12_NewFrame();
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
+
+#endif // _USE_IMGUI
 
 }
 
@@ -109,7 +128,11 @@ void ImGuiManager::Begin() {
 ///=====================================================///
 void ImGuiManager::End() {
 
+#ifdef _USE_IMGUI
+
 	//ImGuiの内部コマンドを生成する
 	ImGui::Render();
+
+#endif // _USE_IMGUI
 
 }

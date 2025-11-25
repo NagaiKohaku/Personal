@@ -66,6 +66,8 @@ void PointLight::SendDataForGPU() {
 ///=====================================================///
 void PointLight::DisplayImGui() {
 
+#ifdef _USE_IMGUI
+
 	ImGui::Begin("PointLight");
 
 	ImGui::ColorEdit4("Color", &lightData_->color.x);
@@ -79,4 +81,7 @@ void PointLight::DisplayImGui() {
 	ImGui::DragFloat("Decay", &lightData_->decay, 0.01f);
 
 	ImGui::End();
+
+#endif // _USE_IMGUI
+
 }
