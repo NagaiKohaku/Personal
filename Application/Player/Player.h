@@ -50,20 +50,7 @@ public:
 	/// - 攻撃間隔・移動速度・回転強度など各種パラメータを設定します。  
 	/// - 初期座標を設定し、移動と生存状態を初期化します。  
 	/// </remarks>
-	void Initialize(Camera* cameraPtr, BulletManager* bulletPtr);
-
-	/// <summary>
-	/// プレイヤーを初期化します。
-	/// </summary>
-	/// <remarks>
-	/// - 弾マネージャなしバージョン
-	/// - カメラ参照とレベルデータを取得します。  
-	/// - 本体・左右ウィングを生成し、階層を構築します。  
-	/// - トレイル・爆発・破壊・マズルフラッシュなど各種エミッターを生成します。  
-	/// - 影、移動・回転関連のパラメータ、初期位置などを設定します。  
-	/// - 移動・生存状態を初期化します。  
-	/// </remarks>
-	void Initialize(Camera* cameraPtr);
+	void Initialize(Camera* cameraPtr, BulletManager* bulletPtr, bool isMoveActive);
 
 	/// <summary>
 	/// プレイヤーの状態を更新します。
@@ -276,7 +263,7 @@ private:
 	Vector3 velocity_;
 
 	//移動アクティブフラグ
-	bool isMoveActive;
+	bool isMoveActive_;
 
 	//死亡フラグ
 	bool isDead_;
@@ -323,5 +310,5 @@ public:
 	/// 移動アクティブフラグを設定
 	/// </summary>
 	/// <param name="flag">移動アクティブフラグ</param>
-	void SetIsMoveActive(bool flag) { isMoveActive = flag; }
+	void SetIsMoveActive(bool flag) { isMoveActive_ = flag; }
 };

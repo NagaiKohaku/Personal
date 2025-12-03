@@ -21,7 +21,7 @@
 ///=====================================================/// 
 /// プレイヤーを初期化
 ///=====================================================///
-void Player::Initialize(Camera* cameraPtr, BulletManager* bulletPtr) {
+void Player::Initialize(Camera* cameraPtr, BulletManager* bulletPtr, bool isMoveActive) {
 
 	//カメラポインタを取得
 	camera_ = cameraPtr;
@@ -171,136 +171,9 @@ void Player::Initialize(Camera* cameraPtr, BulletManager* bulletPtr) {
 	core_->GetWorldTransform().translate_ = initialPos_;
 
 	//移動アクティブフラグの設定
-	isMoveActive = true;
+	isMoveActive_ = isMoveActive;
 
 	//死亡フラグの設定
-	isDead_ = false;
-}
-
-///=====================================================/// 
-/// プレイヤーを初期化（弾マネージャなし）
-///=====================================================///
-void Player::Initialize(Camera* cameraPtr) {
-
-	camera_ = cameraPtr;
-
-	//レベルデータローダーを取得
-	levelDataLoader_ = LevelDataLoader::GetInstance();
-
-	objectData_ = levelDataLoader_->PickObjectData("PlayerObject/JetPlayer.json", ObjectType::PLAYER);
-
-	/// === オブジェクトの生成 === ///
-
-	//コアオブジェクトの生成
-	core_ = std::make_unique<Object3D>();
-
-	core_->Initialize(objectData_[0]);
-
-	//右ウィングオブジェクトの生成
-	rightWing_ = std::make_unique<Object3D>();
-
-	rightWing_->Initialize(objectData_[1]);
-
-	rightWing_->GetWorldTransform().SetParent(&core_->GetWorldTransform());
-
-	//左ウィングオブジェクトの生成
-	leftWing_ = std::make_unique<Object3D>();
-
-	leftWing_->Initialize(objectData_[2]);
-
-	leftWing_->GetWorldTransform().SetParent(&core_->GetWorldTransform());
-
-	//右トレイルエミッターの生成
-	rightTrail_ = std::make_unique<EmitterGroup>();
-
-	rightTrail_->Initialize(camera_);
-
-	rightTrail_->LoadEmitter("Trail");
-
-	rightTrail_->GetWorldTransform().SetParent(&rightWing_->GetWorldTransform());
-
-	rightTrail_->Emit();
-
-	//左トレイルエミッターの生成
-	leftTrail_ = std::make_unique<EmitterGroup>();
-
-	leftTrail_->Initialize(camera_);
-
-	leftTrail_->LoadEmitter("Trail");
-
-	leftTrail_->GetWorldTransform().SetParent(&leftWing_->GetWorldTransform());
-
-	leftTrail_->Emit();
-
-	//死亡時エミッターの生成
-	explosiveEmitter_ = std::make_unique<EmitterGroup>();
-
-	explosiveEmitter_->Initialize(camera_);
-
-	explosiveEmitter_->LoadEmitter("PlayerExplosive");
-
-	explosiveEmitter_->GetWorldTransform().SetParent(&core_->GetWorldTransform());
-
-	//破壊時エミッターの生成
-	destroyEmitter_ = std::make_unique<EmitterGroup>();
-
-	destroyEmitter_->Initialize(camera_);
-
-	destroyEmitter_->LoadEmitter("Destroy");
-
-	destroyEmitter_->GetWorldTransform().SetParent(&core_->GetWorldTransform());
-
-	//マズルフラッシュエミッターの生成
-	muzzleFlashEmitter_ = std::make_unique<EmitterGroup>();
-
-	muzzleFlashEmitter_->Initialize(camera_);
-
-	muzzleFlashEmitter_->LoadEmitter("MuzzleFlash");
-
-	muzzleFlashEmitter_->GetWorldTransform().SetParent(&core_->GetWorldTransform());
-
-	//影オブジェクトの生成
-	shadow_ = std::make_unique<Shadow>();
-
-	shadow_->Initialize();
-
-	/// === 他変数の設定 === ///
-
-	//攻撃タイマーの設定
-	attackTimer_ = 0.0f;
-
-	//戦車状態の攻撃間隔
-	tankAttackInterval_ = 1.0f;
-
-	//飛行機状態の攻撃間隔
-	jetAttackInterval_ = 0.1f;
-
-	//移動速度の設定
-	moveSpeed_ = 1.0f;
-
-	//移動強度の設定
-	moveStrength_ = 10.0f;
-
-	//回転強度の設定
-	rotStrength_ = 10.0f;
-
-	//移動範囲の設定
-	moveRange_ = { 7.0f,4.0f,1.0f };
-
-	//戦車状態の回転範囲の設定
-	driveRotRange_ = { 0.0f,0.5f,0.0f };
-
-	//飛行機状態の回転範囲の設定
-	flightRotRange_ = { 0.5f,0.0f,0.3f };
-
-	//初期座標の設定
-	initialPos_ = { 0.0f,2.0f,0.0f };
-
-	//座標の設定
-	core_->GetWorldTransform().translate_ = initialPos_;
-
-	isMoveActive = false;
-
 	isDead_ = false;
 }
 
@@ -328,7 +201,7 @@ void Player::Update() {
 	}
 
 	//移動可能であれば
-	if (isMoveActive) {
+	if (isMoveActive_) {
 
 		//攻撃
 		Attack();
@@ -372,7 +245,7 @@ void Player::Update() {
 	shadow_->Update(core_->GetWorldTransform().translate_);
 
 	//移動可能であれば
-	if (isMoveActive) {
+	if (isMoveActive_) {
 
 		//コライダーの更新
 		collider_->Update();
@@ -437,7 +310,7 @@ void Player::Draw() {
 	muzzleFlashEmitter_->Draw();
 
 	//移動可能であれば
-	if (isMoveActive) {
+	if (isMoveActive_) {
 
 		//コライダーの描画
 		collider_->Draw();
@@ -455,7 +328,7 @@ void Player::Move() {
 	//移動量をリセット
 	velocity_ = { 0.0f,0.0f,0.0f };
 
-	if (isMoveActive) {
+	if (isMoveActive_) {
 
 		//Wキーが押されたら上方向に移動
 		if (Input::GetInstance()->isPushKey(DIK_W)) {
@@ -770,7 +643,7 @@ void Player::IsCollision() {
 		if (collider_->CheckHitTag(Collider::Tag::ENEMYBULLET)) {
 
 			//移動不可にする
-			isMoveActive = false;
+			isMoveActive_ = false;
 
 			//死亡フラグを立てる
 			isDead_ = true;
