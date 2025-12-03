@@ -3,7 +3,7 @@
 #include "Math/Easing.h"
 
 ///=====================================================/// 
-/// 初期化
+/// カメラをプレイヤーに追従させるために初期化
 ///=====================================================///
 void FollowCamera::Initialize(Camera* camera, Player* player) {
 
@@ -22,33 +22,41 @@ void FollowCamera::Initialize(Camera* camera, Player* player) {
 	//追尾強度を設定
 	followStrength_ = 10.0f;
 
+	//傾き強度を設定
+	slopeStrength_ = 25.0f;
+
+	//プレイヤーとカメラの距離を設定
+	distanceToPlayer_ = 20.0f;
+
 	//カメラの座標を設定
 	camera_->GetWorldTransform().translate_ = offset_;
 
-	camera_->SetOffsetZ(-20.0f);
+	//カメラの距離を設定
+	camera_->SetOffsetZ(-distanceToPlayer_);
 }
 
 ///=====================================================/// 
-/// 更新
+/// プレイヤーにカメラを追従させるために毎フレーム更新
 ///=====================================================///
 void FollowCamera::Update() {
 
+	//デバッグカメラであれば追従処理を行わない
 	if (camera_->IsDebugCamera()) {
 		return;
 	}
 
+	//無効化されていたら処理を行わない
 	if (!isActive_) {
 		return;
 	}
+
+	/// === プレイヤーの方向を計算 === ///
 
 	//カメラの現在座標
 	Vector3 cameraPos = camera_->GetWorldTransform().GetWorldTranslate();
 
 	//プレイヤーの現在座標
 	Vector3 playerPos = player_->GetWorldPos();
-
-	//プレイヤーの移動量
-	Vector3 playerVelocity = Normalize(player_->GetVelocity());
 
 	//カメラからプレイヤーへの方向
 	Vector3 direction = Normalize(playerPos - cameraPos);
@@ -60,17 +68,22 @@ void FollowCamera::Update() {
 		0.0f
 	};
 
-	//プレイヤーの傾き
-	Vector3 playerSlope = {
-		playerVelocity.y * -0.25f,
-		0.0f,
-		playerVelocity.x * -0.25f
-	};
+	/// === プレイヤーの移動方向からカメラの傾きを計算 === ///
 
-	//プレイヤーが戦車状態であれば傾きはなし
-	if (player_->GetMoveState() == Player::MOVESTATE::TANK) {
+	//プレイヤーの移動量
+	Vector3 playerVelocity = Normalize(player_->GetVelocity());
 
-		playerSlope = { 0.0f,0.0f,0.0f };
+	//カメラの傾き
+	Vector3 cameraSlope = { 0.0f,0.0f,0.0f };
+
+	//プレイヤーが戦闘機状態の時のみ傾きを計算
+	if (player_->GetMoveState() == Player::MOVESTATE::JET) {
+
+		cameraSlope = {
+			playerVelocity.y * -(slopeStrength_ / 100.0f),
+			0.0f,
+			playerVelocity.x * -(slopeStrength_ / 100.0f)
+		};
 	}
 
 	//カメラの座標を設定
@@ -79,7 +92,7 @@ void FollowCamera::Update() {
 	//カメラの角度を線形補間で計算
 	camera_->GetWorldTransform().rotate_ = Lerp(
 		camera_->GetWorldTransform().rotate_,
-		(toPlayerRot + playerSlope) * (followRange_ / 100.0f),
+		(toPlayerRot + cameraSlope) * (followRange_ / 100.0f),
 		followStrength_ / 100.0f
 	);
 

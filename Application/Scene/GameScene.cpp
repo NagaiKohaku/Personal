@@ -528,6 +528,17 @@ void GameScene::Draw() {
 	//グラウンドマネージャーの描画
 	groundManager_->Draw();
 
+	if (!isClear_ && !isClearAnim_) {
+
+		helpSprite_->Draw(LayerType::UI);
+	}
+
+	//右衝撃波エミッターの描画
+	shockWaveRightEmitter_->Draw();
+
+	//左衝撃波エミッターの描画
+	shockWaveLeftEmitter_->Draw();
+
 	//ゲームオーバースプライトの更新
 	gameOverSprite_->Draw(LayerType::UI);
 	gameOverSpaceSprite_->Draw(LayerType::UI);
@@ -539,17 +550,6 @@ void GameScene::Draw() {
 	gameClearSpaceSprite_->Draw(LayerType::UI);
 	gameClearLeftArrowSprite_->Draw(LayerType::UI);
 	gameClearRightArrowSprite_->Draw(LayerType::UI);
-
-	if (!isClear_ && !isClearAnim_) {
-
-		helpSprite_->Draw(LayerType::UI);
-	}
-
-	//右衝撃波エミッターの描画
-	shockWaveRightEmitter_->Draw();
-
-	//左衝撃波エミッターの描画
-	shockWaveLeftEmitter_->Draw();
 
 }
 

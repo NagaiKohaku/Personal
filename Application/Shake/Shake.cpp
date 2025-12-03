@@ -5,17 +5,17 @@
 #include "Math/MakeMatrixMath.h"
 #include "Math/Matrix4x4.h"
 
-/// <summary>
-/// シングルトンインスタンスの取得
-/// </summary>
+///=====================================================/// 
+/// Shakeのシングルトンインスタンスを取得
+///=====================================================///
 Shake* Shake::GetInstance() {
 	static Shake instance;
 	return &instance;
 }
 
-/// <summary>
-/// 初期化
-/// </summary>
+///=====================================================/// 
+/// シェイク処理用の初期化
+///=====================================================///
 void Shake::Initialize() {
 
 	transform_.Initialize();
@@ -23,9 +23,9 @@ void Shake::Initialize() {
 	timer_ = 0.0f;
 }
 
-/// <summary>
-/// 更新
-/// </summary>
+///=====================================================/// 
+/// カメラに対してシェイク効果を適用する
+///=====================================================///
 void Shake::Update() {
 
 	//カメラがなければスキップ
@@ -70,9 +70,9 @@ void Shake::Update() {
 	camera_->SetViewProjectionMatrix(viewProjectionMatrix);
 }
 
-/// <summary>
-/// シェイク開始
-/// </summary>
+///=====================================================/// 
+/// シェイクを開始し初期パラメータを設定する
+///=====================================================///
 void Shake::Start(float num, float time) {
 
 	timer_ = 0.0f;

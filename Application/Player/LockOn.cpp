@@ -8,14 +8,17 @@
 
 #include "algorithm"
 
+///=====================================================/// 
+/// ロックオンシステムを初期化
+///=====================================================///
 void LockOn::Initialize(Camera* cameraPtr, Player* playerPtr) {
 
+	//引数の取得
 	camera_ = cameraPtr;
 
 	player_ = playerPtr;
 
 	//メインレティクルの生成
-
 	mainReticle_ = std::make_unique<Reticle>();
 
 	mainReticle_->Initialize(camera_);
@@ -35,18 +38,33 @@ void LockOn::Initialize(Camera* cameraPtr, Player* playerPtr) {
 	//ロックオンレティクルを生成
 	for (int i = 0; i < maxLockOnNum_; i++) {
 
+		//ロックオンレティクルの生成
 		std::unique_ptr<LockOnReticle> lockOnReticle = std::make_unique<LockOnReticle>();
 
+		//構成要素の初期化
+
+		//レティクルの生成
 		lockOnReticle->reticle = std::make_unique<Reticle>();
+
 		lockOnReticle->reticle->Initialize(camera_);
+
+		//ターゲットの初期化
 		lockOnReticle->targetEnemy = nullptr;
+
+		//前回ターゲットの初期化
 		lockOnReticle->preTargetEnemy = nullptr;
+
+		//アクティブフラグの初期化
 		lockOnReticle->isActive = false;
 
+		//リストに追加
 		lockOnReticles_.emplace_back(std::move(lockOnReticle));
 	}
 }
 
+///=====================================================/// 
+/// ロックオンシステムを更新
+///=====================================================///
 void LockOn::Update() {
 
 	/// === メインレティクルの更新 === ///
@@ -94,31 +112,40 @@ void LockOn::Update() {
 	//前回と同じ敵が割り当てられるなら優先的に割り当てる
 	for (auto& lockOnReticle : lockOnReticles_) {
 
+		//アクティブフラグの初期化
 		lockOnReticle->isActive = false;
 
 		for(auto& enemy : lockedEnemies_) {
 
+			//前回と同じ敵なら
 			if (lockOnReticle->preTargetEnemy == enemy.enemy) {
 
+				//ターゲットに敵を設定
 				lockOnReticle->targetEnemy = enemy.enemy;
 
+				//ターゲットの有効化
 				enemy.isAssigned = true;
 			}
 		}
 	}
 
+	//未割り当ての敵を割り当てる
 	for(auto& enemy : lockedEnemies_) {
 
 		if (!enemy.isAssigned) {
 
 			for(auto& lockOnReticle : lockOnReticles_) {
 
+				//ターゲットが未設定なら
 				if (lockOnReticle->targetEnemy == nullptr) {
 
+					//ターゲットに敵を設定
 					lockOnReticle->targetEnemy = enemy.enemy;
 
+					//アニメーションタイマーをリセット
 					lockOnReticle->reticle->ResetAnimTimer();
 
+					//ターゲットの有効化
 					enemy.isAssigned = true;
 
 					break;
@@ -130,19 +157,23 @@ void LockOn::Update() {
 	//ロックオンレティクルの更新
 	for (auto& lockOnReticle : lockOnReticles_) {
 
+		//ターゲットが存在すれば
 		if (lockOnReticle->targetEnemy != nullptr) {
 
-			//ターゲット敵の座標
+			//ターゲットの座標
 			Vector3 targetPos = lockOnReticle->targetEnemy->GetWorldPos();
 
 			//ロックオンレティクルのターゲット座標を設定
 			lockOnReticle->reticle->SetTargetPos(targetPos);
 
+			//アクティブフラグを立てる
 			lockOnReticle->isActive = true;
 		}
 
+		//前回ターゲットの更新
 		lockOnReticle->preTargetEnemy = lockOnReticle->targetEnemy;
 
+		//ターゲットのリセット
 		lockOnReticle->targetEnemy = nullptr;
 
 		//ロックオンレティクルの更新
@@ -153,12 +184,18 @@ void LockOn::Update() {
 	lockedEnemies_.clear();
 }
 
+///=====================================================/// 
+/// メインおよびロックオンレティクルを描画
+///=====================================================///
 void LockOn::Draw() {
 
+	//メインレティクルの描画
 	mainReticle_->Draw();
 
+	//ロックオンレティクルの描画
 	for(auto& lockOnReticle : lockOnReticles_) {
 
+		//アクティブなら描画
 		if (lockOnReticle->isActive) {
 
 			lockOnReticle->reticle->Draw();
@@ -166,8 +203,12 @@ void LockOn::Draw() {
 	}
 }
 
+///=====================================================/// 
+/// 指定した敵をロックオン対象に追加
+///=====================================================///
 void LockOn::AddLockOnEnemy(Enemy* target) {
 
+	//既にロックされているなら何もしない
 	for(auto& enemy : lockedEnemies_) {
 		if (enemy.enemy == target) {
 			return;
@@ -179,13 +220,18 @@ void LockOn::AddLockOnEnemy(Enemy* target) {
 	newLockedEnemy.enemy = target;
 	newLockedEnemy.isAssigned = false;
 
+	//ターゲット情報をリストに追加
 	lockedEnemies_.emplace_back(newLockedEnemy);
 }
 
+///=====================================================/// 
+/// アクティブなロックオンレティクルの座標を取得
+///=====================================================///
 std::vector<Vector3> LockOn::GetLockOnReticlePos() {
 
 	std::vector<Vector3> reticlePositions;
 
+	//アクティブなロックオンレティクルの座標を取得
 	for (auto& lockOnReticle : lockOnReticles_) {
 
 		if (lockOnReticle->isActive) {
