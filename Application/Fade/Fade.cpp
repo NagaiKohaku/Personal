@@ -7,17 +7,17 @@
 #include <Math/Random.h>
 #include <Math/Easing.h>
 
-/// <summary>
-/// シングルトンインスタンスの取得
-/// </summary>
+///=====================================================/// 
+/// Fadeのシングルトンインスタンスを取得
+///=====================================================///
 Fade* Fade::GetInstance() {
 	static Fade instance;
 	return &instance;
 }
 
-/// <summary>
-/// 初期化
-/// </summary>
+///=====================================================/// 
+/// フェード処理に必要なスプライトやリソースを初期化
+///=====================================================///
 void Fade::Initialize() {
 
 	/// === テクスチャのロード === ///
@@ -28,19 +28,19 @@ void Fade::Initialize() {
 
 	/// === フェードに使うスプライトの生成 === ///
 
+	//リングスプライトの生成
 	for (int i = 0; i < 3; i++) {
 
 		CreateRingSprite();
 	}
 
-	/// === 円形のスプライトの生成 === ///
-
+	//円形スプライトの生成
 	CreateCircleSprite();
 }
 
-/// <summary>
-/// 更新
-/// </summary>
+///=====================================================/// 
+/// フェード処理の状態を毎フレーム更新
+///=====================================================///
 void Fade::Update() {
 
 	//フェードインの更新
@@ -78,9 +78,9 @@ void Fade::Update() {
 
 }
 
-/// <summary>
-/// 描画
-/// </summary>
+///=====================================================/// 
+/// 管理しているフェード用スプライトを画面に描画
+///=====================================================///
 void Fade::Draw() {
 
 	for (auto& fadeSprite : fadeSprites_) {
@@ -90,9 +90,9 @@ void Fade::Draw() {
 	}
 }
 
-/// <summary>
-/// フェードイン開始
-/// </summary>
+///=====================================================/// 
+/// フェードイン処理を開始
+///=====================================================///
 void Fade::StartFadeIn() {
 
 	//フェードイン状態にして更新開始
@@ -104,7 +104,7 @@ void Fade::StartFadeIn() {
 	//スプライトの初期座標・初期サイズの設定
 	for (auto& fadeSprite : fadeSprites_) {
 
-		fadeSprite.sprite->SetTranslate(Vector2(640.0f,360.0f));
+		fadeSprite.sprite->SetTranslate(Vector2(WinApp::kClientWidth / 2.0f,WinApp::kClientHeight / 2.0f));
 
 		fadeSprite.sprite->SetSize(fadeSprite.endSize);
 
@@ -113,9 +113,9 @@ void Fade::StartFadeIn() {
 	}
 }
 
-/// <summary>
-/// フェードイン更新
-/// </summary>
+///=====================================================/// 
+/// フェードインの進行処理
+///=====================================================///
 void Fade::FadeInUpdate() {
 
 	if (state_ == FadeState::FADE_IN) {
@@ -128,13 +128,16 @@ void Fade::FadeInUpdate() {
 			//開始時間・終了時間の間のみ更新
 			if (timer_ >= fadeSprite.startTime && timer_ <= fadeSprite.endTime) {
 
+				//経過時間の比率
 				float t = (timer_ - fadeSprite.startTime) / (fadeSprite.endTime - fadeSprite.startTime);
 
+				//下限値補正
 				if (t <= 0.0f) {
 
 					t = 0.0f;
 				}
 
+				//イージング計算
 				Vector2 size = EaseIn(fadeSprite.startSize, fadeSprite.endSize, t, 2.0f);
 
 				//サイズを設定
@@ -156,9 +159,9 @@ void Fade::FadeInUpdate() {
 	}
 }
 
-/// <summary>
-/// フェードアウト開始
-/// </summary>
+///=====================================================/// 
+/// フェードアウト処理を開始
+///=====================================================///
 void Fade::StartFadeOut() {
 
 	//フェードアウト状態にして更新開始
@@ -169,14 +172,14 @@ void Fade::StartFadeOut() {
 
 	//スプライトの初期座標・初期サイズの設定
 	for (auto& fadeSprite : fadeSprites_) {
-		fadeSprite.sprite->SetTranslate(Vector2(640.0f, 360.0f));
+		fadeSprite.sprite->SetTranslate(Vector2(WinApp::kClientWidth / 2.0f, WinApp::kClientHeight / 2.0f));
 		fadeSprite.sprite->SetSize(fadeSprite.startSize);
 	}
 }
 
-/// <summary>
-/// フェードアウト更新
-/// </summary>
+///=====================================================/// 
+/// フェードアウトの進行処理
+///=====================================================///
 void Fade::FadeOutUpdate() {
 
 	if (state_ == FadeState::FADE_OUT) {
@@ -186,15 +189,19 @@ void Fade::FadeOutUpdate() {
 
 		for (auto& fadeSprite : fadeSprites_) {
 
+			//開始時間・終了時間の間のみ更新
 			if (timer_ >= fadeSprite.startTime && timer_ <= fadeSprite.endTime) {
 
+				//経過時間の比率
 				float t = (timer_ - fadeSprite.startTime) / (fadeSprite.endTime - fadeSprite.startTime);
 
+				//上限値補正e
 				if (t >= 1.0f) {
 
 					t = 1.0f;
 				}
 
+				//イージング計算
 				Vector2 size = EaseOut(fadeSprite.startSize, fadeSprite.endSize, t, 2.0f);
 
 				//サイズを設定
@@ -216,17 +223,20 @@ void Fade::FadeOutUpdate() {
 	}
 }
 
-/// <summary>
-/// リングスプライトの生成
-/// </summary>
+///=====================================================/// 
+/// リング形状のスプライトを生成し、フェード用の管理リストに追加
+///=====================================================///
 void Fade::CreateRingSprite() {
 
+	//新しいオブジェクトを生成
 	std::unique_ptr<Object2D> newObject;
 
+	//オブジェクトを生成してパラメータの初期化をする
 	newObject = std::make_unique<Object2D>();
 
 	newObject->Initialize();
 
+	//リングスプライトをセット
 	newObject->SetSprite("Ring");
 
 	newObject->GetSprite()->SetAnchorPoint({ 0.5f,0.5f });
@@ -261,17 +271,20 @@ void Fade::CreateRingSprite() {
 	}
 }
 
-/// <summary>
-/// 円形スプライトの生成
-/// </summary>
+///=====================================================/// 
+/// 円形のスプライトを生成し、フェード用の管理リストに追加
+///=====================================================///
 void Fade::CreateCircleSprite() {
 
+	//新しいオブジェクトを生成
 	std::unique_ptr<Object2D> newObject;
 
+	//オブジェクトを生成してパラメータの初期化をする
 	newObject = std::make_unique<Object2D>();
 
 	newObject->Initialize();
 
+	//円形スプライトをセット
 	newObject->SetSprite("Circle");
 
 	newObject->GetSprite()->SetAnchorPoint({ 0.5f,0.5f });

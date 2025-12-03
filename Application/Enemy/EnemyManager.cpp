@@ -13,7 +13,7 @@
 #include "numbers"
 
 ///=====================================================/// 
-/// 初期化
+/// 敵の生成管理に必要な各種パラメータや参照ポインタを初期化
 ///=====================================================///
 void EnemyManager::Initialize(Camera* cameraPtr, BulletManager* bulletPtr, Player* playerPtr) {
 
@@ -23,10 +23,13 @@ void EnemyManager::Initialize(Camera* cameraPtr, BulletManager* bulletPtr, Playe
 	//カメラポインタを取得
 	camera_ = cameraPtr;
 
+	//バレットマネージャーポインタを取得
 	bulletManager_ = bulletPtr;
 
+	//プレイヤーポインタを取得
 	player_ = playerPtr;
 
+	//ディレクトリパスの設定
 	directoryPath_ = "EnemyFormation/";
 
 	//タイマーの設定
@@ -47,14 +50,19 @@ void EnemyManager::Initialize(Camera* cameraPtr, BulletManager* bulletPtr, Playe
 	//オフセットの設定
 	spawnOffset_ = { 0.0f,4.0f,30.0f };
 
+	//範囲の設定
+	spawnRange_ = { 10.0f,7.0f,0.0f };
+
+	//スポーンフラグの設定
 	isSpawn_ = true;
 }
 
 ///=====================================================/// 
-/// 更新
+/// 敵の生成処理および各敵オブジェクトの更新処理
 ///=====================================================///
 void EnemyManager::Update() {
 
+	//スポーン許可なら
 	if (isSpawn_) {
 
 		//スポーン更新
@@ -71,6 +79,9 @@ void EnemyManager::Update() {
 	}
 }
 
+///=====================================================/// 
+/// 管理中の全ての敵オブジェクトに対して、座標変換のみの更新処理
+///=====================================================///
 void EnemyManager::TransformUpdate() {
 
 	for (auto& enemy : enemies_) {
@@ -81,7 +92,7 @@ void EnemyManager::TransformUpdate() {
 }
 
 ///=====================================================/// 
-/// 描画
+/// 管理中の全ての敵オブジェクトを描画
 ///=====================================================///
 void EnemyManager::Draw() {
 
@@ -92,24 +103,30 @@ void EnemyManager::Draw() {
 	}
 }
 
+///=====================================================/// 
+/// 全敵に対してクリア演出を適用
+///=====================================================///
 void EnemyManager::StartClearUpdate() {
 
+	//スポーン停止
 	isSpawn_ = false;
 
 	for (auto& enemy : enemies_) {
 
+		//クリア用爆発エミッターを起動
 		enemy->EmitClearExplosive();
 
 		for (int i = 0; i < 4; i++) {
 
+			//クリア用更新
 			enemy->ClearUpdate();
 		}
 	}
 }
 
-///=====================================================/// 
-/// スポーン更新
-///=====================================================///
+///==========================================================/// 
+/// 敵のスポーン処理を更新し、一定間隔で編成データに基づく複数の敵を出現
+///==========================================================///
 void EnemyManager::SpawnUpdate() {
 
 	//タイマーを進ませる
@@ -118,14 +135,19 @@ void EnemyManager::SpawnUpdate() {
 	//スポーン間隔を越えたら
 	if (spawnTimer_ >= spawnInterval_) {
 
+		//編成データの番号をランダムに決定
 		int randomNum = RandomInt(1,levelDataLoader_->GetObjectDataCount(directoryPath_));
 
-		Vector3 randomPos = RandomVector3(Vector3(-10.0f, 0.0f, 0.0f), Vector3(10.0f, 8.0f, 0.0f));
+		//ランダムな出現座標を決定
+		Vector3 randomPos = RandomVector3(Vector3(-spawnRange_.x, 0.0f, -spawnRange_.z), Vector3(spawnRange_.x, spawnRange_.y, spawnRange_.z));
 
+		//編成データのファイルパスを決定
 		std::string filePath = "EnemyFormation0" + std::to_string(randomNum) + ".json";
 
+		//編成データを取得
 		std::vector<ObjectData> objectDatas = levelDataLoader_->PickObjectData(directoryPath_ + filePath, ObjectType::ENEMY);
 
+		//編成データを基にエネミーをスポーンさせる
 		for (int i = 0; i < objectDatas.size(); i++) {
 
 			//待機座標
@@ -146,9 +168,9 @@ void EnemyManager::SpawnUpdate() {
 	}
 }
 
-///=====================================================/// 
-/// スポーン処理
-///=====================================================///
+///============================================================/// 
+/// 敵を生成し、初期座標・エントリー座標・待機座標などの各種パラメータを設定
+///============================================================///
 void EnemyManager::Spawn(Vector3 entryPos, Vector3 standbyPos, ObjectData objectData) {
 
 	//エネミーを生成
@@ -178,7 +200,7 @@ void EnemyManager::Spawn(Vector3 entryPos, Vector3 standbyPos, ObjectData object
 }
 
 ///=====================================================/// 
-/// 削除処理
+/// 管理している敵オブジェクトの削除処理
 ///=====================================================///
 void EnemyManager::DeleteEnemy() {
 

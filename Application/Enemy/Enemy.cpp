@@ -13,7 +13,7 @@
 #include "numbers"
 
 ///=====================================================/// 
-/// 初期化
+/// 敵オブジェクトを初期化し、必要なパラメータや関連リソースを設定
 ///=====================================================///
 void Enemy::Initialize(Camera* cameraPtr, BulletManager* bulletPtr, Player* playerPtr, ObjectData objectData) {
 
@@ -28,11 +28,13 @@ void Enemy::Initialize(Camera* cameraPtr, BulletManager* bulletPtr, Player* play
 
 	/// === オブジェクトの生成 === ///
 
-	//生成
+	//敵オブジェクトの生成と初期化
 	object_ = std::make_unique<Object3D>();
-
-	//初期化
 	object_->Initialize(objectData);
+
+	//影オブジェクトの生成と初期化
+	shadow_ = std::make_unique<Shadow>();
+	shadow_->Initialize();
 
 	/// === コライダーの生成 === ///
 
@@ -50,39 +52,25 @@ void Enemy::Initialize(Camera* cameraPtr, BulletManager* bulletPtr, Player* play
 
 	/// === エミッターの生成 === ///
 
-	//死亡時エミッターの生成
+	//死亡時エミッターの生成とエミッター情報読み込み
 	explosiveEmitter_ = std::make_unique<EmitterGroup>();
-
-	//死亡時エミッターの初期化
 	explosiveEmitter_->Initialize(camera_);
-
-	//死亡時エミッターのエミッター情報読み込み
 	explosiveEmitter_->LoadEmitter("BlockExplosive");
 
-	//クリア時爆発エミッターの生成
+	//クリア時爆発エミッターの生成とエミッター情報読み込み
 	clearExplosiveEmitter_ = std::make_unique<EmitterGroup>();
-
-	//クリア時爆発エミッターの初期化
 	clearExplosiveEmitter_->Initialize(camera_);
-
-	//クリア時爆発エミッターのエミッター情報読み込み
 	clearExplosiveEmitter_->LoadEmitter("ClearExplosive");
 
+	//破壊時エミッターの生成とエミッター情報読み込み
 	destroyEmitter_ = std::make_unique<EmitterGroup>();
-
 	destroyEmitter_->Initialize(camera_);
-
 	destroyEmitter_->LoadEmitter("Destroy");
 
+	//ダメージ時エミッターの生成とエミッター情報読み込み
 	damageEmitter_ = std::make_unique<EmitterGroup>();
-
 	damageEmitter_->Initialize(camera_);
-
 	damageEmitter_->LoadEmitter("Damage");
-
-	shadow_ = std::make_unique<Shadow>();
-
-	shadow_->Initialize();
 
 	/// === 他変数の初期化 === ///
 
@@ -92,19 +80,58 @@ void Enemy::Initialize(Camera* cameraPtr, BulletManager* bulletPtr, Player* play
 	//体力の初期化
 	hp_ = 3;
 
-	//アニメーションタイマーの初期化
-	animTimer_ = 0.0f;
+	//弱攻撃ヒット時のダメージの初期化
+	lightAttackDamage_ = 1;
 
+	//中攻撃ヒット時のダメージの初期化
+	mediumAttackDamage_ = 3;
+
+	//移動強度の初期化
+	moveStrength_ = 10.0f;
+
+	//死亡時移動量の設定
+	deadMoveVelocity_ = Vector3(0.0f, -5.0f, -10.0f);
+
+	// 攻撃系の初期化 //
+
+	//攻撃タイマーの初期化
 	attackTimer_ = 0.0f;
 
+	//攻撃間隔の初期化
+	attackFrequency_ = 1.0f;
+
+	// 点滅系の初期化 //
+
+	//点滅タイマーの初期化
 	blinkTimer_ = 0.0f;
 
-	//被弾揺れタイマーの初期化
+	//点滅間隔の初期化
+	blinkFrequency_ = 2.0f;
+
+	//点滅フラグの初期化
+	isBlink_ = false;
+
+	// シェイク系の初期化 //
+
+	//タイマーの初期化
 	shakeTimer_ = 0.5f;
 
+	//最大時間の初期化
 	shakeMaxTime_ = 0.5f;
 
+	//揺れの長さを初期化
 	shakeLength_ = 0.5f;
+
+	//画面揺れの時間を初期化
+	displayShakeTime_ = 0.5f;
+
+	//画面揺れの長さを初期化
+	displayShakeLength_ = 0.5f;
+
+	// アニメーション系の初期化 //
+
+	//アニメーションタイマーの初期化
+	animTimer_ = 0.0f;
 
 	//アニメーション終了時間の初期化
 	entryAnimMaxTime_ = 1.0f;
@@ -117,28 +144,30 @@ void Enemy::Initialize(Camera* cameraPtr, BulletManager* bulletPtr, Player* play
 
 	deadAnimMaxTime_ = 5.0f;
 
-	//点滅フラグの初期化
-	isBlink_ = false;
-
-	//攻撃間隔の初期化
-	attackFrequency_ = 1.0f;
-
-	//点滅間隔の初期化
-	blinkFrequency_ = 2.0f;
-
+	//削除可能フラグの初期化
 	canRemove_ = false;
 
+	//削除中フラグの初期化
 	isRemove_ = false;
 
+	//透明化フラグの初期化
 	isInvisible_ = false;
 }
 
 ///=====================================================/// 
-/// 更新処理
+/// 敵オブジェクトの状態を毎フレーム更新
 ///=====================================================///
 void Enemy::Update() {
 
-	//衝突判定
+	/// === 敵オブジェクトの更新 === ///
+
+	//前フレームの座標を取得
+	prePos_ = object_->GetWorldTransform().translate_;
+
+	//死亡状態の確認
+	CheckDead();
+
+	//衝突時処理
 	IsCollision();
 
 	//行動状態によって変化
@@ -175,121 +204,128 @@ void Enemy::Update() {
 		break;
 	}
 
+	//被弾揺れ処理
+	Shake();
+
 	//点滅処理
 	Blink();
-
-	//前フレームの座標を取得
-	prePos_ = object_->GetWorldTransform().translate_;
-
-	//目標座標に移動
-	object_->GetWorldTransform().translate_ = Lerp(object_->GetWorldTransform().translate_, targetPos_, 0.1f);
-
-	//目標角度に回転
-	object_->GetWorldTransform().rotate_ = Lerp(object_->GetWorldTransform().rotate_, targetRot_, 0.1f);
-
-	//オブジェクトの更新
-	object_->Update();
-
-	Vector3 objectPos = object_->GetWorldTransform().translate_;
-
-	//エミッターを中心座標に移動させる
-	explosiveEmitter_->GetWorldTransform().translate_ = objectPos;
-
-	clearExplosiveEmitter_->GetWorldTransform().translate_ = objectPos;
-
-	destroyEmitter_->GetWorldTransform().translate_ = objectPos;
-
-	damageEmitter_->GetWorldTransform().translate_ = objectPos;
-
-	//エミッターの更新処理
-	explosiveEmitter_->Update();
-
-	//クリア時爆発エミッターの更新処理
-	clearExplosiveEmitter_->Update();
-
-	destroyEmitter_->Update();
-
-	damageEmitter_->Update();
 
 	//コライダーの処理
 	collider_->Update();
 
+	//影オブジェクトの更新
 	shadow_->Update(object_->GetWorldTransform().translate_);
 
-	//被弾揺れ処理
-	Shake();
-}
+	//目標座標に移動
+	object_->GetWorldTransform().translate_ = Lerp(object_->GetWorldTransform().translate_, targetPos_, moveStrength_ / 100.0f);
 
-void Enemy::TransformUpdate() {
+	//目標角度に回転
+	object_->GetWorldTransform().rotate_ = Lerp(object_->GetWorldTransform().rotate_, targetRot_, moveStrength_ / 100.0f);
 
 	//オブジェクトの更新
 	object_->Update();
 
+	/// === エミッターの更新 === ///
+
+	//敵オブジェクトの中心座標
+	Vector3 objectPos = object_->GetWorldTransform().translate_;
+
+	//各エミッターを中心座標に移動させる
+	explosiveEmitter_->GetWorldTransform().translate_ = objectPos;
+	clearExplosiveEmitter_->GetWorldTransform().translate_ = objectPos;
+	destroyEmitter_->GetWorldTransform().translate_ = objectPos;
+	damageEmitter_->GetWorldTransform().translate_ = objectPos;
+
+	//各エミッターの更新処理
+	explosiveEmitter_->Update();
+	clearExplosiveEmitter_->Update();
+	destroyEmitter_->Update();
+	damageEmitter_->Update();
+}
+
+///=====================================================/// 
+/// 敵オブジェクトと影オブジェクトの座標情報のみを更新
+///=====================================================///
+void Enemy::TransformUpdate() {
+
+	//敵オブジェクトの更新
+	object_->Update();
+
+	//影オブジェクトの更新
 	shadow_->Update(object_->GetWorldTransform().translate_);
 }
 
 ///=====================================================/// 
-/// 描画処理
+/// クリア時の敵オブジェクトの移動・回転処理を更新
+///=====================================================///
+void Enemy::ClearUpdate() {
+
+	//下方向に移動させる
+	object_->GetWorldTransform().translate_ = object_->GetWorldTransform().translate_ + deadMoveVelocity_;
+
+	//ランダムに回転させる
+	object_->GetWorldTransform().rotate_ = object_->GetWorldTransform().rotate_ + Vector3(
+		RandomFloat(-std::numbers::pi_v<float>, std::numbers::pi_v<float>),
+		RandomFloat(-std::numbers::pi_v<float>, std::numbers::pi_v<float>),
+		RandomFloat(-std::numbers::pi_v<float>, std::numbers::pi_v<float>)
+	);
+
+	//敵オブジェクトの更新
+	object_->Update();
+
+	//影オブジェクトの更新
+	shadow_->Update(object_->GetWorldTransform().translate_);
+
+	//クリア時爆発エミッターの更新
+	clearExplosiveEmitter_->Update();
+}
+
+///=====================================================/// 
+/// 敵オブジェクトおよび関連する要素の描画処理
 ///=====================================================///
 void Enemy::Draw() {
 
+	//透明化中は描画しない
 	if (!isInvisible_) {
 
 		//オブジェクトの描画
 		object_->Draw(LayerType::Object);
 	}
 
+	//影オブジェクトの描画
+	shadow_->Draw();
+
 	//コライダーの描画
 	collider_->Draw();
 
-	//死亡時エミッターの描画
+	//各エミッターの描画
 	explosiveEmitter_->Draw();
-
-	//クリア時爆発エミッターの描画
 	clearExplosiveEmitter_->Draw();
-
 	destroyEmitter_->Draw();
-
 	damageEmitter_->Draw();
-
-	shadow_->Draw();
 }
 
+///=====================================================/// 
+/// 敵のクリア時爆発エミッターを起動
+///=====================================================///
 void Enemy::EmitClearExplosive() {
 
+	//死亡状態に移行
 	state_ = DEAD;
 
 	//クリア時爆発エミッターを起動
 	clearExplosiveEmitter_->Emit();
-
-	//エミッターを中心座標に移動させる
-	clearExplosiveEmitter_->GetWorldTransform().translate_ = object_->GetWorldTransform().translate_;
-}
-
-void Enemy::ClearUpdate() {
-
-	//下方向に移動させる
-	object_->GetWorldTransform().translate_ = object_->GetWorldTransform().translate_ + Vector3(RandomFloat(-0.2f, 0.2f), RandomFloat(-1.5f, 0.0f), 0.0f);
-
-	//ランダムに回転させる
-	object_->GetWorldTransform().rotate_ = object_->GetWorldTransform().rotate_ + Vector3(
-		RandomFloat(-1.0f, 1.0f),
-		RandomFloat(-1.0f, 1.0f),
-		RandomFloat(-1.0f, 1.0f)
-	);
-
-	//オブジェクトの更新
-	object_->Update();
-
-	shadow_->Update(object_->GetWorldTransform().translate_);
-
-	clearExplosiveEmitter_->Update();
 }
 
 ///=====================================================/// 
-/// 衝突時処理
+/// 他オブジェクトの接触時の処理
 ///=====================================================///
 void Enemy::IsCollision() {
+
+	//コライダーがなければスキップ
+	if (!collider_) {
+		return;
+	}
 
 	//接触状態であれば
 	if (collider_->GetIsTrigger()) {
@@ -299,7 +335,7 @@ void Enemy::IsCollision() {
 
 			damageEmitter_->Emit();
 
-			hp_ -= 1;
+			hp_ -= lightAttackDamage_;
 
 			//被弾揺れタイマーを初期化
 			shakeTimer_ = 0.0f;
@@ -310,88 +346,16 @@ void Enemy::IsCollision() {
 
 			damageEmitter_->Emit();
 
-			hp_ -= 3;
+			hp_ -= mediumAttackDamage_;
 
 			//被弾揺れタイマーを初期化
 			shakeTimer_ = 0.0f;
 		}
-
-		if (hp_ <= 0) {
-
-			if (state_ != DEAD) {
-
-				hp_--;
-
-				//死亡状態に変更
-				state_ = DEAD;
-
-				//コライダーを削除
-				collider_->Remove();
-
-				//死亡時エミッターを起動
-				explosiveEmitter_->Emit();
-
-				//アニメーションタイマーの初期化
-				animTimer_ = 0.0f;
-
-				//被弾揺れタイマーを初期化
-				shakeTimer_ = 0.0f;
-
-				ObjectManager::GetInstance()->AddKillCount();
-
-			}
-		}
 	}
 }
 
 ///=====================================================/// 
-/// 死亡時処理
-///=====================================================///
-void Enemy::Dead() {
-
-	//アニメーションタイマーを進ませる
-	animTimer_ += 1.0f / 60.0f;
-
-	//アニメーションタイマーが終了時間に達したら
-	if (animTimer_ >= deadAnimMaxTime_) {
-
-		//削除可能にする
-		canRemove_ = true;
-	}
-
-	//タイマーの比率
-	float animRatio = animTimer_ / deadAnimMaxTime_;
-
-	Vector3 objectPos = object_->GetWorldTransform().translate_;
-
-	//下方向に落ちていくように設定
-	targetPos_ = Lerp(objectPos, objectPos + Vector3(0.0f, -5.0f, -10.0f), animRatio);
-
-	//Z軸で回転するように設定
-	targetRot_ = Lerp(
-		Vector3(0.0f, -std::numbers::pi_v<float>, 0.0f),
-		Vector3(0.0f, -std::numbers::pi_v<float> *10.0f, std::numbers::pi_v<float> *10.0f),
-		animRatio
-	);
-
-	if (object_->GetWorldTransform().translate_.y <= 0.0f) {
-
-		if (!isInvisible_) {
-
-			isInvisible_ = true;
-
-			explosiveEmitter_->Stop();
-
-			destroyEmitter_->Emit();
-
-			Shake::GetInstance()->Start(0.5f, 0.5f);
-		}
-	}
-
-}
-
-///=====================================================/// 
-/// エントリー時処理
+/// 敵オブジェクトのエントリー時の処理
 ///=====================================================///
 void Enemy::Entry() {
 
@@ -414,9 +378,10 @@ void Enemy::Entry() {
 	float animRatio = animTimer_ / entryAnimMaxTime_;
 
 	//待機座標まで移動
-	targetPos_ = EaseOutBack(entryPos_, standbyPos_, animRatio, 1.0f);
+	targetPos_ = EaseOutBack(entryPos_, standbyPos_, animRatio, 2.0f);
 
-	//前方を向くように設定
+	//前フレームからの移動量を計算
+	//前方を向くようにZ方向成分を強めに設定
 	Vector3 velocity = prePos_ - targetPos_ + Vector3(0.0f, 0.0f, 10.0f);
 
 	//移動方向を向くように設定
@@ -428,7 +393,7 @@ void Enemy::Entry() {
 }
 
 ///=====================================================/// 
-/// 移動処理
+/// 敵オブジェクトの移動時の処理
 ///=====================================================///
 void Enemy::Move() {
 
@@ -474,7 +439,7 @@ void Enemy::Move() {
 }
 
 ///=====================================================/// 
-/// 攻撃処理
+/// 敵オブジェクトの攻撃時の処理
 ///=====================================================///
 void Enemy::Attack() {
 
@@ -518,7 +483,7 @@ void Enemy::Attack() {
 }
 
 ///=====================================================/// 
-/// 離脱処理
+/// 敵オブジェクトの離脱時の処理
 ///=====================================================///
 void Enemy::Exit() {
 
@@ -543,7 +508,8 @@ void Enemy::Exit() {
 	//離脱座標まで移動
 	targetPos_ = EaseOut(exitStartPos_, exitPos_, animRatio, 2.0f);
 
-	//前方を向くように設定
+	//前フレームからの移動量を計算
+	//前方を向くようにZ方向成分を強めに設定
 	Vector3 velocity = prePos_ - targetPos_ + Vector3(0.0f, 0.0f, 10.0f);
 
 	//移動方向を向くように設定
@@ -555,7 +521,57 @@ void Enemy::Exit() {
 }
 
 ///=====================================================/// 
-/// 点滅処理
+/// 敵オブジェクトの死亡時の処理
+///=====================================================///
+void Enemy::Dead() {
+
+	//アニメーションタイマーを進ませる
+	animTimer_ += 1.0f / 60.0f;
+
+	//アニメーションタイマーが終了時間に達したら
+	if (animTimer_ >= deadAnimMaxTime_) {
+
+		//削除可能にする
+		canRemove_ = true;
+	}
+
+	//タイマーの比率
+	float animRatio = animTimer_ / deadAnimMaxTime_;
+
+	Vector3 objectPos = object_->GetWorldTransform().translate_;
+
+	//下方向に落ちていくように設定
+	targetPos_ = Lerp(objectPos, objectPos + deadMoveVelocity_, animRatio);
+
+	//Y軸とZ軸で回転するように設定
+	targetRot_ = Lerp(
+		Vector3(0.0f, -std::numbers::pi_v<float>, 0.0f),
+		Vector3(0.0f, -std::numbers::pi_v<float> * 10.0f, std::numbers::pi_v<float> * 10.0f),
+		animRatio
+	);
+
+	//地面よりも下にいたら透明化させる
+	if (object_->GetWorldTransform().translate_.y <= 0.0f) {
+
+		if (!isInvisible_) {
+
+			//透明化を有効化
+			isInvisible_ = true;
+
+			//爆発エミッターをストップ
+			explosiveEmitter_->Stop();
+
+			//破壊時エミッターを起動
+			destroyEmitter_->Emit();
+
+			//シェイクを開始
+			Shake::GetInstance()->Start(displayShakeLength_, displayShakeTime_);
+		}
+	}
+}
+
+///=====================================================/// 
+/// 敵オブジェクトの点滅処理
 ///=====================================================///
 void Enemy::Blink() {
 
@@ -583,8 +599,12 @@ void Enemy::Blink() {
 	object_->GetModel()->SetColor(color);
 }
 
+///=====================================================/// 
+/// 敵オブジェクトの被弾時のシェイク処理
+///=====================================================///
 void Enemy::Shake() {
 
+	//タイマーが最大時間以下であれば進ませる
 	if (shakeTimer_ < shakeMaxTime_) {
 
 		shakeTimer_ += 1.0f / 60.0f;
@@ -593,23 +613,63 @@ void Enemy::Shake() {
 		return;
 	}
 
+	//タイマーの比率
 	float t = shakeTimer_ / shakeMaxTime_;
 
+	//シェイクの長さ
 	float shakeLength = Lerp(shakeLength_, 0.0f, t);
 
+	//オブジェクトの座標をコピー
 	WorldTransform worldTransform = object_->GetWorldTransform();
 
-	Vector3 randomOffset = {
+	//シェイクのオフセット
+	Vector3 shakeOffset = {
 		RandomFloat(-shakeLength, shakeLength),
 		RandomFloat(-shakeLength, shakeLength),
 		RandomFloat(-shakeLength, shakeLength)
 	};
 
-	worldTransform.translate_ = worldTransform.translate_ + randomOffset;
+	//オブジェクトの座標にシェイクの座標を加える
+	worldTransform.translate_ = worldTransform.translate_ + shakeOffset;
 
+	//シェイク後の座標で更新
 	worldTransform.UpdateMatrix();
 
+	//座標変換データのみシェイク後の座標に変更
 	object_->GetWorldTransform().SetWorldMatrix(worldTransform.GetWorldMatrix());
 
+	//オブジェクトの座標データのみを更新
 	object_->TransformUpdate();
+}
+
+///=====================================================/// 
+/// 敵のHPを確認し、死亡状態に遷移させる処理
+///=====================================================///
+void Enemy::CheckDead() {
+
+	//HPがなくなっていたら
+	if (hp_ <= 0) {
+
+		//すでに死亡状態であればスキップ
+		if (state_ != DEAD) {
+
+			//死亡状態に変更
+			state_ = DEAD;
+
+			//コライダーを削除
+			collider_->Remove();
+
+			//死亡時エミッターを起動
+			explosiveEmitter_->Emit();
+
+			//アニメーションタイマーの初期化
+			animTimer_ = 0.0f;
+
+			//被弾揺れタイマーを初期化
+			shakeTimer_ = 0.0f;
+
+			//キル数をカウントアップ
+			ObjectManager::GetInstance()->AddKillCount();
+		}
+	}
 }

@@ -7,28 +7,38 @@
 #include "filesystem"
 
 ///=====================================================/// 
-/// シングルトンインスタンスの取得
+/// LevelDataLoaderのシングルトンインスタンスを取得
 ///=====================================================///
 LevelDataLoader* LevelDataLoader::GetInstance() {
 	static LevelDataLoader instance;
 	return &instance;
 }
 
+///=====================================================/// 
+/// レベルデータの読み込みを初期化
+///=====================================================///
 void LevelDataLoader::Initialize() {
 
+	//ディレクトリパスの設定
+	directory_ = "Resource/Json/LevelData/";
+
+	//ディレクトリ内の全ファイルを走査
 	for (const auto& entry : std::filesystem::recursive_directory_iterator(directory_)) {
 
+		//拡張子が.jsonのファイルのみ処理
 		if (entry.is_regular_file() && entry.path().extension() == ".json") {
 
+			//ディレクトリからの相対パスを取得
 			std::string relativePath = std::filesystem::relative(entry.path(), directory_).generic_string();
 
+			//データの読み込み
 			Load(relativePath);
 		}
 	}
 }
 
 ///=====================================================/// 
-/// データの読み込み
+/// 指定されたJSONファイルからレベルデータを読み込み
 ///=====================================================///
 void LevelDataLoader::Load(const std::string& fileName) {
 
@@ -181,7 +191,7 @@ void LevelDataLoader::Load(const std::string& fileName) {
 }
 
 ///=====================================================/// 
-/// オブジェクトの数を取得
+/// 指定したレベルデータ内で特定のタイプのオブジェクト数を取得
 ///=====================================================///
 int LevelDataLoader::GetObjectCount(const std::string& fileName, const ObjectType type){
 
@@ -206,12 +216,16 @@ int LevelDataLoader::GetObjectCount(const std::string& fileName, const ObjectTyp
 	return count;
 }
 
+///=====================================================/// 
+/// 指定したディレクトリ名に含まれるレベルデータの数を取得
+///=====================================================///
 int LevelDataLoader::GetObjectDataCount(const std::string& directoryName) {
 
 	int count = 0;
 
 	for (const auto& [key, value] : levelData_) {
 
+		//ディレクトリ名で始まるキーを持つデータをカウント
 		if (key.starts_with(directoryName)) {
 
 			count++;
@@ -222,7 +236,7 @@ int LevelDataLoader::GetObjectDataCount(const std::string& directoryName) {
 }
 
 ///=====================================================/// 
-/// 指定したタイプのオブジェクトデータを取得
+/// 指定したレベルデータから特定のタイプのオブジェクトデータを抽出
 ///=====================================================///
 std::vector<ObjectData> LevelDataLoader::PickObjectData(const std::string& fileName, const ObjectType type){
 

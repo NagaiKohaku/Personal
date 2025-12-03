@@ -16,8 +16,10 @@ void Ground::Initialize() {
 
 	object_->SetModel("Plane");
 
+	// テクスチャの読み込み
 	TextureManager::GetInstance()->LoadTexture("Resource/Texture/RunWay.png");
 
+	// モデルにテクスチャを設定
 	object_->GetModel()->SetTextureFilePath("Resource/Texture/RunWay.png");
 
 	// オブジェクトのスケール設定
@@ -25,9 +27,11 @@ void Ground::Initialize() {
 
 	object_->GetWorldTransform().rotate_ = { 3.14f / 2.0f,0.0f,0.0f };
 
+	// 環境光係数の設定
 	object_->GetModel()->SetEnvironmentCoefficient(0.0f);
 
-	uvTimer_ = 0.0f;
+	// UV座標Y初期化
+	uvPosY = 0.0f;
 }
 
 void Ground::Update() {
@@ -35,13 +39,16 @@ void Ground::Update() {
 	// オブジェクトの更新
 	object_->Update();
 
-	uvTimer_ += 1.0f / 60.0f;
+	// UV座標Y更新
+	uvPosY += 1.0f / 60.0f;
 
-	Vector3 uvTranslate = { 0.0f,uvTimer_,0.0f };
+	// UV変換行列計算
+	Vector3 uvTranslate = { 0.0f,uvPosY,0.0f };
 	Matrix4x4 uvTransformMatrix = MakeTranslateMatrix(uvTranslate);
 	Matrix4x4 uvScaleMatrix = MakeIdentity4x4();
 	Matrix4x4 uvRotateMatrix = MakeIdentity4x4();
 
+	// UV変換行列設定
 	object_->GetModel()->SetUVTransform((uvScaleMatrix * uvRotateMatrix) * uvTransformMatrix);
 }
 
