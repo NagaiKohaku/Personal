@@ -66,7 +66,7 @@ void GameScene::Initialize() {
 
 	player_ = ObjectManager::GetInstance()->GetPlayer();
 
-	player_->Initialize(camera_.get(), bulletManager_.get());
+	player_->Initialize(camera_.get(), bulletManager_.get(),false);
 
 	//最初は動けないようにする
 	player_->SetIsMoveActive(false);

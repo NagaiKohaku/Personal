@@ -61,7 +61,7 @@ void TitleScene::Initialize() {
 
 	player_ = ObjectManager::GetInstance()->GetPlayer();
 
-	player_->Initialize(camera_.get());
+	player_->Initialize(camera_.get(),nullptr,false);
 
 	player_->SetPosition({ 0.0f,1.0f,0.0f });
 
@@ -402,7 +402,7 @@ void TitleScene::Start() {
 		//最後のアニメーションであればスタート演出を終了する
 		if (animNum_ >= static_cast<int>(animPos_.size())) {
 
-			animNum_ = animPos_.size() - 1;
+			animNum_ = static_cast<int>(animPos_.size()) - 1;
 
 			isStart_ = false;
 
