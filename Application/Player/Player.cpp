@@ -17,6 +17,7 @@
 
 #include "algorithm"
 #include "numbers"
+#include "imgui.h"
 
 ///=====================================================/// 
 /// プレイヤーを初期化
@@ -35,26 +36,38 @@ void Player::Initialize(Camera* cameraPtr, BulletManager* bulletPtr, bool isMove
 	//オブジェクトデータを読み込み
 	objectData_ = levelDataLoader_->PickObjectData("PlayerObject/JetPlayer.json", ObjectType::PLAYER);
 
+	ModelManager::GetInstance()->LoadModel("Player", "Player", "Core");
+
 	/// === オブジェクトの生成 === ///
 
 	//コアオブジェクトの生成
 	core_ = std::make_unique<Object3D>();
 
-	core_->Initialize(objectData_[0]);
+	core_->Initialize();
+
+	core_->SetModel("Player");
+
+	rightWingTransform_ = std::make_unique<WorldTransform>();
+
+	rightWingTransform_->Initialize();
+
+	//rightWingTransform_->SetParent(&core_->GetWorldTransform());
+
+	leftWingTransform_ = std::make_unique<WorldTransform>();
+
+	leftWingTransform_->Initialize();
+
+	//leftWingTransform_->SetParent(&core_->GetWorldTransform());
 
 	//右ウィングオブジェクトの生成
 	rightWing_ = std::make_unique<Object3D>();
 
 	rightWing_->Initialize(objectData_[1]);
 
-	rightWing_->GetWorldTransform().SetParent(&core_->GetWorldTransform());
-
 	//左ウィングオブジェクトの生成
 	leftWing_ = std::make_unique<Object3D>();
 
 	leftWing_->Initialize(objectData_[2]);
-
-	leftWing_->GetWorldTransform().SetParent(&core_->GetWorldTransform());
 
 	//右トレイルエミッターの生成
 	rightTrail_ = std::make_unique<EmitterGroup>();
@@ -63,7 +76,7 @@ void Player::Initialize(Camera* cameraPtr, BulletManager* bulletPtr, bool isMove
 
 	rightTrail_->LoadEmitter("Trail");
 
-	rightTrail_->GetWorldTransform().SetParent(&rightWing_->GetWorldTransform());
+	//rightTrail_->GetWorldTransform().SetParent(&rightWing_->GetWorldTransform());
 
 	rightTrail_->Emit();
 
@@ -74,7 +87,7 @@ void Player::Initialize(Camera* cameraPtr, BulletManager* bulletPtr, bool isMove
 
 	leftTrail_->LoadEmitter("Trail");
 
-	leftTrail_->GetWorldTransform().SetParent(&leftWing_->GetWorldTransform());
+	//leftTrail_->GetWorldTransform().SetParent(&leftWing_->GetWorldTransform());
 
 	leftTrail_->Emit();
 
@@ -164,6 +177,14 @@ void Player::Initialize(Camera* cameraPtr, BulletManager* bulletPtr, bool isMove
 	//飛行機状態の回転範囲の設定
 	flightRotRange_ = { 0.5f,0.0f,0.3f };
 
+	tankWingPosOffset_ = { 1.0f,-1.5f,0.0f };
+
+	tankWingRotOffset_ = { 0.0f,0.0f,std::numbers::pi_v<float> * 2.5f };
+
+	jetWingPosOffset_ = { 0.0f,0.0f,0.0f };
+
+	jetWingRotOffset_ = { 0.0f,0.0f,0.0f };
+
 	//初期座標の設定
 	initialPos_ = { 0.0f,2.0f,0.0f };
 
@@ -220,11 +241,21 @@ void Player::Update() {
 	//プレイヤーの更新
 	core_->Update();
 
-	//右ウィングの更新
-	rightWing_->Update();
+	rightWingTransform_->UpdateMatrix();
 
-	//左ウィングの更新
-	leftWing_->Update();
+	leftWingTransform_->UpdateMatrix();
+
+	////右ウィングの更新
+	//rightWing_->Update();
+
+	////左ウィングの更新
+	//leftWing_->Update();
+
+	core_->GetModel()->SetSubmeshLocalTransform(static_cast<size_t>(1), rightWingTransform_->GetWorldMatrix());
+
+	core_->GetModel()->SetSubmeshLocalTransform(static_cast<size_t>(2), leftWingTransform_->GetWorldMatrix());
+
+	core_->GetModel()->UpdateSubmeshTransformsCPU();
 
 	//右トレイルの更新
 	rightTrail_->Update();
@@ -284,11 +315,11 @@ void Player::Draw() {
 		//コアオブジェクトの描画
 		core_->Draw(LayerType::Object);
 
-		//右ウィングの描画
-		rightWing_->Draw(LayerType::Object);
+		////右ウィングの描画
+		//rightWing_->Draw(LayerType::Object);
 
-		//左ウィングの描画
-		leftWing_->Draw(LayerType::Object);
+		////左ウィングの描画
+		//leftWing_->Draw(LayerType::Object);
 
 		//影の描画
 		shadow_->Draw();
@@ -420,6 +451,8 @@ void Player::TankMove() {
 	//左トレイルの現在座標
 	Vector3 leftTrailPos = leftTrail_->GetWorldTransform().translate_;
 
+	float pi = std::numbers::pi_v<float>;
+
 	//左右移動に応じてY軸回転をするように設定
 	Vector3 rotate = {
 		0.0f,
@@ -437,8 +470,52 @@ void Player::TankMove() {
 	//コアオブジェクトの回転
 	core_->GetWorldTransform().rotate_ = Lerp(playerRot, rotate, rotStrength_ / 100.0f);
 
+	rightWingTransform_->translate_ = EaseOut(
+		rightWingTransform_->translate_,
+		Vector3(
+			tankWingPosOffset_.x,
+			tankWingPosOffset_.y,
+			tankWingPosOffset_.z
+		),
+		0.1f,
+		2.0f
+	);
+
+	rightWingTransform_->rotate_ = EaseOut(
+		rightWingTransform_->rotate_,
+		Vector3(
+			tankWingRotOffset_.x,
+			tankWingRotOffset_.y,
+			tankWingRotOffset_.z
+		),
+		0.1f,
+		2.0f
+	);
+
+	leftWingTransform_->translate_ = EaseOut(
+		leftWingTransform_->translate_,
+		Vector3(
+			-tankWingPosOffset_.x,
+			tankWingPosOffset_.y,
+			tankWingPosOffset_.z
+		),
+		0.1f,
+		2.0f
+	);
+
+	leftWingTransform_->rotate_ = EaseOut(
+		leftWingTransform_->rotate_,
+		Vector3(
+			tankWingRotOffset_.x,
+			tankWingRotOffset_.y,
+			-tankWingRotOffset_.z
+		),
+		0.1f,
+		2.0f
+	);
+
 	//右ウィングの移動・回転
-	rightWing_->GetWorldTransform().translate_ = EaseOut(rightWingPos, Vector3(0.75f, 0.0f, 0.0f), 0.1f, 2.0f);
+	rightWing_->GetWorldTransform().translate_ = EaseOut(rightWingPos, Vector3(tankWingPosOffset_.x, tankWingPosOffset_.y, tankWingPosOffset_.z), 0.1f, 2.0f);
 	rightWing_->GetWorldTransform().rotate_ = EaseOut(
 		rightWingRot,
 		Vector3(0.0f, 0.0f, std::numbers::pi_v<float> / 2.0f + std::numbers::pi_v<float> *2.0f),
@@ -447,10 +524,10 @@ void Player::TankMove() {
 	);
 
 	//右トレイルの移動
-	rightTrail_->GetWorldTransform().translate_ = EaseOut(rightTrailPos, Vector3(-0.75f, 0.0f, 0.0f), 0.1f, 2.0f);
+	rightTrail_->GetWorldTransform().translate_ = EaseOut(rightTrailPos, Vector3(rightWingPos.x, rightWingPos.y + 1.5f, rightWingPos.z), 0.1f, 2.0f);
 
 	//左ウィングの移動・回転
-	leftWing_->GetWorldTransform().translate_ = EaseOut(leftWingPos, Vector3(-0.75f, 0.0f, 0.0f), 0.1f, 2.0f);
+	leftWing_->GetWorldTransform().translate_ = EaseOut(leftWingPos, Vector3(-tankWingPosOffset_.x, tankWingPosOffset_.y, tankWingPosOffset_.z), 0.1f, 2.0f);
 	leftWing_->GetWorldTransform().rotate_ = EaseOut(
 		leftWingRot,
 		Vector3(0.0f, 0.0f, -std::numbers::pi_v<float> / 2.0f - std::numbers::pi_v<float> *2.0f),
@@ -459,7 +536,7 @@ void Player::TankMove() {
 	);
 
 	//左トレイルの移動
-	leftTrail_->GetWorldTransform().translate_ = EaseOut(leftTrailPos, Vector3(0.75f, 0.0f, 0.0f), 0.1f, 2.0f);
+	leftTrail_->GetWorldTransform().translate_ = EaseOut(leftTrailPos, Vector3(leftWingPos.x, leftWingPos.y + 1.5f, leftWingPos.z), 0.1f, 2.0f);
 }
 
 ///=====================================================/// 
@@ -501,8 +578,52 @@ void Player::JetMove() {
 	//コアオブジェクトの回転
 	core_->GetWorldTransform().rotate_ = Lerp(playerRot, rotate, rotStrength_ / 100.0f);
 
+	rightWingTransform_->translate_ = EaseOut(
+		rightWingTransform_->translate_,
+		Vector3(
+			jetWingPosOffset_.x,
+			jetWingPosOffset_.y,
+			jetWingPosOffset_.z
+		),
+		0.1f,
+		2.0f
+	);
+
+	rightWingTransform_->rotate_ = EaseOut(
+		rightWingTransform_->rotate_,
+		Vector3(
+			jetWingRotOffset_.x,
+			jetWingRotOffset_.y,
+			jetWingRotOffset_.z
+		),
+		0.1f,
+		2.0f
+	);
+
+	leftWingTransform_->translate_ = EaseOut(
+		leftWingTransform_->translate_,
+		Vector3(
+			-jetWingPosOffset_.x,
+			jetWingPosOffset_.y,
+			jetWingPosOffset_.z
+		),
+		0.1f,
+		2.0f
+	);
+
+	leftWingTransform_->rotate_ = EaseOut(
+		leftWingTransform_->rotate_,
+		Vector3(
+			jetWingRotOffset_.x,
+			jetWingRotOffset_.y,
+			-jetWingRotOffset_.z
+		),
+		0.1f,
+		2.0f
+	);
+
 	//右ウィングの移動・回転
-	rightWing_->GetWorldTransform().translate_ = EaseOut(rightWingPos, Vector3(1.35f, 0.0f, 0.0f), 0.1f, 2.0f);
+	rightWing_->GetWorldTransform().translate_ = EaseOut(rightWingPos, jetWingPosOffset_, 0.1f, 2.0f);
 	rightWing_->GetWorldTransform().rotate_ = EaseOut(rightWingRot, Vector3(0.0f, 0.0f, 0.0f), 0.1f, 2.0f);
 
 	//右トレイルの移動
@@ -582,7 +703,7 @@ void Player::TankAttack() {
 			//レティクルの位置を取得
 			std::vector<Vector3> reticlePositions = lockOn_->GetLockOnReticlePos();
 
-			for(auto& pos : reticlePositions) {
+			for (auto& pos : reticlePositions) {
 
 				//オブジェクトからレティクルへの方向
 				Vector3 direction = pos - core_->GetWorldTransform().GetWorldTranslate();
@@ -691,4 +812,17 @@ void Player::Dead() {
 			Shake::GetInstance()->Start(1.0f, 0.5f);
 		}
 	}
+}
+
+void Player::ImGui() {
+
+	ImGui::Begin("Player");
+
+	ImGui::DragFloat3("CorePos", &core_->GetWorldTransform().translate_.x, 0.01f);
+
+	ImGui::DragFloat3("CoreRot", &core_->GetWorldTransform().rotate_.x, 0.01f);
+
+	ImGui::DragFloat3("TankMax", &tankWingPosOffset_.x, 0.01f);
+
+	ImGui::End();
 }

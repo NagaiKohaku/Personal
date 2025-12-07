@@ -82,6 +82,8 @@ public:
 	/// </remarks>
 	void Draw();
 
+	void ImGui();
+
 	///-------------------------------------------/// 
 	/// クラス内処理関数
 	///-------------------------------------------///
@@ -193,6 +195,10 @@ private:
 	//コアオブジェクト
 	std::unique_ptr<Object3D> core_ = nullptr;
 
+	std::unique_ptr<WorldTransform> rightWingTransform_;
+
+	std::unique_ptr<WorldTransform> leftWingTransform_;
+
 	//右ウィングオブジェクト
 	std::unique_ptr<Object3D> rightWing_;
 
@@ -255,6 +261,14 @@ private:
 
 	//飛行機状態の回転範囲
 	Vector3 flightRotRange_;
+
+	Vector3 tankWingPosOffset_;
+
+	Vector3 tankWingRotOffset_;
+
+	Vector3 jetWingPosOffset_;
+
+	Vector3 jetWingRotOffset_;
 
 	//初期座標
 	Vector3 initialPos_;

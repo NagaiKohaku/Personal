@@ -363,6 +363,8 @@ void TitleScene::ImGui() {
 
 	ImGui::End();
 
+	player_->ImGui();
+
 #endif // _USE_IMGUI
 
 }
