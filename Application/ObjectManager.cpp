@@ -52,9 +52,14 @@ void ObjectManager::SpawnEnemy() {
 	enemies_.push_back(std::make_unique<Enemy>());
 }
 
+void ObjectManager::SpawnBoss() {
+	boss_ = std::make_unique<Boss>();
+}
+
 void ObjectManager::ClearAll() {
 	player_.reset();
 	enemies_.clear();
+	boss_.reset();
 	killCount_ = 0;
 }
 

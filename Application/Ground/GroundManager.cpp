@@ -8,6 +8,7 @@
 #include "Math/Random.h"
 
 #include "imgui.h"
+#include <numbers>
 
 ///=====================================================/// 
 /// 地面と建物群を初期化
@@ -19,11 +20,11 @@ void GroundManager::Initialize() {
 
 	buildingHeight_ = 20.0f;
 
-	buildingRandomRange_ = 6.0f;
+	buildingRandomRange_ = 10.0f;
 
-	buildingDistance_ = 9.0f;
+	buildingDistance_ = 25.0f;
 
-	buildingStartX_ = 30.0f;
+	buildingStartX_ = 40.0f;
 
 	buildingStartZ_ = 1000.0f;
 
@@ -44,29 +45,30 @@ void GroundManager::Initialize() {
 			//建物の生成
 			std::unique_ptr<Building> building = std::make_unique<Building>();
 
-			//建物のスケール計算
-			Vector3 scale = { buildingWidth_,buildingHeight_ + RandomFloat(-buildingRandomRange_,buildingRandomRange_),buildingWidth_};
+			//建物の角度
+			Vector3 rotate = Vector3(0.0f, 0.0f, 0.0f);
 
 			//建物の座標計算
 			Vector3 pos = {
-				buildingStartX_ + j / 2 * (buildingWidth_ * 2.0f + buildingDistance_),
-				0.0f,
-				buildingStartZ_ - i * (buildingWidth_ * 2.0f + buildingDistance_)
+				buildingStartX_ + j / 2 * buildingDistance_,
+				RandomFloat(-buildingRandomRange_,0.0f),
+				buildingStartZ_ - i * buildingDistance_
 			};
 
 			if (j % 2 == 0) {
 				pos.x *= -1.0f; // 偶数番目の建物はX座標を反転
+				rotate.y = std::numbers::pi_v<float>; // 建物を180度回転
 			}
 
 			//建物の初期化
-			building->Initialize(pos, scale);
+			building->Initialize(pos, rotate);
 
 			//建物をコンテナに追加
 			building_.push_back(std::move(building));
 		}
 
 		//終了判定
-		if (buildingStartZ_ - i * (buildingWidth_ * 2.0f + buildingDistance_) <= -buildingStartZ_) {
+		if (buildingStartZ_ - i * buildingDistance_ <= -buildingStartZ_) {
 
 			break;
 		}

@@ -288,6 +288,7 @@
     <ClCompile Include="Application\ObjectManager.cpp" />
     <ClCompile Include="Application\Player\LockOn.cpp" />
     <ClCompile Include="Application\Flash\Flash.cpp" />
+    <ClCompile Include="Application\Enemy\Boss.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application\Bullet\BulletBase.h">
@@ -546,6 +547,7 @@
     <ClInclude Include="Application\ObjectManager.h" />
     <ClInclude Include="Application\Player\LockOn.h" />
     <ClInclude Include="Application\Flash\Flash.h" />
+    <ClInclude Include="Application\Enemy\Boss.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resource\Shader\DebugObject.hlsli">

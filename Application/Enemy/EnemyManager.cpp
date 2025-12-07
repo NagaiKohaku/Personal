@@ -54,7 +54,13 @@ void EnemyManager::Initialize(Camera* cameraPtr, BulletManager* bulletPtr, Playe
 	spawnRange_ = { 10.0f,7.0f,0.0f };
 
 	//スポーンフラグの設定
-	isSpawn_ = true;
+	isSpawn_ = false;
+
+	ObjectManager::GetInstance()->SpawnBoss();
+
+	boss_ = ObjectManager::GetInstance()->GetBoss();
+
+	boss_->Initialize();
 }
 
 ///=====================================================/// 
@@ -77,6 +83,8 @@ void EnemyManager::Update() {
 		//エネミーの更新
 		enemy->Update();
 	}
+
+	boss_->Update();
 }
 
 ///=====================================================/// 
@@ -89,6 +97,7 @@ void EnemyManager::TransformUpdate() {
 		//エネミーの座標のみ更新
 		enemy->TransformUpdate();
 	}
+
 }
 
 ///=====================================================/// 
@@ -101,6 +110,8 @@ void EnemyManager::Draw() {
 		//エネミーの描画
 		enemy->Draw();
 	}
+
+	boss_->Draw();
 }
 
 ///=====================================================/// 

@@ -5,6 +5,7 @@
 
 class Player;
 class Enemy;
+class Boss;
 class EnemyManager;
 
 class ObjectManager {
@@ -23,6 +24,8 @@ public:
 
 	void SpawnEnemy();
 
+	void SpawnBoss();
+
 	void ClearAll();
 
 private:
@@ -31,6 +34,8 @@ private:
 
 	std::list<std::unique_ptr<Enemy>> enemies_;
 
+	std::unique_ptr<Boss> boss_;
+
 	int killCount_ = 0;
 
 public:
@@ -38,6 +43,8 @@ public:
 	Player* GetPlayer() { return player_.get(); }
 
 	std::list<Enemy*> GetEnemies();
+
+	Boss* GetBoss() { return boss_.get(); }
 
 	int GetKillCount() { return killCount_; }
 

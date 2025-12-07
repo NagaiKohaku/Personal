@@ -159,6 +159,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Application\LevelEditor\LevelDataLoader.cpp" />
     <ClCompile Include="Application\Bullet\EnemyBullet.cpp" />
     <ClCompile Include="Application\Ground\Building.cpp" />
+    <ClCompile Include="Application\Enemy\Boss.cpp" />
     <ClCompile Include="Engine\3d\Mesh\CubeMesh.cpp" />
     <ClCompile Include="Engine\3d\Collider\AABBCollider.cpp" />
     <ClCompile Include="Engine\3d\Collider\Collider.cpp" />
@@ -246,6 +247,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Application\LevelEditor\LevelDataLoader.h" />
     <ClInclude Include="Application\Bullet\EnemyBullet.h" />
     <ClInclude Include="Application\Ground\Building.h" />
+    <ClInclude Include="Application\Enemy\Boss.h" />
     <ClInclude Include="Engine\3d\Mesh\CubeMesh.h" />
     <ClInclude Include="Engine\3d\Collider\AABBCollider.h" />
     <ClInclude Include="Engine\3d\Collider\Collider.h" />

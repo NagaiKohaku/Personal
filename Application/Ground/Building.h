@@ -25,13 +25,13 @@ public:
 	/// 建物オブジェクトを初期化します。
 	/// </summary>
 	/// <param name="pos">建物の配置位置を指定します。</param>
-	/// <param name="scale">建物のスケール（大きさ）を指定します。</param>
+	/// <param name="rotate">建物の配置角度を指定します。</param>
 	/// <remarks>
 	/// - 3Dオブジェクトを生成し、初期化します。
-	/// - キューブモデルを設定し、指定された位置とスケールを適用します。
+	/// - キューブモデルを設定し、指定された位置と角度を適用します。
 	/// - 建物の移動速度を初期値として設定します。
 	/// </remarks>
-	void Initialize(Vector3 pos, Vector3 scale);
+	void Initialize(Vector3 pos, Vector3 rotate);
 
 	/// <summary>
 	/// 建物オブジェクトの更新処理を行います。

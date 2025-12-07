@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Enemy/Enemy.h"
+#include "Enemy/Boss.h"
 
 #include "3d/Camera/Camera.h"
 
@@ -148,6 +149,9 @@ private:
 
 	//エネミーリスト
 	std::list<Enemy*> enemies_;
+
+	//ボス
+	Boss* boss_;
 
 	//スポーンタイマー
 	float spawnTimer_;
