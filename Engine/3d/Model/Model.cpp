@@ -85,31 +85,60 @@ void Model::Initialize(MeshType type, const std::string& textureFilePath) {
 	mesh_ = CreateMesh(type);
 	mesh_->Initialize();
 
+	if (modelData_.submeshes.empty()) {
+		modelData_.submeshes.push_back(Submesh());
+		modelData_.submeshes[0].startIndex = 0;
+		modelData_.submeshes[0].indexCount = (uint32_t)modelData_.indices.size();
+		modelData_.submeshes[0].materialIndex = 0;
+	}
+
 	for (uint32_t i = 0; i < mesh_->GetVertexCount(); i++) {
 		modelData_.vertices.push_back(mesh_->GetVertexData()[i]);
 	}
 	for (uint32_t i = 0; i < mesh_->GetIndexCount(); i++) {
 		modelData_.indices.push_back(mesh_->GetIndexData()[i]);
+		modelData_.submeshes[0].indexCount++;
 	}
 
 	// create default single material
 	modelData_.texturePaths.push_back(textureFilePath);
 
-	// create material CBV
-	auto buf = modelCommon_->GetDxCommon()->CreateBufferResource(sizeof(Material));
-	materialResources_.push_back(buf);
-	Material* mapped = nullptr;
-	buf->Map(0, nullptr, reinterpret_cast<void**>(&mapped));
-	mapped->color = Vector4(1,1,1,1);
-	mapped->enableLighting = 1;
-	mapped->uvTransform = MakeIdentity4x4();
-	mapped->shininess = 50.0f;
-	mapped->environmentCoefficient = 1.0f;
-	materialDataMapped_.push_back(mapped);
+	// マテリアルリソースを用意（マテリアル数だけCBVを作る）
+	size_t matCount = modelData_.texturePaths.size();
+	if (matCount == 0) {
+		// 既存1テクスチャ互換：既存処理を維持
+		materialResources_.resize(1);
+		materialResources_[0] = modelCommon_->GetDxCommon()->CreateBufferResource(sizeof(Material));
+		materialResources_[0]->Map(0, nullptr, reinterpret_cast<void**>(&materialDataMapped_.emplace_back(nullptr)));
+		// we'll remap correctly below
+	}
 
-	// ensure texture loaded
-	TextureManager::GetInstance()->LoadTexture(textureFilePath);
-	textureFilePath_ = textureFilePath;
+	// create per-material CBV and map them
+	materialResources_.clear();
+	materialDataMapped_.clear();
+	for (size_t i = 0; i < modelData_.texturePaths.size(); ++i) {
+		auto buf = modelCommon_->GetDxCommon()->CreateBufferResource(sizeof(Material));
+		materialResources_.push_back(buf);
+
+		Material* mapped = nullptr;
+		buf->Map(0, nullptr, reinterpret_cast<void**>(&mapped));
+		// initialize defaults
+		mapped->color = Vector4(1, 1, 1, 1);
+		mapped->enableLighting = 1;
+		mapped->uvTransform = MakeIdentity4x4();
+		mapped->shininess = 50.0f;
+		mapped->environmentCoefficient = 1.0f;
+
+		materialDataMapped_.push_back(mapped);
+
+		// ensure texture loaded into TextureManager
+		TextureManager::GetInstance()->LoadTexture(modelData_.texturePaths[i]);
+	}
+
+	// Backwards compatibility: if single texture present, set textureFilePath_
+	if (!modelData_.texturePaths.empty()) {
+		textureFilePath_ = modelData_.texturePaths[0];
+	}
 }
 
 ///=====================================================/// 

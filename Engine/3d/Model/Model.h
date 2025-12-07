@@ -121,6 +121,6 @@ private:
 	void SetUVTransform(const Matrix4x4& uvTransform) { if(!materialDataMapped_.empty()) materialDataMapped_[0]->uvTransform = uvTransform; }
 	void SetShininess(const float& shininess) { if(!materialDataMapped_.empty()) materialDataMapped_[0]->shininess = shininess; }
 	void SetEnvironmentCoefficient(const float& coefficient) { if(!materialDataMapped_.empty()) materialDataMapped_[0]->environmentCoefficient = coefficient; }
-	void SetTextureFilePath(const std::string filePath) { textureFilePath_ = filePath; }
+	void SetTextureFilePath(const std::string filePath) { modelData_.texturePaths[0] = filePath; }
 	void SetTextureIndex(const uint32_t index) { textureIndex_ = index; }
 };

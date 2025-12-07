@@ -199,12 +199,6 @@ private:
 
 	std::unique_ptr<WorldTransform> leftWingTransform_;
 
-	//右ウィングオブジェクト
-	std::unique_ptr<Object3D> rightWing_;
-
-	//左ウィングオブジェクト
-	std::unique_ptr<Object3D> leftWing_;
-
 	//右トレイルエミッター
 	std::unique_ptr<EmitterGroup> rightTrail_;
 
