@@ -54,7 +54,7 @@ void EnemyManager::Initialize(Camera* cameraPtr, BulletManager* bulletPtr, Playe
 	spawnRange_ = { 10.0f,7.0f,0.0f };
 
 	//スポーンフラグの設定
-	isSpawn_ = false;
+	isSpawn_ = true;
 
 	ObjectManager::GetInstance()->SpawnBoss();
 

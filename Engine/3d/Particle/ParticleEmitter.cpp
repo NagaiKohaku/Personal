@@ -133,8 +133,6 @@ void ParticleEmitter::Initialize(const std::string& groupName, const std::string
 	//テクスチャの設定
 	model_->SetTextureFilePath("Resource/Sprite/Particle/" + textureFileName_);
 
-	//テクスチャ番号の設定
-	model_->SetTextureIndex(textureManager_->GetSrvIndex(model_->GetTextureFilePath()));
 }
 
 ///=====================================================/// 
@@ -496,8 +494,6 @@ void ParticleEmitter::ImGui() {
 				textureFileName_ = textureItems[currentTexture];
 
 				model_->SetTextureFilePath("Resource/Sprite/Particle/" + textureFileName_);
-
-				model_->SetTextureIndex(textureManager_->GetSrvIndex(model_->GetTextureFilePath()));
 			}
 			ImGui::NextColumn();
 

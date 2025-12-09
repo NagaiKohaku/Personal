@@ -48,13 +48,10 @@ private:
 
 	// モデルデータ
 	struct ModelData {
-		std::vector<MeshBase::VertexData> vertices; // 頂点データ
-		std::vector<uint32_t> indices; // インデックスデータ
-
-		std::vector<Submesh> submeshes;           // サブメッシュ配列
+		std::unique_ptr<MeshBase> mesh; // メッシュ（頂点・インデックスバッファ）
+		std::unordered_map<std::string, Submesh> subMeshes;// サブメッシュ配列
 		std::vector<std::string> materialNames;   // マテリアル名 (usemtl の名前)
 		std::vector<std::string> texturePaths;    // マテリアルごとのテクスチャパス (map_Kd)
-
 		std::vector<MeshBase::VertexData> baseVertices;
 	};
 
@@ -67,7 +64,6 @@ public:
 	void SendMeshDataForGPU();
 	void SendMaterialDataForGPU();
 	void SendTextureDataForGPU();
-	void Copy(Model* model);
 
 	// ===== Submesh animation API =====
 	/// <summary>
@@ -92,7 +88,6 @@ private:
 
 private:
 	ModelCommon* modelCommon_ = nullptr;
-	std::unique_ptr<MeshBase> mesh_;
 
 	// Per-material CBV resources
 	std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>> materialResources_;
@@ -103,14 +98,8 @@ private:
 	// temporary storage used during MTL parsing
 	std::unordered_map<std::string, std::string> mtlToTextureMap_;
 
-	// original single-texture compatibility (kept for convenience)
-	std::string textureFilePath_;
-	uint32_t textureIndex_ = 0;
-
 	public:
-	MeshBase* GetMesh() { return mesh_.get(); }
-	ModelData GetModelData() { return modelData_; }
-	std::string GetTextureFilePath() const { return textureFilePath_; }
+	MeshBase* GetMesh() { return modelData_.mesh.get(); }
 
 	const Vector4& GetColor() { return materialDataMapped_.empty() ? *((Vector4*)nullptr) : materialDataMapped_[0]->color; }
 	const Matrix4x4& GetUVTransform() { static Matrix4x4 id; return id; }
@@ -122,5 +111,4 @@ private:
 	void SetShininess(const float& shininess) { if(!materialDataMapped_.empty()) materialDataMapped_[0]->shininess = shininess; }
 	void SetEnvironmentCoefficient(const float& coefficient) { if(!materialDataMapped_.empty()) materialDataMapped_[0]->environmentCoefficient = coefficient; }
 	void SetTextureFilePath(const std::string filePath) { modelData_.texturePaths[0] = filePath; }
-	void SetTextureIndex(const uint32_t index) { textureIndex_ = index; }
 };

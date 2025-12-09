@@ -16,45 +16,46 @@
 ///=====================================================///
 void Model::Initialize(const std::string& directoryPath, const std::string& filename) {
 
+	/// === モデル基底のインスタンスを取得 === ///
+
 	// モデル基底のインスタンスを取得
 	modelCommon_ = ModelCommon::GetInstance();
+
+	/// === メッシュの作成 === ///
+
+	// ModelMesh のインスタンスを生成
+	modelData_.mesh = std::make_unique<ModelMesh>();
 
 	// OBJ 読み込み（usemtl / mtllib を処理）
 	LoadObjFile(directoryPath, filename);
 
-	// Mesh の生成（1つの VB/IB にまとめる設計のまま）
-	mesh_ = std::make_unique<ModelMesh>();
+	// メッシュの初期化
+	modelData_.mesh->Initialize();
 
-	// 頂点データとインデックスデータのコピー
-	mesh_->CopyMeshData(modelData_.indices, modelData_.vertices);
+	//メッシュの更新
+	modelData_.mesh->UpdateMeshDataGPU();
 
-	// 初期化
-	mesh_->Initialize();
+	/// === マテリアルの設定 === ///
 
-	// マテリアルリソースを用意（マテリアル数だけCBVを作る）
-	size_t matCount = modelData_.texturePaths.size();
-	if (matCount == 0) {
-		// 既存1テクスチャ互換：既存処理を維持
-		materialResources_.resize(1);
-		materialResources_[0] = modelCommon_->GetDxCommon()->CreateBufferResource(sizeof(Material));
-		materialResources_[0]->Map(0, nullptr, reinterpret_cast<void**>(&materialDataMapped_.emplace_back(nullptr)));
-		// we'll remap correctly below
-	}
-
-	// create per-material CBV and map them
-	materialResources_.clear();
-	materialDataMapped_.clear();
 	for (size_t i = 0; i < modelData_.texturePaths.size(); ++i) {
+
 		auto buf = modelCommon_->GetDxCommon()->CreateBufferResource(sizeof(Material));
+
 		materialResources_.push_back(buf);
 
 		Material* mapped = nullptr;
+
 		buf->Map(0, nullptr, reinterpret_cast<void**>(&mapped));
+
 		// initialize defaults
-		mapped->color = Vector4(1,1,1,1);
+		mapped->color = Vector4(1, 1, 1, 1);
+
 		mapped->enableLighting = 1;
+
 		mapped->uvTransform = MakeIdentity4x4();
+
 		mapped->shininess = 50.0f;
+
 		mapped->environmentCoefficient = 1.0f;
 
 		materialDataMapped_.push_back(mapped);
@@ -63,10 +64,6 @@ void Model::Initialize(const std::string& directoryPath, const std::string& file
 		TextureManager::GetInstance()->LoadTexture(modelData_.texturePaths[i]);
 	}
 
-	// Backwards compatibility: if single texture present, set textureFilePath_
-	if (!modelData_.texturePaths.empty()) {
-		textureFilePath_ = modelData_.texturePaths[0];
-	}
 }
 
 ///=====================================================///
@@ -76,21 +73,16 @@ void Model::Initialize(MeshType type, const std::string& textureFilePath) {
 
 	modelCommon_ = ModelCommon::GetInstance();
 
-	mesh_ = CreateMesh(type);
-	mesh_->Initialize();
+	// ModelMesh のインスタンスを生成
+	modelData_.mesh = CreateMesh(type);
 
-	if (modelData_.submeshes.empty()) {
-		modelData_.submeshes.push_back(Submesh());
-		modelData_.submeshes[0].startIndex = 0;
-		modelData_.submeshes[0].indexCount = (uint32_t)modelData_.indices.size();
-		modelData_.submeshes[0].materialIndex = 0;
-	}
+	// メッシュの初期化
+	modelData_.mesh->Initialize();
 
-	modelData_.vertices = mesh_->GetVertexData();
-
-	modelData_.indices = mesh_->GetIndexData();
-
-	modelData_.submeshes[0].indexCount = static_cast<uint32_t>(mesh_->GetIndexData().size());
+	modelData_.subMeshes["Primitive"] = Submesh();
+	modelData_.subMeshes["Primitive"].materialIndex = 0;
+	modelData_.subMeshes["Primitive"].startIndex = 0;
+	modelData_.subMeshes["Primitive"].indexCount = static_cast<uint32_t>(modelData_.mesh->GetIndexData().size());
 
 	// create default single material
 	modelData_.texturePaths.push_back(textureFilePath);
@@ -127,10 +119,6 @@ void Model::Initialize(MeshType type, const std::string& textureFilePath) {
 		TextureManager::GetInstance()->LoadTexture(modelData_.texturePaths[i]);
 	}
 
-	// Backwards compatibility: if single texture present, set textureFilePath_
-	if (!modelData_.texturePaths.empty()) {
-		textureFilePath_ = modelData_.texturePaths[0];
-	}
 }
 
 ///=====================================================/// 
@@ -140,13 +128,17 @@ void Model::Initialize(MeshType type, Model* model) {
 
 	modelCommon_ = ModelCommon::GetInstance();
 
-	// copy
-	Copy(model);
+	modelData_.mesh = CreateMesh(type);
 
-	// mesh create and copy as before
-	mesh_ = CreateMesh(type);
-	mesh_->CopyMeshData(modelData_.indices, modelData_.vertices);
-	mesh_->Initialize();
+	modelData_.mesh->CopyMeshData(model->modelData_.mesh->GetIndexData(), model->modelData_.mesh->GetVertexData());
+
+	modelData_.mesh->Initialize();
+
+	modelData_.subMeshes = model->modelData_.subMeshes;
+
+	modelData_.materialNames = model->modelData_.materialNames;
+
+	modelData_.texturePaths = model->modelData_.texturePaths;
 
 	// create material CBVs for each texture path
 	for (auto& path : modelData_.texturePaths) {
@@ -154,7 +146,7 @@ void Model::Initialize(MeshType type, Model* model) {
 		materialResources_.push_back(buf);
 		Material* mapped = nullptr;
 		buf->Map(0, nullptr, reinterpret_cast<void**>(&mapped));
-		mapped->color = Vector4(1,1,1,1);
+		mapped->color = Vector4(1, 1, 1, 1);
 		mapped->enableLighting = 1;
 		mapped->uvTransform = MakeIdentity4x4();
 		mapped->shininess = 50.0f;
@@ -171,13 +163,17 @@ void Model::Initialize(MeshType type, Model* model) {
 void Model::Draw() {
 
 	// メッシュの設定（VB/IB 設定）
-	mesh_->SendDataForGPU();
+	modelData_.mesh->SendDataForGPU();
 
 	// サブメッシュごとに描画
-	for (const auto& sm : modelData_.submeshes) {
+	for (const auto& pair : modelData_.subMeshes) {
+
+		std::string key = pair.first;
+
+		Submesh subMesh = pair.second;
 
 		// set material CBV for this submesh
-		size_t matIdx = sm.materialIndex < materialResources_.size() ? sm.materialIndex : 0;
+		size_t matIdx = subMesh.materialIndex < materialResources_.size() ? subMesh.materialIndex : 0;
 		if (!materialResources_.empty()) {
 			modelCommon_->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResources_[matIdx]->GetGPUVirtualAddress());
 		}
@@ -190,7 +186,7 @@ void Model::Draw() {
 
 		// draw only that submesh index range
 		modelCommon_->GetDxCommon()->GetCommandList()->DrawIndexedInstanced(
-			sm.indexCount, 1, sm.startIndex, 0, 0);
+			subMesh.indexCount, 1, subMesh.startIndex, 0, 0);
 	}
 }
 
@@ -198,7 +194,7 @@ void Model::Draw() {
 /// メッシュをGPUへ送信
 ///=====================================================///
 void Model::SendMeshDataForGPU() {
-	mesh_->SendDataForGPU();
+	modelData_.mesh->SendDataForGPU();
 }
 
 ///=====================================================/// 
@@ -221,27 +217,19 @@ void Model::SendTextureDataForGPU() {
 }
 
 ///=====================================================/// 
-/// モデルのデータをコピー
-///=====================================================///
-void Model::Copy(Model* model) {
-	modelData_ = model->modelData_;
-	textureFilePath_ = model->textureFilePath_;
-}
-
-///=====================================================/// 
 /// サブメッシュのローカル変換を設定
 ///=====================================================///
 void Model::SetSubmeshLocalTransform(size_t submeshIndex, const Matrix4x4& localTransform) {
-	if (submeshIndex >= modelData_.submeshes.size()) return;
-	modelData_.submeshes[submeshIndex].localTransform = localTransform;
+	if (submeshIndex >= modelData_.subMeshes.size()) return;
+	modelData_.subMeshes[submeshIndex].localTransform = localTransform;
 }
 
 ///=====================================================/// 
 /// サブメッシュのローカル変換を取得
 ///=====================================================///
 Matrix4x4 Model::GetSubmeshLocalTransform(size_t submeshIndex) const {
-	if (submeshIndex >= modelData_.submeshes.size()) return MakeIdentity4x4();
-	return modelData_.submeshes[submeshIndex].localTransform;
+	if (submeshIndex >= modelData_.subMeshes.size()) return MakeIdentity4x4();
+	return modelData_.subMeshes[submeshIndex].localTransform;
 }
 
 ///=====================================================/// 
@@ -250,24 +238,29 @@ Matrix4x4 Model::GetSubmeshLocalTransform(size_t submeshIndex) const {
 ///=====================================================///
 void Model::UpdateSubmeshTransformsCPU() {
 	// if no baseVertices stored, initialize it from current vertices
-	if (modelData_.baseVertices.size() != modelData_.vertices.size()) {
-		modelData_.baseVertices = modelData_.vertices;
+	if (modelData_.baseVertices.size() != modelData_.mesh->GetVertexData().size()) {
+		modelData_.baseVertices = modelData_.mesh->GetVertexData();
 	}
 
 	// start with base vertices
 	auto currentVerts = modelData_.baseVertices;
 
 	// For each submesh, transform the vertices referenced by its indices
-	for (const auto& sm : modelData_.submeshes) {
+	for (const auto& pair : modelData_.subMeshes) {
+
+		std::string key = pair.first;
+
+		Submesh subMesh = pair.second;
+
 		// build transform matrix (for now assume world = local)
-		Matrix4x4 m = sm.localTransform;
+		Matrix4x4 m = subMesh.localTransform;
 
 		// iterate indices for this submesh
-		uint32_t start = sm.startIndex;
-		uint32_t count = sm.indexCount;
+		uint32_t start = subMesh.startIndex;
+		uint32_t count = subMesh.indexCount;
 
 		for (uint32_t i = 0; i < count; ++i) {
-			uint32_t idx = modelData_.indices[start + i];
+			uint32_t idx = modelData_.mesh->GetIndexData()[start + i];
 			// transform position (assume position is Vector4)
 			Vector4 p = currentVerts[idx].position;
 			// apply matrix (assuming row-major helper functions exist)
@@ -290,13 +283,9 @@ void Model::UpdateSubmeshTransformsCPU() {
 		}
 	}
 
-	// copy modified vertices into GPU buffer via mesh_->CopyMeshData
-	mesh_->CopyMeshData(modelData_.indices, currentVerts);
+	modelData_.mesh->CopyMeshData(modelData_.mesh->GetIndexData(), currentVerts);
 
-	mesh_->UpdateMeshDataGPU();
-
-	// also update stored 'vertices' copy
-	modelData_.vertices = std::move(currentVerts);
+	modelData_.mesh->UpdateMeshDataGPU();
 }
 
 ///=====================================================/// 
@@ -304,114 +293,221 @@ void Model::UpdateSubmeshTransformsCPU() {
 ///=====================================================///
 void Model::LoadObjFile(const std::string& directoryPath, const std::string& filename) {
 
-	// 一時データ
-	MeshBase::VertexData triangle[3];
-	std::vector<Vector4> positions;
-	std::vector<Vector3> normals;
-	std::vector<Vector2> texcoords;
+	//ファイルの内容
+	std::ifstream file(directoryPath + "/" + filename);
+
+	//ファイルの1行分の内容
 	std::string line;
 
-	std::ifstream file(directoryPath + "/" + filename);
+	//3頂点データ
+	MeshBase::VertexData triangle[3];
+
+	//頂点座標データ
+	std::vector<Vector4> positions;
+
+	//頂点方向データ
+	std::vector<Vector3> normals;
+
+	//UV座標データ
+	std::vector<Vector2> texcoords;
+
+	//オブジェクト名
+	std::string objectName;
+
+	//ファイルを開く
 	assert(file.is_open());
 
-	// current submesh index in modelData_.submeshes
-	int currentSubmesh = -1;
+	// 現在のサブメッシュの数
+	int currentSubmesh = 0;
 
+	//1行ずつ読み込む
 	while (std::getline(file, line)) {
+
+		//読み込んだ内容
 		std::istringstream s(line);
+
+		//識別子
 		std::string identifier;
+
+		//識別子要素を読み込む
 		s >> identifier;
+
 		if (identifier == "v") {
+
+			/// === 頂点座標データの読み込み === ///
+
+			//頂点座標データ
 			Vector4 position;
+
+			//頂点座標データを読み込む
 			s >> position.x >> position.y >> position.z;
+
+			//DirectXの設定に合わせてX軸を反転
 			position.x *= -1.0f;
+
+			//同次座標を設定
 			position.w = 1.0f;
+
+			//頂点座標データを登録
 			positions.push_back(position);
+
 		} else if (identifier == "vt") {
+
+			/// === uv座標データの読み込み === ///
+
+			//uv座標データ
 			Vector2 texCoord;
+
+			//uv座標データを読み込む
 			s >> texCoord.x >> texCoord.y;
+
+			//DirectXの設定に合わせてy軸を調整
 			texCoord.y = 1.0f - texCoord.y;
+
+			//uv座標データを登録
 			texcoords.push_back(texCoord);
+
 		} else if (identifier == "vn") {
+
+			/// === 頂点方向データの読み込み === ///
+
+			//頂点方向データ
 			Vector3 normal;
+
+			//頂点方向データを読み込む
 			s >> normal.x >> normal.y >> normal.z;
+
+			//DirectXの設定に合わせてX軸を反転
 			normal.x *= -1.0f;
+
+			//頂点方向データを登録
 			normals.push_back(normal);
+
+		} else if (identifier == "o") {
+
+			/// === サブメッシュの生成 === ///
+
+			//オブジェクト名を読み込む
+			s >> objectName;
+
+			//サブメッシュを生成
+			modelData_.subMeshes[objectName] = Submesh();
+
 		} else if (identifier == "f") {
-			// Ensure we have a submesh to push into
-			if (currentSubmesh < 0) {
-				// create a default submesh 0
-				modelData_.submeshes.push_back(Submesh());
-				modelData_.submeshes.back().startIndex = 0;
-				modelData_.submeshes.back().indexCount = 0;
-				modelData_.materialNames.push_back(std::string("default"));
-				modelData_.texturePaths.push_back(textureFilePath_); // may be empty
-				currentSubmesh = 0;
-			}
+
+			/// === 三角面情報の読み込み === ///
 
 			for (int faceVertex = 0; faceVertex < 3; ++faceVertex) {
+
+				//頂点定義
 				std::string vertexDefinition;
+
+				//頂点定義を読み込む
 				s >> vertexDefinition;
+
 				std::istringstream v(vertexDefinition);
-				uint32_t elementIndices[3] = {0,0,0};
+
+				//要素番号
+				uint32_t elementIndices[3] = { 0,0,0 };
+
+				//3頂点分の要素番号を読み込む
 				for (int element = 0; element < 3; ++element) {
+
 					std::string index;
+
 					std::getline(v, index, '/');
+
 					elementIndices[element] = index.empty() ? 0 : std::stoi(index);
 				}
+
+				//要素番号から頂点座標、頂点方向、uv座標を取得する
 				Vector4 position = positions[elementIndices[0] - 1];
+
 				Vector2 texCoord = texcoords[elementIndices[1] - 1];
+
 				Vector3 normal = normals[elementIndices[2] - 1];
+
+				//1頂点ずつデータを登録
 				triangle[faceVertex] = { position, texCoord, normal };
 			}
 
 			for (int i = 2; i >= 0; i--) {
-				modelData_.indices.push_back(uint32_t(modelData_.vertices.size()));
-				modelData_.vertices.push_back(triangle[i]);
-				modelData_.submeshes[currentSubmesh].indexCount += 1;
+
+				//メッシュに頂点データを設定する
+				modelData_.mesh->AddVertexData(triangle[i]);
+
+				//頂点番号を増やす
+				modelData_.subMeshes[objectName].indexCount += 1;
 			}
 
 		} else if (identifier == "mtllib") {
-			std::string materialFilename;
-			s >> materialFilename;
-			LoadMaterialTemplateFile(directoryPath, materialFilename);
-		} else if (identifier == "usemtl") {
-			std::string matName;
-			s >> matName;
-			// determine material index (add if new)
-			auto it = std::find(modelData_.materialNames.begin(), modelData_.materialNames.end(), matName);
-			int matIndex = -1;
-			if (it == modelData_.materialNames.end()) {
-				matIndex = int(modelData_.materialNames.size());
-				modelData_.materialNames.push_back(matName);
-				// push texture path if known from parsed MTL, else empty
-				auto tIt = mtlToTextureMap_.find(matName);
-				if (tIt != mtlToTextureMap_.end()) modelData_.texturePaths.push_back(tIt->second);
-				else modelData_.texturePaths.push_back(std::string());
-				// start a new submesh record
-				modelData_.submeshes.push_back(Submesh());
-				modelData_.submeshes.back().startIndex = uint32_t(modelData_.indices.size());
-				modelData_.submeshes.back().indexCount = 0;
-				modelData_.submeshes.back().materialIndex = matIndex;
-			} else {
-				matIndex = int(std::distance(modelData_.materialNames.begin(), it));
-				// start a new submesh for this material
-				modelData_.submeshes.push_back(Submesh());
-				modelData_.submeshes.back().startIndex = uint32_t(modelData_.indices.size());
-				modelData_.submeshes.back().indexCount = 0;
-				modelData_.submeshes.back().materialIndex = matIndex;
-			}
-			currentSubmesh = int(modelData_.submeshes.size()) - 1;
-		}
-	}
 
-	// If we ended without create any submesh but have indices, create default
-	if (modelData_.submeshes.empty() && !modelData_.indices.empty()) {
-		modelData_.submeshes.push_back(Submesh());
-		modelData_.submeshes.back().startIndex = 0;
-		modelData_.submeshes.back().indexCount = uint32_t(modelData_.indices.size());
-		modelData_.materialNames.push_back(std::string("default"));
-		modelData_.texturePaths.push_back(textureFilePath_);
+			/// === マテリアルの読み込み === ///
+
+			//マテリアルファイル名
+			std::string materialFilename;
+
+			//マテリアルファイル名を読み込む
+			s >> materialFilename;
+
+			//マテリアル情報を読み込む
+			LoadMaterialTemplateFile(directoryPath, materialFilename);
+
+		} else if (identifier == "usemtl") {
+
+			/// === マテリアルの設定 === ///
+
+			//マテリアル名
+			std::string matName;
+
+			//マテリアル名を読み込む
+			s >> matName;
+
+			//マテリアル名が存在するかチェック
+			auto it = std::find(modelData_.materialNames.begin(), modelData_.materialNames.end(), matName);
+
+			int matIndex = -1;
+
+			if (it == modelData_.materialNames.end()) {
+
+				//マテリアル番号を振り分け
+				matIndex = static_cast<int>(modelData_.materialNames.size());
+
+				//モデルデータにマテリアル名を登録
+				modelData_.materialNames.push_back(matName);
+
+				//テクスチャパスが存在するかチェック
+				auto tIt = mtlToTextureMap_.find(matName);
+
+				if (tIt != mtlToTextureMap_.end()) {
+
+					//モデルデータにテクスチャパスを登録
+					modelData_.texturePaths.push_back(tIt->second);
+				} else {
+
+					//空の文字列で登録
+					modelData_.texturePaths.push_back(std::string());
+				}
+
+				modelData_.subMeshes[objectName].materialIndex = matIndex;
+
+				modelData_.subMeshes[objectName].startIndex = uint32_t(modelData_.mesh->GetIndexData().size());
+
+				modelData_.subMeshes[objectName].indexCount = 0;
+			} else {
+
+				matIndex = int(std::distance(modelData_.materialNames.begin(), it));
+
+				// start a new submesh for this material
+				modelData_.subMeshes[objectName].materialIndex = matIndex;
+
+				modelData_.subMeshes[objectName].startIndex = uint32_t(modelData_.mesh->GetIndexData().size());
+
+				modelData_.subMeshes[objectName].indexCount = 0;
+			}
+
+			currentSubmesh = int(modelData_.subMeshes.size()) - 1;
+		}
 	}
 }
 
@@ -420,27 +516,45 @@ void Model::LoadObjFile(const std::string& directoryPath, const std::string& fil
 ///=====================================================///
 void Model::LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename) {
 
+	//ファイルの内容
 	std::ifstream file(directoryPath + "/" + filename);
+
+	//ファイルの1行分の内容
+	std::string line;
+
+	//マテリアル名
+	std::string materialName;
+
+	//テクスチャファイル名
+	std::string textureFilename;
+
+	//ファイルを開く
 	assert(file.is_open());
 
-	std::string line;
-	std::string currentNewmtl;
-
+	//ファイルを読み込む
 	while (std::getline(file, line)) {
+
+		//読み込んだ内容
 		std::istringstream s(line);
+
+		//識別子
 		std::string identifier;
+
+		//識別子要素を読み込む
 		s >> identifier;
+
 		if (identifier == "newmtl") {
-			s >> currentNewmtl;
+
+			//マテリアル名を読み込む
+			s >> materialName;
+
 		} else if (identifier == "map_Kd") {
-			std::string textureFilename;
+
+			//テクスチャファイル名を読み込む
 			s >> textureFilename;
-			if (!currentNewmtl.empty()) {
-				mtlToTextureMap_[currentNewmtl] = directoryPath + "/" + textureFilename;
-			} else {
-				// fallback: if no material name context, set default textureFilePath_
-				textureFilePath_ = directoryPath + "/" + textureFilename;
-			}
+
+			//マテリアル名とテクスチャファイル名を登録
+			mtlToTextureMap_[materialName] = directoryPath + "/" + textureFilename;
 		}
 	}
 }
