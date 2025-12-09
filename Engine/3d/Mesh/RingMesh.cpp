@@ -5,24 +5,7 @@
 ///=====================================================///
 void RingMesh::Initialize() {
 
-	directXCommon_ = DirectXCommon::GetInstance();
-
-	/// === 頂点リソースの生成 === ///
-
-	//頂点リソースの生成
-	vertexResource_ = directXCommon_->CreateBufferResource(sizeof(VertexData) * 4 * kRingDivide);
-
-	//頂点バッファビューの作成
-	vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
-
-	//使用するリソースのサイズを設定
-	vertexBufferView_.SizeInBytes = sizeof(VertexData) * 4 * kRingDivide;
-
-	//1頂点当たりのサイズを設定
-	vertexBufferView_.StrideInBytes = sizeof(VertexData);
-
-	//リソースにデータを書き込めるようにする
-	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData_));
+	/// === 頂点データの設定 === ///
 
 	for (uint32_t index = 0; index < kRingDivide; ++index) {
 
@@ -34,49 +17,43 @@ void RingMesh::Initialize() {
 		float u = static_cast<float>(index) / static_cast<float>(kRingDivide);
 		float uNext = static_cast<float>(index + 1) / static_cast<float>(kRingDivide);
 
-		vertexData_[index * 4 + 0].position = { -sin * kOuterRadius,cos * kOuterRadius,0.0f,1.0f };
-		vertexData_[index * 4 + 0].texcoord = { u,0.0f };
-		vertexData_[index * 4 + 0].normal = { 0.0f,0.0f,-1.0f };
+		vertexData_.push_back({
+			{ -sin * kOuterRadius,cos * kOuterRadius,0.0f,1.0f },
+			{ u,0.0f },
+			{ 0.0f,0.0f,-1.0f }
+			});
 
-		vertexData_[index * 4 + 1].position = { -sinNext * kOuterRadius,cosNext * kOuterRadius,0.0f,1.0f };
-		vertexData_[index * 4 + 1].texcoord = { uNext,0.0f };
-		vertexData_[index * 4 + 1].normal = { 0.0f,0.0f,-1.0f };
+		vertexData_.push_back({
+			{ -sinNext * kOuterRadius,cosNext * kOuterRadius,0.0f,1.0f },
+			{ uNext,0.0f },
+			{ 0.0f,0.0f,-1.0f }
+			});
 
-		vertexData_[index * 4 + 2].position = { -sin * kInnerRadius,cos * kInnerRadius,0.0f,1.0f };
-		vertexData_[index * 4 + 2].texcoord = { u,1.0f };
-		vertexData_[index * 4 + 2].normal = { 0.0f,0.0f,-1.0f };
+		vertexData_.push_back({
+			{ -sin * kInnerRadius,cos * kInnerRadius,0.0f,1.0f },
+			{ u,1.0f },
+			{ 0.0f,0.0f,-1.0f }
+			});
 
-		vertexData_[index * 4 + 3].position = { -sinNext * kInnerRadius,cosNext * kInnerRadius,0.0f,1.0f };
-		vertexData_[index * 4 + 3].texcoord = { uNext,1.0f };
-		vertexData_[index * 4 + 3].normal = { 0.0f,0.0f,-1.0f };
-
+		vertexData_.push_back({
+			{ -sinNext * kInnerRadius,cosNext * kInnerRadius,0.0f,1.0f },
+			{ uNext,1.0f },
+			{ 0.0f,0.0f,-1.0f }
+			});
 	}
 
-	/// === 頂点インデックスリソースの生成 === ///
-
-	indexCount_ = 6 * kRingDivide;
-
-	//頂点インデックスリソースの生成
-	indexResource_ = directXCommon_->CreateBufferResource(sizeof(uint32_t) * indexCount_);
-
-	//リソースの場所を取得
-	indexBufferView_.BufferLocation = indexResource_->GetGPUVirtualAddress();
-
-	//使用するリソースのサイズを設定
-	indexBufferView_.SizeInBytes = sizeof(uint32_t) * indexCount_;
-
-	//フォーマットを設定
-	indexBufferView_.Format = DXGI_FORMAT_R32_UINT;
-
-	//リソースにデータを書き込めるようにする
-	indexResource_->Map(0, nullptr, reinterpret_cast<void**>(&indexData_));
+	/// === 頂点インデックスデータの設定 === ///
 
 	for (uint32_t index = 0; index < kRingDivide; ++index) {
-		indexData_[index * 6 + 0] = index * 4 + 0;
-		indexData_[index * 6 + 1] = index * 4 + 1;
-		indexData_[index * 6 + 2] = index * 4 + 2;
-		indexData_[index * 6 + 3] = index * 4 + 1;
-		indexData_[index * 6 + 4] = index * 4 + 3;
-		indexData_[index * 6 + 5] = index * 4 + 2;
+
+		indexData_.push_back(index * 4 + 0);
+		indexData_.push_back(index * 4 + 1);
+		indexData_.push_back(index * 4 + 2);
+		indexData_.push_back(index * 4 + 1);
+		indexData_.push_back(index * 4 + 3);
+		indexData_.push_back(index * 4 + 2);
 	}
+
+	//リソースの初期化
+	MeshBase::Initialize();
 }

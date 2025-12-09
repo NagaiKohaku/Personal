@@ -231,11 +231,7 @@ void Player::Update() {
 
 	core_->GetModel()->SetSubmeshLocalTransform(static_cast<size_t>(1), rightWingTransform_->GetWorldMatrix());
 
-	core_->GetModel()->SetSubmeshLocalTransform(static_cast<size_t>(3), rightWingTransform_->GetWorldMatrix());
-
 	core_->GetModel()->SetSubmeshLocalTransform(static_cast<size_t>(2), leftWingTransform_->GetWorldMatrix());
-
-	core_->GetModel()->SetSubmeshLocalTransform(static_cast<size_t>(4), leftWingTransform_->GetWorldMatrix());
 
 	core_->GetModel()->UpdateSubmeshTransformsCPU();
 
@@ -757,13 +753,4 @@ void Player::Dead() {
 
 void Player::ImGui() {
 
-	ImGui::Begin("Player");
-
-	ImGui::DragFloat3("CorePos", &core_->GetWorldTransform().translate_.x, 0.01f);
-
-	ImGui::DragFloat3("CoreRot", &core_->GetWorldTransform().rotate_.x, 0.01f);
-
-	ImGui::DragFloat3("TankMax", &tankWingPosOffset_.x, 0.01f);
-
-	ImGui::End();
 }

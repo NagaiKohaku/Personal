@@ -420,7 +420,7 @@ void ParticleEmitter::Draw(LayerType layer) {
 
 		directXCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(1, srvManager_->GetGPUDescriptorHandle(srvIndex_));
 
-		directXCommon_->GetCommandList()->DrawIndexedInstanced(model_->GetMesh()->GetIndexCount(), numInstance_, 0, 0, 0);
+		directXCommon_->GetCommandList()->DrawIndexedInstanced(static_cast<UINT>(model_->GetMesh()->GetIndexData().size()), numInstance_, 0, 0, 0);
 		};
 
 	//レンダラーにコマンドを登録

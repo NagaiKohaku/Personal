@@ -25,17 +25,11 @@ void Model::Initialize(const std::string& directoryPath, const std::string& file
 	// Mesh の生成（1つの VB/IB にまとめる設計のまま）
 	mesh_ = std::make_unique<ModelMesh>();
 
-	// 頂点数の設定
-	mesh_->SetVertexCount(uint32_t(modelData_.vertices.size()));
-
-	// インデックス数の設定
-	mesh_->SetIndexCount(uint32_t(modelData_.indices.size()));
+	// 頂点データとインデックスデータのコピー
+	mesh_->CopyMeshData(modelData_.indices, modelData_.vertices);
 
 	// 初期化
 	mesh_->Initialize();
-
-	// 頂点データとインデックスデータのコピー
-	mesh_->CopyMeshData(modelData_.indices, modelData_.vertices);
 
 	// マテリアルリソースを用意（マテリアル数だけCBVを作る）
 	size_t matCount = modelData_.texturePaths.size();
@@ -92,13 +86,11 @@ void Model::Initialize(MeshType type, const std::string& textureFilePath) {
 		modelData_.submeshes[0].materialIndex = 0;
 	}
 
-	for (uint32_t i = 0; i < mesh_->GetVertexCount(); i++) {
-		modelData_.vertices.push_back(mesh_->GetVertexData()[i]);
-	}
-	for (uint32_t i = 0; i < mesh_->GetIndexCount(); i++) {
-		modelData_.indices.push_back(mesh_->GetIndexData()[i]);
-		modelData_.submeshes[0].indexCount++;
-	}
+	modelData_.vertices = mesh_->GetVertexData();
+
+	modelData_.indices = mesh_->GetIndexData();
+
+	modelData_.submeshes[0].indexCount = static_cast<uint32_t>(mesh_->GetIndexData().size());
 
 	// create default single material
 	modelData_.texturePaths.push_back(textureFilePath);
@@ -153,10 +145,8 @@ void Model::Initialize(MeshType type, Model* model) {
 
 	// mesh create and copy as before
 	mesh_ = CreateMesh(type);
-	mesh_->SetVertexCount(uint32_t(modelData_.vertices.size()));
-	mesh_->SetIndexCount(uint32_t(modelData_.indices.size()));
-	mesh_->Initialize();
 	mesh_->CopyMeshData(modelData_.indices, modelData_.vertices);
+	mesh_->Initialize();
 
 	// create material CBVs for each texture path
 	for (auto& path : modelData_.texturePaths) {
@@ -302,6 +292,8 @@ void Model::UpdateSubmeshTransformsCPU() {
 
 	// copy modified vertices into GPU buffer via mesh_->CopyMeshData
 	mesh_->CopyMeshData(modelData_.indices, currentVerts);
+
+	mesh_->UpdateMeshDataGPU();
 
 	// also update stored 'vertices' copy
 	modelData_.vertices = std::move(currentVerts);

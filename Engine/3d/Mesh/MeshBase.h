@@ -9,8 +9,9 @@
 #include "Math/Vector4.h"
 #include "Math/Matrix4x4.h"
 
-#include "string"
-#include "wrl.h"
+#include <string>
+#include <vector>
+#include <wrl.h>
 
 /// <summary>
 /// メッシュ基底クラス（Mesh Base）です。
@@ -49,10 +50,9 @@ public:
 	/// メッシュを初期化する純粋仮想関数。
 	/// </summary>
 	/// <remarks>
-	/// - 派生クラスで必ず実装する必要があります。
 	/// - 頂点・インデックスリソースの生成や初期データ設定などを行います。
 	/// </remarks>
-	virtual void Initialize() = 0;
+	virtual void Initialize();
 
 	/// <summary>
 	/// GPUにメッシュのデータを送信します。
@@ -72,46 +72,33 @@ public:
 	/// </remarks>
 	void CopyMeshData(std::vector<uint32_t> indices, std::vector<VertexData> vertices);
 
+	/// <summary>
+	/// GPU上のメッシュデータを更新します。
+	/// </summary>
+	void UpdateMeshDataGPU();
+
+	/// <summary>
+	/// 頂点データを追加します。
+	/// </summary>
+	/// <param name="vertex">頂点データ</param>
+	void AddVertexData(const VertexData& vertex);
+
 	///-------------------------------------------/// 
 	/// ゲッター・セッター
 	///-------------------------------------------///
 public:
 
 	/// <summary>
-	/// 頂点数を取得
-	/// </summary>
-	/// <returns>頂点数</returns>
-	uint32_t GetVertexCount() const { return vertexCount_; }
-
-	/// <summary>
-	/// インデックス数を取得
-	/// </summary>
-	/// <returns>インデックス数</returns>
-	uint32_t GetIndexCount() const { return indexCount_; }
-
-	/// <summary>
-	/// 頂点データを取得
+	/// 頂点データを取得します。
 	/// </summary>
 	/// <returns>頂点データ</returns>
-	VertexData* GetVertexData() const { return vertexData_; }
+	std::vector<VertexData>& GetVertexData() { return vertexData_; }
 
 	/// <summary>
-	/// インデックスデータを取得
+	/// インデックスデータを取得します。
 	/// </summary>
 	/// <returns>インデックスデータ</returns>
-	uint32_t* GetIndexData() const { return indexData_; }
-
-	/// <summary>
-	/// 頂点数を設定
-	/// </summary>
-	/// <param name="count">頂点数</param>
-	void SetVertexCount(uint32_t count) { vertexCount_ = count; }
-
-	/// <summary>
-	/// インデックス数を設定
-	/// </summary>
-	/// <param name="count">インデックス数</param>
-	void SetIndexCount(uint32_t count) { indexCount_ = count; }
+	std::vector<uint32_t>& GetIndexData() { return indexData_; }
 
 	///-------------------------------------------/// 
 	/// メンバ変数
@@ -121,11 +108,11 @@ protected:
 	//DirectX基底
 	DirectXCommon* directXCommon_ = nullptr;
 
-	//頂点数
-	uint32_t vertexCount_ = 0;
+	//頂点データ
+	std::vector<VertexData> vertexData_;
 
-	//インデックス数
-	uint32_t indexCount_ = 0;
+	//インデックスデータ
+	std::vector<uint32_t> indexData_;
 
 	/// === バッファリソース === ///
 
@@ -138,10 +125,10 @@ protected:
 	/// === バッファリソース内のデータを指すポインタ === ///
 
 	//頂点データ
-	VertexData* vertexData_ = nullptr;
+	VertexData* mappedVertexData_ = nullptr;
 
 	//頂点番号データ
-	uint32_t* indexData_ = nullptr;
+	uint32_t* mappedIndexData_ = nullptr;
 
 	/// === バッファビュー === ///
 

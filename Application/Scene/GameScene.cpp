@@ -530,7 +530,7 @@ void GameScene::Draw() {
 
 	if (!isClear_ && !isClearAnim_) {
 
-		helpSprite_->Draw(LayerType::UI);
+		//helpSprite_->Draw(LayerType::UI);
 	}
 
 	//右衝撃波エミッターの描画
