@@ -242,7 +242,7 @@
     <ClCompile Include="Engine\Scene\SceneManager.cpp">
       <Filter>Engine\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Application\Scene\GameScene.cpp">
+    <ClCompile Include="Application\Scene\GameScene\GameScene.cpp">
       <Filter>Application\Scene</Filter>
     </ClCompile>
     <ClCompile Include="Application\Scene\ParticleEditorScene.cpp">
@@ -288,6 +288,11 @@
     <ClCompile Include="Application\ObjectManager.cpp" />
     <ClCompile Include="Application\Player\LockOn.cpp" />
     <ClCompile Include="Application\Flash\Flash.cpp" />
+    <ClCompile Include="Application\Scene\GameScene\GameScene3DObject.cpp" />
+    <ClCompile Include="Application\Scene\GameScene\GameScene2DObject.cpp" />
+    <ClCompile Include="Application\Scene\GameScene\Event\ClearEvent.cpp" />
+    <ClCompile Include="Application\Scene\GameScene\Event\StartEvent.cpp" />
+    <ClCompile Include="Application\Scene\GameScene\Event\GameOverEvent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application\Bullet\BulletBase.h">
@@ -497,7 +502,7 @@
     <ClInclude Include="Engine\Scene\SceneManager.h">
       <Filter>Engine\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="Application\Scene\GameScene.h">
+    <ClInclude Include="Application\Scene\GameScene\GameScene.h">
       <Filter>Application\Scene</Filter>
     </ClInclude>
     <ClInclude Include="Application\Scene\ParticleEditorScene.h">
@@ -546,6 +551,12 @@
     <ClInclude Include="Application\ObjectManager.h" />
     <ClInclude Include="Application\Player\LockOn.h" />
     <ClInclude Include="Application\Flash\Flash.h" />
+    <ClInclude Include="Application\Scene\GameScene\GameScene3DObject.h" />
+    <ClInclude Include="Application\Scene\GameScene\GameScene2DObject.h" />
+    <ClInclude Include="Application\Scene\GameScene\Event\ClearEvent.h" />
+    <ClInclude Include="Application\Scene\GameScene\Event\StartEvent.h" />
+    <ClInclude Include="Application\Scene\GameScene\Event\GameOverEvent.h" />
+    <ClInclude Include="Application\AnimPoint.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resource\Shader\DebugObject.hlsli">

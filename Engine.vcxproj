@@ -159,6 +159,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Application\LevelEditor\LevelDataLoader.cpp" />
     <ClCompile Include="Application\Bullet\EnemyBullet.cpp" />
     <ClCompile Include="Application\Ground\Building.cpp" />
+    <ClCompile Include="Application\Scene\GameScene\Event\ClearEvent.cpp" />
     <ClCompile Include="Engine\3d\Mesh\CubeMesh.cpp" />
     <ClCompile Include="Engine\3d\Collider\AABBCollider.cpp" />
     <ClCompile Include="Engine\3d\Collider\Collider.cpp" />
@@ -199,6 +200,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Application\Fade\Fade.cpp" />
     <ClCompile Include="Application\Player\LockOn.cpp" />
     <ClCompile Include="Application\Flash\Flash.cpp" />
+    <ClCompile Include="Application\Scene\GameScene\GameScene3DObject.cpp" />
+    <ClCompile Include="Application\Scene\GameScene\GameScene2DObject.cpp" />
+    <ClCompile Include="Application\Scene\GameScene\Event\GameOverEvent.cpp" />
     <ClCompile Include="main.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Development|x64'">MaxSpeed</Optimization>
       <WholeProgramOptimization Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</WholeProgramOptimization>
@@ -227,7 +231,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Application\Scene\ParticleEditorScene.cpp" />
     <ClCompile Include="Application\Player\Player.cpp" />
     <ClCompile Include="Engine\Scene\BaseScene.cpp" />
-    <ClCompile Include="Application\Scene\GameScene.cpp" />
+    <ClCompile Include="Application\Scene\GameScene\GameScene.cpp" />
     <ClCompile Include="Engine\Scene\SceneManager.cpp" />
     <ClCompile Include="Engine\2d\Sprite\SpriteManager.cpp" />
     <ClCompile Include="Engine\Math\WorldTransform.cpp" />
@@ -241,11 +245,14 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Application\Scene\TitleScene.cpp" />
     <ClCompile Include="Application\Shake\Shake.cpp" />
     <ClCompile Include="Application\ObjectManager.cpp" />
+    <ClCompile Include="Application\Scene\GameScene\Event\StartEvent.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Application\AnimPoint.h" />
     <ClInclude Include="Application\LevelEditor\LevelDataLoader.h" />
     <ClInclude Include="Application\Bullet\EnemyBullet.h" />
     <ClInclude Include="Application\Ground\Building.h" />
+    <ClInclude Include="Application\Scene\GameScene\Event\ClearEvent.h" />
     <ClInclude Include="Engine\3d\Mesh\CubeMesh.h" />
     <ClInclude Include="Engine\3d\Collider\AABBCollider.h" />
     <ClInclude Include="Engine\3d\Collider\Collider.h" />
@@ -310,7 +317,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Application\Scene\ParticleEditorScene.h" />
     <ClInclude Include="Application\Player\Player.h" />
     <ClInclude Include="Engine\Scene\BaseScene.h" />
-    <ClInclude Include="Application\Scene\GameScene.h" />
+    <ClInclude Include="Application\Scene\GameScene\GameScene.h" />
     <ClInclude Include="Engine\Scene\SceneManager.h" />
     <ClInclude Include="Engine\2d\Sprite\SpriteManager.h" />
     <ClInclude Include="Engine\Math\WorldTransform.h" />
@@ -331,6 +338,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Application\ObjectManager.h" />
     <ClInclude Include="Application\Player\LockOn.h" />
     <ClInclude Include="Application\Flash\Flash.h" />
+    <ClInclude Include="Application\Scene\GameScene\GameScene3DObject.h" />
+    <ClInclude Include="Application\Scene\GameScene\GameScene2DObject.h" />
+    <ClInclude Include="Application\Scene\GameScene\Event\StartEvent.h" />
+    <ClInclude Include="Application\Scene\GameScene\Event\GameOverEvent.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Application\LevelEditor\Python\add_collider.py">
