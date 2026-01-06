@@ -11,6 +11,11 @@
 
 #include "LockOn.h"
 
+#include "State/MovementState/JetMoveState.h"
+#include "State/MovementState/TankMoveState.h"
+#include "State/AttackState/TankAttackState.h"
+#include "State/AttackState/JetAttackState.h"
+
 #include "memory"
 
 /// === 前方宣言 === ///
@@ -82,6 +87,15 @@ public:
 	/// </remarks>
 	void Draw();
 
+	/// <summary>
+	/// マズルフラッシュエミッターを発生させます。
+	/// </summary>
+	void EmitMuzzleFlash() { muzzleFlashEmitter_->Emit(); }
+
+	void ChangeJetState();
+
+	void ChangeTankState();
+
 	///-------------------------------------------/// 
 	/// クラス内処理関数
 	///-------------------------------------------///
@@ -100,28 +114,6 @@ private:
 	void Move();
 
 	/// <summary>
-	/// 戦車モード時のプレイヤーの移動およびパーツ演出処理を行います。
-	/// </summary>
-	/// <remarks>
-	/// - 現在の本体や各パーツの位置・回転を取得し、左右方向の入力に応じた回転量を算出します。  
-	/// - 算出した回転量を事前に決められた範囲内に収め、本体の回転を補間しながら変化させます。  
-	/// - 右ウィング・左ウィングおよび各トレイルは、所定の位置や回転へ向けて緩やかに移動・回転させ、戦車モード特有の見た目になるよう調整します。  
-	/// - すべての処理は補間関数を使用して滑らかに変化するようにしています。  
-	/// </remarks>
-	void TankMove();
-
-	/// <summary>
-	/// 飛行機モード時のプレイヤーの移動およびパーツ演出処理を行います。
-	/// </summary>
-	/// <remarks>
-	/// - 現在の本体や各パーツの位置・回転を取得し、左右移動でZ軸回転、上下移動でX軸回転する角度を算出します。  
-	/// - 算出した回転量を事前に決められた範囲内に収め、本体の回転を補間して滑らかに変化させます。  
-	/// - 右ウィング・左ウィングおよび各トレイルは、所定の位置や回転へ向けて緩やかに移動・回転させ、飛行機モード特有の見た目になるよう調整します。  
-	/// - すべての処理は補間関数を使用して自然な動きになるようにしています。  
-	/// </remarks>
-	void JetMove();
-
-	/// <summary>
 	/// プレイヤーの攻撃処理を行います。
 	/// </summary>
 	/// <remarks>
@@ -129,28 +121,6 @@ private:
 	/// - 各モードごとに異なる攻撃方法が適用されます。  
 	/// </remarks>
 	void Attack();
-
-	/// <summary>
-	/// 戦車モード時の攻撃処理を行います。
-	/// </summary>
-	/// <remarks>
-	/// - 攻撃タイマーが設定された間隔を超えた場合、画面上の敵をチェックし、ロックオン範囲内の敵をロックオン対象に追加します。  
-	/// - スペースキーが押されていた場合、マズルフラッシュエミッターを発生させ、ロックオンした敵の方向に弾を発射します。  
-	/// - 発射後は攻撃タイマーをリセットし、次の攻撃タイミングを管理します。  
-	/// - 弾はプレイヤーの位置からロックオン対象に向かって生成されます。  
-	/// </remarks>
-	void TankAttack();
-
-	/// <summary>
-	/// 飛行機モード時の攻撃処理を行います。
-	/// </summary>
-	/// <remarks>
-	/// - 攻撃タイマーが設定された間隔を超え、スペースキーが押されていた場合に攻撃が発生します。  
-	/// - マズルフラッシュエミッターを発生させ、プレイヤーの位置からレティクルの方向へ弾を生成します。  
-	/// - 攻撃後はタイマーをリセットし、次の攻撃タイミングを管理します。  
-	/// - 弾は飛行機モード用の種類として生成されます。  
-	/// </remarks>
-	void JetAttack();
 
 	/// <summary>
 	/// プレイヤーと他オブジェクトの衝突判定を行います。
@@ -223,41 +193,17 @@ private:
 	//レティクル
 	std::unique_ptr<LockOn> lockOn_ = nullptr;
 
+	//移動ステート
+	std::unique_ptr<MovementState> movementState_;
+
+	//攻撃ステート
+	std::unique_ptr<AttackState> attackState_;
+
 	//移動状態
 	MOVESTATE moveState_;
 
-	//攻撃タイマー
-	float attackTimer_;
-
-	//戦車状態の攻撃間隔
-	float tankAttackInterval_;
-
-	//飛行機状態の攻撃間隔
-	float jetAttackInterval_;
-
 	//移動速度
 	float moveSpeed_;
-
-	//移動強度
-	float moveStrength_;
-
-	//回転強度
-	float rotStrength_;
-
-	//ロックオン範囲
-	float lockOnRange_;
-
-	//移動範囲
-	Vector3 moveRange_;
-
-	//戦車状態の回転範囲
-	Vector3 driveRotRange_;
-
-	//飛行機状態の回転範囲
-	Vector3 flightRotRange_;
-
-	//初期座標
-	Vector3 initialPos_;
 
 	//移動量
 	Vector3 velocity_;
@@ -282,6 +228,12 @@ public:
 	/// <returns>ワールド座標</returns>
 	Vector3 GetWorldPos() { return core_->GetWorldTransform().GetWorldTranslate(); }
 
+	WorldTransform GetCoreWorldTransform() { return core_->GetWorldTransform(); }
+
+	WorldTransform GetLeftWingWorldTransform() { return leftWing_->GetWorldTransform(); }
+
+	WorldTransform GetRightWingWorldTransform() { return rightWing_->GetWorldTransform(); }
+
 	/// <summary>
 	/// 移動量を取得
 	/// </summary>
@@ -305,6 +257,12 @@ public:
 	/// </summary>
 	/// <param name="pos">座標</param>
 	void SetPosition(Vector3 pos) { core_->GetWorldTransform().translate_ = pos; }
+
+	void SetCoreWorldTransform(WorldTransform transform) { core_->GetWorldTransform() = transform; }
+
+	void SetLeftWingWorldTransform(WorldTransform transform) { leftWing_->GetWorldTransform() = transform; }
+
+	void SetRightWingWorldTransform(WorldTransform transform) { rightWing_->GetWorldTransform() = transform; }
 
 	/// <summary>
 	/// 移動アクティブフラグを設定

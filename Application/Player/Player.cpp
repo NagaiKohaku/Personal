@@ -132,43 +132,22 @@ void Player::Initialize(Camera* cameraPtr, BulletManager* bulletPtr, bool isMove
 	//初期化
 	lockOn_->Initialize(camera_, this);
 
+	/// === 移動ステートの初期化 === ///
+
+	movementState_ = std::make_unique<TankMoveState>();
+
+	movementState_->Enter();
+
+	/// === 攻撃ステートの初期化 === ///
+
+	attackState_ = std::make_unique<TankAttackState>();
+
+	attackState_->Enter();
+
 	/// === 他変数の設定 === ///
-
-	//攻撃タイマーの設定
-	attackTimer_ = 0.0f;
-
-	//戦車状態の攻撃間隔
-	tankAttackInterval_ = 1.0f;
-
-	//飛行機状態の攻撃間隔
-	jetAttackInterval_ = 0.1f;
 
 	//移動速度の設定
 	moveSpeed_ = 1.0f;
-
-	//移動強度の設定
-	moveStrength_ = 10.0f;
-
-	//回転強度の設定
-	rotStrength_ = 10.0f;
-
-	//ロックオン範囲の設定
-	lockOnRange_ = 300.0f;
-
-	//移動範囲の設定
-	moveRange_ = { 7.0f,4.0f,0.0f };
-
-	//戦車状態の回転範囲の設定
-	driveRotRange_ = { 0.0f,0.5f,0.0f };
-
-	//飛行機状態の回転範囲の設定
-	flightRotRange_ = { 0.5f,0.0f,0.3f };
-
-	//初期座標の設定
-	initialPos_ = { 0.0f,2.0f,0.0f };
-
-	//座標の設定
-	core_->GetWorldTransform().translate_ = initialPos_;
 
 	//移動アクティブフラグの設定
 	isMoveActive_ = isMoveActive;
@@ -320,6 +299,24 @@ void Player::Draw() {
 	}
 }
 
+void Player::ChangeJetState() {
+
+	movementState_ = std::make_unique<JetMoveState>();
+	movementState_->Enter();
+
+	attackState_ = std::make_unique<JetAttackState>();
+	attackState_->Enter();
+}
+
+void Player::ChangeTankState() {
+
+	movementState_ = std::make_unique<TankMoveState>();
+	movementState_->Enter();
+
+	attackState_ = std::make_unique<TankAttackState>();
+	attackState_->Enter();
+}
+
 ///=====================================================/// 
 /// プレイヤーの移動処理
 ///=====================================================///
@@ -355,166 +352,7 @@ void Player::Move() {
 		}
 	}
 
-	//移動量の長さが0でなければ
-	if (Length(velocity_) != 0.0f) {
-
-		//プレイヤーの現在座標
-		Vector3 playerPos = core_->GetWorldTransform().translate_;
-
-		//移動後の座標
-		Vector3 movePos = playerPos + velocity_;
-
-		//初期座標の移動範囲からはみ出さないように移動座標を制限
-		movePos = {
-			std::clamp(movePos.x,initialPos_.x - moveRange_.x,initialPos_.x + moveRange_.x),
-			std::clamp(movePos.y,initialPos_.y - moveRange_.y,initialPos_.y + moveRange_.y),
-			std::clamp(movePos.z,initialPos_.z - moveRange_.z,initialPos_.z + moveRange_.z),
-		};
-
-		//線形補間で移動後座標に向かって移動
-		Vector3 moveResult = Lerp(playerPos, movePos, moveStrength_ / 100.0f);
-
-		//地面よりも下に行かないようにする
-		moveResult.y = fmaxf(1.0f, moveResult.y);
-
-		//オブジェクトの座標を結果座標で設定
-		core_->GetWorldTransform().translate_ = moveResult;
-	}
-
-	switch (moveState_) {
-	case Player::TANK:
-
-		//戦車状態の移動
-		TankMove();
-
-		break;
-	case Player::JET:
-
-		//飛行機状態の移動
-		JetMove();
-
-		break;
-	}
-
-}
-
-///=====================================================/// 
-/// 戦車モード時のプレイヤーの移動およびパーツ演出処理
-///=====================================================///
-void Player::TankMove() {
-
-	//プレイヤーの現在角度
-	Vector3 playerRot = core_->GetWorldTransform().rotate_;
-
-	//右ウィングの現在座標・回転
-	Vector3 rightWingPos = rightWing_->GetWorldTransform().translate_;
-	Vector3 rightWingRot = rightWing_->GetWorldTransform().rotate_;
-
-	//右トレイルの現在座標
-	Vector3 rightTrailPos = rightTrail_->GetWorldTransform().translate_;
-
-	//左ウィングの現在座標・回転
-	Vector3 leftWingPos = leftWing_->GetWorldTransform().translate_;
-	Vector3 leftWingRot = leftWing_->GetWorldTransform().rotate_;
-
-	//左トレイルの現在座標
-	Vector3 leftTrailPos = leftTrail_->GetWorldTransform().translate_;
-
-	//左右移動に応じてY軸回転をするように設定
-	Vector3 rotate = {
-		0.0f,
-		Normalize(velocity_).x,
-		0.0f
-	};
-
-	//回転範囲で制限
-	rotate = {
-		std::clamp(rotate.x,-driveRotRange_.x,driveRotRange_.x),
-		std::clamp(rotate.y,-driveRotRange_.y,driveRotRange_.y),
-		std::clamp(rotate.z,-driveRotRange_.z,driveRotRange_.z)
-	};
-
-	//コアオブジェクトの回転
-	core_->GetWorldTransform().rotate_ = Lerp(playerRot, rotate, rotStrength_ / 100.0f);
-
-	//右ウィングの移動・回転
-	rightWing_->GetWorldTransform().translate_ = EaseOut(rightWingPos, Vector3(0.75f, 0.0f, 0.0f), 0.1f, 2.0f);
-	rightWing_->GetWorldTransform().rotate_ = EaseOut(
-		rightWingRot,
-		Vector3(0.0f, 0.0f, std::numbers::pi_v<float> / 2.0f + std::numbers::pi_v<float> *2.0f),
-		0.1f,
-		2.0f
-	);
-
-	//右トレイルの移動
-	rightTrail_->GetWorldTransform().translate_ = EaseOut(rightTrailPos, Vector3(-0.75f, 0.0f, 0.0f), 0.1f, 2.0f);
-
-	//左ウィングの移動・回転
-	leftWing_->GetWorldTransform().translate_ = EaseOut(leftWingPos, Vector3(-0.75f, 0.0f, 0.0f), 0.1f, 2.0f);
-	leftWing_->GetWorldTransform().rotate_ = EaseOut(
-		leftWingRot,
-		Vector3(0.0f, 0.0f, -std::numbers::pi_v<float> / 2.0f - std::numbers::pi_v<float> *2.0f),
-		0.1f,
-		2.0f
-	);
-
-	//左トレイルの移動
-	leftTrail_->GetWorldTransform().translate_ = EaseOut(leftTrailPos, Vector3(0.75f, 0.0f, 0.0f), 0.1f, 2.0f);
-}
-
-///=====================================================/// 
-/// 飛行機モード時のプレイヤーの移動およびパーツ演出処理
-///=====================================================///
-void Player::JetMove() {
-
-	//コアオブジェクトの現在角度
-	Vector3 playerRot = core_->GetWorldTransform().rotate_;
-
-	//右ウィングの現在座標・回転
-	Vector3 rightWingPos = rightWing_->GetWorldTransform().translate_;
-	Vector3 rightWingRot = rightWing_->GetWorldTransform().rotate_;
-
-	//右トレイルの現在座標
-	Vector3 rightTrailPos = rightTrail_->GetWorldTransform().translate_;
-
-	//左ウィングの現在座標・回転
-	Vector3 leftWingPos = leftWing_->GetWorldTransform().translate_;
-	Vector3 leftWingRot = leftWing_->GetWorldTransform().rotate_;
-
-	//左トレイルの現在座標
-	Vector3 leftTrailPos = leftTrail_->GetWorldTransform().translate_;
-
-	//左右移動でZ軸回転、上下移動でX軸回転をするように設定
-	Vector3 rotate = {
-		-Normalize(velocity_).y,
-		0.0f,
-		-Normalize(velocity_).x
-	};
-
-	//回転範囲で制限
-	rotate = {
-		std::clamp(rotate.x,-flightRotRange_.x,flightRotRange_.x),
-		std::clamp(rotate.y,-flightRotRange_.y,flightRotRange_.y),
-		std::clamp(rotate.z,-flightRotRange_.z,flightRotRange_.z)
-	};
-
-	//コアオブジェクトの回転
-	core_->GetWorldTransform().rotate_ = Lerp(playerRot, rotate, rotStrength_ / 100.0f);
-
-	//右ウィングの移動・回転
-	rightWing_->GetWorldTransform().translate_ = EaseOut(rightWingPos, Vector3(1.35f, 0.0f, 0.0f), 0.1f, 2.0f);
-	rightWing_->GetWorldTransform().rotate_ = EaseOut(rightWingRot, Vector3(0.0f, 0.0f, 0.0f), 0.1f, 2.0f);
-
-	//右トレイルの移動
-	rightTrail_->GetWorldTransform().translate_ = EaseOut(rightTrailPos, Vector3(0.75f, 0.0f, 0.0f), 0.1f, 2.0f);
-
-	//左ウィングの移動・回転
-	leftWing_->GetWorldTransform().translate_ = EaseOut(leftWingPos, Vector3(-1.35f, 0.0f, 0.0f), 0.1f, 2.0f);
-	leftWing_->GetWorldTransform().rotate_ = EaseOut(leftWingRot, Vector3(0.0f, 0.0f, 0.0f), 0.1f, 2.0f);
-
-	//左トレイルの移動
-	leftTrail_->GetWorldTransform().translate_ = EaseOut(leftTrailPos, Vector3(-0.75f, 0.0f, 0.0f), 0.1f, 2.0f);
-
+	movementState_->Update(*this, velocity_);
 }
 
 ///=====================================================/// 
@@ -522,113 +360,7 @@ void Player::JetMove() {
 ///=====================================================///
 void Player::Attack() {
 
-	//攻撃タイマーを進める
-	attackTimer_ += 1.0f / 60.0f;
-
-	switch (moveState_) {
-	case Player::TANK:
-
-		//戦車状態の攻撃
-		TankAttack();
-
-		break;
-	case Player::JET:
-
-		//飛行機状態の攻撃
-		JetAttack();
-
-		break;
-	}
-}
-
-///=====================================================/// 
-/// 戦車モード時の攻撃処理
-///=====================================================///
-void Player::TankAttack() {
-
-	std::list<Enemy*> enemyList = ObjectManager::GetInstance()->GetEnemies();
-
-	//タイマーが攻撃間隔を超えたら
-	if (attackTimer_ >= tankAttackInterval_) {
-
-		for (auto& enemy : enemyList) {
-
-			//敵が死亡していたらスキップ
-			if (enemy->CheckIsDead()) {
-
-				continue;
-			}
-
-			//敵のスクリーン座標
-			Vector3 enemyScreenPos = Vector3ToScreenSpace(camera_, enemy->GetWorldPos());
-
-			//メインレティクルのスクリーン座標
-			Vector3 mainReticleScreenPos = Vector3ToScreenSpace(camera_, lockOn_->GetMainReticlePos());
-
-			//ロックオン範囲内であれば
-			if (Length(enemyScreenPos - mainReticleScreenPos) <= lockOnRange_) {
-
-				//ロックオン対象に追加
-				lockOn_->AddLockOnEnemy(enemy);
-			}
-		}
-
-		//スペースキーが押されていたら
-		if (Input::GetInstance()->isPushKey(DIK_SPACE)) {
-
-			//マズルフラッシュエミッターを発生
-			muzzleFlashEmitter_->Emit();
-
-			//レティクルの位置を取得
-			std::vector<Vector3> reticlePositions = lockOn_->GetLockOnReticlePos();
-
-			for(auto& pos : reticlePositions) {
-
-				//オブジェクトからレティクルへの方向
-				Vector3 direction = pos - core_->GetWorldTransform().GetWorldTranslate();
-
-				//バレットマネージャーに弾を追加
-				bulletManager_->AddBullet(
-					core_->GetWorldTransform().translate_,
-					Normalize(direction),
-					BulletManager::BULLETTYPE::TANK
-				);
-			}
-
-			//攻撃のタイマーをリセット
-			attackTimer_ = 0.0f;
-		}
-	}
-}
-
-///=====================================================/// 
-/// 飛行機モード時の攻撃処理
-///=====================================================///
-void Player::JetAttack() {
-
-	//タイマーが攻撃間隔を超えたら
-	if (attackTimer_ >= jetAttackInterval_) {
-
-		//スペースキーが押されていたら
-		if (Input::GetInstance()->isPushKey(DIK_SPACE)) {
-
-			//マズルフラッシュエミッターを発生
-			muzzleFlashEmitter_->Emit();
-
-			//オブジェクトからレティクルへの方向
-			Vector3 direction = lockOn_->GetMainReticlePos() - core_->GetWorldTransform().GetWorldTranslate();
-
-			//バレットマネージャーに弾を追加
-			bulletManager_->AddBullet(
-				core_->GetWorldTransform().translate_,
-				Normalize(direction),
-				BulletManager::BULLETTYPE::JET
-			);
-
-			//攻撃のタイマーをリセット
-			attackTimer_ = 0.0f;
-		}
-	}
+	attackState_->Update(*this, *lockOn_, *bulletManager_);
 }
 
 ///=====================================================/// 

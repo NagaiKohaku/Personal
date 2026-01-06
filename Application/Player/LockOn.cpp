@@ -5,6 +5,7 @@
 #include "Enemy/Enemy.h"
 
 #include "Math/Easing.h"
+#include "Math/MakeMatrixMath.h"
 
 #include "algorithm"
 
@@ -241,4 +242,16 @@ std::vector<Vector3> LockOn::GetLockOnReticlePos() {
 	}
 
 	return reticlePositions;
+}
+
+float LockOn::GetMainReticleToEnemyLength(Enemy* enemy) {
+
+	//敵のスクリーン座標
+	Vector3 enemyScreenPos = Vector3ToScreenSpace(camera_, enemy->GetWorldPos());
+
+	//メインレティクルのスクリーン座標
+	Vector3 mainReticleScreenPos = Vector3ToScreenSpace(camera_, mainReticle_->GetWorldPos());
+
+	//レティクルとエネミーの距離を返す
+	return Length(enemyScreenPos - mainReticleScreenPos);
 }

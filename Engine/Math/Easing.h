@@ -57,7 +57,7 @@ Vector3 SLerp(const Vector3& v1, const Vector3& v2, float t);
 /// <param name="t"></param>
 /// <param name="mag"></param>
 /// <returns></returns>
-Vector2 EaseIn(const Vector2& v1, const Vector2& v2, float t, float mag);
+Vector2 EaseIn(const Vector2& v1, const Vector2& v2, float t, float mag = 2.0f);
 
 /// <summary>
 /// EaseIn関数
@@ -67,7 +67,7 @@ Vector2 EaseIn(const Vector2& v1, const Vector2& v2, float t, float mag);
 /// <param name="t"></param>
 /// <param name="mag"></param>
 /// <returns></returns>
-Vector3 EaseIn(const Vector3& v1, const Vector3& v2, float t, float mag);
+Vector3 EaseIn(const Vector3& v1, const Vector3& v2, float t, float mag = 2.0f);
 
 /// <summary>
 /// EaseIn関数
@@ -77,7 +77,7 @@ Vector3 EaseIn(const Vector3& v1, const Vector3& v2, float t, float mag);
 /// <param name="t"></param>
 /// <param name="mag"></param>
 /// <returns></returns>
-Vector4 EaseIn(const Vector4& v1, const Vector4& v2, float t, float mag);
+Vector4 EaseIn(const Vector4& v1, const Vector4& v2, float t, float mag = 2.0f);
 
 /// <summary>
 /// EaseOut関数
@@ -87,7 +87,7 @@ Vector4 EaseIn(const Vector4& v1, const Vector4& v2, float t, float mag);
 /// <param name="t"></param>
 /// <param name="mag"></param>
 /// <returns></returns>
-float EaseOut(const float& n1, const float& n2, float t, float mag);
+float EaseOut(const float& n1, const float& n2, float t, float mag = 2.0f);
 
 /// <summary>
 /// EaseOut関数
@@ -97,7 +97,7 @@ float EaseOut(const float& n1, const float& n2, float t, float mag);
 /// <param name="t"></param>
 /// <param name="mag"></param>
 /// <returns></returns>
-Vector2 EaseOut(const Vector2& v1, const Vector2& v2, float t, float mag);
+Vector2 EaseOut(const Vector2& v1, const Vector2& v2, float t, float mag = 2.0f);
 
 /// <summary>
 /// EaseOut関数
@@ -107,7 +107,7 @@ Vector2 EaseOut(const Vector2& v1, const Vector2& v2, float t, float mag);
 /// <param name="t"></param>
 /// <param name="mag"></param>
 /// <returns></returns>
-Vector3 EaseOut(const Vector3& v1, const Vector3& v2, float t, float mag);
+Vector3 EaseOut(const Vector3& v1, const Vector3& v2, float t, float mag = 2.0f);
 
 /// <summary>
 /// EaseOut関数
@@ -117,7 +117,7 @@ Vector3 EaseOut(const Vector3& v1, const Vector3& v2, float t, float mag);
 /// <param name="t"></param>
 /// <param name="mag"></param>
 /// <returns></returns>
-Vector4 EaseOut(const Vector4& v1, const Vector4& v2, float t, float mag);
+Vector4 EaseOut(const Vector4& v1, const Vector4& v2, float t, float mag = 2.0f);
 
 /// <summary>
 /// EaseOutCirc関数
@@ -127,7 +127,7 @@ Vector4 EaseOut(const Vector4& v1, const Vector4& v2, float t, float mag);
 /// <param name="t"></param>
 /// <param name="mag"></param>
 /// <returns></returns>
-Vector3 EaseOutCirc(const Vector3& v1, const Vector3& v2, float t, float mag);
+Vector3 EaseOutCirc(const Vector3& v1, const Vector3& v2, float t, float mag = 2.0f);
 
 /// <summary>
 /// EaseOutBack関数
@@ -137,7 +137,7 @@ Vector3 EaseOutCirc(const Vector3& v1, const Vector3& v2, float t, float mag);
 /// <param name="t"></param>
 /// <param name="mag"></param>
 /// <returns></returns>
-Vector3 EaseOutBack(const Vector3& v1, const Vector3& v2, float t, float mag);
+Vector3 EaseOutBack(const Vector3& v1, const Vector3& v2, float t, float mag = 2.0f);
 
 /// <summary>
 /// EaseInOut関数
@@ -147,7 +147,7 @@ Vector3 EaseOutBack(const Vector3& v1, const Vector3& v2, float t, float mag);
 /// <param name="t"></param>
 /// <param name="mag"></param>
 /// <returns></returns>
-Vector3 EaseInOut(const Vector3& v1, const Vector3& v2, float t, float mag);
+Vector3 EaseInOut(const Vector3& v1, const Vector3& v2, float t, float mag = 2.0f);
 
 /// <summary>
 /// EaseInOut関数
@@ -157,4 +157,4 @@ Vector3 EaseInOut(const Vector3& v1, const Vector3& v2, float t, float mag);
 /// <param name="t"></param>
 /// <param name="mag"></param>
 /// <returns></returns>
-Vector4 EaseInOut(const Vector4& v1, const Vector4& v2, float t, float mag);
+Vector4 EaseInOut(const Vector4& v1, const Vector4& v2, float t, float mag = 2.0f);

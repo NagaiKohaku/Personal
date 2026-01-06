@@ -288,6 +288,10 @@
     <ClCompile Include="Application\ObjectManager.cpp" />
     <ClCompile Include="Application\Player\LockOn.cpp" />
     <ClCompile Include="Application\Flash\Flash.cpp" />
+    <ClCompile Include="Application\Player\State\AttackState\JetAttackState.cpp" />
+    <ClCompile Include="Application\Player\State\AttackState\TankAttackState.cpp" />
+    <ClCompile Include="Application\Player\State\MovementState\JetMoveState.cpp" />
+    <ClCompile Include="Application\Player\State\MovementState\TankMoveState.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application\Bullet\BulletBase.h">
@@ -546,6 +550,12 @@
     <ClInclude Include="Application\ObjectManager.h" />
     <ClInclude Include="Application\Player\LockOn.h" />
     <ClInclude Include="Application\Flash\Flash.h" />
+    <ClInclude Include="Application\Player\State\AttackState\AttackState.h" />
+    <ClInclude Include="Application\Player\State\AttackState\JetAttackState.h" />
+    <ClInclude Include="Application\Player\State\AttackState\TankAttackState.h" />
+    <ClInclude Include="Application\Player\State\MovementState\MovementState.h" />
+    <ClInclude Include="Application\Player\State\MovementState\JetMoveState.h" />
+    <ClInclude Include="Application\Player\State\MovementState\TankMoveState.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resource\Shader\DebugObject.hlsli">

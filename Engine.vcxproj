@@ -199,6 +199,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Application\Fade\Fade.cpp" />
     <ClCompile Include="Application\Player\LockOn.cpp" />
     <ClCompile Include="Application\Flash\Flash.cpp" />
+    <ClCompile Include="Application\Player\State\AttackState\JetAttackState.cpp" />
+    <ClCompile Include="Application\Player\State\MovementState\JetMoveState.cpp" />
     <ClCompile Include="main.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Development|x64'">MaxSpeed</Optimization>
       <WholeProgramOptimization Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</WholeProgramOptimization>
@@ -241,11 +243,14 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Application\Scene\TitleScene.cpp" />
     <ClCompile Include="Application\Shake\Shake.cpp" />
     <ClCompile Include="Application\ObjectManager.cpp" />
+    <ClCompile Include="Application\Player\State\AttackState\TankAttackState.cpp" />
+    <ClCompile Include="Application\Player\State\MovementState\TankMoveState.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application\LevelEditor\LevelDataLoader.h" />
     <ClInclude Include="Application\Bullet\EnemyBullet.h" />
     <ClInclude Include="Application\Ground\Building.h" />
+    <ClInclude Include="Application\Player\State\AttackState\AttackState.h" />
     <ClInclude Include="Engine\3d\Mesh\CubeMesh.h" />
     <ClInclude Include="Engine\3d\Collider\AABBCollider.h" />
     <ClInclude Include="Engine\3d\Collider\Collider.h" />
@@ -331,6 +336,11 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Application\ObjectManager.h" />
     <ClInclude Include="Application\Player\LockOn.h" />
     <ClInclude Include="Application\Flash\Flash.h" />
+    <ClInclude Include="Application\Player\State\AttackState\JetAttackState.h" />
+    <ClInclude Include="Application\Player\State\AttackState\TankAttackState.h" />
+    <ClInclude Include="Application\Player\State\MovementState\MovementState.h" />
+    <ClInclude Include="Application\Player\State\MovementState\JetMoveState.h" />
+    <ClInclude Include="Application\Player\State\MovementState\TankMoveState.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Application\LevelEditor\Python\add_collider.py">
