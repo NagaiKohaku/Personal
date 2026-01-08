@@ -19,7 +19,19 @@
 └── └── ├── Enemy.cpp
 └── └── ├── Enemy.h
 └── └── ├── EnemyManager.cpp
-└── └── └── EnemyManager.h
+└── └── ├── EnemyManager.h
+└── └── └── State/
+└── └──     ├── EnemyAttackState.cpp
+└── └──     ├── EnemyAttackState.h
+└── └──     ├── EnemyDeadState.cpp
+└── └──     ├── EnemyDeadState.h
+└── └──     ├── EnemyEntryState.cpp
+└── └──     ├── EnemyEntryState.h
+└── └──     ├── EnemyExitState.cpp
+└── └──     ├── EnemyExitState.h
+└── └──     ├── EnemyMoveState.cpp
+└── └──     ├── EnemyMoveState.h
+└── └──     └── EnemyState.h
 └── ├── Fade/
 └── └── ├── Fade.cpp
 └── └── └── Fade.h
@@ -48,7 +60,20 @@
 └── └── ├── Player.cpp
 └── └── ├── Player.h
 └── └── ├── Reticle.cpp
-└── └── └── Reticle.h
+└── └── ├── Reticle.h
+└── └── └── State/
+└── └──     ├── AttackState/
+└── └──     └── ├── AttackState.h
+└── └──     └── ├── JetAttackState.cpp
+└── └──     └── ├── JetAttackState.h
+└── └──     └── ├── TankAttackState.cpp
+└── └──     └── └── TankAttackState.h
+└── └──     └── MovementState/
+└── └──         ├── JetMoveState.cpp
+└── └──         ├── JetMoveState.h
+└── └──         ├── MovementState.h
+└── └──         ├── TankMoveState.cpp
+└── └──         └── TankMoveState.h
 └── ├── Scene/
 └── └── ├── GameScene.cpp
 └── └── ├── GameScene.h
@@ -1643,10 +1668,14 @@ void Enemy::Initialize(Camera* cameraPtr, BulletManager* bulletPtr, Player* play
 	/// === 他変数の初期化 === ///
 
 	//行動状態はエントリー状態で初期化
-	state_ = ENTRY;
+	state_ = std::make_unique<EnemyEntryState>();
+	state_->Enter();
 
 	//体力の初期化
 	hp_ = 3;
+
+	//死亡時のHPの初期化
+	deadHp_ = 100;
 
 	//弱攻撃ヒット時のダメージの初期化
 	lightAttackDamage_ = 1;
@@ -1654,19 +1683,8 @@ void Enemy::Initialize(Camera* cameraPtr, BulletManager* bulletPtr, Player* play
 	//中攻撃ヒット時のダメージの初期化
 	mediumAttackDamage_ = 3;
 
-	//移動強度の初期化
-	moveStrength_ = 10.0f;
-
 	//死亡時移動量の設定
 	deadMoveVelocity_ = Vector3(0.0f, -5.0f, -10.0f);
-
-	// 攻撃系の初期化 //
-
-	//攻撃タイマーの初期化
-	attackTimer_ = 0.0f;
-
-	//攻撃間隔の初期化
-	attackFrequency_ = 1.0f;
 
 	// 点滅系の初期化 //
 
@@ -1675,9 +1693,6 @@ void Enemy::Initialize(Camera* cameraPtr, BulletManager* bulletPtr, Player* play
 
 	//点滅間隔の初期化
 	blinkFrequency_ = 2.0f;
-
-	//点滅フラグの初期化
-	isBlink_ = false;
 
 	// シェイク系の初期化 //
 
@@ -1696,22 +1711,6 @@ void Enemy::Initialize(Camera* cameraPtr, BulletManager* bulletPtr, Player* play
 	//画面揺れの長さを初期化
 	displayShakeLength_ = 0.5f;
 
-	// アニメーション系の初期化 //
-
-	//アニメーションタイマーの初期化
-	animTimer_ = 0.0f;
-
-	//アニメーション終了時間の初期化
-	entryAnimMaxTime_ = 1.0f;
-
-	moveAnimMaxTime_ = 5.0f;
-
-	attackAnimMaxTime_ = 2.0f;
-
-	exitAnimMaxTime_ = 2.0f;
-
-	deadAnimMaxTime_ = 5.0f;
-
 	//削除可能フラグの初期化
 	canRemove_ = false;
 
@@ -1720,6 +1719,8 @@ void Enemy::Initialize(Camera* cameraPtr, BulletManager* bulletPtr, Player* play
 
 	//透明化フラグの初期化
 	isInvisible_ = false;
+
+	isBlink_ = false;
 }
 
 ///=====================================================/// 
@@ -1735,42 +1736,10 @@ void Enemy::Update() {
 	//死亡状態の確認
 	CheckDead();
 
+	state_->Update(*this);
+
 	//衝突時処理
 	IsCollision();
-
-	//行動状態によって変化
-	switch (state_) {
-	case Enemy::ENTRY:
-
-		//エントリー時の処理
-		Entry();
-
-		break;
-	case Enemy::MOVE:
-
-		//移動処理
-		Move();
-
-		break;
-	case Enemy::ATTACK:
-
-		//攻撃処理
-		Attack();
-
-		break;
-	case Enemy::EXIT:
-
-		//離脱処理
-		Exit();
-
-		break;
-	case Enemy::DEAD:
-
-		//死亡処理
-		Dead();
-
-		break;
-	}
 
 	//被弾揺れ処理
 	Shake();
@@ -1783,12 +1752,6 @@ void Enemy::Update() {
 
 	//影オブジェクトの更新
 	shadow_->Update(object_->GetWorldTransform().translate_);
-
-	//目標座標に移動
-	object_->GetWorldTransform().translate_ = Lerp(object_->GetWorldTransform().translate_, targetPos_, moveStrength_ / 100.0f);
-
-	//目標角度に回転
-	object_->GetWorldTransform().rotate_ = Lerp(object_->GetWorldTransform().rotate_, targetRot_, moveStrength_ / 100.0f);
 
 	//オブジェクトの更新
 	object_->Update();
@@ -1878,11 +1841,21 @@ void Enemy::Draw() {
 ///=====================================================///
 void Enemy::EmitClearExplosive() {
 
-	//死亡状態に移行
-	state_ = DEAD;
-
 	//クリア時爆発エミッターを起動
 	clearExplosiveEmitter_->Emit();
+}
+
+void Enemy::ChangeState(std::unique_ptr<EnemyState> state) {
+
+	state_ = std::move(state);
+	state_->Enter();
+}
+
+void Enemy::StartBlink() {
+
+	isBlink_ = true;
+
+	blinkTimer_ = 0.0f;
 }
 
 ///=====================================================/// 
@@ -1918,222 +1891,6 @@ void Enemy::IsCollision() {
 
 			//被弾揺れタイマーを初期化
 			shakeTimer_ = 0.0f;
-		}
-	}
-}
-
-///=====================================================/// 
-/// 敵オブジェクトのエントリー時の処理
-///=====================================================///
-void Enemy::Entry() {
-
-	//アニメーションタイマーを進ませる
-	animTimer_ += 1.0f / 60.0f;
-
-	//アニメーションタイマーが終了時間に達したら
-	if (animTimer_ >= entryAnimMaxTime_) {
-
-		//前進状態に変更
-		state_ = MOVE;
-
-		//アニメーションタイマーをリセット
-		animTimer_ = 0.0f;
-
-		return;
-	}
-
-	//タイマーの比率
-	float animRatio = animTimer_ / entryAnimMaxTime_;
-
-	//待機座標まで移動
-	targetPos_ = EaseOutBack(entryPos_, standbyPos_, animRatio, 2.0f);
-
-	//前フレームからの移動量を計算
-	//前方を向くようにZ方向成分を強めに設定
-	Vector3 velocity = prePos_ - targetPos_ + Vector3(0.0f, 0.0f, 10.0f);
-
-	//移動方向を向くように設定
-	targetRot_ = {
-		Normalize(velocity).y,
-		-std::numbers::pi_v<float>,
-		Normalize(velocity).x
-	};
-}
-
-///=====================================================/// 
-/// 敵オブジェクトの移動時の処理
-///=====================================================///
-void Enemy::Move() {
-
-	//アニメーションタイマーを進ませる
-	animTimer_ += 1.0f / 60.0f;
-
-	//アニメーションタイマーが終了時間に達したら
-	if (animTimer_ >= moveAnimMaxTime_) {
-
-		//攻撃状態に設定
-		state_ = ATTACK;
-
-		//アニメーションタイマーをリセット
-		animTimer_ = 0.0f;
-
-		//攻撃状態になったら即攻撃できるように設定
-		attackTimer_ = attackFrequency_;
-
-		//点滅を終了
-		isBlink_ = false;
-
-		//オブジェクトの色を元に戻す
-		object_->GetModel()->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
-
-		return;
-	}
-
-	//タイマーの比率
-	float animRatio = animTimer_ / moveAnimMaxTime_;
-
-	//離脱開始座標まで移動
-	targetPos_ = Lerp(standbyPos_, exitStartPos_, animRatio);
-
-	//前方を向くように設定
-	targetRot_ = Vector3(0.0f, -std::numbers::pi_v<float>, 0.0f);
-
-	//終了2秒前になったら
-	if (animTimer_ >= moveAnimMaxTime_ - 2.0f) {
-
-		//点滅を開始する
-		isBlink_ = true;
-	}
-}
-
-///=====================================================/// 
-/// 敵オブジェクトの攻撃時の処理
-///=====================================================///
-void Enemy::Attack() {
-
-	//アニメーションタイマーを進ませる
-	animTimer_ += 1.0f / 60.0f;
-
-	//攻撃タイマーを進ませる
-	attackTimer_ += 1.0f / 60.0f;
-
-	//アニメーションタイマーが終了時間に達したら
-	if (animTimer_ >= attackAnimMaxTime_) {
-
-		//離脱状態に設定
-		state_ = EXIT;
-
-		//アニメーションタイマーをリセット
-		animTimer_ = 0.0f;
-
-		return;
-	}
-
-	//タイマーの比率
-	float animRatio = animTimer_ / attackAnimMaxTime_;
-
-	//攻撃可能になったら
-	if (attackTimer_ >= attackFrequency_) {
-
-		//プレイヤーへの方向
-		Vector3 direction = player_->GetWorldPos() - object_->GetWorldTransform().translate_;
-
-		//プレイヤーに向かって弾を発射
-		bulletManager_->AddBullet(
-			object_->GetWorldTransform().translate_,
-			Normalize(direction),
-			BulletManager::BULLETTYPE::ENEMY
-		);
-
-		//攻撃タイマーのリセット
-		attackTimer_ = 0.0f;
-	}
-}
-
-///=====================================================/// 
-/// 敵オブジェクトの離脱時の処理
-///=====================================================///
-void Enemy::Exit() {
-
-	//アニメーションタイマーを進ませる
-	animTimer_ += 1.0f / 60.0f;
-
-	//アニメーションタイマーが終了時間に達したら
-	if (animTimer_ >= exitAnimMaxTime_) {
-
-		//削除可能にする
-		canRemove_ = true;
-
-		//コライダーを削除
-		collider_->Remove();
-
-		return;
-	}
-
-	//タイマーの比率
-	float animRatio = animTimer_ / exitAnimMaxTime_;
-
-	//離脱座標まで移動
-	targetPos_ = EaseOut(exitStartPos_, exitPos_, animRatio, 2.0f);
-
-	//前フレームからの移動量を計算
-	//前方を向くようにZ方向成分を強めに設定
-	Vector3 velocity = prePos_ - targetPos_ + Vector3(0.0f, 0.0f, 10.0f);
-
-	//移動方向を向くように設定
-	targetRot_ = {
-		Normalize(velocity).y,
-		-std::numbers::pi_v<float>,
-		Normalize(velocity).x
-	};
-}
-
-///=====================================================/// 
-/// 敵オブジェクトの死亡時の処理
-///=====================================================///
-void Enemy::Dead() {
-
-	//アニメーションタイマーを進ませる
-	animTimer_ += 1.0f / 60.0f;
-
-	//アニメーションタイマーが終了時間に達したら
-	if (animTimer_ >= deadAnimMaxTime_) {
-
-		//削除可能にする
-		canRemove_ = true;
-	}
-
-	//タイマーの比率
-	float animRatio = animTimer_ / deadAnimMaxTime_;
-
-	Vector3 objectPos = object_->GetWorldTransform().translate_;
-
-	//下方向に落ちていくように設定
-	targetPos_ = Lerp(objectPos, objectPos + deadMoveVelocity_, animRatio);
-
-	//Y軸とZ軸で回転するように設定
-	targetRot_ = Lerp(
-		Vector3(0.0f, -std::numbers::pi_v<float>, 0.0f),
-		Vector3(0.0f, -std::numbers::pi_v<float> * 10.0f, std::numbers::pi_v<float> * 10.0f),
-		animRatio
-	);
-
-	//地面よりも下にいたら透明化させる
-	if (object_->GetWorldTransform().translate_.y <= 0.0f) {
-
-		if (!isInvisible_) {
-
-			//透明化を有効化
-			isInvisible_ = true;
-
-			//爆発エミッターをストップ
-			explosiveEmitter_->Stop();
-
-			//破壊時エミッターを起動
-			destroyEmitter_->Emit();
-
-			//シェイクを開始
-			Shake::GetInstance()->Start(displayShakeLength_, displayShakeTime_);
 		}
 	}
 }
@@ -2218,28 +1975,66 @@ void Enemy::CheckDead() {
 	//HPがなくなっていたら
 	if (hp_ <= 0) {
 
-		//すでに死亡状態であればスキップ
-		if (state_ != DEAD) {
+		//二度とここに来ないように大きな値を入れておく
+		hp_ = deadHp_;
 
-			//死亡状態に変更
-			state_ = DEAD;
+		//状態を死亡状態に変更
+		ChangeState(std::make_unique<EnemyDeadState>());
 
-			//コライダーを削除
-			collider_->Remove();
+		//コライダーを削除
+		collider_->Remove();
 
-			//死亡時エミッターを起動
-			explosiveEmitter_->Emit();
+		//死亡時エミッターを起動
+		explosiveEmitter_->Emit();
 
-			//アニメーションタイマーの初期化
-			animTimer_ = 0.0f;
+		//被弾揺れタイマーを初期化
+		shakeTimer_ = 0.0f;
 
-			//被弾揺れタイマーを初期化
-			shakeTimer_ = 0.0f;
+		//キル数をカウントアップ
+		ObjectManager::GetInstance()->AddKillCount();
 
-			//キル数をカウントアップ
-			ObjectManager::GetInstance()->AddKillCount();
-		}
 	}
+}
+
+void Enemy::StartRemove() {
+
+	//削除可能にする
+	canRemove_ = true;
+
+	//コライダーを削除
+	collider_->Remove();
+
+}
+
+void Enemy::StartDestroy() {
+
+	//透明化を有効化
+	isInvisible_ = true;
+
+	//爆発エミッターをストップ
+	explosiveEmitter_->Stop();
+
+	//破壊時エミッターを起動
+	destroyEmitter_->Emit();
+
+	//シェイクを開始
+	Shake::GetInstance()->Start(displayShakeLength_, displayShakeTime_);
+}
+
+void Enemy::ResetColor() {
+
+	//オブジェクトの色を元に戻す
+	object_->GetModel()->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+
+	isBlink_ = false;
+}
+
+Vector3 Enemy::GetPlayerPos() {
+	return player_->GetWorldPos();
+}
+
+BulletManager* Enemy::GetBulletManager() {
+	return bulletManager_;
 }
 
 ============================================================
@@ -2255,6 +2050,12 @@ File Path: Application/Enemy/Enemy.h
 
 #include "3d/Collider/AABBCollider.h"
 #include "3d/Collider/SphereCollider.h"
+
+#include "Enemy/State/EnemyEntryState.h"
+#include "Enemy/State/EnemyMoveState.h"
+#include "Enemy/State/EnemyAttackState.h"
+#include "Enemy/State/EnemyExitState.h"
+#include "Enemy/State/EnemyDeadState.h"
 
 #include "memory"
 
@@ -2278,20 +2079,6 @@ class Player;
 /// - 敵の初期化、更新、描画、攻撃、移動、死亡処理などの一連の動作を提供します。  
 /// </remarks>
 class Enemy {
-
-	///-------------------------------------------/// 
-	/// 列挙型
-	///-------------------------------------------///
-private:
-
-	//行動状態
-	enum STATE {
-		ENTRY,
-		MOVE,
-		ATTACK,
-		EXIT,
-		DEAD
-	};
 
 	///-------------------------------------------/// 
 	/// メンバ関数
@@ -2373,8 +2160,18 @@ public:
 	/// <summary>
 	/// 死亡状態のチェック
 	/// </summary>
-	/// <returns>死亡状態の場合は true : 違う場合は false</returns>
-	bool CheckIsDead() { return state_ == DEAD; }
+	/// <returns> HPが死亡状態のHP以上であれば true : 死亡状態のHP以下であれば false</returns>
+	bool CheckIsDead() { return hp_ >= deadHp_; }
+
+	void ChangeState(std::unique_ptr<EnemyState> state);
+
+	void StartBlink();
+
+	void StartRemove();
+
+	void StartDestroy();
+
+	void ResetColor();
 
 	///-------------------------------------------/// 
 	/// クラス内処理関数
@@ -2495,6 +2292,8 @@ private:
 	//オブジェクト
 	std::unique_ptr<Object3D> object_ = nullptr;
 
+	std::unique_ptr<EnemyState> state_;
+
 	//コライダー
 	std::unique_ptr<SphereCollider> collider_ = nullptr;
 
@@ -2513,20 +2312,8 @@ private:
 	//影オブジェクト
 	std::unique_ptr<Shadow> shadow_;
 
-	//行動状態
-	STATE state_;
-
 	//前フレームの座標
 	Vector3 prePos_;
-
-	//移動目標座標
-	Vector3 targetPos_;
-
-	//回転目標角度
-	Vector3 targetRot_;
-
-	//移動強度(％)
-	float moveStrength_;
 
 	//エントリー状態の座標
 	Vector3 entryPos_;
@@ -2546,26 +2333,20 @@ private:
 	//体力
 	int hp_;
 
+	//死亡時に設定するHP
+	int deadHp_;
+
 	//弱攻撃ヒット時のダメージ
 	int lightAttackDamage_;
 
 	//中攻撃ヒット時のダメージ
 	int mediumAttackDamage_;
 
-	//攻撃タイマー
-	float attackTimer_;
-
-	//攻撃間隔
-	float attackFrequency_;
-
 	//点滅タイマー
 	float blinkTimer_;
 
 	//点滅間隔
 	float blinkFrequency_;
-
-	//点滅フラグ
-	bool isBlink_;
 
 	//被弾揺れタイマー
 	float shakeTimer_;
@@ -2582,24 +2363,6 @@ private:
 	//画面揺れの長さ
 	float displayShakeLength_;
 
-	//アニメーションタイマー
-	float animTimer_;
-
-	//エントリー時アニメーション終了時間
-	float entryAnimMaxTime_;
-
-	//移動時のアニメーション終了時間
-	float moveAnimMaxTime_;
-
-	//攻撃時のアニメーション終了時間
-	float attackAnimMaxTime_;
-
-	//離脱時アニメーション終了時間
-	float exitAnimMaxTime_;
-
-	//死亡時アニメーション終了時間
-	float deadAnimMaxTime_;
-
 	//削除可能フラグ
 	bool canRemove_;
 
@@ -2608,6 +2371,8 @@ private:
 
 	//透明化フラグ
 	bool isInvisible_;
+
+	bool isBlink_;
 
 	///-------------------------------------------///
 	/// ゲッター・セッター
@@ -2620,11 +2385,27 @@ public:
 	/// <param name="pos">座標</param>
 	void SetPosition(Vector3 pos) { object_->GetWorldTransform().translate_ = pos; }
 
+	WorldTransform GetWorldTransform() { return object_->GetWorldTransform(); }
+
+	void SetWorldTransform(WorldTransform transform) { object_->GetWorldTransform() = transform; }
+
+	/// <summary>
+	/// ワールド座標を取得
+	/// </summary>
+	/// <returns>ワールド座標</returns>
+	Vector3 GetWorldPos() { return object_->GetWorldTransform().GetWorldTranslate(); }
+
+	Vector3 GetPrePos() { return prePos_; }
+
+	Vector3 GetPlayerPos();
+
 	/// <summary>
 	/// エントリーの位置を設定します。
 	/// </summary>
 	/// <param name="pos">座標</param>
 	void SetEntryPos(Vector3 pos) { entryPos_ = pos; }
+
+	Vector3 GetEntryPos() { return entryPos_; }
 
 	/// <summary>
 	/// スタンバイ状態の座標のセッター
@@ -2632,11 +2413,15 @@ public:
 	/// <param name="pos">座標</param>
 	void SetStandbyPos(Vector3 pos) { standbyPos_ = pos; }
 
+	Vector3 GetStandbyPos() { return standbyPos_; }
+
 	/// <summary>
 	/// 離脱開始座標の設定
 	/// </summary>
 	/// <param name="pos">座標</param>
 	void SetExitStartPos(Vector3 pos) { exitStartPos_ = pos; }
+
+	Vector3 GetExitStartPos() { return exitStartPos_; }
 
 	/// <summary>
 	/// 離脱状態の座標の設定
@@ -2644,17 +2429,13 @@ public:
 	/// <param name="pos">座標</param>
 	void SetExitPos(Vector3 pos) { exitPos_ = pos; }
 
+	Vector3 GetExitPos() { return exitPos_; }
+
 	/// <summary>
 	/// 削除中フラグのセッター
 	/// </summary>
 	/// <param name="flag">フラグ</param>
 	void SetIsRemove(bool flag) { isRemove_ = flag; }
-
-	/// <summary>
-	/// ワールド座標を取得
-	/// </summary>
-	/// <returns>ワールド座標</returns>
-	Vector3 GetWorldPos() { return object_->GetWorldTransform().GetWorldTranslate(); }
 
 	/// <summary>
 	/// 削除可能フラグのゲッター
@@ -2667,6 +2448,8 @@ public:
 	/// </summary>
 	/// <returns>フラグ</returns>
 	bool GetIsRemove() { return isRemove_; }
+
+	BulletManager* GetBulletManager();
 
 };
 
@@ -3089,6 +2872,538 @@ public:
 	/// <returns>エネミーリスト</returns>
 	std::list<Enemy*> GetEnemyList();
 
+};
+
+============================================================
+File Path: Application/Enemy/State/EnemyAttackState.cpp
+============================================================
+#include "EnemyAttackState.h"
+
+#include <Enemy/State/EnemyExitState.h>
+
+#include <Enemy/Enemy.h>
+#include <Player/Player.h>
+#include <Bullet/BulletManager.h>
+#include <ObjectManager.h>
+
+#include <Math/Easing.h>
+
+#include <numbers>
+
+void EnemyAttackState::Enter() {
+
+	maxTime_ = 2.0f;
+
+	attackFrequency_ = 1.0f;
+
+	timer_ = 0.0f;
+
+	attackTimer_ = attackFrequency_;
+}
+
+void EnemyAttackState::Update(Enemy& enemy) {
+
+	//タイマーを進ませる
+	timer_ += 1.0f / 60.0f;
+
+	//攻撃タイマーを進ませる
+	attackTimer_ += 1.0f / 60.0f;
+
+	//タイマーが終了時間に達したら
+	if (timer_ >= maxTime_) {
+
+		//撤退状態に変更
+		enemy.ChangeState(std::make_unique<EnemyExitState>());
+
+		return;
+	}
+
+	//タイマーの比率
+	float ratio = timer_ / maxTime_;
+
+	//プレイヤーのポインタを取得
+	Player* player = ObjectManager::GetInstance()->GetPlayer();
+
+	//攻撃可能になったら
+	if (attackTimer_ >= attackFrequency_) {
+
+		//プレイヤーへの方向
+		Vector3 direction = player->GetWorldPos() - enemy.GetWorldPos();
+
+		//プレイヤーに向かって弾を発射
+		enemy.GetBulletManager()->AddBullet(
+			enemy.GetWorldPos(),
+			Normalize(direction),
+			BulletManager::BULLETTYPE::ENEMY
+		);
+
+		//攻撃タイマーのリセット
+		attackTimer_ = 0.0f;
+	}
+}
+
+============================================================
+File Path: Application/Enemy/State/EnemyAttackState.h
+============================================================
+#pragma once
+
+#include <Enemy/State/EnemyState.h>
+
+class EnemyAttackState : public EnemyState {
+
+public:
+
+	// 状態に入るときの処理
+	void Enter() override;
+
+	// 毎フレームの更新処理
+	void Update(Enemy& enemy) override;
+
+private:
+
+	float timer_;
+
+	float maxTime_;
+
+	float attackTimer_;
+
+	float attackFrequency_;
+};
+
+
+
+============================================================
+File Path: Application/Enemy/State/EnemyDeadState.cpp
+============================================================
+#include "EnemyDeadState.h"
+
+#include <Enemy/Enemy.h>
+
+#include <Math/Easing.h>
+
+#include <numbers>
+
+void EnemyDeadState::Enter() {
+
+	timer_ = 0.0f;
+
+	maxTime_ = 5.0f;
+
+	moveStrength_ = 10.0f;
+
+	deadMoveVelocity_ = Vector3(0.0f, -5.0f, -10.0f);
+
+	isDestroy_ = false;
+}
+
+void EnemyDeadState::Update(Enemy& enemy) {
+
+	//タイマーを進ませる
+	timer_ += 1.0f / 60.0f;
+
+	//タイマーが終了時間に達したら
+	if (timer_ >= maxTime_) {
+
+		//削除処理を開始
+		enemy.StartRemove();
+
+		return;
+	}
+
+	//地面に到達したら
+	if (enemy.GetWorldTransform().translate_.y <= 0.0f) {
+
+		//まだ破壊処理を開始していなければ
+		if (!isDestroy_) {
+
+			//破壊処理を開始
+			enemy.StartDestroy();
+
+			//破壊処理を開始したフラグを立てる
+			isDestroy_ = true;
+		}
+	}
+
+	//タイマーの比率
+	float ratio = timer_ / maxTime_;
+
+	//敵のワールド座標取得
+	WorldTransform enemyWT = enemy.GetWorldTransform();
+
+	//目標地点を計算
+	Vector3 targetPos = Lerp(enemyWT.translate_, enemyWT.translate_ + deadMoveVelocity_, ratio);
+
+	//目標角度を計算
+	Vector3 targetRot = Lerp(
+		Vector3(0.0f, -std::numbers::pi_v<float>, 0.0f),
+		Vector3(0.0f, -std::numbers::pi_v<float> * 10.0f, std::numbers::pi_v<float> *10.0f),
+		ratio
+	);
+
+	//目標地点まで移動
+	enemyWT.translate_ = Lerp(enemy.GetWorldTransform().translate_, targetPos, moveStrength_ / 100.0f);
+
+	//目標角度まで回転
+	enemyWT.rotate_ = Lerp(enemy.GetWorldTransform().rotate_, targetRot, moveStrength_ / 100.0f);
+
+	//移動後のワールド座標を設定
+	enemy.SetWorldTransform(enemyWT);
+}
+
+
+============================================================
+File Path: Application/Enemy/State/EnemyDeadState.h
+============================================================
+#pragma once
+
+#include <Enemy/State/EnemyState.h>
+#include <Math/Vector3.h>
+
+class EnemyDeadState : public EnemyState {
+
+public:
+
+	// 状態に入るときの処理
+	void Enter() override;
+
+	// 毎フレームの更新処理
+	void Update(Enemy& enemy) override;
+
+private:
+
+	float timer_;
+
+	float maxTime_;
+
+	float moveStrength_;
+
+	Vector3 deadMoveVelocity_;
+
+	bool isDestroy_;
+};
+
+
+
+============================================================
+File Path: Application/Enemy/State/EnemyEntryState.cpp
+============================================================
+#include "EnemyEntryState.h"
+
+#include <Enemy/State/EnemyMoveState.h>
+
+#include <Enemy/Enemy.h>
+
+#include <Math/Easing.h>
+
+#include <numbers>
+
+void EnemyEntryState::Enter() {
+
+	timer_ = 0.0f;
+
+	maxTime_ = 1.0f;
+
+	moveStrength_ = 10.0f;
+}
+
+void EnemyEntryState::Update(Enemy& enemy) {
+
+	//タイマーを進ませる
+	timer_ += 1.0f / 60.0f;
+
+	//タイマーが終了時間に達したら
+	if (timer_ >= maxTime_) {
+
+		//前進状態に変更
+		enemy.ChangeState(std::make_unique<EnemyMoveState>());
+
+		return;
+	}
+
+	//タイマーの比率
+	float ratio = timer_ / maxTime_;
+
+	//敵のワールド座標取得
+	WorldTransform enemyWT = enemy.GetWorldTransform();
+
+	//目標地点を計算
+	Vector3 targetPos = EaseOutBack(enemy.GetEntryPos(), enemy.GetStandbyPos(), ratio, 2.0f);
+
+	//前フレームからの移動量を計算
+	//前方を向くようにZ方向成分を強めに設定
+	Vector3 velocity = enemy.GetPrePos() - targetPos + Vector3(0.0f, 0.0f, 10.0f);
+
+	//目標角度を計算
+	Vector3 targetRot = {
+		Normalize(velocity).y,
+		-std::numbers::pi_v<float>,
+		Normalize(velocity).x
+	};
+
+	//目標地点へ移動
+	enemyWT.translate_ = Lerp(enemy.GetWorldTransform().translate_,targetPos, moveStrength_ / 100.0f);
+
+	//目標角度へ回転
+	enemyWT.rotate_ = Lerp(enemy.GetWorldTransform().rotate_, targetRot, moveStrength_ / 100.0f);
+
+	//移動後のワールド座標を設定
+	enemy.SetWorldTransform(enemyWT);
+}
+
+
+============================================================
+File Path: Application/Enemy/State/EnemyEntryState.h
+============================================================
+#pragma once
+
+#include <Enemy/State/EnemyState.h>
+
+class EnemyEntryState : public EnemyState {
+
+public:
+
+	// 状態に入るときの処理
+	void Enter() override;
+
+	// 毎フレームの更新処理
+	void Update(Enemy& enemy) override;
+
+private:
+
+	float timer_;
+
+	float maxTime_;
+
+	float moveStrength_;
+};
+
+============================================================
+File Path: Application/Enemy/State/EnemyExitState.cpp
+============================================================
+#include "EnemyExitState.h"
+
+#include <Enemy/Enemy.h>
+
+#include <Math/Easing.h>
+
+#include <numbers>
+
+void EnemyExitState::Enter() {
+
+	timer_ = 0.0f;
+
+	maxTime_ = 2.0f;
+
+	moveStrength_ = 10.0f;
+}
+
+void EnemyExitState::Update(Enemy& enemy) {
+
+	//タイマーを進ませる
+	timer_ += 1.0f / 60.0f;
+
+	//タイマーが終了時間に達したら
+	if (timer_ >= maxTime_) {
+
+		//削除処理を開始
+		enemy.StartRemove();
+
+		return;
+	}
+
+	//タイマーの比率
+	float ratio = timer_ / maxTime_;
+
+	//敵のワールド座標取得
+	WorldTransform enemyWT = enemy.GetWorldTransform();
+
+	//目標地点を計算
+	Vector3 targetPos = EaseOut(enemy.GetExitStartPos(), enemy.GetExitPos(), ratio, 2.0f);
+
+	//前フレームからの移動量を計算
+	//前方を向くようにZ方向成分を強めに設定
+	Vector3 velocity = enemy.GetPrePos() - targetPos + Vector3(0.0f, 0.0f, 10.0f);
+
+	//目標角度を計算
+	Vector3 targetRot = {
+		Normalize(velocity).y,
+		-std::numbers::pi_v<float>,
+		Normalize(velocity).x
+	};
+
+	//目標地点へ移動
+	enemyWT.translate_ = Lerp(enemy.GetWorldTransform().translate_, targetPos, moveStrength_ / 100.0f);
+
+	//目標角度へ回転
+	enemyWT.rotate_ = Lerp(enemy.GetWorldTransform().rotate_, targetRot, moveStrength_ / 100.0f);
+
+	//移動後のワールド座標を設定
+	enemy.SetWorldTransform(enemyWT);
+}
+
+
+============================================================
+File Path: Application/Enemy/State/EnemyExitState.h
+============================================================
+#pragma once
+
+#include <Enemy/State/EnemyState.h>
+
+class EnemyExitState : public EnemyState {
+
+public:
+
+	// 状態に入るときの処理
+	void Enter() override;
+
+	// 毎フレームの更新処理
+	void Update(Enemy& enemy) override;
+
+private:
+
+	float timer_;
+
+	float maxTime_;
+
+	float moveStrength_;
+};
+
+
+
+============================================================
+File Path: Application/Enemy/State/EnemyMoveState.cpp
+============================================================
+#include "EnemyMoveState.h"
+
+#include <Enemy/State/EnemyAttackState.h>
+
+#include <Enemy/Enemy.h>
+
+#include <Math/Easing.h>
+
+#include <numbers>
+
+void EnemyMoveState::Enter() {
+
+	timer_ = 0.0f;
+
+	maxTime_ = 5.0f;
+
+	blinkStartTime_ = 3.0f;
+
+	moveStrength_ = 10.0f;
+
+	startBlink_ = false;
+}
+
+void EnemyMoveState::Update(Enemy& enemy) {
+
+	//タイマーを進ませる
+	timer_ += 1.0f / 60.0f;
+
+	//タイマーが終了時間に達したら
+	if (timer_ >= maxTime_) {
+
+		//点滅をリセット
+		enemy.ResetColor();
+
+		//攻撃状態に変更
+		enemy.ChangeState(std::make_unique<EnemyAttackState>());
+
+		return;
+	}
+
+	//点滅開始時間に達したら
+	if (timer_ >= blinkStartTime_) {
+		if (!startBlink_) {
+
+			//点滅開始
+			enemy.StartBlink();
+
+			//点滅開始フラグを立てる
+			startBlink_ = true;
+		}
+	}
+
+	//タイマーの比率
+	float ratio = timer_ / maxTime_;
+
+	//敵のワールド座標取得
+	WorldTransform enemyWT = enemy.GetWorldTransform();
+
+	//目標地点を計算
+	Vector3 targetPos = EaseOutBack(enemy.GetStandbyPos(), enemy.GetExitStartPos(), ratio, 2.0f);
+
+	//前フレームからの移動量を計算
+	//前方を向くようにZ方向成分を強めに設定
+	Vector3 velocity = enemy.GetPrePos() - targetPos + Vector3(0.0f, 0.0f, 10.0f);
+
+	//目標角度を計算
+	Vector3 targetRot = {
+		Normalize(velocity).y,
+		-std::numbers::pi_v<float>,
+		Normalize(velocity).x
+	};
+
+	//目標地点へ移動
+	enemyWT.translate_ = Lerp(enemy.GetWorldTransform().translate_, targetPos, moveStrength_ / 100.0f);
+
+	//目標角度へ回転
+	enemyWT.rotate_ = Lerp(enemy.GetWorldTransform().rotate_, targetRot, moveStrength_ / 100.0f);
+
+	//移動後のワールド座標を設定
+	enemy.SetWorldTransform(enemyWT);
+}
+
+
+============================================================
+File Path: Application/Enemy/State/EnemyMoveState.h
+============================================================
+#pragma once
+
+#include <Enemy/State/EnemyState.h>
+
+class EnemyMoveState : public EnemyState {
+
+public:
+
+	// 状態に入るときの処理
+	void Enter() override;
+
+	// 毎フレームの更新処理
+	void Update(Enemy& enemy) override;
+
+private:
+
+	float timer_;
+
+	float maxTime_;
+
+	float blinkStartTime_;
+
+	float moveStrength_;
+
+	bool startBlink_;
+};
+
+
+
+============================================================
+File Path: Application/Enemy/State/EnemyState.h
+============================================================
+#pragma once
+
+class Enemy;
+
+class EnemyState {
+
+public:
+
+	virtual ~EnemyState() = default;
+
+	virtual void Enter() = 0;
+
+	virtual void Update(Enemy& enemy) = 0;
 };
 
 ============================================================
@@ -5178,6 +5493,7 @@ File Path: Application/Player/LockOn.cpp
 #include "Enemy/Enemy.h"
 
 #include "Math/Easing.h"
+#include "Math/MakeMatrixMath.h"
 
 #include "algorithm"
 
@@ -5416,6 +5732,18 @@ std::vector<Vector3> LockOn::GetLockOnReticlePos() {
 	return reticlePositions;
 }
 
+float LockOn::GetMainReticleToEnemyLength(Enemy* enemy) {
+
+	//敵のスクリーン座標
+	Vector3 enemyScreenPos = Vector3ToScreenSpace(camera_, enemy->GetWorldPos());
+
+	//メインレティクルのスクリーン座標
+	Vector3 mainReticleScreenPos = Vector3ToScreenSpace(camera_, mainReticle_->GetWorldPos());
+
+	//レティクルとエネミーの距離を返す
+	return Length(enemyScreenPos - mainReticleScreenPos);
+}
+
 ============================================================
 File Path: Application/Player/LockOn.h
 ============================================================
@@ -5562,6 +5890,13 @@ public:
 	/// <return>アクティブなロックオンレティクルの座標リスト</return>
 	std::vector<Vector3> GetLockOnReticlePos();
 
+	/// <summary>
+	/// メインレティクルとエネミーの距離を取得します。
+	/// </summary>
+	/// <param name="enemy"></param>
+	/// <returns></returns>
+	float GetMainReticleToEnemyLength(Enemy* enemy);
+
 };
 
 ============================================================
@@ -5701,43 +6036,22 @@ void Player::Initialize(Camera* cameraPtr, BulletManager* bulletPtr, bool isMove
 	//初期化
 	lockOn_->Initialize(camera_, this);
 
+	/// === 移動ステートの初期化 === ///
+
+	movementState_ = std::make_unique<TankMoveState>();
+
+	movementState_->Enter();
+
+	/// === 攻撃ステートの初期化 === ///
+
+	attackState_ = std::make_unique<TankAttackState>();
+
+	attackState_->Enter();
+
 	/// === 他変数の設定 === ///
-
-	//攻撃タイマーの設定
-	attackTimer_ = 0.0f;
-
-	//戦車状態の攻撃間隔
-	tankAttackInterval_ = 1.0f;
-
-	//飛行機状態の攻撃間隔
-	jetAttackInterval_ = 0.1f;
 
 	//移動速度の設定
 	moveSpeed_ = 1.0f;
-
-	//移動強度の設定
-	moveStrength_ = 10.0f;
-
-	//回転強度の設定
-	rotStrength_ = 10.0f;
-
-	//ロックオン範囲の設定
-	lockOnRange_ = 300.0f;
-
-	//移動範囲の設定
-	moveRange_ = { 7.0f,4.0f,0.0f };
-
-	//戦車状態の回転範囲の設定
-	driveRotRange_ = { 0.0f,0.5f,0.0f };
-
-	//飛行機状態の回転範囲の設定
-	flightRotRange_ = { 0.5f,0.0f,0.3f };
-
-	//初期座標の設定
-	initialPos_ = { 0.0f,2.0f,0.0f };
-
-	//座標の設定
-	core_->GetWorldTransform().translate_ = initialPos_;
 
 	//移動アクティブフラグの設定
 	isMoveActive_ = isMoveActive;
@@ -5889,6 +6203,24 @@ void Player::Draw() {
 	}
 }
 
+void Player::ChangeJetState() {
+
+	movementState_ = std::make_unique<JetMoveState>();
+	movementState_->Enter();
+
+	attackState_ = std::make_unique<JetAttackState>();
+	attackState_->Enter();
+}
+
+void Player::ChangeTankState() {
+
+	movementState_ = std::make_unique<TankMoveState>();
+	movementState_->Enter();
+
+	attackState_ = std::make_unique<TankAttackState>();
+	attackState_->Enter();
+}
+
 ///=====================================================/// 
 /// プレイヤーの移動処理
 ///=====================================================///
@@ -5924,166 +6256,7 @@ void Player::Move() {
 		}
 	}
 
-	//移動量の長さが0でなければ
-	if (Length(velocity_) != 0.0f) {
-
-		//プレイヤーの現在座標
-		Vector3 playerPos = core_->GetWorldTransform().translate_;
-
-		//移動後の座標
-		Vector3 movePos = playerPos + velocity_;
-
-		//初期座標の移動範囲からはみ出さないように移動座標を制限
-		movePos = {
-			std::clamp(movePos.x,initialPos_.x - moveRange_.x,initialPos_.x + moveRange_.x),
-			std::clamp(movePos.y,initialPos_.y - moveRange_.y,initialPos_.y + moveRange_.y),
-			std::clamp(movePos.z,initialPos_.z - moveRange_.z,initialPos_.z + moveRange_.z),
-		};
-
-		//線形補間で移動後座標に向かって移動
-		Vector3 moveResult = Lerp(playerPos, movePos, moveStrength_ / 100.0f);
-
-		//地面よりも下に行かないようにする
-		moveResult.y = fmaxf(1.0f, moveResult.y);
-
-		//オブジェクトの座標を結果座標で設定
-		core_->GetWorldTransform().translate_ = moveResult;
-	}
-
-	switch (moveState_) {
-	case Player::TANK:
-
-		//戦車状態の移動
-		TankMove();
-
-		break;
-	case Player::JET:
-
-		//飛行機状態の移動
-		JetMove();
-
-		break;
-	}
-
-}
-
-///=====================================================/// 
-/// 戦車モード時のプレイヤーの移動およびパーツ演出処理
-///=====================================================///
-void Player::TankMove() {
-
-	//プレイヤーの現在角度
-	Vector3 playerRot = core_->GetWorldTransform().rotate_;
-
-	//右ウィングの現在座標・回転
-	Vector3 rightWingPos = rightWing_->GetWorldTransform().translate_;
-	Vector3 rightWingRot = rightWing_->GetWorldTransform().rotate_;
-
-	//右トレイルの現在座標
-	Vector3 rightTrailPos = rightTrail_->GetWorldTransform().translate_;
-
-	//左ウィングの現在座標・回転
-	Vector3 leftWingPos = leftWing_->GetWorldTransform().translate_;
-	Vector3 leftWingRot = leftWing_->GetWorldTransform().rotate_;
-
-	//左トレイルの現在座標
-	Vector3 leftTrailPos = leftTrail_->GetWorldTransform().translate_;
-
-	//左右移動に応じてY軸回転をするように設定
-	Vector3 rotate = {
-		0.0f,
-		Normalize(velocity_).x,
-		0.0f
-	};
-
-	//回転範囲で制限
-	rotate = {
-		std::clamp(rotate.x,-driveRotRange_.x,driveRotRange_.x),
-		std::clamp(rotate.y,-driveRotRange_.y,driveRotRange_.y),
-		std::clamp(rotate.z,-driveRotRange_.z,driveRotRange_.z)
-	};
-
-	//コアオブジェクトの回転
-	core_->GetWorldTransform().rotate_ = Lerp(playerRot, rotate, rotStrength_ / 100.0f);
-
-	//右ウィングの移動・回転
-	rightWing_->GetWorldTransform().translate_ = EaseOut(rightWingPos, Vector3(0.75f, 0.0f, 0.0f), 0.1f, 2.0f);
-	rightWing_->GetWorldTransform().rotate_ = EaseOut(
-		rightWingRot,
-		Vector3(0.0f, 0.0f, std::numbers::pi_v<float> / 2.0f + std::numbers::pi_v<float> *2.0f),
-		0.1f,
-		2.0f
-	);
-
-	//右トレイルの移動
-	rightTrail_->GetWorldTransform().translate_ = EaseOut(rightTrailPos, Vector3(-0.75f, 0.0f, 0.0f), 0.1f, 2.0f);
-
-	//左ウィングの移動・回転
-	leftWing_->GetWorldTransform().translate_ = EaseOut(leftWingPos, Vector3(-0.75f, 0.0f, 0.0f), 0.1f, 2.0f);
-	leftWing_->GetWorldTransform().rotate_ = EaseOut(
-		leftWingRot,
-		Vector3(0.0f, 0.0f, -std::numbers::pi_v<float> / 2.0f - std::numbers::pi_v<float> *2.0f),
-		0.1f,
-		2.0f
-	);
-
-	//左トレイルの移動
-	leftTrail_->GetWorldTransform().translate_ = EaseOut(leftTrailPos, Vector3(0.75f, 0.0f, 0.0f), 0.1f, 2.0f);
-}
-
-///=====================================================/// 
-/// 飛行機モード時のプレイヤーの移動およびパーツ演出処理
-///=====================================================///
-void Player::JetMove() {
-
-	//コアオブジェクトの現在角度
-	Vector3 playerRot = core_->GetWorldTransform().rotate_;
-
-	//右ウィングの現在座標・回転
-	Vector3 rightWingPos = rightWing_->GetWorldTransform().translate_;
-	Vector3 rightWingRot = rightWing_->GetWorldTransform().rotate_;
-
-	//右トレイルの現在座標
-	Vector3 rightTrailPos = rightTrail_->GetWorldTransform().translate_;
-
-	//左ウィングの現在座標・回転
-	Vector3 leftWingPos = leftWing_->GetWorldTransform().translate_;
-	Vector3 leftWingRot = leftWing_->GetWorldTransform().rotate_;
-
-	//左トレイルの現在座標
-	Vector3 leftTrailPos = leftTrail_->GetWorldTransform().translate_;
-
-	//左右移動でZ軸回転、上下移動でX軸回転をするように設定
-	Vector3 rotate = {
-		-Normalize(velocity_).y,
-		0.0f,
-		-Normalize(velocity_).x
-	};
-
-	//回転範囲で制限
-	rotate = {
-		std::clamp(rotate.x,-flightRotRange_.x,flightRotRange_.x),
-		std::clamp(rotate.y,-flightRotRange_.y,flightRotRange_.y),
-		std::clamp(rotate.z,-flightRotRange_.z,flightRotRange_.z)
-	};
-
-	//コアオブジェクトの回転
-	core_->GetWorldTransform().rotate_ = Lerp(playerRot, rotate, rotStrength_ / 100.0f);
-
-	//右ウィングの移動・回転
-	rightWing_->GetWorldTransform().translate_ = EaseOut(rightWingPos, Vector3(1.35f, 0.0f, 0.0f), 0.1f, 2.0f);
-	rightWing_->GetWorldTransform().rotate_ = EaseOut(rightWingRot, Vector3(0.0f, 0.0f, 0.0f), 0.1f, 2.0f);
-
-	//右トレイルの移動
-	rightTrail_->GetWorldTransform().translate_ = EaseOut(rightTrailPos, Vector3(0.75f, 0.0f, 0.0f), 0.1f, 2.0f);
-
-	//左ウィングの移動・回転
-	leftWing_->GetWorldTransform().translate_ = EaseOut(leftWingPos, Vector3(-1.35f, 0.0f, 0.0f), 0.1f, 2.0f);
-	leftWing_->GetWorldTransform().rotate_ = EaseOut(leftWingRot, Vector3(0.0f, 0.0f, 0.0f), 0.1f, 2.0f);
-
-	//左トレイルの移動
-	leftTrail_->GetWorldTransform().translate_ = EaseOut(leftTrailPos, Vector3(-0.75f, 0.0f, 0.0f), 0.1f, 2.0f);
-
+	movementState_->Update(*this, velocity_);
 }
 
 ///=====================================================/// 
@@ -6091,113 +6264,7 @@ void Player::JetMove() {
 ///=====================================================///
 void Player::Attack() {
 
-	//攻撃タイマーを進める
-	attackTimer_ += 1.0f / 60.0f;
-
-	switch (moveState_) {
-	case Player::TANK:
-
-		//戦車状態の攻撃
-		TankAttack();
-
-		break;
-	case Player::JET:
-
-		//飛行機状態の攻撃
-		JetAttack();
-
-		break;
-	}
-}
-
-///=====================================================/// 
-/// 戦車モード時の攻撃処理
-///=====================================================///
-void Player::TankAttack() {
-
-	std::list<Enemy*> enemyList = ObjectManager::GetInstance()->GetEnemies();
-
-	//タイマーが攻撃間隔を超えたら
-	if (attackTimer_ >= tankAttackInterval_) {
-
-		for (auto& enemy : enemyList) {
-
-			//敵が死亡していたらスキップ
-			if (enemy->CheckIsDead()) {
-
-				continue;
-			}
-
-			//敵のスクリーン座標
-			Vector3 enemyScreenPos = Vector3ToScreenSpace(camera_, enemy->GetWorldPos());
-
-			//メインレティクルのスクリーン座標
-			Vector3 mainReticleScreenPos = Vector3ToScreenSpace(camera_, lockOn_->GetMainReticlePos());
-
-			//ロックオン範囲内であれば
-			if (Length(enemyScreenPos - mainReticleScreenPos) <= lockOnRange_) {
-
-				//ロックオン対象に追加
-				lockOn_->AddLockOnEnemy(enemy);
-			}
-		}
-
-		//スペースキーが押されていたら
-		if (Input::GetInstance()->isPushKey(DIK_SPACE)) {
-
-			//マズルフラッシュエミッターを発生
-			muzzleFlashEmitter_->Emit();
-
-			//レティクルの位置を取得
-			std::vector<Vector3> reticlePositions = lockOn_->GetLockOnReticlePos();
-
-			for(auto& pos : reticlePositions) {
-
-				//オブジェクトからレティクルへの方向
-				Vector3 direction = pos - core_->GetWorldTransform().GetWorldTranslate();
-
-				//バレットマネージャーに弾を追加
-				bulletManager_->AddBullet(
-					core_->GetWorldTransform().translate_,
-					Normalize(direction),
-					BulletManager::BULLETTYPE::TANK
-				);
-			}
-
-			//攻撃のタイマーをリセット
-			attackTimer_ = 0.0f;
-		}
-	}
-}
-
-///=====================================================/// 
-/// 飛行機モード時の攻撃処理
-///=====================================================///
-void Player::JetAttack() {
-
-	//タイマーが攻撃間隔を超えたら
-	if (attackTimer_ >= jetAttackInterval_) {
-
-		//スペースキーが押されていたら
-		if (Input::GetInstance()->isPushKey(DIK_SPACE)) {
-
-			//マズルフラッシュエミッターを発生
-			muzzleFlashEmitter_->Emit();
-
-			//オブジェクトからレティクルへの方向
-			Vector3 direction = lockOn_->GetMainReticlePos() - core_->GetWorldTransform().GetWorldTranslate();
-
-			//バレットマネージャーに弾を追加
-			bulletManager_->AddBullet(
-				core_->GetWorldTransform().translate_,
-				Normalize(direction),
-				BulletManager::BULLETTYPE::JET
-			);
-
-			//攻撃のタイマーをリセット
-			attackTimer_ = 0.0f;
-		}
-	}
+	attackState_->Update(*this, *lockOn_, *bulletManager_);
 }
 
 ///=====================================================/// 
@@ -6278,6 +6345,11 @@ File Path: Application/Player/Player.h
 
 #include "LockOn.h"
 
+#include "State/MovementState/JetMoveState.h"
+#include "State/MovementState/TankMoveState.h"
+#include "State/AttackState/TankAttackState.h"
+#include "State/AttackState/JetAttackState.h"
+
 #include "memory"
 
 /// === 前方宣言 === ///
@@ -6349,6 +6421,15 @@ public:
 	/// </remarks>
 	void Draw();
 
+	/// <summary>
+	/// マズルフラッシュエミッターを発生させます。
+	/// </summary>
+	void EmitMuzzleFlash() { muzzleFlashEmitter_->Emit(); }
+
+	void ChangeJetState();
+
+	void ChangeTankState();
+
 	///-------------------------------------------/// 
 	/// クラス内処理関数
 	///-------------------------------------------///
@@ -6367,28 +6448,6 @@ private:
 	void Move();
 
 	/// <summary>
-	/// 戦車モード時のプレイヤーの移動およびパーツ演出処理を行います。
-	/// </summary>
-	/// <remarks>
-	/// - 現在の本体や各パーツの位置・回転を取得し、左右方向の入力に応じた回転量を算出します。  
-	/// - 算出した回転量を事前に決められた範囲内に収め、本体の回転を補間しながら変化させます。  
-	/// - 右ウィング・左ウィングおよび各トレイルは、所定の位置や回転へ向けて緩やかに移動・回転させ、戦車モード特有の見た目になるよう調整します。  
-	/// - すべての処理は補間関数を使用して滑らかに変化するようにしています。  
-	/// </remarks>
-	void TankMove();
-
-	/// <summary>
-	/// 飛行機モード時のプレイヤーの移動およびパーツ演出処理を行います。
-	/// </summary>
-	/// <remarks>
-	/// - 現在の本体や各パーツの位置・回転を取得し、左右移動でZ軸回転、上下移動でX軸回転する角度を算出します。  
-	/// - 算出した回転量を事前に決められた範囲内に収め、本体の回転を補間して滑らかに変化させます。  
-	/// - 右ウィング・左ウィングおよび各トレイルは、所定の位置や回転へ向けて緩やかに移動・回転させ、飛行機モード特有の見た目になるよう調整します。  
-	/// - すべての処理は補間関数を使用して自然な動きになるようにしています。  
-	/// </remarks>
-	void JetMove();
-
-	/// <summary>
 	/// プレイヤーの攻撃処理を行います。
 	/// </summary>
 	/// <remarks>
@@ -6396,28 +6455,6 @@ private:
 	/// - 各モードごとに異なる攻撃方法が適用されます。  
 	/// </remarks>
 	void Attack();
-
-	/// <summary>
-	/// 戦車モード時の攻撃処理を行います。
-	/// </summary>
-	/// <remarks>
-	/// - 攻撃タイマーが設定された間隔を超えた場合、画面上の敵をチェックし、ロックオン範囲内の敵をロックオン対象に追加します。  
-	/// - スペースキーが押されていた場合、マズルフラッシュエミッターを発生させ、ロックオンした敵の方向に弾を発射します。  
-	/// - 発射後は攻撃タイマーをリセットし、次の攻撃タイミングを管理します。  
-	/// - 弾はプレイヤーの位置からロックオン対象に向かって生成されます。  
-	/// </remarks>
-	void TankAttack();
-
-	/// <summary>
-	/// 飛行機モード時の攻撃処理を行います。
-	/// </summary>
-	/// <remarks>
-	/// - 攻撃タイマーが設定された間隔を超え、スペースキーが押されていた場合に攻撃が発生します。  
-	/// - マズルフラッシュエミッターを発生させ、プレイヤーの位置からレティクルの方向へ弾を生成します。  
-	/// - 攻撃後はタイマーをリセットし、次の攻撃タイミングを管理します。  
-	/// - 弾は飛行機モード用の種類として生成されます。  
-	/// </remarks>
-	void JetAttack();
 
 	/// <summary>
 	/// プレイヤーと他オブジェクトの衝突判定を行います。
@@ -6490,41 +6527,17 @@ private:
 	//レティクル
 	std::unique_ptr<LockOn> lockOn_ = nullptr;
 
+	//移動ステート
+	std::unique_ptr<MovementState> movementState_;
+
+	//攻撃ステート
+	std::unique_ptr<AttackState> attackState_;
+
 	//移動状態
 	MOVESTATE moveState_;
 
-	//攻撃タイマー
-	float attackTimer_;
-
-	//戦車状態の攻撃間隔
-	float tankAttackInterval_;
-
-	//飛行機状態の攻撃間隔
-	float jetAttackInterval_;
-
 	//移動速度
 	float moveSpeed_;
-
-	//移動強度
-	float moveStrength_;
-
-	//回転強度
-	float rotStrength_;
-
-	//ロックオン範囲
-	float lockOnRange_;
-
-	//移動範囲
-	Vector3 moveRange_;
-
-	//戦車状態の回転範囲
-	Vector3 driveRotRange_;
-
-	//飛行機状態の回転範囲
-	Vector3 flightRotRange_;
-
-	//初期座標
-	Vector3 initialPos_;
 
 	//移動量
 	Vector3 velocity_;
@@ -6549,6 +6562,12 @@ public:
 	/// <returns>ワールド座標</returns>
 	Vector3 GetWorldPos() { return core_->GetWorldTransform().GetWorldTranslate(); }
 
+	WorldTransform GetCoreWorldTransform() { return core_->GetWorldTransform(); }
+
+	WorldTransform GetLeftWingWorldTransform() { return leftWing_->GetWorldTransform(); }
+
+	WorldTransform GetRightWingWorldTransform() { return rightWing_->GetWorldTransform(); }
+
 	/// <summary>
 	/// 移動量を取得
 	/// </summary>
@@ -6572,6 +6591,12 @@ public:
 	/// </summary>
 	/// <param name="pos">座標</param>
 	void SetPosition(Vector3 pos) { core_->GetWorldTransform().translate_ = pos; }
+
+	void SetCoreWorldTransform(WorldTransform transform) { core_->GetWorldTransform() = transform; }
+
+	void SetLeftWingWorldTransform(WorldTransform transform) { leftWing_->GetWorldTransform() = transform; }
+
+	void SetRightWingWorldTransform(WorldTransform transform) { rightWing_->GetWorldTransform() = transform; }
 
 	/// <summary>
 	/// 移動アクティブフラグを設定
@@ -6814,6 +6839,501 @@ public:
 };
 
 ============================================================
+File Path: Application/Player/State/AttackState/AttackState.h
+============================================================
+#pragma once
+
+class Player;
+class LockOn;
+class BulletManager;
+
+class AttackState {
+
+public:
+
+	virtual ~AttackState() = default;
+
+	virtual void Enter() = 0;
+
+	virtual void Update(Player& player, LockOn& lockOn, BulletManager& bulletManager) = 0;
+};
+
+============================================================
+File Path: Application/Player/State/AttackState/JetAttackState.cpp
+============================================================
+#include "JetAttackState.h"
+
+#include <Player/Player.h>
+#include <Player/LockOn.h>
+#include <Bullet/BulletManager.h>
+
+#include <Base/Input.h>
+
+void JetAttackState::Enter() {
+
+	//攻撃間隔を設定
+	attackInterval_ = 0.1f;
+
+	//タイマーをリセット
+	attackTimer_ = attackInterval_;
+}
+
+void JetAttackState::Update(Player& player, LockOn& lockOn, BulletManager& bulletManager) {
+
+	attackTimer_ += 1.0f / 60.0f;
+
+	//タイマーが攻撃間隔を超えたら
+	if (attackTimer_ >= attackInterval_) {
+
+		//スペースキーが押されていたら
+		if (Input::GetInstance()->isPushKey(DIK_SPACE)) {
+
+			//マズルフラッシュエミッターを発生
+			player.EmitMuzzleFlash();
+
+			//オブジェクトからレティクルへの方向
+			Vector3 direction = lockOn.GetMainReticlePos() - player.GetWorldPos();
+
+			//バレットマネージャーに弾を追加
+			bulletManager.AddBullet(
+				player.GetWorldPos(),
+				Normalize(direction),
+				BulletManager::BULLETTYPE::JET
+			);
+
+			//攻撃のタイマーをリセット
+			attackTimer_ = 0.0f;
+		}
+	}
+}
+
+============================================================
+File Path: Application/Player/State/AttackState/JetAttackState.h
+============================================================
+#pragma once
+
+#include <Player/State/AttackState/AttackState.h>
+
+class JetAttackState : public AttackState {
+
+public:
+
+	void Enter() override;
+
+	void Update(Player& player, LockOn& lockOn, BulletManager& bulletManager) override;
+
+private:
+
+	float attackTimer_;
+
+	float attackInterval_;
+
+};
+
+============================================================
+File Path: Application/Player/State/AttackState/TankAttackState.cpp
+============================================================
+#include "TankAttackState.h"
+
+#include <Player/Player.h>
+#include <Player/LockOn.h>
+#include <Bullet/BulletManager.h>
+
+#include <Enemy/Enemy.h>
+#include <ObjectManager.h>
+#include <Base/Input.h>
+#include <Math/MakeMatrixMath.h>
+
+void TankAttackState::Enter() {
+
+	//攻撃間隔を設定
+	attackInterval_ = 1.0f;
+
+	//タイマーをリセット
+	attackTimer_ = attackInterval_;
+
+	//ロックオン範囲を設定
+	lockOnRange_ = 300.0f;
+}
+
+void TankAttackState::Update(Player& player, LockOn& lockOn, BulletManager& bulletManager) {
+
+	std::list<Enemy*> enemyList = ObjectManager::GetInstance()->GetEnemies();
+
+	attackTimer_ += 1.0f / 60.0f;
+
+	//タイマーが攻撃間隔を超えたら
+	if (attackTimer_ >= attackInterval_) {
+
+		for (auto& enemy : enemyList) {
+
+			//敵が死亡していたらスキップ
+			if (enemy->CheckIsDead()) {
+
+				continue;
+			}
+
+			//ロックオン範囲内であれば
+			if (lockOn.GetMainReticleToEnemyLength(enemy) <= lockOnRange_) {
+
+				//ロックオン対象に追加
+				lockOn.AddLockOnEnemy(enemy);
+			}
+		}
+
+		//スペースキーが押されていたら
+		if (Input::GetInstance()->isPushKey(DIK_SPACE)) {
+
+			//マズルフラッシュエミッターを発生
+			player.EmitMuzzleFlash();
+
+			//レティクルの位置を取得
+			std::vector<Vector3> reticlePositions = lockOn.GetLockOnReticlePos();
+
+			for (auto& pos : reticlePositions) {
+
+				//オブジェクトからレティクルへの方向
+				Vector3 direction = pos - player.GetWorldPos();
+
+				//バレットマネージャーに弾を追加
+				bulletManager.AddBullet(
+					player.GetWorldPos(),
+					Normalize(direction),
+					BulletManager::BULLETTYPE::TANK
+				);
+			}
+
+			//攻撃のタイマーをリセット
+			attackTimer_ = 0.0f;
+		}
+	}
+}
+
+============================================================
+File Path: Application/Player/State/AttackState/TankAttackState.h
+============================================================
+#pragma once
+
+#include <Player/State/AttackState/AttackState.h>
+
+class TankAttackState : public AttackState {
+
+public:
+
+	void Enter() override;
+
+	void Update(Player& player, LockOn& lockOn, BulletManager& bulletManager) override;
+
+private:
+
+	float attackTimer_;
+
+	float attackInterval_;
+
+	float lockOnRange_;
+};
+
+============================================================
+File Path: Application/Player/State/MovementState/JetMoveState.cpp
+============================================================
+#include "JetMoveState.h"
+
+#include <Player/Player.h>
+
+#include <Math/Easing.h>
+
+#include <algorithm>
+
+void JetMoveState::Enter() {
+
+	initialPos_ = { 0.0f,2.0f,0.0f };
+
+	moveRange_ = { 7.0f,4.0f,0.0f };
+
+	rotRange_ = { 0.5f,0.0f,0.3f };
+
+	moveStrength_ = 10.0f;
+
+	rotStrength_ = 10.0f;
+}
+
+void JetMoveState::Update(Player& player, Vector3 velocity) {
+
+	if (player.GetWorldPos().y <= 1.0f) {
+
+		player.ChangeTankState();
+
+		return;
+	}
+
+	WorldTransform coreWT = player.GetCoreWorldTransform();
+	WorldTransform leftWingWT = player.GetLeftWingWorldTransform();
+	WorldTransform rightWingWT = player.GetRightWingWorldTransform();
+
+	//コアオブジェクトの現在角度
+	Vector3 playerPos = coreWT.translate_;
+	Vector3 playerRot = coreWT.rotate_;
+
+	//左ウィングの現在座標・回転
+	Vector3 leftWingPos = leftWingWT.translate_;
+	Vector3 leftWingRot = leftWingWT.rotate_;
+
+	//右ウィングの現在座標・回転
+	Vector3 rightWingPos = rightWingWT.translate_;
+	Vector3 rightWingRot = rightWingWT.rotate_;
+
+	////右トレイルの現在座標
+	//Vector3 rightTrailPos = rightTrail_->GetWorldTransform().translate_;
+
+	////左トレイルの現在座標
+	//Vector3 leftTrailPos = leftTrail_->GetWorldTransform().translate_;
+
+	//移動後座標の算出
+	Vector3 movePos = playerPos + velocity;
+
+	movePos = {
+		std::clamp(movePos.x,initialPos_.x - moveRange_.x,initialPos_.x + moveRange_.x),
+		std::clamp(movePos.y,initialPos_.y - moveRange_.y,initialPos_.y + moveRange_.y),
+		std::clamp(movePos.z,initialPos_.z - moveRange_.z,initialPos_.z + moveRange_.z),
+	};
+
+	//左右移動でZ軸回転、上下移動でX軸回転をするように設定
+	Vector3 rotate = {
+		-Normalize(velocity).y,
+		0.0f,
+		-Normalize(velocity).x
+	};
+
+	//回転範囲で制限
+	rotate = {
+		std::clamp(rotate.x,-rotRange_.x,rotRange_.x),
+		std::clamp(rotate.y,-rotRange_.y,rotRange_.y),
+		std::clamp(rotate.z,-rotRange_.z,rotRange_.z)
+	};
+
+	//コアオブジェクトの回転
+	coreWT.translate_ = Lerp(playerPos, movePos, moveStrength_ / 100.0f);
+	coreWT.rotate_ = Lerp(playerRot, rotate, rotStrength_ / 100.0f);
+
+	coreWT.translate_.y = fmaxf(1.0f, coreWT.translate_.y);
+
+	player.SetCoreWorldTransform(coreWT);
+
+	//右ウィングの移動・回転
+	rightWingWT.translate_ = EaseOut(rightWingPos, Vector3(1.35f, 0.0f, 0.0f), 0.1f, 2.0f);
+	rightWingWT.rotate_ = EaseOut(rightWingRot, Vector3(0.0f, 0.0f, 0.0f), 0.1f, 2.0f);
+
+	player.SetRightWingWorldTransform(rightWingWT);
+
+	//左ウィングの移動・回転
+	leftWingWT.translate_ = EaseOut(leftWingPos, Vector3(-1.35f, 0.0f, 0.0f), 0.1f, 2.0f);
+	leftWingWT.rotate_ = EaseOut(leftWingRot, Vector3(0.0f, 0.0f, 0.0f), 0.1f, 2.0f);
+
+	player.SetLeftWingWorldTransform(leftWingWT);
+
+	////右トレイルの移動
+	//rightTrail_->GetWorldTransform().translate_ = EaseOut(rightTrailPos, Vector3(0.75f, 0.0f, 0.0f), 0.1f, 2.0f);
+
+	////左トレイルの移動
+	//leftTrail_->GetWorldTransform().translate_ = EaseOut(leftTrailPos, Vector3(-0.75f, 0.0f, 0.0f), 0.1f, 2.0f);
+
+}
+
+============================================================
+File Path: Application/Player/State/MovementState/JetMoveState.h
+============================================================
+#pragma once
+
+#include <Player/State/MovementState/MovementState.h>
+
+class JetMoveState : public MovementState {
+
+public:
+
+	void Enter() override;
+
+	void Update(Player& player, Vector3 velocity) override;
+
+private:
+
+	Vector3 initialPos_;
+
+	Vector3 moveRange_;
+
+	Vector3 rotRange_;
+
+	float moveStrength_;
+
+	float rotStrength_;
+};
+
+============================================================
+File Path: Application/Player/State/MovementState/MovementState.h
+============================================================
+#pragma once
+
+#include <Math/Vector3.h>
+
+class Player;
+
+class MovementState {
+
+public:
+
+	virtual ~MovementState() = default;
+
+	virtual void Enter() = 0;
+
+	virtual void Update(Player& player, Vector3 velocity) = 0;
+};
+
+============================================================
+File Path: Application/Player/State/MovementState/TankMoveState.cpp
+============================================================
+#include "TankMoveState.h"
+
+#include <Player/Player.h>
+
+#include <Math/Easing.h>
+
+#include <algorithm>
+#include <numbers>
+
+void TankMoveState::Enter() {
+
+	initialPos_ = { 0.0f,2.0f,0.0f };
+
+	moveRange_ = { 7.0f,4.0f,0.0f };
+
+	rotRange_ = { 0.0f,0.5f,0.0f };
+
+	moveStrength_ = 10.0f;
+
+	rotStrength_ = 10.0f;
+}
+
+void TankMoveState::Update(Player& player, Vector3 velocity) {
+
+	if (player.GetWorldPos().y > 1.0f) {
+
+		player.ChangeJetState();
+
+		return;
+	}
+
+	WorldTransform coreWT = player.GetCoreWorldTransform();
+	WorldTransform leftWingWT = player.GetLeftWingWorldTransform();
+	WorldTransform rightWingWT = player.GetRightWingWorldTransform();
+
+	//コアオブジェクトの現在角度
+	Vector3 playerPos = coreWT.translate_;
+	Vector3 playerRot = coreWT.rotate_;
+
+	//左ウィングの現在座標・回転
+	Vector3 leftWingPos = leftWingWT.translate_;
+	Vector3 leftWingRot = leftWingWT.rotate_;
+
+	//右ウィングの現在座標・回転
+	Vector3 rightWingPos = rightWingWT.translate_;
+	Vector3 rightWingRot = rightWingWT.rotate_;
+
+	////右トレイルの現在座標
+	//Vector3 rightTrailPos = rightTrail_->GetWorldTransform().translate_;
+
+	////左トレイルの現在座標
+	//Vector3 leftTrailPos = leftTrail_->GetWorldTransform().translate_;
+
+	//移動後座標の算出
+	Vector3 movePos = playerPos + velocity;
+
+	movePos = {
+		std::clamp(movePos.x,initialPos_.x - moveRange_.x,initialPos_.x + moveRange_.x),
+		std::clamp(movePos.y,initialPos_.y - moveRange_.y,initialPos_.y + moveRange_.y),
+		std::clamp(movePos.z,initialPos_.z - moveRange_.z,initialPos_.z + moveRange_.z),
+	};
+
+	//左右移動でZ軸回転、上下移動でX軸回転をするように設定
+	Vector3 rotate = {
+		-Normalize(velocity).y,
+		0.0f,
+		-Normalize(velocity).x
+	};
+
+	//回転範囲で制限
+	rotate = {
+		std::clamp(rotate.x,-rotRange_.x,rotRange_.x),
+		std::clamp(rotate.y,-rotRange_.y,rotRange_.y),
+		std::clamp(rotate.z,-rotRange_.z,rotRange_.z)
+	};
+
+	//コアオブジェクトの回転
+	coreWT.translate_ = Lerp(playerPos, movePos, moveStrength_ / 100.0f);
+	coreWT.rotate_ = Lerp(playerRot, rotate, rotStrength_ / 100.0f);
+
+	coreWT.translate_.y = fmaxf(1.0f, coreWT.translate_.y);
+
+	player.SetCoreWorldTransform(coreWT);
+
+	//右ウィングの移動・回転
+	rightWingWT.translate_ = EaseOut(rightWingPos, Vector3(0.75f, 0.0f, 0.0f), 0.1f, 2.0f);
+	rightWingWT.rotate_ = EaseOut(
+		rightWingRot,
+		Vector3(0.0f, 0.0f, std::numbers::pi_v<float> / 2.0f + std::numbers::pi_v<float> *2.0f),
+		0.1f,
+		2.0f
+	);
+
+	player.SetRightWingWorldTransform(rightWingWT);
+
+	//左ウィングの移動・回転
+	leftWingWT.translate_ = EaseOut(leftWingPos, Vector3(-0.75f, 0.0f, 0.0f), 0.1f, 2.0f);
+	leftWingWT.rotate_ = EaseOut(
+		leftWingRot,
+		Vector3(0.0f, 0.0f, -std::numbers::pi_v<float> / 2.0f - std::numbers::pi_v<float> *2.0f),
+		0.1f,
+		2.0f
+	);
+
+	player.SetLeftWingWorldTransform(leftWingWT);
+
+	////右トレイルの移動
+	//rightTrail_->GetWorldTransform().translate_ = EaseOut(rightTrailPos, Vector3(0.75f, 0.0f, 0.0f), 0.1f, 2.0f);
+
+	////左トレイルの移動
+	//leftTrail_->GetWorldTransform().translate_ = EaseOut(leftTrailPos, Vector3(-0.75f, 0.0f, 0.0f), 0.1f, 2.0f);
+
+}
+
+
+============================================================
+File Path: Application/Player/State/MovementState/TankMoveState.h
+============================================================
+#pragma once
+
+#include <Player/State/MovementState/MovementState.h>
+
+class TankMoveState : public MovementState {
+
+public:
+
+	void Enter() override;
+
+	void Update(Player& player, Vector3 velocity) override;
+
+private:
+
+	Vector3 initialPos_;
+
+	Vector3 moveRange_;
+
+	Vector3 rotRange_;
+
+	float moveStrength_;
+
+	float rotStrength_;
+};
+
+============================================================
 File Path: Application/Scene/GameScene.cpp
 ============================================================
 #include "GameScene.h"
@@ -6855,9 +7375,6 @@ void GameScene::Initialize() {
 
 	//デバッグカメラを使用しない
 	camera_->SetDebugCameraFlag(false);
-
-	//カメラの座標
-	camera_->GetWorldTransform().translate_ = { 0.0f,3.0f,0.0f };
 
 	//シェイクにカメラをセット
 	Shake::GetInstance()->SetCamera(camera_.get());
@@ -7189,7 +7706,7 @@ void GameScene::Update() {
 		timerDirection_ *= -1.0f;
 	}
 
-	float lerpNum = EaseOut(0.0f, arrowLength_, arrowTimer_ / 1.0f, 2.0f);
+	float lerpNum = EaseOut(0.0f, arrowLength_, arrowTimer_ / 1.0f);
 
 	gameOverLeftArrowSprite_->SetTranslate({ spaceKeyPos_.x - spaceKeySize_.x / 2.0f - 64.0f - lerpNum,spaceKeyPos_.y });
 
@@ -7540,15 +8057,8 @@ File Path: Application/Scene/GameScene.h
 #include "list"
 
 /// <summary>
-/// ゲームシーンを表すクラスです。
+/// ゲームシーン
 /// </summary>
-/// <remarks>
-/// - BaseSceneを継承し、ゲームプレイに必要なオブジェクトの管理、更新、描画、アニメーション演出を行います。  
-/// - カメラ（通常カメラ・追従カメラ）、プレイヤー、エネミー、弾、グラウンド、UIスプライト、エフェクトなどのオブジェクトを管理します。  
-/// - ゲーム開始時・クリア時のアニメーションや、ゲームオーバー演出の制御も行います。  
-/// - Update()やDraw()内で各オブジェクトの更新・描画を順序よく行い、シーン遷移やフェード制御も含めています。  
-/// - AnimPoint構造体を用いたキーフレーム方式で、プレイヤーとカメラのアニメーションを補間します。  
-/// </remarks>
 class GameScene : public BaseScene {
 
 	///-------------------------------------------/// 
@@ -7572,55 +8082,21 @@ public:
 	/// <summary>
 	/// ゲームシーンの初期化を行います。
 	/// </summary>
-	/// <remarks>
-	/// - カメラを生成・初期化し、デバッグカメラを無効化した後、シーン全体のカメラ制御に設定します。  
-	/// - エネミーマネージャー、バレットマネージャー、グラウンドマネージャーを生成・初期化します。  
-	/// - プレイヤーを生成し、カメラとバレットマネージャーを渡して初期化します。初期状態では移動不可に設定します。  
-	/// - 追尾カメラを生成・初期化し、プレイヤーに追従させます。初期状態では無効化します。  
-	/// - ゲームオーバーおよびゲームクリア関連の2Dスプライトを生成し、位置・アンカーポイント・カラーを設定します。  
-	/// - 衝撃波エミッターを左右に生成・初期化し、カメラに紐づけて読み込みます。  
-	/// - 各種タイマーやフラグを初期化し、シーン開始時のアニメーション用キーフレームを設定します。  
-	/// - Fade制御にカメラとプレイヤーをセットし、フェードインを開始します。  
-	/// </remarks>
 	void Initialize() override;
 
 	/// <summary>
 	/// ゲームシーンの終了処理を行います。
 	/// </summary>
-	/// <remarks>
-	/// - ObjectManagerに登録されている全てのオブジェクトをクリアします。  
-	/// - 演出系（フェード・カメラシェイク）の参照をリセットし、外部オブジェクトへの依存を解除します。  
-	/// - 使用している音声データやオーディオシステムを解放してリソースを整理します。  
-	/// </remarks>
 	void Finalize() override;
 
 	/// <summary>
 	/// ゲームシーンの毎フレーム更新処理を行います。
 	/// </summary>
-	/// <remarks>
-	/// - フェード演出の状態を確認し、FADE_INが終了していれば状態をリセットします。  
-	/// - スタートおよびクリア時のアニメーションを更新します。  
-	/// - 追尾カメラおよびメインカメラを更新します。  
-	/// - ゲーム進行中であれば、プレイヤー・エネミー・弾・グラウンドの各オブジェクトを更新します。  
-	/// - ゲームクリア時にはTransformのみ更新して描画状態を維持します。  
-	/// - UIの矢印アニメーションをタイマーで制御し、Lerp/EaseOutでスムーズに移動させます。  
-	/// - ゲームオーバー・ゲームクリアスプライトの更新と表示制御を行います。  
-	/// - 衝撃波エミッターを更新します。  
-	/// - プレイヤーが死亡した場合、ゲームオーバー演出を開始します。  
-	/// - 一定条件を満たした場合、ゲームクリア演出を開始し、フェードアウトによるシーン遷移を行います。  
-	/// </remarks>
 	void Update() override;
 
 	/// <summary>
 	/// ゲームシーンの描画処理を行います。
 	/// </summary>
-	/// <remarks>
-	/// - プレイヤー、エネミー、弾、グラウンドをそれぞれ描画します。  
-	/// - ゲームオーバー・ゲームクリア時のスプライトをUIレイヤーとして描画します。  
-	/// - ゲームクリア演出中でなければ、ヘルプスプライトを描画します。  
-	/// - 衝撃波エミッターを左右それぞれ描画します。  
-	/// - 描画順は基本的にゲームオブジェクト → エフェクト → UIスプライトの順で行います。  
-	/// </remarks>
 	void Draw() override;
 
 	/// <summary>
@@ -7631,23 +8107,11 @@ public:
 	/// <summary>
 	/// ゲーム開始時のカメラ・プレイヤーアニメーションを更新します。
 	/// </summary>
-	/// <remarks>
-	/// - ゲーム開始演出が完了していない場合のみ処理を行います。  
-	/// - タイマーを進め、現在のキーフレームに応じてプレイヤー位置とカメラ回転を補間します。  
-	/// - キーフレーム間の補間にはEaseOut関数を使用し、滑らかな動きを実現します。  
-	/// - 最終キーフレームに到達したら、開始演出を終了し、追従カメラを有効化、プレイヤー操作を可能にします。  
-	/// </remarks>
 	void StartAnimation();
 
 	/// <summary>
 	/// ゲームクリア時のプレイヤー・エフェクトアニメーションを更新します。
 	/// </summary>
-	/// <remarks>
-	/// - クリア演出中のみ処理を行います。  
-	/// - タイマーを進め、現在のキーフレームに応じてプレイヤー位置を補間します。  
-	/// - プレイヤーの左右に衝撃波エミッターを追従させ、キーフレーム到達時に発射します。  
-	/// - 最終キーフレームに到達したらフェードアウトを開始し、演出を終了します。  
-	/// </remarks>
 	void ClearAnimation();
 
 	///-------------------------------------------/// 
@@ -26870,7 +27334,7 @@ Vector3 SLerp(const Vector3& v1, const Vector3& v2, float t);
 /// <param name="t"></param>
 /// <param name="mag"></param>
 /// <returns></returns>
-Vector2 EaseIn(const Vector2& v1, const Vector2& v2, float t, float mag);
+Vector2 EaseIn(const Vector2& v1, const Vector2& v2, float t, float mag = 2.0f);
 
 /// <summary>
 /// EaseIn関数
@@ -26880,7 +27344,7 @@ Vector2 EaseIn(const Vector2& v1, const Vector2& v2, float t, float mag);
 /// <param name="t"></param>
 /// <param name="mag"></param>
 /// <returns></returns>
-Vector3 EaseIn(const Vector3& v1, const Vector3& v2, float t, float mag);
+Vector3 EaseIn(const Vector3& v1, const Vector3& v2, float t, float mag = 2.0f);
 
 /// <summary>
 /// EaseIn関数
@@ -26890,7 +27354,7 @@ Vector3 EaseIn(const Vector3& v1, const Vector3& v2, float t, float mag);
 /// <param name="t"></param>
 /// <param name="mag"></param>
 /// <returns></returns>
-Vector4 EaseIn(const Vector4& v1, const Vector4& v2, float t, float mag);
+Vector4 EaseIn(const Vector4& v1, const Vector4& v2, float t, float mag = 2.0f);
 
 /// <summary>
 /// EaseOut関数
@@ -26900,7 +27364,7 @@ Vector4 EaseIn(const Vector4& v1, const Vector4& v2, float t, float mag);
 /// <param name="t"></param>
 /// <param name="mag"></param>
 /// <returns></returns>
-float EaseOut(const float& n1, const float& n2, float t, float mag);
+float EaseOut(const float& n1, const float& n2, float t, float mag = 2.0f);
 
 /// <summary>
 /// EaseOut関数
@@ -26910,7 +27374,7 @@ float EaseOut(const float& n1, const float& n2, float t, float mag);
 /// <param name="t"></param>
 /// <param name="mag"></param>
 /// <returns></returns>
-Vector2 EaseOut(const Vector2& v1, const Vector2& v2, float t, float mag);
+Vector2 EaseOut(const Vector2& v1, const Vector2& v2, float t, float mag = 2.0f);
 
 /// <summary>
 /// EaseOut関数
@@ -26920,7 +27384,7 @@ Vector2 EaseOut(const Vector2& v1, const Vector2& v2, float t, float mag);
 /// <param name="t"></param>
 /// <param name="mag"></param>
 /// <returns></returns>
-Vector3 EaseOut(const Vector3& v1, const Vector3& v2, float t, float mag);
+Vector3 EaseOut(const Vector3& v1, const Vector3& v2, float t, float mag = 2.0f);
 
 /// <summary>
 /// EaseOut関数
@@ -26930,7 +27394,7 @@ Vector3 EaseOut(const Vector3& v1, const Vector3& v2, float t, float mag);
 /// <param name="t"></param>
 /// <param name="mag"></param>
 /// <returns></returns>
-Vector4 EaseOut(const Vector4& v1, const Vector4& v2, float t, float mag);
+Vector4 EaseOut(const Vector4& v1, const Vector4& v2, float t, float mag = 2.0f);
 
 /// <summary>
 /// EaseOutCirc関数
@@ -26940,7 +27404,7 @@ Vector4 EaseOut(const Vector4& v1, const Vector4& v2, float t, float mag);
 /// <param name="t"></param>
 /// <param name="mag"></param>
 /// <returns></returns>
-Vector3 EaseOutCirc(const Vector3& v1, const Vector3& v2, float t, float mag);
+Vector3 EaseOutCirc(const Vector3& v1, const Vector3& v2, float t, float mag = 2.0f);
 
 /// <summary>
 /// EaseOutBack関数
@@ -26950,7 +27414,7 @@ Vector3 EaseOutCirc(const Vector3& v1, const Vector3& v2, float t, float mag);
 /// <param name="t"></param>
 /// <param name="mag"></param>
 /// <returns></returns>
-Vector3 EaseOutBack(const Vector3& v1, const Vector3& v2, float t, float mag);
+Vector3 EaseOutBack(const Vector3& v1, const Vector3& v2, float t, float mag = 2.0f);
 
 /// <summary>
 /// EaseInOut関数
@@ -26960,7 +27424,7 @@ Vector3 EaseOutBack(const Vector3& v1, const Vector3& v2, float t, float mag);
 /// <param name="t"></param>
 /// <param name="mag"></param>
 /// <returns></returns>
-Vector3 EaseInOut(const Vector3& v1, const Vector3& v2, float t, float mag);
+Vector3 EaseInOut(const Vector3& v1, const Vector3& v2, float t, float mag = 2.0f);
 
 /// <summary>
 /// EaseInOut関数
@@ -26970,7 +27434,7 @@ Vector3 EaseInOut(const Vector3& v1, const Vector3& v2, float t, float mag);
 /// <param name="t"></param>
 /// <param name="mag"></param>
 /// <returns></returns>
-Vector4 EaseInOut(const Vector4& v1, const Vector4& v2, float t, float mag);
+Vector4 EaseInOut(const Vector4& v1, const Vector4& v2, float t, float mag = 2.0f);
 
 ============================================================
 File Path: Engine/Math/KeyFrameQuaternion.h
@@ -29351,6 +29815,11 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Application\LevelEditor\LevelDataLoader.cpp" />
     <ClCompile Include="Application\Bullet\EnemyBullet.cpp" />
     <ClCompile Include="Application\Ground\Building.cpp" />
+    <ClCompile Include="Application\Enemy\State\EnemyAttackState.cpp" />
+    <ClCompile Include="Application\Enemy\State\EnemyDeadState.cpp" />
+    <ClCompile Include="Application\Enemy\State\EnemyEntryState.cpp" />
+    <ClCompile Include="Application\Enemy\State\EnemyExitState.cpp" />
+    <ClCompile Include="Application\Enemy\State\EnemyMoveState.cpp" />
     <ClCompile Include="Engine\3d\Mesh\CubeMesh.cpp" />
     <ClCompile Include="Engine\3d\Collider\AABBCollider.cpp" />
     <ClCompile Include="Engine\3d\Collider\Collider.cpp" />
@@ -29391,6 +29860,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Application\Fade\Fade.cpp" />
     <ClCompile Include="Application\Player\LockOn.cpp" />
     <ClCompile Include="Application\Flash\Flash.cpp" />
+    <ClCompile Include="Application\Player\State\AttackState\JetAttackState.cpp" />
+    <ClCompile Include="Application\Player\State\MovementState\JetMoveState.cpp" />
     <ClCompile Include="main.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Development|x64'">MaxSpeed</Optimization>
       <WholeProgramOptimization Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</WholeProgramOptimization>
@@ -29433,11 +29904,20 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Application\Scene\TitleScene.cpp" />
     <ClCompile Include="Application\Shake\Shake.cpp" />
     <ClCompile Include="Application\ObjectManager.cpp" />
+    <ClCompile Include="Application\Player\State\AttackState\TankAttackState.cpp" />
+    <ClCompile Include="Application\Player\State\MovementState\TankMoveState.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application\LevelEditor\LevelDataLoader.h" />
     <ClInclude Include="Application\Bullet\EnemyBullet.h" />
     <ClInclude Include="Application\Ground\Building.h" />
+    <ClInclude Include="Application\Player\State\AttackState\AttackState.h" />
+    <ClInclude Include="Application\Enemy\State\EnemyState.h" />
+    <ClInclude Include="Application\Enemy\State\EnemyAttackState.h" />
+    <ClInclude Include="Application\Enemy\State\EnemyDeadState.h" />
+    <ClInclude Include="Application\Enemy\State\EnemyEntryState.h" />
+    <ClInclude Include="Application\Enemy\State\EnemyExitState.h" />
+    <ClInclude Include="Application\Enemy\State\EnemyMoveState.h" />
     <ClInclude Include="Engine\3d\Mesh\CubeMesh.h" />
     <ClInclude Include="Engine\3d\Collider\AABBCollider.h" />
     <ClInclude Include="Engine\3d\Collider\Collider.h" />
@@ -29523,6 +30003,11 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Application\ObjectManager.h" />
     <ClInclude Include="Application\Player\LockOn.h" />
     <ClInclude Include="Application\Flash\Flash.h" />
+    <ClInclude Include="Application\Player\State\AttackState\JetAttackState.h" />
+    <ClInclude Include="Application\Player\State\AttackState\TankAttackState.h" />
+    <ClInclude Include="Application\Player\State\MovementState\MovementState.h" />
+    <ClInclude Include="Application\Player\State\MovementState\JetMoveState.h" />
+    <ClInclude Include="Application\Player\State\MovementState\TankMoveState.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Application\LevelEditor\Python\add_collider.py">
@@ -30016,6 +30501,15 @@ File Path: Engine.vcxproj.filters
     <ClCompile Include="Application\ObjectManager.cpp" />
     <ClCompile Include="Application\Player\LockOn.cpp" />
     <ClCompile Include="Application\Flash\Flash.cpp" />
+    <ClCompile Include="Application\Player\State\AttackState\JetAttackState.cpp" />
+    <ClCompile Include="Application\Player\State\AttackState\TankAttackState.cpp" />
+    <ClCompile Include="Application\Player\State\MovementState\JetMoveState.cpp" />
+    <ClCompile Include="Application\Player\State\MovementState\TankMoveState.cpp" />
+    <ClCompile Include="Application\Enemy\State\EnemyEntryState.cpp" />
+    <ClCompile Include="Application\Enemy\State\EnemyMoveState.cpp" />
+    <ClCompile Include="Application\Enemy\State\EnemyAttackState.cpp" />
+    <ClCompile Include="Application\Enemy\State\EnemyExitState.cpp" />
+    <ClCompile Include="Application\Enemy\State\EnemyDeadState.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application\Bullet\BulletBase.h">
@@ -30274,6 +30768,18 @@ File Path: Engine.vcxproj.filters
     <ClInclude Include="Application\ObjectManager.h" />
     <ClInclude Include="Application\Player\LockOn.h" />
     <ClInclude Include="Application\Flash\Flash.h" />
+    <ClInclude Include="Application\Player\State\AttackState\AttackState.h" />
+    <ClInclude Include="Application\Player\State\AttackState\JetAttackState.h" />
+    <ClInclude Include="Application\Player\State\AttackState\TankAttackState.h" />
+    <ClInclude Include="Application\Player\State\MovementState\MovementState.h" />
+    <ClInclude Include="Application\Player\State\MovementState\JetMoveState.h" />
+    <ClInclude Include="Application\Player\State\MovementState\TankMoveState.h" />
+    <ClInclude Include="Application\Enemy\State\EnemyState.h" />
+    <ClInclude Include="Application\Enemy\State\EnemyEntryState.h" />
+    <ClInclude Include="Application\Enemy\State\EnemyMoveState.h" />
+    <ClInclude Include="Application\Enemy\State\EnemyAttackState.h" />
+    <ClInclude Include="Application\Enemy\State\EnemyExitState.h" />
+    <ClInclude Include="Application\Enemy\State\EnemyDeadState.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resource\Shader\DebugObject.hlsli">
