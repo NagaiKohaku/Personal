@@ -12,5 +12,5 @@ public:
 
 	virtual void Enter() = 0;
 
-	virtual void Update(Player& player, LockOn& lockOn, BulletManager& bulletManager) = 0;
+	virtual void Update(Player& player) = 0;
 };

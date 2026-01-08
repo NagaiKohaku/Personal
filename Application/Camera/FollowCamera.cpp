@@ -71,7 +71,7 @@ void FollowCamera::Update() {
 	/// === プレイヤーの移動方向からカメラの傾きを計算 === ///
 
 	//プレイヤーの移動量
-	Vector3 playerVelocity = Normalize(player_->GetVelocity());
+	Vector3 playerVelocity = Normalize(player_->GetInputDirection());
 
 	//カメラの傾き
 	Vector3 cameraSlope = { 0.0f,0.0f,0.0f };

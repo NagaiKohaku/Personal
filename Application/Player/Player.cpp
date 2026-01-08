@@ -146,9 +146,6 @@ void Player::Initialize(Camera* cameraPtr, BulletManager* bulletPtr, bool isMove
 
 	/// === 他変数の設定 === ///
 
-	//移動速度の設定
-	moveSpeed_ = 1.0f;
-
 	//移動アクティブフラグの設定
 	isMoveActive_ = isMoveActive;
 
@@ -299,6 +296,67 @@ void Player::Draw() {
 	}
 }
 
+void Player::UpdateLockOn(float lockOnRange) {
+
+	std::list<Enemy*> enemyList = ObjectManager::GetInstance()->GetEnemies();
+
+	for (auto& enemy : enemyList) {
+
+		//敵が死亡していたらスキップ
+		if (enemy->CheckIsDead()) {
+
+			continue;
+		}
+
+		//ロックオン範囲内であれば
+		if (lockOn_->GetMainReticleToEnemyLength(enemy) <= lockOnRange) {
+
+			//ロックオン対象に追加
+			lockOn_->AddLockOnEnemy(enemy);
+		}
+	}
+}
+
+void Player::JetAttack() {
+
+	//マズルフラッシュエミッターを発生
+	muzzleFlashEmitter_->Emit();
+
+	//オブジェクトからレティクルへの方向
+	Vector3 direction = lockOn_->GetMainReticlePos() - core_->GetWorldTransform().translate_;
+
+	//バレットマネージャーに弾を追加
+	bulletManager_->AddBullet(
+		core_->GetWorldTransform().translate_,
+		Normalize(direction),
+		BulletManager::BULLETTYPE::JET
+	);
+
+}
+
+void Player::TankAttack() {
+
+	//マズルフラッシュエミッターを発生
+	muzzleFlashEmitter_->Emit();
+
+	//レティクルの位置を取得
+	std::vector<Vector3> reticlePositions = lockOn_->GetLockOnReticlePos();
+
+	for (auto& pos : reticlePositions) {
+
+		//オブジェクトからレティクルへの方向
+		Vector3 direction = pos - core_->GetWorldTransform().translate_;
+
+		//バレットマネージャーに弾を追加
+		bulletManager_->AddBullet(
+			core_->GetWorldTransform().translate_,
+			Normalize(direction),
+			BulletManager::BULLETTYPE::TANK
+		);
+	}
+
+}
+
 void Player::ChangeJetState() {
 
 	movementState_ = std::make_unique<JetMoveState>();
@@ -323,36 +381,36 @@ void Player::ChangeTankState() {
 void Player::Move() {
 
 	//移動量をリセット
-	velocity_ = { 0.0f,0.0f,0.0f };
+	inputDirection_ = { 0.0f,0.0f,0.0f };
 
 	if (isMoveActive_) {
 
 		//Wキーが押されたら上方向に移動
 		if (Input::GetInstance()->isPushKey(DIK_W)) {
 
-			velocity_.y += moveSpeed_;
+			inputDirection_.y += 1.0f;
 		}
 
 		//Sキーが押されたら下方向に移動
 		if (Input::GetInstance()->isPushKey(DIK_S)) {
 
-			velocity_.y -= moveSpeed_;
+			inputDirection_.y -= 1.0f;
 		}
 
 		//Aキーが押されたら左方向に移動
 		if (Input::GetInstance()->isPushKey(DIK_A)) {
 
-			velocity_.x -= moveSpeed_;
+			inputDirection_.x -= 1.0f;
 		}
 
 		//Dキーが押されたら右方向に移動
 		if (Input::GetInstance()->isPushKey(DIK_D)) {
 
-			velocity_.x += moveSpeed_;
+			inputDirection_.x += 1.0f;
 		}
 	}
 
-	movementState_->Update(*this, velocity_);
+	movementState_->Update(*this);
 }
 
 ///=====================================================/// 
@@ -360,7 +418,7 @@ void Player::Move() {
 ///=====================================================///
 void Player::Attack() {
 
-	attackState_->Update(*this, *lockOn_, *bulletManager_);
+	attackState_->Update(*this);
 }
 
 ///=====================================================/// 

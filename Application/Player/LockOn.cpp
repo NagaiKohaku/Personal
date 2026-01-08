@@ -74,7 +74,7 @@ void LockOn::Update() {
 	Vector3 playerPos = player_->GetWorldPos();
 
 	//プレイヤーの移動方向
-	Vector3 moveDirection = Normalize(player_->GetVelocity());
+	Vector3 moveDirection = Normalize(player_->GetInputDirection());
 
 	//メインレティクルの座標
 	Vector3 mainReticlePos = mainReticle_->GetWorldPos();

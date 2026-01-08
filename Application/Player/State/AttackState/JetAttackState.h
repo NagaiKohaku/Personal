@@ -8,7 +8,7 @@ public:
 
 	void Enter() override;
 
-	void Update(Player& player, LockOn& lockOn, BulletManager& bulletManager) override;
+	void Update(Player& player) override;
 
 private:
 
