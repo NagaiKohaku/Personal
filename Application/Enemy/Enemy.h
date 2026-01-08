@@ -9,6 +9,12 @@
 #include "3d/Collider/AABBCollider.h"
 #include "3d/Collider/SphereCollider.h"
 
+#include "Enemy/State/EnemyEntryState.h"
+#include "Enemy/State/EnemyMoveState.h"
+#include "Enemy/State/EnemyAttackState.h"
+#include "Enemy/State/EnemyExitState.h"
+#include "Enemy/State/EnemyDeadState.h"
+
 #include "memory"
 
 /// === 前方宣言 === ///
@@ -31,20 +37,6 @@ class Player;
 /// - 敵の初期化、更新、描画、攻撃、移動、死亡処理などの一連の動作を提供します。  
 /// </remarks>
 class Enemy {
-
-	///-------------------------------------------/// 
-	/// 列挙型
-	///-------------------------------------------///
-private:
-
-	//行動状態
-	enum STATE {
-		ENTRY,
-		MOVE,
-		ATTACK,
-		EXIT,
-		DEAD
-	};
 
 	///-------------------------------------------/// 
 	/// メンバ関数
@@ -126,8 +118,18 @@ public:
 	/// <summary>
 	/// 死亡状態のチェック
 	/// </summary>
-	/// <returns>死亡状態の場合は true : 違う場合は false</returns>
-	bool CheckIsDead() { return state_ == DEAD; }
+	/// <returns> HPが死亡状態のHP以上であれば true : 死亡状態のHP以下であれば false</returns>
+	bool CheckIsDead() { return hp_ >= deadHp_; }
+
+	void ChangeState(std::unique_ptr<EnemyState> state);
+
+	void StartBlink();
+
+	void StartRemove();
+
+	void StartDestroy();
+
+	void ResetColor();
 
 	///-------------------------------------------/// 
 	/// クラス内処理関数
@@ -248,6 +250,8 @@ private:
 	//オブジェクト
 	std::unique_ptr<Object3D> object_ = nullptr;
 
+	std::unique_ptr<EnemyState> state_;
+
 	//コライダー
 	std::unique_ptr<SphereCollider> collider_ = nullptr;
 
@@ -266,20 +270,8 @@ private:
 	//影オブジェクト
 	std::unique_ptr<Shadow> shadow_;
 
-	//行動状態
-	STATE state_;
-
 	//前フレームの座標
 	Vector3 prePos_;
-
-	//移動目標座標
-	Vector3 targetPos_;
-
-	//回転目標角度
-	Vector3 targetRot_;
-
-	//移動強度(％)
-	float moveStrength_;
 
 	//エントリー状態の座標
 	Vector3 entryPos_;
@@ -299,26 +291,20 @@ private:
 	//体力
 	int hp_;
 
+	//死亡時に設定するHP
+	int deadHp_;
+
 	//弱攻撃ヒット時のダメージ
 	int lightAttackDamage_;
 
 	//中攻撃ヒット時のダメージ
 	int mediumAttackDamage_;
 
-	//攻撃タイマー
-	float attackTimer_;
-
-	//攻撃間隔
-	float attackFrequency_;
-
 	//点滅タイマー
 	float blinkTimer_;
 
 	//点滅間隔
 	float blinkFrequency_;
-
-	//点滅フラグ
-	bool isBlink_;
 
 	//被弾揺れタイマー
 	float shakeTimer_;
@@ -335,24 +321,6 @@ private:
 	//画面揺れの長さ
 	float displayShakeLength_;
 
-	//アニメーションタイマー
-	float animTimer_;
-
-	//エントリー時アニメーション終了時間
-	float entryAnimMaxTime_;
-
-	//移動時のアニメーション終了時間
-	float moveAnimMaxTime_;
-
-	//攻撃時のアニメーション終了時間
-	float attackAnimMaxTime_;
-
-	//離脱時アニメーション終了時間
-	float exitAnimMaxTime_;
-
-	//死亡時アニメーション終了時間
-	float deadAnimMaxTime_;
-
 	//削除可能フラグ
 	bool canRemove_;
 
@@ -361,6 +329,8 @@ private:
 
 	//透明化フラグ
 	bool isInvisible_;
+
+	bool isBlink_;
 
 	///-------------------------------------------///
 	/// ゲッター・セッター
@@ -373,11 +343,27 @@ public:
 	/// <param name="pos">座標</param>
 	void SetPosition(Vector3 pos) { object_->GetWorldTransform().translate_ = pos; }
 
+	WorldTransform GetWorldTransform() { return object_->GetWorldTransform(); }
+
+	void SetWorldTransform(WorldTransform transform) { object_->GetWorldTransform() = transform; }
+
+	/// <summary>
+	/// ワールド座標を取得
+	/// </summary>
+	/// <returns>ワールド座標</returns>
+	Vector3 GetWorldPos() { return object_->GetWorldTransform().GetWorldTranslate(); }
+
+	Vector3 GetPrePos() { return prePos_; }
+
+	Vector3 GetPlayerPos();
+
 	/// <summary>
 	/// エントリーの位置を設定します。
 	/// </summary>
 	/// <param name="pos">座標</param>
 	void SetEntryPos(Vector3 pos) { entryPos_ = pos; }
+
+	Vector3 GetEntryPos() { return entryPos_; }
 
 	/// <summary>
 	/// スタンバイ状態の座標のセッター
@@ -385,11 +371,15 @@ public:
 	/// <param name="pos">座標</param>
 	void SetStandbyPos(Vector3 pos) { standbyPos_ = pos; }
 
+	Vector3 GetStandbyPos() { return standbyPos_; }
+
 	/// <summary>
 	/// 離脱開始座標の設定
 	/// </summary>
 	/// <param name="pos">座標</param>
 	void SetExitStartPos(Vector3 pos) { exitStartPos_ = pos; }
+
+	Vector3 GetExitStartPos() { return exitStartPos_; }
 
 	/// <summary>
 	/// 離脱状態の座標の設定
@@ -397,17 +387,13 @@ public:
 	/// <param name="pos">座標</param>
 	void SetExitPos(Vector3 pos) { exitPos_ = pos; }
 
+	Vector3 GetExitPos() { return exitPos_; }
+
 	/// <summary>
 	/// 削除中フラグのセッター
 	/// </summary>
 	/// <param name="flag">フラグ</param>
 	void SetIsRemove(bool flag) { isRemove_ = flag; }
-
-	/// <summary>
-	/// ワールド座標を取得
-	/// </summary>
-	/// <returns>ワールド座標</returns>
-	Vector3 GetWorldPos() { return object_->GetWorldTransform().GetWorldTranslate(); }
 
 	/// <summary>
 	/// 削除可能フラグのゲッター
@@ -420,5 +406,7 @@ public:
 	/// </summary>
 	/// <returns>フラグ</returns>
 	bool GetIsRemove() { return isRemove_; }
+
+	BulletManager* GetBulletManager();
 
 };

@@ -8,11 +8,11 @@
 
 void JetAttackState::Enter() {
 
-	//タイマーをリセット
-	attackTimer_ = 0.0f;
-
 	//攻撃間隔を設定
 	attackInterval_ = 0.1f;
+
+	//タイマーをリセット
+	attackTimer_ = attackInterval_;
 }
 
 void JetAttackState::Update(Player& player, LockOn& lockOn, BulletManager& bulletManager) {

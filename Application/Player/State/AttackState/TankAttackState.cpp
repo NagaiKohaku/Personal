@@ -11,11 +11,11 @@
 
 void TankAttackState::Enter() {
 
-	//タイマーをリセット
-	attackTimer_ = 0.0f;
-
 	//攻撃間隔を設定
 	attackInterval_ = 1.0f;
+
+	//タイマーをリセット
+	attackTimer_ = attackInterval_;
 
 	//ロックオン範囲を設定
 	lockOnRange_ = 300.0f;

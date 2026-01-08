@@ -292,6 +292,11 @@
     <ClCompile Include="Application\Player\State\AttackState\TankAttackState.cpp" />
     <ClCompile Include="Application\Player\State\MovementState\JetMoveState.cpp" />
     <ClCompile Include="Application\Player\State\MovementState\TankMoveState.cpp" />
+    <ClCompile Include="Application\Enemy\State\EnemyEntryState.cpp" />
+    <ClCompile Include="Application\Enemy\State\EnemyMoveState.cpp" />
+    <ClCompile Include="Application\Enemy\State\EnemyAttackState.cpp" />
+    <ClCompile Include="Application\Enemy\State\EnemyExitState.cpp" />
+    <ClCompile Include="Application\Enemy\State\EnemyDeadState.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application\Bullet\BulletBase.h">
@@ -556,6 +561,12 @@
     <ClInclude Include="Application\Player\State\MovementState\MovementState.h" />
     <ClInclude Include="Application\Player\State\MovementState\JetMoveState.h" />
     <ClInclude Include="Application\Player\State\MovementState\TankMoveState.h" />
+    <ClInclude Include="Application\Enemy\State\EnemyState.h" />
+    <ClInclude Include="Application\Enemy\State\EnemyEntryState.h" />
+    <ClInclude Include="Application\Enemy\State\EnemyMoveState.h" />
+    <ClInclude Include="Application\Enemy\State\EnemyAttackState.h" />
+    <ClInclude Include="Application\Enemy\State\EnemyExitState.h" />
+    <ClInclude Include="Application\Enemy\State\EnemyDeadState.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resource\Shader\DebugObject.hlsli">
