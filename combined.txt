@@ -1477,7 +1477,7 @@ void FollowCamera::Update() {
 	/// === プレイヤーの移動方向からカメラの傾きを計算 === ///
 
 	//プレイヤーの移動量
-	Vector3 playerVelocity = Normalize(player_->GetVelocity());
+	Vector3 playerVelocity = Normalize(player_->GetInputDirection());
 
 	//カメラの傾き
 	Vector3 cameraSlope = { 0.0f,0.0f,0.0f };
@@ -5562,7 +5562,7 @@ void LockOn::Update() {
 	Vector3 playerPos = player_->GetWorldPos();
 
 	//プレイヤーの移動方向
-	Vector3 moveDirection = Normalize(player_->GetVelocity());
+	Vector3 moveDirection = Normalize(player_->GetInputDirection());
 
 	//メインレティクルの座標
 	Vector3 mainReticlePos = mainReticle_->GetWorldPos();
@@ -6050,9 +6050,6 @@ void Player::Initialize(Camera* cameraPtr, BulletManager* bulletPtr, bool isMove
 
 	/// === 他変数の設定 === ///
 
-	//移動速度の設定
-	moveSpeed_ = 1.0f;
-
 	//移動アクティブフラグの設定
 	isMoveActive_ = isMoveActive;
 
@@ -6203,6 +6200,67 @@ void Player::Draw() {
 	}
 }
 
+void Player::UpdateLockOn(float lockOnRange) {
+
+	std::list<Enemy*> enemyList = ObjectManager::GetInstance()->GetEnemies();
+
+	for (auto& enemy : enemyList) {
+
+		//敵が死亡していたらスキップ
+		if (enemy->CheckIsDead()) {
+
+			continue;
+		}
+
+		//ロックオン範囲内であれば
+		if (lockOn_->GetMainReticleToEnemyLength(enemy) <= lockOnRange) {
+
+			//ロックオン対象に追加
+			lockOn_->AddLockOnEnemy(enemy);
+		}
+	}
+}
+
+void Player::JetAttack() {
+
+	//マズルフラッシュエミッターを発生
+	muzzleFlashEmitter_->Emit();
+
+	//オブジェクトからレティクルへの方向
+	Vector3 direction = lockOn_->GetMainReticlePos() - core_->GetWorldTransform().translate_;
+
+	//バレットマネージャーに弾を追加
+	bulletManager_->AddBullet(
+		core_->GetWorldTransform().translate_,
+		Normalize(direction),
+		BulletManager::BULLETTYPE::JET
+	);
+
+}
+
+void Player::TankAttack() {
+
+	//マズルフラッシュエミッターを発生
+	muzzleFlashEmitter_->Emit();
+
+	//レティクルの位置を取得
+	std::vector<Vector3> reticlePositions = lockOn_->GetLockOnReticlePos();
+
+	for (auto& pos : reticlePositions) {
+
+		//オブジェクトからレティクルへの方向
+		Vector3 direction = pos - core_->GetWorldTransform().translate_;
+
+		//バレットマネージャーに弾を追加
+		bulletManager_->AddBullet(
+			core_->GetWorldTransform().translate_,
+			Normalize(direction),
+			BulletManager::BULLETTYPE::TANK
+		);
+	}
+
+}
+
 void Player::ChangeJetState() {
 
 	movementState_ = std::make_unique<JetMoveState>();
@@ -6227,36 +6285,36 @@ void Player::ChangeTankState() {
 void Player::Move() {
 
 	//移動量をリセット
-	velocity_ = { 0.0f,0.0f,0.0f };
+	inputDirection_ = { 0.0f,0.0f,0.0f };
 
 	if (isMoveActive_) {
 
 		//Wキーが押されたら上方向に移動
 		if (Input::GetInstance()->isPushKey(DIK_W)) {
 
-			velocity_.y += moveSpeed_;
+			inputDirection_.y += 1.0f;
 		}
 
 		//Sキーが押されたら下方向に移動
 		if (Input::GetInstance()->isPushKey(DIK_S)) {
 
-			velocity_.y -= moveSpeed_;
+			inputDirection_.y -= 1.0f;
 		}
 
 		//Aキーが押されたら左方向に移動
 		if (Input::GetInstance()->isPushKey(DIK_A)) {
 
-			velocity_.x -= moveSpeed_;
+			inputDirection_.x -= 1.0f;
 		}
 
 		//Dキーが押されたら右方向に移動
 		if (Input::GetInstance()->isPushKey(DIK_D)) {
 
-			velocity_.x += moveSpeed_;
+			inputDirection_.x += 1.0f;
 		}
 	}
 
-	movementState_->Update(*this, velocity_);
+	movementState_->Update(*this);
 }
 
 ///=====================================================/// 
@@ -6264,7 +6322,7 @@ void Player::Move() {
 ///=====================================================///
 void Player::Attack() {
 
-	attackState_->Update(*this, *lockOn_, *bulletManager_);
+	attackState_->Update(*this);
 }
 
 ///=====================================================/// 
@@ -6421,10 +6479,11 @@ public:
 	/// </remarks>
 	void Draw();
 
-	/// <summary>
-	/// マズルフラッシュエミッターを発生させます。
-	/// </summary>
-	void EmitMuzzleFlash() { muzzleFlashEmitter_->Emit(); }
+	void UpdateLockOn(float lockOnRange);
+
+	void JetAttack();
+
+	void TankAttack();
 
 	void ChangeJetState();
 
@@ -6536,11 +6595,8 @@ private:
 	//移動状態
 	MOVESTATE moveState_;
 
-	//移動速度
-	float moveSpeed_;
-
 	//移動量
-	Vector3 velocity_;
+	Vector3 inputDirection_;
 
 	//移動アクティブフラグ
 	bool isMoveActive_;
@@ -6568,11 +6624,15 @@ public:
 
 	WorldTransform GetRightWingWorldTransform() { return rightWing_->GetWorldTransform(); }
 
+	WorldTransform GetLeftTrailWorldTransform() { return leftTrail_->GetWorldTransform(); }
+
+	WorldTransform GetRightTrailWorldTransform() { return rightTrail_->GetWorldTransform(); }
+
 	/// <summary>
 	/// 移動量を取得
 	/// </summary>
 	/// <returns>移動量</returns>
-	Vector3 GetVelocity() { return velocity_; }
+	Vector3 GetInputDirection() { return inputDirection_; }
 
 	/// <summary>
 	/// 移動状態を取得
@@ -6597,6 +6657,10 @@ public:
 	void SetLeftWingWorldTransform(WorldTransform transform) { leftWing_->GetWorldTransform() = transform; }
 
 	void SetRightWingWorldTransform(WorldTransform transform) { rightWing_->GetWorldTransform() = transform; }
+
+	void SetLeftTrailWorldTransform(WorldTransform transform) { leftTrail_->GetWorldTransform() = transform; }
+
+	void SetRightTrailWorldTransform(WorldTransform transform) { rightTrail_->GetWorldTransform() = transform; }
 
 	/// <summary>
 	/// 移動アクティブフラグを設定
@@ -6855,7 +6919,7 @@ public:
 
 	virtual void Enter() = 0;
 
-	virtual void Update(Player& player, LockOn& lockOn, BulletManager& bulletManager) = 0;
+	virtual void Update(Player& player) = 0;
 };
 
 ============================================================
@@ -6864,8 +6928,6 @@ File Path: Application/Player/State/AttackState/JetAttackState.cpp
 #include "JetAttackState.h"
 
 #include <Player/Player.h>
-#include <Player/LockOn.h>
-#include <Bullet/BulletManager.h>
 
 #include <Base/Input.h>
 
@@ -6878,7 +6940,7 @@ void JetAttackState::Enter() {
 	attackTimer_ = attackInterval_;
 }
 
-void JetAttackState::Update(Player& player, LockOn& lockOn, BulletManager& bulletManager) {
+void JetAttackState::Update(Player& player) {
 
 	attackTimer_ += 1.0f / 60.0f;
 
@@ -6888,18 +6950,8 @@ void JetAttackState::Update(Player& player, LockOn& lockOn, BulletManager& bulle
 		//スペースキーが押されていたら
 		if (Input::GetInstance()->isPushKey(DIK_SPACE)) {
 
-			//マズルフラッシュエミッターを発生
-			player.EmitMuzzleFlash();
-
-			//オブジェクトからレティクルへの方向
-			Vector3 direction = lockOn.GetMainReticlePos() - player.GetWorldPos();
-
-			//バレットマネージャーに弾を追加
-			bulletManager.AddBullet(
-				player.GetWorldPos(),
-				Normalize(direction),
-				BulletManager::BULLETTYPE::JET
-			);
+			//攻撃実行
+			player.JetAttack();
 
 			//攻撃のタイマーをリセット
 			attackTimer_ = 0.0f;
@@ -6920,7 +6972,7 @@ public:
 
 	void Enter() override;
 
-	void Update(Player& player, LockOn& lockOn, BulletManager& bulletManager) override;
+	void Update(Player& player) override;
 
 private:
 
@@ -6936,11 +6988,6 @@ File Path: Application/Player/State/AttackState/TankAttackState.cpp
 #include "TankAttackState.h"
 
 #include <Player/Player.h>
-#include <Player/LockOn.h>
-#include <Bullet/BulletManager.h>
-
-#include <Enemy/Enemy.h>
-#include <ObjectManager.h>
 #include <Base/Input.h>
 #include <Math/MakeMatrixMath.h>
 
@@ -6956,52 +7003,21 @@ void TankAttackState::Enter() {
 	lockOnRange_ = 300.0f;
 }
 
-void TankAttackState::Update(Player& player, LockOn& lockOn, BulletManager& bulletManager) {
-
-	std::list<Enemy*> enemyList = ObjectManager::GetInstance()->GetEnemies();
+void TankAttackState::Update(Player& player) {
 
 	attackTimer_ += 1.0f / 60.0f;
 
 	//タイマーが攻撃間隔を超えたら
 	if (attackTimer_ >= attackInterval_) {
 
-		for (auto& enemy : enemyList) {
-
-			//敵が死亡していたらスキップ
-			if (enemy->CheckIsDead()) {
-
-				continue;
-			}
-
-			//ロックオン範囲内であれば
-			if (lockOn.GetMainReticleToEnemyLength(enemy) <= lockOnRange_) {
-
-				//ロックオン対象に追加
-				lockOn.AddLockOnEnemy(enemy);
-			}
-		}
+		//ロックオンの更新
+		player.UpdateLockOn(lockOnRange_);
 
 		//スペースキーが押されていたら
 		if (Input::GetInstance()->isPushKey(DIK_SPACE)) {
 
-			//マズルフラッシュエミッターを発生
-			player.EmitMuzzleFlash();
-
-			//レティクルの位置を取得
-			std::vector<Vector3> reticlePositions = lockOn.GetLockOnReticlePos();
-
-			for (auto& pos : reticlePositions) {
-
-				//オブジェクトからレティクルへの方向
-				Vector3 direction = pos - player.GetWorldPos();
-
-				//バレットマネージャーに弾を追加
-				bulletManager.AddBullet(
-					player.GetWorldPos(),
-					Normalize(direction),
-					BulletManager::BULLETTYPE::TANK
-				);
-			}
+			//攻撃実行
+			player.TankAttack();
 
 			//攻撃のタイマーをリセット
 			attackTimer_ = 0.0f;
@@ -7022,7 +7038,7 @@ public:
 
 	void Enter() override;
 
-	void Update(Player& player, LockOn& lockOn, BulletManager& bulletManager) override;
+	void Update(Player& player) override;
 
 private:
 
@@ -7052,23 +7068,31 @@ void JetMoveState::Enter() {
 
 	rotRange_ = { 0.5f,0.0f,0.3f };
 
+	moveSpeed_ = 1.0f;
+
 	moveStrength_ = 10.0f;
 
 	rotStrength_ = 10.0f;
+
+	minJetHeight_ = 1.0f;
 }
 
-void JetMoveState::Update(Player& player, Vector3 velocity) {
+void JetMoveState::Update(Player& player) {
 
-	if (player.GetWorldPos().y <= 1.0f) {
+	//高度が一定値を下回ったら戦車モードに変更
+	if (player.GetWorldPos().y <= minJetHeight_) {
 
 		player.ChangeTankState();
 
 		return;
 	}
 
+	//各オブジェクトのワールド変換取得
 	WorldTransform coreWT = player.GetCoreWorldTransform();
 	WorldTransform leftWingWT = player.GetLeftWingWorldTransform();
 	WorldTransform rightWingWT = player.GetRightWingWorldTransform();
+	WorldTransform leftTrailWT = player.GetLeftTrailWorldTransform();
+	WorldTransform rightTrailWT = player.GetRightTrailWorldTransform();
 
 	//コアオブジェクトの現在角度
 	Vector3 playerPos = coreWT.translate_;
@@ -7082,15 +7106,19 @@ void JetMoveState::Update(Player& player, Vector3 velocity) {
 	Vector3 rightWingPos = rightWingWT.translate_;
 	Vector3 rightWingRot = rightWingWT.rotate_;
 
-	////右トレイルの現在座標
-	//Vector3 rightTrailPos = rightTrail_->GetWorldTransform().translate_;
+	//左トレイルの現在座標
+	Vector3 leftTrailPos = leftTrailWT.translate_;
 
-	////左トレイルの現在座標
-	//Vector3 leftTrailPos = leftTrail_->GetWorldTransform().translate_;
+	//右トレイルの現在座標
+	Vector3 rightTrailPos = rightTrailWT.translate_;
 
-	//移動後座標の算出
+	//移動量の計算
+	Vector3 velocity = player.GetInputDirection() * moveSpeed_;
+
+	//移動後座標の計算
 	Vector3 movePos = playerPos + velocity;
 
+	//移動範囲で制限
 	movePos = {
 		std::clamp(movePos.x,initialPos_.x - moveRange_.x,initialPos_.x + moveRange_.x),
 		std::clamp(movePos.y,initialPos_.y - moveRange_.y,initialPos_.y + moveRange_.y),
@@ -7111,32 +7139,51 @@ void JetMoveState::Update(Player& player, Vector3 velocity) {
 		std::clamp(rotate.z,-rotRange_.z,rotRange_.z)
 	};
 
-	//コアオブジェクトの回転
+	/// === コアオブジェクトの移動・回転 === ///
+
+	//コアオブジェクトの移動・回転
 	coreWT.translate_ = Lerp(playerPos, movePos, moveStrength_ / 100.0f);
 	coreWT.rotate_ = Lerp(playerRot, rotate, rotStrength_ / 100.0f);
 
-	coreWT.translate_.y = fmaxf(1.0f, coreWT.translate_.y);
+	//地面より下に行かないようにする
+	coreWT.translate_.y = fmaxf(minJetHeight_, coreWT.translate_.y);
 
+	//移動後のワールド座標を設定
 	player.SetCoreWorldTransform(coreWT);
 
-	//右ウィングの移動・回転
-	rightWingWT.translate_ = EaseOut(rightWingPos, Vector3(1.35f, 0.0f, 0.0f), 0.1f, 2.0f);
-	rightWingWT.rotate_ = EaseOut(rightWingRot, Vector3(0.0f, 0.0f, 0.0f), 0.1f, 2.0f);
-
-	player.SetRightWingWorldTransform(rightWingWT);
+	/// === 左ウィングの移動・回転 === ///
 
 	//左ウィングの移動・回転
 	leftWingWT.translate_ = EaseOut(leftWingPos, Vector3(-1.35f, 0.0f, 0.0f), 0.1f, 2.0f);
 	leftWingWT.rotate_ = EaseOut(leftWingRot, Vector3(0.0f, 0.0f, 0.0f), 0.1f, 2.0f);
 
+	//移動後のワールド座標を設定
 	player.SetLeftWingWorldTransform(leftWingWT);
 
-	////右トレイルの移動
-	//rightTrail_->GetWorldTransform().translate_ = EaseOut(rightTrailPos, Vector3(0.75f, 0.0f, 0.0f), 0.1f, 2.0f);
+	/// === 右ウィングの移動・回転 === ///
 
-	////左トレイルの移動
-	//leftTrail_->GetWorldTransform().translate_ = EaseOut(leftTrailPos, Vector3(-0.75f, 0.0f, 0.0f), 0.1f, 2.0f);
+	//右ウィングの移動・回転
+	rightWingWT.translate_ = EaseOut(rightWingPos, Vector3(1.35f, 0.0f, 0.0f), 0.1f, 2.0f);
+	rightWingWT.rotate_ = EaseOut(rightWingRot, Vector3(0.0f, 0.0f, 0.0f), 0.1f, 2.0f);
 
+	//移動後のワールド座標を設定
+	player.SetRightWingWorldTransform(rightWingWT);
+
+	/// === 左トレイルの移動 === ///
+
+	//左トレイルの移動
+	leftTrailWT.translate_ = EaseOut(leftTrailPos, Vector3(-0.75f, 0.0f, 0.0f), 0.1f, 2.0f);
+
+	//移動後のワールド座標を設定
+	player.SetLeftTrailWorldTransform(leftTrailWT);
+
+	/// === 右トレイルの移動 === ///
+
+	//右トレイルの移動
+	rightTrailWT.translate_ = EaseOut(rightTrailPos, Vector3(0.75f, 0.0f, 0.0f), 0.1f, 2.0f);
+
+	//移動後のワールド座標を設定
+	player.SetRightTrailWorldTransform(rightTrailWT);
 }
 
 ============================================================
@@ -7146,13 +7193,15 @@ File Path: Application/Player/State/MovementState/JetMoveState.h
 
 #include <Player/State/MovementState/MovementState.h>
 
+#include <Math/Vector3.h>
+
 class JetMoveState : public MovementState {
 
 public:
 
 	void Enter() override;
 
-	void Update(Player& player, Vector3 velocity) override;
+	void Update(Player& player) override;
 
 private:
 
@@ -7162,17 +7211,19 @@ private:
 
 	Vector3 rotRange_;
 
+	float moveSpeed_;
+
 	float moveStrength_;
 
 	float rotStrength_;
+
+	float minJetHeight_;
 };
 
 ============================================================
 File Path: Application/Player/State/MovementState/MovementState.h
 ============================================================
 #pragma once
-
-#include <Math/Vector3.h>
 
 class Player;
 
@@ -7184,7 +7235,7 @@ public:
 
 	virtual void Enter() = 0;
 
-	virtual void Update(Player& player, Vector3 velocity) = 0;
+	virtual void Update(Player& player) = 0;
 };
 
 ============================================================
@@ -7207,23 +7258,31 @@ void TankMoveState::Enter() {
 
 	rotRange_ = { 0.0f,0.5f,0.0f };
 
+	moveSpeed_ = 0.75f;
+
 	moveStrength_ = 10.0f;
 
 	rotStrength_ = 10.0f;
+
+	maxTankHeight_ = 1.0f;
 }
 
-void TankMoveState::Update(Player& player, Vector3 velocity) {
+void TankMoveState::Update(Player& player) {
 
-	if (player.GetWorldPos().y > 1.0f) {
+	//高度が一定値を超えたらジェットモードに変更
+	if (player.GetWorldPos().y > maxTankHeight_) {
 
 		player.ChangeJetState();
 
 		return;
 	}
 
+	//各オブジェクトのワールド変換取得
 	WorldTransform coreWT = player.GetCoreWorldTransform();
 	WorldTransform leftWingWT = player.GetLeftWingWorldTransform();
 	WorldTransform rightWingWT = player.GetRightWingWorldTransform();
+	WorldTransform leftTrailWT = player.GetLeftTrailWorldTransform();
+	WorldTransform rightTrailWT = player.GetRightTrailWorldTransform();
 
 	//コアオブジェクトの現在角度
 	Vector3 playerPos = coreWT.translate_;
@@ -7237,15 +7296,19 @@ void TankMoveState::Update(Player& player, Vector3 velocity) {
 	Vector3 rightWingPos = rightWingWT.translate_;
 	Vector3 rightWingRot = rightWingWT.rotate_;
 
-	////右トレイルの現在座標
-	//Vector3 rightTrailPos = rightTrail_->GetWorldTransform().translate_;
+	//左トレイルの現在座標
+	Vector3 leftTrailPos = leftTrailWT.translate_;
 
-	////左トレイルの現在座標
-	//Vector3 leftTrailPos = leftTrail_->GetWorldTransform().translate_;
+	//右トレイルの現在座標
+	Vector3 rightTrailPos = rightTrailWT.translate_;
 
-	//移動後座標の算出
+	//移動量の計算
+	Vector3 velocity = player.GetInputDirection() * moveSpeed_;
+
+	//移動後座標の計算
 	Vector3 movePos = playerPos + velocity;
 
+	//移動範囲で制限
 	movePos = {
 		std::clamp(movePos.x,initialPos_.x - moveRange_.x,initialPos_.x + moveRange_.x),
 		std::clamp(movePos.y,initialPos_.y - moveRange_.y,initialPos_.y + moveRange_.y),
@@ -7266,24 +7329,19 @@ void TankMoveState::Update(Player& player, Vector3 velocity) {
 		std::clamp(rotate.z,-rotRange_.z,rotRange_.z)
 	};
 
-	//コアオブジェクトの回転
+	/// === コアオブジェクトの移動・回転 === ///
+
+	//コアオブジェクトの移動・回転
 	coreWT.translate_ = Lerp(playerPos, movePos, moveStrength_ / 100.0f);
 	coreWT.rotate_ = Lerp(playerRot, rotate, rotStrength_ / 100.0f);
 
-	coreWT.translate_.y = fmaxf(1.0f, coreWT.translate_.y);
+	//地面より下に行かないようにする
+	coreWT.translate_.y = fmaxf(maxTankHeight_, coreWT.translate_.y);
 
+	//移動後のワールド座標を設定
 	player.SetCoreWorldTransform(coreWT);
 
-	//右ウィングの移動・回転
-	rightWingWT.translate_ = EaseOut(rightWingPos, Vector3(0.75f, 0.0f, 0.0f), 0.1f, 2.0f);
-	rightWingWT.rotate_ = EaseOut(
-		rightWingRot,
-		Vector3(0.0f, 0.0f, std::numbers::pi_v<float> / 2.0f + std::numbers::pi_v<float> *2.0f),
-		0.1f,
-		2.0f
-	);
-
-	player.SetRightWingWorldTransform(rightWingWT);
+	/// === 左ウィングの移動・回転 === ///
 
 	//左ウィングの移動・回転
 	leftWingWT.translate_ = EaseOut(leftWingPos, Vector3(-0.75f, 0.0f, 0.0f), 0.1f, 2.0f);
@@ -7294,16 +7352,39 @@ void TankMoveState::Update(Player& player, Vector3 velocity) {
 		2.0f
 	);
 
+	//移動後のワールド座標を設定
 	player.SetLeftWingWorldTransform(leftWingWT);
 
-	////右トレイルの移動
-	//rightTrail_->GetWorldTransform().translate_ = EaseOut(rightTrailPos, Vector3(0.75f, 0.0f, 0.0f), 0.1f, 2.0f);
+	/// === 右ウィングの移動・回転 === ///
 
-	////左トレイルの移動
-	//leftTrail_->GetWorldTransform().translate_ = EaseOut(leftTrailPos, Vector3(-0.75f, 0.0f, 0.0f), 0.1f, 2.0f);
+	//右ウィングの移動・回転
+	rightWingWT.translate_ = EaseOut(rightWingPos, Vector3(0.75f, 0.0f, 0.0f), 0.1f, 2.0f);
+	rightWingWT.rotate_ = EaseOut(
+		rightWingRot,
+		Vector3(0.0f, 0.0f, std::numbers::pi_v<float> / 2.0f + std::numbers::pi_v<float> *2.0f),
+		0.1f,
+		2.0f
+	);
 
+	//移動後のワールド座標を設定
+	player.SetRightWingWorldTransform(rightWingWT);
+
+	/// === 左トレイルの移動 === ///
+
+	//左トレイルの移動
+	leftTrailWT.translate_ = EaseOut(leftTrailPos, Vector3(0.75f, 0.0f, 0.0f), 0.1f, 2.0f);
+
+	//移動後のワールド座標を設定
+	player.SetLeftTrailWorldTransform(leftTrailWT);
+
+	/// === 右トレイルの移動 === ///
+
+	//右トレイルの移動
+	rightTrailWT.translate_ = EaseOut(rightTrailPos, Vector3(-0.75f, 0.0f, 0.0f), 0.1f, 2.0f);
+
+	//移動後のワールド座標を設定
+	player.SetRightTrailWorldTransform(rightTrailWT);
 }
-
 
 ============================================================
 File Path: Application/Player/State/MovementState/TankMoveState.h
@@ -7312,13 +7393,15 @@ File Path: Application/Player/State/MovementState/TankMoveState.h
 
 #include <Player/State/MovementState/MovementState.h>
 
+#include <Math/Vector3.h>
+
 class TankMoveState : public MovementState {
 
 public:
 
 	void Enter() override;
 
-	void Update(Player& player, Vector3 velocity) override;
+	void Update(Player& player) override;
 
 private:
 
@@ -7328,9 +7411,13 @@ private:
 
 	Vector3 rotRange_;
 
+	float moveSpeed_;
+
 	float moveStrength_;
 
 	float rotStrength_;
+
+	float maxTankHeight_;
 };
 
 ============================================================
