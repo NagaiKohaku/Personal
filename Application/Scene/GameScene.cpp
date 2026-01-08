@@ -38,9 +38,6 @@ void GameScene::Initialize() {
 	//デバッグカメラを使用しない
 	camera_->SetDebugCameraFlag(false);
 
-	//カメラの座標
-	camera_->GetWorldTransform().translate_ = { 0.0f,3.0f,0.0f };
-
 	//シェイクにカメラをセット
 	Shake::GetInstance()->SetCamera(camera_.get());
 
@@ -371,7 +368,7 @@ void GameScene::Update() {
 		timerDirection_ *= -1.0f;
 	}
 
-	float lerpNum = EaseOut(0.0f, arrowLength_, arrowTimer_ / 1.0f, 2.0f);
+	float lerpNum = EaseOut(0.0f, arrowLength_, arrowTimer_ / 1.0f);
 
 	gameOverLeftArrowSprite_->SetTranslate({ spaceKeyPos_.x - spaceKeySize_.x / 2.0f - 64.0f - lerpNum,spaceKeyPos_.y });
 

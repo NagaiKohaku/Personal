@@ -141,4 +141,11 @@ public:
 	/// <return>アクティブなロックオンレティクルの座標リスト</return>
 	std::vector<Vector3> GetLockOnReticlePos();
 
+	/// <summary>
+	/// メインレティクルとエネミーの距離を取得します。
+	/// </summary>
+	/// <param name="enemy"></param>
+	/// <returns></returns>
+	float GetMainReticleToEnemyLength(Enemy* enemy);
+
 };
