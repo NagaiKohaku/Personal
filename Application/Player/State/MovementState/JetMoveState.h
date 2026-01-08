@@ -2,13 +2,15 @@
 
 #include <Player/State/MovementState/MovementState.h>
 
+#include <Math/Vector3.h>
+
 class JetMoveState : public MovementState {
 
 public:
 
 	void Enter() override;
 
-	void Update(Player& player, Vector3 velocity) override;
+	void Update(Player& player) override;
 
 private:
 
@@ -18,7 +20,11 @@ private:
 
 	Vector3 rotRange_;
 
+	float moveSpeed_;
+
 	float moveStrength_;
 
 	float rotStrength_;
+
+	float minJetHeight_;
 };

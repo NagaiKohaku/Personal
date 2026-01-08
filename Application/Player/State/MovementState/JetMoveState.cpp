@@ -14,23 +14,31 @@ void JetMoveState::Enter() {
 
 	rotRange_ = { 0.5f,0.0f,0.3f };
 
+	moveSpeed_ = 1.0f;
+
 	moveStrength_ = 10.0f;
 
 	rotStrength_ = 10.0f;
+
+	minJetHeight_ = 1.0f;
 }
 
-void JetMoveState::Update(Player& player, Vector3 velocity) {
+void JetMoveState::Update(Player& player) {
 
-	if (player.GetWorldPos().y <= 1.0f) {
+	//高度が一定値を下回ったら戦車モードに変更
+	if (player.GetWorldPos().y <= minJetHeight_) {
 
 		player.ChangeTankState();
 
 		return;
 	}
 
+	//各オブジェクトのワールド変換取得
 	WorldTransform coreWT = player.GetCoreWorldTransform();
 	WorldTransform leftWingWT = player.GetLeftWingWorldTransform();
 	WorldTransform rightWingWT = player.GetRightWingWorldTransform();
+	WorldTransform leftTrailWT = player.GetLeftTrailWorldTransform();
+	WorldTransform rightTrailWT = player.GetRightTrailWorldTransform();
 
 	//コアオブジェクトの現在角度
 	Vector3 playerPos = coreWT.translate_;
@@ -44,15 +52,19 @@ void JetMoveState::Update(Player& player, Vector3 velocity) {
 	Vector3 rightWingPos = rightWingWT.translate_;
 	Vector3 rightWingRot = rightWingWT.rotate_;
 
-	////右トレイルの現在座標
-	//Vector3 rightTrailPos = rightTrail_->GetWorldTransform().translate_;
+	//左トレイルの現在座標
+	Vector3 leftTrailPos = leftTrailWT.translate_;
 
-	////左トレイルの現在座標
-	//Vector3 leftTrailPos = leftTrail_->GetWorldTransform().translate_;
+	//右トレイルの現在座標
+	Vector3 rightTrailPos = rightTrailWT.translate_;
 
-	//移動後座標の算出
+	//移動量の計算
+	Vector3 velocity = player.GetInputDirection() * moveSpeed_;
+
+	//移動後座標の計算
 	Vector3 movePos = playerPos + velocity;
 
+	//移動範囲で制限
 	movePos = {
 		std::clamp(movePos.x,initialPos_.x - moveRange_.x,initialPos_.x + moveRange_.x),
 		std::clamp(movePos.y,initialPos_.y - moveRange_.y,initialPos_.y + moveRange_.y),
@@ -73,30 +85,49 @@ void JetMoveState::Update(Player& player, Vector3 velocity) {
 		std::clamp(rotate.z,-rotRange_.z,rotRange_.z)
 	};
 
-	//コアオブジェクトの回転
+	/// === コアオブジェクトの移動・回転 === ///
+
+	//コアオブジェクトの移動・回転
 	coreWT.translate_ = Lerp(playerPos, movePos, moveStrength_ / 100.0f);
 	coreWT.rotate_ = Lerp(playerRot, rotate, rotStrength_ / 100.0f);
 
-	coreWT.translate_.y = fmaxf(1.0f, coreWT.translate_.y);
+	//地面より下に行かないようにする
+	coreWT.translate_.y = fmaxf(minJetHeight_, coreWT.translate_.y);
 
+	//移動後のワールド座標を設定
 	player.SetCoreWorldTransform(coreWT);
 
-	//右ウィングの移動・回転
-	rightWingWT.translate_ = EaseOut(rightWingPos, Vector3(1.35f, 0.0f, 0.0f), 0.1f, 2.0f);
-	rightWingWT.rotate_ = EaseOut(rightWingRot, Vector3(0.0f, 0.0f, 0.0f), 0.1f, 2.0f);
-
-	player.SetRightWingWorldTransform(rightWingWT);
+	/// === 左ウィングの移動・回転 === ///
 
 	//左ウィングの移動・回転
 	leftWingWT.translate_ = EaseOut(leftWingPos, Vector3(-1.35f, 0.0f, 0.0f), 0.1f, 2.0f);
 	leftWingWT.rotate_ = EaseOut(leftWingRot, Vector3(0.0f, 0.0f, 0.0f), 0.1f, 2.0f);
 
+	//移動後のワールド座標を設定
 	player.SetLeftWingWorldTransform(leftWingWT);
 
-	////右トレイルの移動
-	//rightTrail_->GetWorldTransform().translate_ = EaseOut(rightTrailPos, Vector3(0.75f, 0.0f, 0.0f), 0.1f, 2.0f);
+	/// === 右ウィングの移動・回転 === ///
 
-	////左トレイルの移動
-	//leftTrail_->GetWorldTransform().translate_ = EaseOut(leftTrailPos, Vector3(-0.75f, 0.0f, 0.0f), 0.1f, 2.0f);
+	//右ウィングの移動・回転
+	rightWingWT.translate_ = EaseOut(rightWingPos, Vector3(1.35f, 0.0f, 0.0f), 0.1f, 2.0f);
+	rightWingWT.rotate_ = EaseOut(rightWingRot, Vector3(0.0f, 0.0f, 0.0f), 0.1f, 2.0f);
 
+	//移動後のワールド座標を設定
+	player.SetRightWingWorldTransform(rightWingWT);
+
+	/// === 左トレイルの移動 === ///
+
+	//左トレイルの移動
+	leftTrailWT.translate_ = EaseOut(leftTrailPos, Vector3(-0.75f, 0.0f, 0.0f), 0.1f, 2.0f);
+
+	//移動後のワールド座標を設定
+	player.SetLeftTrailWorldTransform(leftTrailWT);
+
+	/// === 右トレイルの移動 === ///
+
+	//右トレイルの移動
+	rightTrailWT.translate_ = EaseOut(rightTrailPos, Vector3(0.75f, 0.0f, 0.0f), 0.1f, 2.0f);
+
+	//移動後のワールド座標を設定
+	player.SetRightTrailWorldTransform(rightTrailWT);
 }

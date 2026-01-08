@@ -87,10 +87,11 @@ public:
 	/// </remarks>
 	void Draw();
 
-	/// <summary>
-	/// マズルフラッシュエミッターを発生させます。
-	/// </summary>
-	void EmitMuzzleFlash() { muzzleFlashEmitter_->Emit(); }
+	void UpdateLockOn(float lockOnRange);
+
+	void JetAttack();
+
+	void TankAttack();
 
 	void ChangeJetState();
 
@@ -202,11 +203,8 @@ private:
 	//移動状態
 	MOVESTATE moveState_;
 
-	//移動速度
-	float moveSpeed_;
-
 	//移動量
-	Vector3 velocity_;
+	Vector3 inputDirection_;
 
 	//移動アクティブフラグ
 	bool isMoveActive_;
@@ -234,11 +232,15 @@ public:
 
 	WorldTransform GetRightWingWorldTransform() { return rightWing_->GetWorldTransform(); }
 
+	WorldTransform GetLeftTrailWorldTransform() { return leftTrail_->GetWorldTransform(); }
+
+	WorldTransform GetRightTrailWorldTransform() { return rightTrail_->GetWorldTransform(); }
+
 	/// <summary>
 	/// 移動量を取得
 	/// </summary>
 	/// <returns>移動量</returns>
-	Vector3 GetVelocity() { return velocity_; }
+	Vector3 GetInputDirection() { return inputDirection_; }
 
 	/// <summary>
 	/// 移動状態を取得
@@ -263,6 +265,10 @@ public:
 	void SetLeftWingWorldTransform(WorldTransform transform) { leftWing_->GetWorldTransform() = transform; }
 
 	void SetRightWingWorldTransform(WorldTransform transform) { rightWing_->GetWorldTransform() = transform; }
+
+	void SetLeftTrailWorldTransform(WorldTransform transform) { leftTrail_->GetWorldTransform() = transform; }
+
+	void SetRightTrailWorldTransform(WorldTransform transform) { rightTrail_->GetWorldTransform() = transform; }
 
 	/// <summary>
 	/// 移動アクティブフラグを設定
