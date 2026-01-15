@@ -250,6 +250,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Application\ObjectManager.cpp" />
     <ClCompile Include="Application\Player\State\AttackState\TankAttackState.cpp" />
     <ClCompile Include="Application\Player\State\MovementState\TankMoveState.cpp" />
+    <ClCompile Include="Application\UIManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application\LevelEditor\LevelDataLoader.h" />
@@ -352,6 +353,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Application\Player\State\MovementState\MovementState.h" />
     <ClInclude Include="Application\Player\State\MovementState\JetMoveState.h" />
     <ClInclude Include="Application\Player\State\MovementState\TankMoveState.h" />
+    <ClInclude Include="Application\UIManager.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Application\LevelEditor\Python\add_collider.py">

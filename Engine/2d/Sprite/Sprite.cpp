@@ -76,6 +76,8 @@ void Sprite::Initialize(const std::string& fileName) {
 	materialData_->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 	materialData_->enableLighting = false;
 	materialData_->uvTransform = MakeIdentity4x4();
+	materialData_->ratio = 1.0f;
+	materialData_->brightness = 0.1f;
 
 	/// === テクスチャの読み込み === ///
 

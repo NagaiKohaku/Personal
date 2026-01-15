@@ -80,22 +80,6 @@ void GameScene::Initialize() {
 	//最初は無効化する
 	followCamera_->SetIsActive(false);
 
-	/// === スプライトの読み込み === ///
-
-	SpriteManager::GetInstance()->LoadSprite("GameOver", "RoadFlightGameOver");
-
-	SpriteManager::GetInstance()->LoadSprite("GameOverSpace", "GameOverSpace");
-
-	SpriteManager::GetInstance()->LoadSprite("GameOverArrow", "GameOverArrow");
-
-	SpriteManager::GetInstance()->LoadSprite("GameClear", "RoadFlightGameClear");
-
-	SpriteManager::GetInstance()->LoadSprite("GameClearSpace", "GameClearSpace");
-
-	SpriteManager::GetInstance()->LoadSprite("GameClearArrow", "GameClearArrow");
-
-	SpriteManager::GetInstance()->LoadSprite("KillToTitle", "KillToTitle");
-
 	/// === ゲームオーバースプライトの生成 === ///
 
 	//テキストスプライトの生成
@@ -103,7 +87,7 @@ void GameScene::Initialize() {
 
 	gameOverSprite_->Initialize();
 
-	gameOverSprite_->SetSprite("GameOver");
+	gameOverSprite_->SetSprite("RoadFlightGameOver");
 
 	gameOverSprite_->GetSprite()->SetAnchorPoint({ 0.5f,0.5f });
 
@@ -169,7 +153,7 @@ void GameScene::Initialize() {
 
 	gameClearSprite_->Initialize();
 
-	gameClearSprite_->SetSprite("GameClear");
+	gameClearSprite_->SetSprite("RoadFlightGameClear");
 
 	gameClearSprite_->GetSprite()->SetAnchorPoint({ 0.5f,0.5f });
 
@@ -224,6 +208,8 @@ void GameScene::Initialize() {
 
 	gameClearRightArrowSprite_->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
 
+	/// === ヘルプスプライトの生成 === ///
+
 	helpSprite_ = std::make_unique<Object2D>();
 
 	helpSprite_->Initialize();
@@ -233,6 +219,46 @@ void GameScene::Initialize() {
 	helpSprite_->GetSprite()->SetAnchorPoint({ 0.5f,0.5f });
 
 	helpSprite_->SetTranslate({ 640.0f,360.0f });
+
+	spaceKeySprite_ = std::make_unique<Object2D>();
+
+	spaceKeySprite_->Initialize();
+
+	spaceKeySprite_->SetSprite("SpaceButton");
+
+	spaceKeySprite_->GetSprite()->SetAnchorPoint({ 0.5f,0.5f });
+
+	spaceKeySprite_->SetTranslate({ 50.0f,660.0f });
+
+	moveKeySprite_ = std::make_unique<Object2D>();
+
+	moveKeySprite_->Initialize();
+
+	moveKeySprite_->SetSprite("MoveButton");
+
+	moveKeySprite_->GetSprite()->SetAnchorPoint({ 0.5f,0.5f });
+
+	moveKeySprite_->SetTranslate({ 50.0f,600.0f });
+
+	attackHelpSprite_ = std::make_unique<Object2D>();
+
+	attackHelpSprite_->Initialize();
+
+	attackHelpSprite_->SetSprite("AttackHelp");
+
+	attackHelpSprite_->GetSprite()->SetAnchorPoint({ 0.5f,0.5f });
+
+	attackHelpSprite_->SetTranslate({ 50.0f,660.0f });
+
+	moveHelpSprite_ = std::make_unique<Object2D>();
+
+	moveHelpSprite_->Initialize();
+
+	moveHelpSprite_->SetSprite("MoveHelp");
+
+	moveHelpSprite_->GetSprite()->SetAnchorPoint({ 0.5f,0.5f });
+
+	moveHelpSprite_->SetTranslate({ 50.0f,600.0f });
 
 	/// === エミッターの生成 === ///
 
@@ -378,6 +404,16 @@ void GameScene::Update() {
 
 	gameClearRightArrowSprite_->SetTranslate({ spaceKeyPos_.x + spaceKeySize_.x / 2.0f + 64.0f + lerpNum,spaceKeyPos_.y });
 
+	spaceKeySprite_->GetSprite()->SetRatio(player_->GetAttackTimeRatio());
+
+	if (Length(player_->GetInputDirection()) != 0.0f) {
+
+		moveKeySprite_->GetSprite()->SetRatio(1.0f);
+	} else {
+
+		moveKeySprite_->GetSprite()->SetRatio(0.0f);
+	}
+
 	//ゲームオーバースプライトの更新
 	gameOverSprite_->Update();
 	gameOverSpaceSprite_->Update();
@@ -391,6 +427,10 @@ void GameScene::Update() {
 	gameClearRightArrowSprite_->Update();
 
 	helpSprite_->Update();
+	spaceKeySprite_->Update();
+	moveKeySprite_->Update();
+	attackHelpSprite_->Update();
+	moveHelpSprite_->Update();
 
 	//右衝撃波エミッターの更新
 	shockWaveRightEmitter_->Update();
@@ -528,6 +568,10 @@ void GameScene::Draw() {
 	if (!isClear_ && !isClearAnim_) {
 
 		helpSprite_->Draw(LayerType::UI);
+		spaceKeySprite_->Draw(LayerType::UI);
+		moveKeySprite_->Draw(LayerType::UI);
+		attackHelpSprite_->Draw(LayerType::UI);
+		moveHelpSprite_->Draw(LayerType::UI);
 	}
 
 	//右衝撃波エミッターの描画

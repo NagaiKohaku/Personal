@@ -15,15 +15,12 @@ Flash* Flash::GetInstance() {
 ///=====================================================///
 void Flash::Initialize() {
 
-	//スプライトの読み込み
-	SpriteManager::GetInstance()->LoadSprite("Flash", "white_128x128");
-
 	//フラッシュ用オブジェクトの生成
 	flashObject_ = std::make_unique<Object2D>();
 
 	flashObject_->Initialize();
 
-	flashObject_->SetSprite("Flash");
+	flashObject_->SetSprite("white_128x128");
 
 	flashObject_->GetSprite()->SetAnchorPoint({ 0.5f,0.5f });
 

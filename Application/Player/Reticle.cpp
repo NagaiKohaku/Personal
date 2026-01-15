@@ -16,9 +16,6 @@ void Reticle::Initialize(Camera* cameraPtr) {
 	//カメラポインタを取得
 	camera_ = cameraPtr;
 
-	//ReticleSpriteを読み込む
-	SpriteManager::GetInstance()->LoadSprite("Reticle", "Reticle");
-
 	/// === 2Dオブジェクトの生成 === ///
 
 	//生成

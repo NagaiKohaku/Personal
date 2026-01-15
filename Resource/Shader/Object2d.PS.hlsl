@@ -6,6 +6,8 @@ struct Material
     float4 color;
     int enableLighting;
     float4x4 uvTransform;
+    float ratio;
+    float brightness;
 };
 
 //マテリアル
@@ -45,7 +47,11 @@ PixelShaderOutPut main(VertexShaderOutput input)
 
     //マテリアル情報とテクスチャの色を合わせる
     output.color = gMaterial.color * FXAA_PS(input);
- 
+
+    float isUnderRatio = step(input.texcoord.x, gMaterial.ratio);
+
+    output.color.rgb *= lerp(gMaterial.brightness, 1.0f, isUnderRatio);
+
     return output;
 }
 

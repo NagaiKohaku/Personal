@@ -146,6 +146,14 @@ private:
 	//ヘルプスプライト
 	std::unique_ptr<Object2D> helpSprite_;
 
+	std::unique_ptr<Object2D> spaceKeySprite_;
+
+	std::unique_ptr<Object2D> moveKeySprite_;
+
+	std::unique_ptr<Object2D> attackHelpSprite_;
+
+	std::unique_ptr<Object2D> moveHelpSprite_;
+
 	//スペースキースプライトの位置
 	Vector2 spaceKeyPos_;
 

@@ -42,6 +42,9 @@ private:
 		int32_t enableLighting;
 		float padding[3];
 		Matrix4x4 uvTransform;
+		float ratio;
+		float brightness;
+		float padding2[2];
 	};
 
 	///-------------------------------------------/// 
@@ -222,6 +225,10 @@ public:
 	/// <returns>色</returns>
 	const Vector4& GetColor() const { return materialData_->color; }
 
+	const float& GetRatio() const { return materialData_->ratio; }
+
+	const float& GetBrightness() const { return materialData_->brightness; }
+
 	/// <summary>
 	/// アンカーポイントを取得
 	/// </summary>
@@ -275,6 +282,10 @@ public:
 	/// </summary>
 	/// <param name="color">色</param>
 	void SetColor(const Vector4& color) { materialData_->color = color; }
+
+	void SetRatio(const float ratio) { materialData_->ratio = ratio; }
+
+	void SetBrightness(const float brightness) { materialData_->brightness = brightness; }
 
 	/// <summary>
 	/// アンカーポイントの設定

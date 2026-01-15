@@ -41,14 +41,6 @@ void TitleScene::Initialize() {
 
 	Shake::GetInstance()->SetCamera(camera_.get());
 
-	/// === モデルの読み込み === ///
-
-	SpriteManager::GetInstance()->LoadSprite("TitleSprite", "RoadflightTitle");
-
-	SpriteManager::GetInstance()->LoadSprite("TitleSpace", "GameOverSpace");
-
-	SpriteManager::GetInstance()->LoadSprite("TitleArrow", "GameOverArrow");
-
 	/// === 3Dオブジェクトの設定 === ///
 
 	//グラウンドマネージャーの生成
@@ -72,7 +64,7 @@ void TitleScene::Initialize() {
 
 	titleSprite_->Initialize();
 
-	titleSprite_->SetSprite("TitleSprite");
+	titleSprite_->SetSprite("RoadflightTitle");
 
 	titleSprite_->GetSprite()->SetAnchorPoint({ 0.5f,0.5f });
 
@@ -85,7 +77,7 @@ void TitleScene::Initialize() {
 
 	spaceKeySprite_->Initialize();
 
-	spaceKeySprite_->SetSprite("TitleSpace");
+	spaceKeySprite_->SetSprite("GameOverSpace");
 
 	spaceKeySprite_->GetSprite()->SetAnchorPoint({ 0.5f,0.5f });
 
@@ -102,7 +94,7 @@ void TitleScene::Initialize() {
 
 	leftArrowSprite_->Initialize();
 
-	leftArrowSprite_->SetSprite("TitleArrow");
+	leftArrowSprite_->SetSprite("GameOverArrow");
 
 	leftArrowSprite_->GetSprite()->SetAnchorPoint({ 0.5f,0.5f });
 
@@ -115,7 +107,7 @@ void TitleScene::Initialize() {
 
 	rightArrowSprite_->Initialize();
 
-	rightArrowSprite_->SetSprite("TitleArrow");
+	rightArrowSprite_->SetSprite("GameOverArrow");
 
 	rightArrowSprite_->GetSprite()->SetIsFlipX(true);
 

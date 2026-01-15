@@ -297,6 +297,7 @@
     <ClCompile Include="Application\Enemy\State\EnemyAttackState.cpp" />
     <ClCompile Include="Application\Enemy\State\EnemyExitState.cpp" />
     <ClCompile Include="Application\Enemy\State\EnemyDeadState.cpp" />
+    <ClCompile Include="Application\UIManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application\Bullet\BulletBase.h">
@@ -567,6 +568,7 @@
     <ClInclude Include="Application\Enemy\State\EnemyAttackState.h" />
     <ClInclude Include="Application\Enemy\State\EnemyExitState.h" />
     <ClInclude Include="Application\Enemy\State\EnemyDeadState.h" />
+    <ClInclude Include="Application\UIManager.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resource\Shader\DebugObject.hlsli">

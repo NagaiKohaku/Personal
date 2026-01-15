@@ -9,6 +9,7 @@
 #include "Base/ImGuiManager.h"
 #include "Base/Renderer.h"
 #include "2d/Sprite/SpriteCommon.h"
+#include "2d/Sprite/SpriteManager.h"
 #include "2d/Object/Object2DCommon.h"
 #include "2d/Sprite/TextureManager.h"
 #include "3d/Object/Object3DCommon.h"
@@ -19,6 +20,7 @@
 #include "3d/Particle/ParticleCommon.h"
 #include "3d/Collider/ColliderManager.h"
 #include "ObjectManager.h"
+#include "UIManager.h"
 
 #include "Scene/SceneManager.h"
 #include "LevelEditor/LevelDataLoader.h"
@@ -115,6 +117,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	ObjectManager* objectManager = ObjectManager::GetInstance();
 	objectManager->Initialize();
 
+	//スプライトマネージャー
+	SpriteManager* spriteManager = SpriteManager::GetInstance();
+	spriteManager->Initialize();
+
+	//UIマネージャー
+	UIManager* uiManager = UIManager::GetInstance();
+	uiManager->Initialize();
+
 	//コライダーマネージャー
 	ColliderManager* colliderManager = ColliderManager::GetInstance();
 	colliderManager->Initialize();
@@ -179,6 +189,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//オブジェクトマネージャーの更新
 		objectManager->Update();
 
+		//UIマネージャーの更新
+		uiManager->Update();
+
 		//コライダーマネージャーの更新
 		colliderManager->Update();
 
@@ -211,6 +224,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		//オブジェクトマネージャーの描画
 		objectManager->Draw();
+
+		//uiマネージャーの描画
+		uiManager->Draw();
 
 		//シーンの描画
 		sceneManager->Draw();
