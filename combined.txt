@@ -84,9 +84,11 @@
 └── ├── Shadow/
 └── └── ├── Shadow.cpp
 └── └── └── Shadow.h
-└── └── Shake/
-└──     ├── Shake.cpp
-└──     └── Shake.h
+└── ├── Shake/
+└── └── ├── Shake.cpp
+└── └── └── Shake.h
+└── ├── UIManager.cpp
+└── └── UIManager.h
 ├── Engine/
 └── ├── 2d/
 └── └── ├── Object/
@@ -303,30 +305,33 @@
 └── └── ├── LevelData/
 └── └── └── ├── EnemyFormation/
 └── └── └── └── PlayerObject/
-└── └── └── Particle/
-└── └──     └── Group/
-└── └──         ├── BlockExplosive/
-└── └──         └── └── Emitter/
-└── └──         ├── ClearExplosive/
-└── └──         └── └── Emitter/
-└── └──         ├── Damage/
-└── └──         └── └── Emitter/
-└── └──         ├── Destroy/
-└── └──         └── └── Emitter/
-└── └──         ├── Explosive/
-└── └──         └── ├── Emitter/
-└── └──         ├── MuzzleFlash/
-└── └──         └── ├── Emitter/
-└── └──         ├── PlayerExplosive/
-└── └──         └── ├── Emitter/
-└── └──         ├── ShockWaveLeft/
-└── └──         └── ├── Emitter/
-└── └──         ├── ShockWaveRight/
-└── └──         └── ├── Emitter/
-└── └──         ├── Trail/
-└── └──         └── ├── Emitter/
-└── └──         └── defaultGroup/
-└── └──             ├── Emitter/
+└── └── ├── Particle/
+└── └── └── └── Group/
+└── └── └──     ├── BlockExplosive/
+└── └── └──     └── └── Emitter/
+└── └── └──     ├── ClearExplosive/
+└── └── └──     └── └── Emitter/
+└── └── └──     ├── Damage/
+└── └── └──     └── └── Emitter/
+└── └── └──     ├── Destroy/
+└── └── └──     └── └── Emitter/
+└── └── └──     ├── Explosive/
+└── └── └──     └── ├── Emitter/
+└── └── └──     ├── MuzzleFlash/
+└── └── └──     └── ├── Emitter/
+└── └── └──     ├── PlayerExplosive/
+└── └── └──     └── ├── Emitter/
+└── └── └──     ├── ShockWaveLeft/
+└── └── └──     └── ├── Emitter/
+└── └── └──     ├── ShockWaveRight/
+└── └── └──     └── ├── Emitter/
+└── └── └──     ├── Trail/
+└── └── └──     └── ├── Emitter/
+└── └── └──     └── defaultGroup/
+└── └── └──         ├── Emitter/
+└── └── └── UIGroup/
+└── └──     ├── GameScene/
+└── └──     └── TitleScene/
 └── ├── Model/
 └── └── ├── Enemy/
 └── └── └── Player/
@@ -335,6 +340,7 @@
 └── ├── Sound/
 └── └── └── SE/
 └── ├── Sprite/
+└── └── ├── AttackHelp/
 └── └── ├── BigCircle/
 └── └── ├── BigRing/
 └── └── ├── GameClearArrow/
@@ -342,11 +348,14 @@
 └── └── ├── GameOverArrow/
 └── └── ├── GameOverSpace/
 └── └── ├── KillToTitle/
+└── └── ├── MoveButton/
+└── └── ├── MoveHelp/
 └── └── ├── Particle/
 └── └── ├── Reticle/
 └── └── ├── RoadFlightGameClear/
 └── └── ├── RoadFlightGameOver/
 └── └── ├── RoadflightTitle/
+└── └── ├── SpaceButton/
 └── └── ├── ToTitle/
 └── └── ├── black_128x128/
 └── └── ├── space/
@@ -3431,12 +3440,6 @@ Fade* Fade::GetInstance() {
 ///=====================================================///
 void Fade::Initialize() {
 
-	/// === テクスチャのロード === ///
-
-	SpriteManager::GetInstance()->LoadSprite("Ring", "BigRing");
-
-	SpriteManager::GetInstance()->LoadSprite("Circle", "BigCircle");
-
 	/// === フェードに使うスプライトの生成 === ///
 
 	//リングスプライトの生成
@@ -3648,7 +3651,7 @@ void Fade::CreateRingSprite() {
 	newObject->Initialize();
 
 	//リングスプライトをセット
-	newObject->SetSprite("Ring");
+	newObject->SetSprite("BigRing");
 
 	newObject->GetSprite()->SetAnchorPoint({ 0.5f,0.5f });
 
@@ -3696,7 +3699,7 @@ void Fade::CreateCircleSprite() {
 	newObject->Initialize();
 
 	//円形スプライトをセット
-	newObject->SetSprite("Circle");
+	newObject->SetSprite("BigCircle");
 
 	newObject->GetSprite()->SetAnchorPoint({ 0.5f,0.5f });
 
@@ -3971,15 +3974,12 @@ Flash* Flash::GetInstance() {
 ///=====================================================///
 void Flash::Initialize() {
 
-	//スプライトの読み込み
-	SpriteManager::GetInstance()->LoadSprite("Flash", "white_128x128");
-
 	//フラッシュ用オブジェクトの生成
 	flashObject_ = std::make_unique<Object2D>();
 
 	flashObject_->Initialize();
 
-	flashObject_->SetSprite("Flash");
+	flashObject_->SetSprite("white_128x128");
 
 	flashObject_->GetSprite()->SetAnchorPoint({ 0.5f,0.5f });
 
@@ -6646,6 +6646,12 @@ public:
 	/// <returns>死亡フラグ</returns>
 	bool GetIsDead() { return isDead_; }
 
+	bool GetIsMoveActive() { return isMoveActive_; }
+
+	float GetAttackTimeRatio() {
+		return attackState_->GetAttackTimer() / attackState_->GetAttackInterval();
+	}
+
 	/// <summary>
 	/// 座標を設定
 	/// </summary>
@@ -6689,9 +6695,6 @@ void Reticle::Initialize(Camera* cameraPtr) {
 
 	//カメラポインタを取得
 	camera_ = cameraPtr;
-
-	//ReticleSpriteを読み込む
-	SpriteManager::GetInstance()->LoadSprite("Reticle", "Reticle");
 
 	/// === 2Dオブジェクトの生成 === ///
 
@@ -6920,6 +6923,19 @@ public:
 	virtual void Enter() = 0;
 
 	virtual void Update(Player& player) = 0;
+
+protected:
+
+	float attackTimer_;
+
+	float attackInterval_;
+
+public:
+
+	float GetAttackTimer() const { return attackTimer_; }
+
+	float GetAttackInterval() const { return attackInterval_; }
+
 };
 
 ============================================================
@@ -6973,12 +6989,6 @@ public:
 	void Enter() override;
 
 	void Update(Player& player) override;
-
-private:
-
-	float attackTimer_;
-
-	float attackInterval_;
 
 };
 
@@ -7041,10 +7051,6 @@ public:
 	void Update(Player& player) override;
 
 private:
-
-	float attackTimer_;
-
-	float attackInterval_;
 
 	float lockOnRange_;
 };
@@ -7429,6 +7435,7 @@ File Path: Application/Scene/GameScene.cpp
 #include "Base/Input.h"
 #include "Scene/SceneManager.h"
 #include "ObjectManager.h"
+#include "UIManager.h"
 
 #include "2d/Sprite/SpriteManager.h"
 #include "3d/Model/ModelManager.h"
@@ -7505,159 +7512,13 @@ void GameScene::Initialize() {
 	//最初は無効化する
 	followCamera_->SetIsActive(false);
 
-	/// === スプライトの読み込み === ///
-
-	SpriteManager::GetInstance()->LoadSprite("GameOver", "RoadFlightGameOver");
-
-	SpriteManager::GetInstance()->LoadSprite("GameOverSpace", "GameOverSpace");
-
-	SpriteManager::GetInstance()->LoadSprite("GameOverArrow", "GameOverArrow");
-
-	SpriteManager::GetInstance()->LoadSprite("GameClear", "RoadFlightGameClear");
-
-	SpriteManager::GetInstance()->LoadSprite("GameClearSpace", "GameClearSpace");
-
-	SpriteManager::GetInstance()->LoadSprite("GameClearArrow", "GameClearArrow");
-
-	SpriteManager::GetInstance()->LoadSprite("KillToTitle", "KillToTitle");
-
 	/// === ゲームオーバースプライトの生成 === ///
 
-	//テキストスプライトの生成
-	gameOverSprite_ = std::make_unique<Object2D>();
+	UIManager::GetInstance()->LoadUI("GameScene");
 
-	gameOverSprite_->Initialize();
+	spaceKeyPos_ = UIManager::GetInstance()->GetUIObject("GameOver", "Space")->GetTranslate();
 
-	gameOverSprite_->SetSprite("GameOver");
-
-	gameOverSprite_->GetSprite()->SetAnchorPoint({ 0.5f,0.5f });
-
-	gameOverSprite_->SetTranslate({ 640.0f,100.0f });
-
-	gameOverSprite_->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
-
-	//スペースキースプライトの生成
-	gameOverSpaceSprite_ = std::make_unique<Object2D>();
-
-	gameOverSpaceSprite_->Initialize();
-
-	gameOverSpaceSprite_->SetSprite("GameOverSpace");
-
-	gameOverSpaceSprite_->GetSprite()->SetAnchorPoint({ 0.5f,0.5f });
-
-	gameOverSpaceSprite_->GetSprite()->SetColor({ 1.0f,1.0f,1.0f,1.0f });
-
-	gameOverSpaceSprite_->SetTranslate({ 640.0f,600.0f });
-
-	gameOverSpaceSprite_->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
-
-	spaceKeyPos_ = gameOverSpaceSprite_->GetTranslate();
-
-	spaceKeySize_ = gameOverSpaceSprite_->GetSize();
-
-	//左矢印スプライトの生成
-	gameOverLeftArrowSprite_ = std::make_unique<Object2D>();
-
-	gameOverLeftArrowSprite_->Initialize();
-
-	gameOverLeftArrowSprite_->SetSprite("GameOverArrow");
-
-	gameOverLeftArrowSprite_->GetSprite()->SetAnchorPoint({ 0.5f,0.5f });
-
-	gameOverLeftArrowSprite_->GetSprite()->SetColor({ 1.0f,1.0f,1.0f,1.0f });
-
-	gameOverLeftArrowSprite_->SetTranslate({ spaceKeyPos_.x - spaceKeySize_.x / 2.0f - 64.0f,spaceKeyPos_.y });
-
-	gameOverLeftArrowSprite_->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
-
-	//右矢印スプライトの生成
-	gameOverRightArrowSprite_ = std::make_unique<Object2D>();
-
-	gameOverRightArrowSprite_->Initialize();
-
-	gameOverRightArrowSprite_->SetSprite("GameOverArrow");
-
-	gameOverRightArrowSprite_->GetSprite()->SetIsFlipX(true);
-
-	gameOverRightArrowSprite_->GetSprite()->SetAnchorPoint({ 0.5f,0.5f });
-
-	gameOverRightArrowSprite_->GetSprite()->SetColor({ 1.0f,1.0f,1.0f,1.0f });
-
-	gameOverRightArrowSprite_->SetTranslate({ spaceKeyPos_.x + spaceKeySize_.x / 2.0f + 64.0f,spaceKeyPos_.y });
-
-	gameOverRightArrowSprite_->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
-
-	/// === ゲームクリアスプライトの生成 === ///
-
-	//テキストスプライトの生成
-	gameClearSprite_ = std::make_unique<Object2D>();
-
-	gameClearSprite_->Initialize();
-
-	gameClearSprite_->SetSprite("GameClear");
-
-	gameClearSprite_->GetSprite()->SetAnchorPoint({ 0.5f,0.5f });
-
-	gameClearSprite_->SetTranslate({ 640.0f,100.0f });
-
-	gameClearSprite_->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
-
-	//スペースキースプライトの生成
-	gameClearSpaceSprite_ = std::make_unique<Object2D>();
-
-	gameClearSpaceSprite_->Initialize();
-
-	gameClearSpaceSprite_->SetSprite("GameClearSpace");
-
-	gameClearSpaceSprite_->GetSprite()->SetAnchorPoint({ 0.5f,0.5f });
-
-	gameClearSpaceSprite_->GetSprite()->SetColor({ 1.0f,1.0f,1.0f,1.0f });
-
-	gameClearSpaceSprite_->SetTranslate({ 640.0f,600.0f });
-
-	gameClearSpaceSprite_->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
-
-	//左矢印スプライトの生成
-	gameClearLeftArrowSprite_ = std::make_unique<Object2D>();
-
-	gameClearLeftArrowSprite_->Initialize();
-
-	gameClearLeftArrowSprite_->SetSprite("GameClearArrow");
-
-	gameClearLeftArrowSprite_->GetSprite()->SetAnchorPoint({ 0.5f,0.5f });
-
-	gameClearLeftArrowSprite_->GetSprite()->SetColor({ 1.0f,1.0f,1.0f,1.0f });
-
-	gameClearLeftArrowSprite_->SetTranslate({ spaceKeyPos_.x - spaceKeySize_.x / 2.0f - 64.0f,spaceKeyPos_.y });
-
-	gameClearLeftArrowSprite_->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
-
-	//右矢印スプライトの生成
-	gameClearRightArrowSprite_ = std::make_unique<Object2D>();
-
-	gameClearRightArrowSprite_->Initialize();
-
-	gameClearRightArrowSprite_->SetSprite("GameClearArrow");
-
-	gameClearRightArrowSprite_->GetSprite()->SetIsFlipX(true);
-
-	gameClearRightArrowSprite_->GetSprite()->SetAnchorPoint({ 0.5f,0.5f });
-
-	gameClearRightArrowSprite_->GetSprite()->SetColor({ 1.0f,1.0f,1.0f,1.0f });
-
-	gameClearRightArrowSprite_->SetTranslate({ spaceKeyPos_.x + spaceKeySize_.x / 2.0f + 64.0f,spaceKeyPos_.y });
-
-	gameClearRightArrowSprite_->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
-
-	helpSprite_ = std::make_unique<Object2D>();
-
-	helpSprite_->Initialize();
-
-	helpSprite_->SetSprite("KillToTitle");
-
-	helpSprite_->GetSprite()->SetAnchorPoint({ 0.5f,0.5f });
-
-	helpSprite_->SetTranslate({ 640.0f,360.0f });
+	spaceKeySize_ = UIManager::GetInstance()->GetUIObject("GameOver", "Space")->GetSize();
 
 	/// === エミッターの生成 === ///
 
@@ -7720,6 +7581,12 @@ void GameScene::Initialize() {
 void GameScene::Finalize() {
 
 	ObjectManager::GetInstance()->ClearAll();
+
+	UIManager::GetInstance()->DeleteUI("GameOver");
+
+	UIManager::GetInstance()->DeleteUI("Clear");
+
+	UIManager::GetInstance()->DeleteUI("Help");
 
 	//演出系の参照リセット
 	Fade::GetInstance()->SetCamera(nullptr);
@@ -7795,27 +7662,23 @@ void GameScene::Update() {
 
 	float lerpNum = EaseOut(0.0f, arrowLength_, arrowTimer_ / 1.0f);
 
-	gameOverLeftArrowSprite_->SetTranslate({ spaceKeyPos_.x - spaceKeySize_.x / 2.0f - 64.0f - lerpNum,spaceKeyPos_.y });
+	UIManager::GetInstance()->GetUIObject("GameOver","LeftArrow")->SetTranslate({spaceKeyPos_.x - spaceKeySize_.x / 2.0f - 64.0f - lerpNum,spaceKeyPos_.y});
 
-	gameOverRightArrowSprite_->SetTranslate({ spaceKeyPos_.x + spaceKeySize_.x / 2.0f + 64.0f + lerpNum,spaceKeyPos_.y });
+	UIManager::GetInstance()->GetUIObject("GameOver", "RightArrow")->SetTranslate({ spaceKeyPos_.x + spaceKeySize_.x / 2.0f + 64.0f + lerpNum,spaceKeyPos_.y });
 
-	gameClearLeftArrowSprite_->SetTranslate({ spaceKeyPos_.x - spaceKeySize_.x / 2.0f - 64.0f - lerpNum,spaceKeyPos_.y });
+	UIManager::GetInstance()->GetUIObject("Clear", "LeftArrow")->SetTranslate({ spaceKeyPos_.x - spaceKeySize_.x / 2.0f - 64.0f - lerpNum,spaceKeyPos_.y });
 
-	gameClearRightArrowSprite_->SetTranslate({ spaceKeyPos_.x + spaceKeySize_.x / 2.0f + 64.0f + lerpNum,spaceKeyPos_.y });
+	UIManager::GetInstance()->GetUIObject("Clear", "LeftArrow")->SetTranslate({ spaceKeyPos_.x + spaceKeySize_.x / 2.0f + 64.0f + lerpNum,spaceKeyPos_.y });
 
-	//ゲームオーバースプライトの更新
-	gameOverSprite_->Update();
-	gameOverSpaceSprite_->Update();
-	gameOverLeftArrowSprite_->Update();
-	gameOverRightArrowSprite_->Update();
+	UIManager::GetInstance()->GetUIObject("Help", "SpaceKey")->GetSprite()->SetRatio(player_->GetAttackTimeRatio());
 
-	//ゲームクリアスプライトの更新
-	gameClearSprite_->Update();
-	gameClearSpaceSprite_->Update();
-	gameClearLeftArrowSprite_->Update();
-	gameClearRightArrowSprite_->Update();
+	if (Length(player_->GetInputDirection()) != 0.0f) {
 
-	helpSprite_->Update();
+		UIManager::GetInstance()->GetUIObject("Help", "MoveKey")->GetSprite()->SetRatio(1.0f);
+	} else {
+
+		UIManager::GetInstance()->GetUIObject("Help", "MoveKey")->GetSprite()->SetRatio(0.0f);
+	}
 
 	//右衝撃波エミッターの更新
 	shockWaveRightEmitter_->Update();
@@ -7831,13 +7694,13 @@ void GameScene::Update() {
 			isGameOver_ = true;
 
 			//スプライトを映す
-			gameOverSprite_->GetSprite()->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+			UIManager::GetInstance()->GetUIObject("GameOver", "Text")->GetSprite()->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
 
-			gameOverSpaceSprite_->GetSprite()->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+			UIManager::GetInstance()->GetUIObject("GameOver", "Space")->GetSprite()->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
 
-			gameOverLeftArrowSprite_->GetSprite()->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+			UIManager::GetInstance()->GetUIObject("GameOver", "LeftArrow")->GetSprite()->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
 
-			gameOverRightArrowSprite_->GetSprite()->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+			UIManager::GetInstance()->GetUIObject("GameOver", "RightArrow")->GetSprite()->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
 
 			//シェイクを始める
 			Shake::GetInstance()->Start(1.0f, 0.5f);
@@ -7876,13 +7739,13 @@ void GameScene::Update() {
 					player_->SetIsMoveActive(false);
 
 					//スプライトを映す
-					gameClearSprite_->GetSprite()->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+					UIManager::GetInstance()->GetUIObject("Clear", "Text")->GetSprite()->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
 
-					gameClearSpaceSprite_->GetSprite()->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+					UIManager::GetInstance()->GetUIObject("Clear", "Space")->GetSprite()->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
 
-					gameClearLeftArrowSprite_->GetSprite()->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+					UIManager::GetInstance()->GetUIObject("Clear", "LeftArrow")->GetSprite()->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
 
-					gameClearRightArrowSprite_->GetSprite()->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+					UIManager::GetInstance()->GetUIObject("Clear", "RightArrow")->GetSprite()->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
 
 					//シェイクを始める
 					Shake::GetInstance()->Start(1.0f, 1.0f);
@@ -7906,13 +7769,13 @@ void GameScene::Update() {
 			isClear_ = false;
 
 			//スプライトを再度隠す
-			gameClearSprite_->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
+			UIManager::GetInstance()->GetUIObject("Clear", "Text")->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
 
-			gameClearSpaceSprite_->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
+			UIManager::GetInstance()->GetUIObject("Clear", "Space")->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
 
-			gameClearLeftArrowSprite_->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
+			UIManager::GetInstance()->GetUIObject("Clear", "LeftArrow")->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
 
-			gameClearRightArrowSprite_->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
+			UIManager::GetInstance()->GetUIObject("Clear", "RightArrow")->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
 
 			//画面をフラッシュさせる
 			Flash::GetInstance()->Start(0.5f, Vector4(1.0f, 1.0f, 1.0f, 1.0f));
@@ -7920,6 +7783,21 @@ void GameScene::Update() {
 			//色を反転させる
 			OffScreen::GetInstance()->SetColorReverseRatio(0.0f);
 		}
+	}
+
+	if (isClear_ || isGameOver_) {
+
+		//スプライトを再度隠す
+		UIManager::GetInstance()->GetUIObject("Help", "Attack")->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
+
+		UIManager::GetInstance()->GetUIObject("Help", "Move")->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
+
+		UIManager::GetInstance()->GetUIObject("Help", "MoveKey")->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
+
+		UIManager::GetInstance()->GetUIObject("Help", "SpaceKey")->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
+
+		UIManager::GetInstance()->GetUIObject("Help", "Target")->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
+
 	}
 
 	//フェードアウトが終わったら
@@ -7950,28 +7828,11 @@ void GameScene::Draw() {
 	//グラウンドマネージャーの描画
 	groundManager_->Draw();
 
-	if (!isClear_ && !isClearAnim_) {
-
-		helpSprite_->Draw(LayerType::UI);
-	}
-
 	//右衝撃波エミッターの描画
 	shockWaveRightEmitter_->Draw();
 
 	//左衝撃波エミッターの描画
 	shockWaveLeftEmitter_->Draw();
-
-	//ゲームオーバースプライトの更新
-	gameOverSprite_->Draw(LayerType::UI);
-	gameOverSpaceSprite_->Draw(LayerType::UI);
-	gameOverLeftArrowSprite_->Draw(LayerType::UI);
-	gameOverRightArrowSprite_->Draw(LayerType::UI);
-
-	//ゲームクリアスプライトの更新
-	gameClearSprite_->Draw(LayerType::UI);
-	gameClearSpaceSprite_->Draw(LayerType::UI);
-	gameClearLeftArrowSprite_->Draw(LayerType::UI);
-	gameClearRightArrowSprite_->Draw(LayerType::UI);
 
 }
 
@@ -8238,33 +8099,6 @@ private:
 
 	//SkyBox
 	std::unique_ptr<SkyBox> skyBox_;
-
-	//ゲームオーバースプライト
-	std::unique_ptr<Object2D> gameOverSprite_;
-
-	//ゲームオーバースペーススプライト
-	std::unique_ptr<Object2D> gameOverSpaceSprite_;
-
-	//ゲームオーバー左矢印スプライト
-	std::unique_ptr<Object2D> gameOverLeftArrowSprite_;
-
-	//ゲームオーバー右矢印スプライト
-	std::unique_ptr<Object2D> gameOverRightArrowSprite_;
-
-	//ゲームクリアスプライト
-	std::unique_ptr<Object2D> gameClearSprite_;
-
-	//ゲームクリアスペーススプライト
-	std::unique_ptr<Object2D> gameClearSpaceSprite_;
-
-	//ゲームクリア左矢印スプライト
-	std::unique_ptr<Object2D> gameClearLeftArrowSprite_;
-
-	//ゲームクリア右矢印スプライト
-	std::unique_ptr<Object2D> gameClearRightArrowSprite_;
-
-	//ヘルプスプライト
-	std::unique_ptr<Object2D> helpSprite_;
 
 	//スペースキースプライトの位置
 	Vector2 spaceKeyPos_;
@@ -8678,6 +8512,8 @@ File Path: Application/Scene/TitleScene.cpp
 #include <Fade/Fade.h>
 #include <Shake/Shake.h>
 
+#include <UIManager.h>
+
 #include <Base/Input.h>
 
 #include <Math/Easing.h>
@@ -8709,14 +8545,6 @@ void TitleScene::Initialize() {
 
 	Shake::GetInstance()->SetCamera(camera_.get());
 
-	/// === モデルの読み込み === ///
-
-	SpriteManager::GetInstance()->LoadSprite("TitleSprite", "RoadflightTitle");
-
-	SpriteManager::GetInstance()->LoadSprite("TitleSpace", "GameOverSpace");
-
-	SpriteManager::GetInstance()->LoadSprite("TitleArrow", "GameOverArrow");
-
 	/// === 3Dオブジェクトの設定 === ///
 
 	//グラウンドマネージャーの生成
@@ -8735,63 +8563,19 @@ void TitleScene::Initialize() {
 
 	/// === 2Dオブジェクトの設定 === ///
 
-	//タイトルスプライトの生成
-	titleSprite_ = std::make_unique<Object2D>();
+	//UIManager::GetInstance()->CreateUI("Title", "Title", "RoadflightTitle");
 
-	titleSprite_->Initialize();
+	//UIManager::GetInstance()->CreateUI("Title", "SpaceButton", "GameOverSpace");
 
-	titleSprite_->SetSprite("TitleSprite");
+	//UIManager::GetInstance()->CreateUI("Title", "LeftArrow", "GameOverArrow");
 
-	titleSprite_->GetSprite()->SetAnchorPoint({ 0.5f,0.5f });
+	//UIManager::GetInstance()->CreateUI("Title", "RIghtArrow", "GameOverArrow");
 
-	titleSprite_->GetSprite()->SetColor({ 1.0f,1.0f,1.0f,1.0f });
+	UIManager::GetInstance()->LoadUI("TitleScene");
 
-	titleSprite_->SetTranslate({ 640.0f,100.0f });
+	spaceKeyPos_ = UIManager::GetInstance()->GetUIObject("Title", "SpaceButton")->GetTranslate();
 
-	//スペースキースプライトの生成
-	spaceKeySprite_ = std::make_unique<Object2D>();
-
-	spaceKeySprite_->Initialize();
-
-	spaceKeySprite_->SetSprite("TitleSpace");
-
-	spaceKeySprite_->GetSprite()->SetAnchorPoint({ 0.5f,0.5f });
-
-	spaceKeySprite_->GetSprite()->SetColor({ 1.0f,1.0f,1.0f,1.0f });
-
-	spaceKeySprite_->SetTranslate({ 640.0f,600.0f });
-
-	spaceKeyPos_ = spaceKeySprite_->GetTranslate();
-
-	spaceKeySize_ = spaceKeySprite_->GetSize();
-
-	//左矢印スプライトの生成
-	leftArrowSprite_ = std::make_unique<Object2D>();
-
-	leftArrowSprite_->Initialize();
-
-	leftArrowSprite_->SetSprite("TitleArrow");
-
-	leftArrowSprite_->GetSprite()->SetAnchorPoint({ 0.5f,0.5f });
-
-	leftArrowSprite_->GetSprite()->SetColor({ 1.0f,1.0f,1.0f,1.0f });
-
-	leftArrowSprite_->SetTranslate({ spaceKeyPos_.x - spaceKeySize_.x / 2.0f - 64.0f,spaceKeyPos_.y });
-
-	//右矢印スプライトの生成
-	rightArrowSprite_ = std::make_unique<Object2D>();
-
-	rightArrowSprite_->Initialize();
-
-	rightArrowSprite_->SetSprite("TitleArrow");
-
-	rightArrowSprite_->GetSprite()->SetIsFlipX(true);
-
-	rightArrowSprite_->GetSprite()->SetAnchorPoint({ 0.5f,0.5f });
-
-	rightArrowSprite_->GetSprite()->SetColor({ 1.0f,1.0f,1.0f,1.0f });
-
-	rightArrowSprite_->SetTranslate({ spaceKeyPos_.x + spaceKeySize_.x / 2.0f + 64.0f,spaceKeyPos_.y });
+	spaceKeySize_ = UIManager::GetInstance()->GetUIObject("Title", "SpaceButton")->GetSize();
 
 	/// === エミッターの生成 === ///
 
@@ -8862,6 +8646,8 @@ void TitleScene::Finalize() {
 
 	//オブジェクトの破棄
 	ObjectManager::GetInstance()->ClearAll();
+
+	UIManager::GetInstance()->DeleteUI("Title");
 
 	//フェードのカメラとプレイヤーを解除
 	Fade::GetInstance()->SetCamera(nullptr);
@@ -8941,9 +8727,9 @@ void TitleScene::Update() {
 
 	float lerpNum = EaseOut(0.0f, arrowLength_, arrowTimer_ / 1.0f, 2.0f);
 
-	leftArrowSprite_->SetTranslate({ spaceKeyPos_.x - spaceKeySize_.x / 2.0f - 64.0f - lerpNum,spaceKeyPos_.y });
+	UIManager::GetInstance()->GetUIObject("Title", "LeftArrow")->SetTranslate({ spaceKeyPos_.x - spaceKeySize_.x / 2.0f - 64.0f - lerpNum,spaceKeyPos_.y });
 
-	rightArrowSprite_->SetTranslate({ spaceKeyPos_.x + spaceKeySize_.x / 2.0f + 64.0f + lerpNum,spaceKeyPos_.y });
+	UIManager::GetInstance()->GetUIObject("Title", "RightArrow")->SetTranslate({ spaceKeyPos_.x + spaceKeySize_.x / 2.0f + 64.0f + lerpNum,spaceKeyPos_.y });
 
 	//カメラの更新
 	camera_->Update();
@@ -8959,18 +8745,6 @@ void TitleScene::Update() {
 
 	//衝撃波エミッターの更新
 	shockWaveRightEmitter_->Update();
-
-	//タイトルスプライトの更新
-	titleSprite_->Update();
-
-	//スペースキースプライトの更新
-	spaceKeySprite_->Update();
-
-	//左矢印スプライトの更新
-	leftArrowSprite_->Update();
-
-	//右矢印スプライトの更新
-	rightArrowSprite_->Update();
 
 	if (isFade_) {
 
@@ -9001,17 +8775,6 @@ void TitleScene::Draw() {
 	//衝撃波エミッターの描画(右)
 	shockWaveRightEmitter_->Draw();
 
-	//タイトルスプライトの描画
-	titleSprite_->Draw(LayerType::UI);
-
-	//スペースキースプライトの描画
-	spaceKeySprite_->Draw(LayerType::UI);
-
-	//左矢印スプライトの描画
-	leftArrowSprite_->Draw(LayerType::UI);
-
-	//右矢印スプライトの描画
-	rightArrowSprite_->Draw(LayerType::UI);
 }
 
 ///=====================================================/// 
@@ -9020,16 +8783,6 @@ void TitleScene::Draw() {
 void TitleScene::ImGui() {
 
 #ifdef _USE_IMGUI
-
-	ImGui::Begin("TitleScene");
-
-	Vector4 color = titleSprite_->GetSprite()->GetColor();
-
-	ImGui::SliderFloat("alpha", &color.w, 0.0f, 1.0f);
-
-	titleSprite_->GetSprite()->SetColor(color);
-
-	ImGui::End();
 
 #endif // _USE_IMGUI
 
@@ -9099,13 +8852,13 @@ void TitleScene::Start() {
 	//最初のアニメーションの時はスプライトを一緒にフェードアウトさせる
 	if (animNum_ == 1) {
 
-		titleSprite_->GetSprite()->SetColor({ 1.0f,1.0f,1.0f,Lerp(1.0f,0.0f,t) });
+		UIManager::GetInstance()->GetUIObject("Title", "Title")->GetSprite()->SetColor({ 1.0f,1.0f,1.0f,Lerp(1.0f,0.0f,t) });
 
-		spaceKeySprite_->GetSprite()->SetColor({ 1.0f,1.0f,1.0f,Lerp(1.0f,0.0f,t) });
+		UIManager::GetInstance()->GetUIObject("Title", "SpaceButton")->GetSprite()->SetColor({ 1.0f,1.0f,1.0f,Lerp(1.0f,0.0f,t) });
 
-		leftArrowSprite_->GetSprite()->SetColor({ 1.0f,1.0f,1.0f,Lerp(1.0f,0.0f,t) });
+		UIManager::GetInstance()->GetUIObject("Title", "LeftArrow")->GetSprite()->SetColor({ 1.0f,1.0f,1.0f,Lerp(1.0f,0.0f,t) });
 
-		rightArrowSprite_->GetSprite()->SetColor({ 1.0f,1.0f,1.0f,Lerp(1.0f,0.0f,t) });
+		UIManager::GetInstance()->GetUIObject("Title", "RightArrow")->GetSprite()->SetColor({ 1.0f,1.0f,1.0f,Lerp(1.0f,0.0f,t) });
 	}
 
 	//最後のアニメーションの時はカメラをプレイヤーに向ける
@@ -9240,18 +8993,6 @@ private:
 
 	//グラウンドマネージャー
 	std::unique_ptr<GroundManager> groundManager_;
-
-	//タイトル
-	std::unique_ptr<Object2D> titleSprite_;
-
-	//スペースキー
-	std::unique_ptr<Object2D> spaceKeySprite_;
-
-	//左矢印
-	std::unique_ptr<Object2D> leftArrowSprite_;
-
-	//右矢印
-	std::unique_ptr<Object2D> rightArrowSprite_;
 
 	//衝撃波エミッター(左)
 	std::unique_ptr<EmitterGroup> shockWaveLeftEmitter_;
@@ -9649,6 +9390,542 @@ private:
 };
 
 ============================================================
+File Path: Application/UIManager.cpp
+============================================================
+#include "UIManager.h"
+
+#include <2d/Sprite/SpriteManager.h>
+
+#include <Base/Input.h>
+
+#include <imgui.h>
+
+#include <json.hpp>
+#include <filesystem>
+#include <fstream>
+
+UIManager* UIManager::GetInstance() {
+	static UIManager instance;
+	return &instance;
+}
+
+void UIManager::Initialize() {
+
+	directoryPath_ = "Resource/Json/UIGroup/";
+
+	resizeMargin_ = 10.0f;
+
+	isEditMode_ = false;
+}
+
+void UIManager::Update() {
+
+	if (isEditMode_) {
+
+		Edit();
+	}
+
+	for (auto& uiGroup : uiGroups_) {
+		for (auto& ui : uiGroup->uiList) {
+			ui.object->Update();
+		}
+	}
+
+}
+
+void UIManager::Draw() {
+
+	for (auto& uiGroup : uiGroups_) {
+		for (auto& ui : uiGroup->uiList) {
+			ui.object->Draw(LayerType::UI);
+		}
+	}
+}
+
+void UIManager::ImGui() {
+
+#ifdef _USE_IMGUI
+
+	//ウィンドウの開始
+	ImGui::Begin("UIManager", nullptr, ImGuiWindowFlags_MenuBar);
+
+	if (ImGui::BeginMenuBar()) {
+
+		if (ImGui::BeginMenu("メニュー", "MENU")) {
+
+			if (ImGui::MenuItem("保存")) {
+
+				SaveUIState("TitleScene");
+			}
+
+			if (ImGui::MenuItem("追加")) {
+
+			}
+
+			ImGui::EndMenu();
+		}
+		ImGui::EndMenuBar();
+	}
+
+	if (ImGui::Checkbox("編集を有効化", &isEditMode_)) {
+		EnableEditMode(isEditMode_);
+	}
+
+	ImGui::Separator();
+
+	for (auto& uiGroup : uiGroups_) {
+
+		std::string groupLabelStr = uiGroup->name + " : UI数[" + std::to_string(uiGroup->uiList.size()) + "]";
+		const char* groupLabel = groupLabelStr.c_str();
+
+		if (ImGui::TreeNode(groupLabel)) {
+
+			for (auto& ui : uiGroup->uiList) {
+
+				if (ImGui::TreeNode(ui.name.c_str())) {
+
+					Vector2 position = ui.object->GetTranslate();
+
+					ImGui::Text("座標");
+					ImGui::DragFloat2("##Position", &position.x, 0.1f);
+					ImGui::NextColumn();
+
+					ui.object->SetTranslate(position);
+
+					float rotate = ui.object->GetRotate();
+
+					ImGui::Text("回転");
+					ImGui::DragFloat("##Rotate", &rotate, 0.1f);
+					ImGui::NextColumn();
+
+					ui.object->SetRotate(rotate);
+
+					Vector2 size = ui.object->GetSize();
+
+					ImGui::Text("サイズ");
+					ImGui::DragFloat2("##Size", &size.x, 0.1f);
+					ImGui::NextColumn();
+
+					ui.object->SetSize(size);
+
+					ImGui::TreePop();
+
+				}
+			}
+
+			ImGui::TreePop();
+		}
+	}
+
+	//ImGuiの終了
+	ImGui::End();
+
+#endif // _USE_IMGUI
+
+}
+
+void UIManager::CreateUI(const std::string& groupName, const std::string uiName, const std::string& spriteName) {
+
+	UIObject newUIObject;
+
+	newUIObject.name = uiName;
+
+	newUIObject.object = std::make_unique<Object2D>();
+
+	newUIObject.object->Initialize();
+
+	newUIObject.object->SetSprite(spriteName);
+
+	CreateUIGroup(groupName);
+
+	GetUIGroup(groupName)->uiList.push_back(std::move(newUIObject));
+}
+
+void UIManager::DeleteUI(const std::string& groupName) {
+
+	UIGroup* group = GetUIGroup(groupName);
+
+	for (auto it = uiGroups_.begin(); it != uiGroups_.end(); it++) {
+
+		if (it->get()->name == groupName) {
+
+			for (auto& ui : it->get()->uiList) {
+
+				ui.object.reset();
+			}
+
+			it = uiGroups_.erase(it);
+
+			return;
+		}
+	}
+
+}
+
+void UIManager::Edit() {
+
+	for (auto& uiGroup : uiGroups_) {
+		for (auto& ui : uiGroup->uiList) {
+
+			Vector2 uiMin = { ui.object->GetTranslate().x - ui.object->GetSize().x / 2.0f, ui.object->GetTranslate().y - ui.object->GetSize().y / 2.0f };
+			Vector2 uiMax = { ui.object->GetTranslate().x + ui.object->GetSize().x / 2.0f, ui.object->GetTranslate().y + ui.object->GetSize().y / 2.0f };
+
+			Vector2 mousePos = Input::GetInstance()->GetMousePos();
+
+			EditUIPosition(ui.object.get(), uiMin, uiMax, mousePos);
+
+			EditUISize(ui.object.get(), uiMin, uiMax, mousePos);
+		}
+	}
+}
+
+void UIManager::EditUIPosition(Object2D* uiObject, Vector2 uiMin, Vector2 uiMax, Vector2 mousePos) {
+
+	// 左クリックの押下状態を取得
+	bool isLeftDown = Input::GetInstance()->IsPushMouseButton(0);
+
+	if (!isLeftDown) {
+
+		// ドラッグ終了
+		activeRepositioningUI_ = nullptr;
+
+		return;
+	}
+
+	// ドラッグを開始する条件：現在無効で、マウスが範囲内かつ左ボタンが押されている
+	if (activeRepositioningUI_ == nullptr) {
+
+		// マウスがUI内にあるかどうか（開始判定にのみ使用）
+		bool inHitZone = CheckInZone(uiMin, uiMax, mousePos);
+
+		if (inHitZone && isLeftDown) {
+
+			// ドラッグを開始
+			activeRepositioningUI_ = uiObject;
+		}
+	}
+
+	// ここからは activeRepositioningUI_ == uiObject のときに処理される
+	if (activeRepositioningUI_ == uiObject) {
+
+		// UIの座標をマウス座標に合わせる（元実装と同様に中央を合わせる）
+		uiObject->SetTranslate({ mousePos.x, mousePos.y });
+	}
+}
+
+void UIManager::EditUISize(Object2D* uiObject, Vector2 uiMin, Vector2 uiMax, Vector2 mousePos) {
+
+	// 右クリックの押下状態（押されている間 true とする既存仕様を仮定）
+	bool isRightDown = Input::GetInstance()->IsPushMouseButton(1);
+
+	if (!isRightDown) {
+
+		// ドラッグ終了
+		activeResizingUI_ = nullptr;
+
+		return;
+	}
+
+	// マウスがリサイズ判定領域内かどうか（開始判定にのみ使う）
+	bool inResizeZone = CheckInZone(uiMin, uiMax, mousePos);
+
+	if (activeResizingUI_ == nullptr) {
+
+		if (inResizeZone && isRightDown) {
+
+			// ドラッグ開始
+			activeResizingUI_ = uiObject;
+		}
+	}
+
+	// リサイズ中の処理（対象が一致する場合のみ）
+	if (activeResizingUI_ == uiObject) {
+
+		Vector2 texSize = activeResizingUI_->GetSprite()->GetTextureSize();
+
+		// マウス位置とUI中心の相対距離を、初期サイズの半分で正規化
+		Vector2 sizeRatio = { std::abs(mousePos.x - activeResizingUI_->GetTranslate().x) / (texSize.x / 2.0f),
+						std::abs(mousePos.y - activeResizingUI_->GetTranslate().y) / (texSize.y / 2.0f) };
+
+		// スケール係数（初期距離に対する比）
+		float scaleRatio = (sizeRatio.x + sizeRatio.y) * 0.5f;
+
+		// 新しいサイズを計算（アスペクト比を変えない：両軸に同じ係数を適用）
+		Vector2 newSize = { texSize.x * scaleRatio, texSize.y * scaleRatio };
+
+		// サイズの下限を確保（幅・高さともに小さすぎないように）
+		const float minSize = 1.0f;
+		if (newSize.x < minSize) {
+			newSize.x = minSize;
+		}
+		if (newSize.y < minSize) {
+			newSize.y = minSize;
+		}
+
+		// サイズを設定（translate は変更しない）
+		activeResizingUI_->SetSize(newSize);
+	}
+}
+
+bool UIManager::CheckInZone(Vector2 min, Vector2 max, Vector2 mousePos) {
+
+	if (mousePos.x >= min.x && mousePos.x <= max.x &&
+		mousePos.y >= min.y && mousePos.y <= max.y) {
+		return true;
+	}
+
+	return false;
+}
+
+void UIManager::EnableEditMode(bool flag) {
+
+	for (auto& uiGroup : uiGroups_) {
+		for (auto& ui : uiGroup->uiList) {
+
+			ui.object->GetSprite()->SetEnableEdit(flag);
+		}
+	}
+}
+
+void UIManager::CreateUIGroup(const std::string& groupName) {
+
+	if (GetUIGroup(groupName) != nullptr) {
+		return;
+	}
+
+	std::unique_ptr<UIGroup> newGroup = std::make_unique<UIGroup>();
+
+	newGroup->name = groupName;
+
+	uiGroups_.push_back(std::move(newGroup));
+}
+
+void UIManager::LoadUI(const std::string& fileName) {
+
+	nlohmann::json jsonData;
+
+	std::string directoryPath = directoryPath_ + fileName + "/";
+
+	std::string filePath = directoryPath + fileName + ".json";
+
+	std::ifstream file(filePath);
+
+	if (!file.is_open()) {
+		std::string message = "Failed open data file for read.";
+		MessageBoxA(nullptr, message.c_str(), "EmitterGroup", 0);
+		assert(0);
+		return;
+	}
+
+	file >> jsonData;
+
+	file.close();
+
+	for (auto& [groupName, groupData] : jsonData.items()) {
+
+		CreateUIGroup(groupName);
+
+		for (auto& [uiName, uiData] : groupData.items()) {
+
+			std::string uiFileName;
+
+			uiFileName = uiData["fileName"].get<std::string>();
+
+			CreateUI(groupName, uiName, uiFileName);
+
+			Object2D* ui = GetUIObject(groupName, uiName);
+
+			Vector2 position{
+				uiData["position"][0].get<float>(),
+				uiData["position"][1].get<float>()
+			};
+
+			float rotate = uiData["rotate"].get<float>();
+
+			Vector2 size{
+				uiData["size"][0].get<float>(),
+				uiData["size"][1].get<float>()
+			};
+
+			Vector4 color{
+				uiData["color"][0].get<float>(),
+				uiData["color"][1].get<float>(),
+				uiData["color"][2].get<float>(),
+				uiData["color"][3].get<float>()
+			};
+
+			ui->SetTranslate(position);
+			ui->SetRotate(rotate);
+			ui->SetSize(size);
+			ui->GetSprite()->SetColor(color);
+		}
+	}
+}
+
+void UIManager::SaveUIState(const std::string& fileName) {
+
+	nlohmann::json jsonData;
+
+	std::string directoryPath = directoryPath_ + fileName + "/";
+
+	std::string filePath = directoryPath + fileName + ".json";
+
+	for (auto& uiGroup : uiGroups_) {
+		for (auto& ui : uiGroup->uiList) {
+
+			std::string groupName = uiGroup->name;
+			std::string uiName = ui.name;
+
+			Vector2 uiPosition = ui.object->GetTranslate();
+			float uiRotate = ui.object->GetRotate();
+			Vector2 uiSize = ui.object->GetSize();
+			Vector4 uiColor = ui.object->GetSprite()->GetColor();
+			std::string uiFileName = ui.object->GetSprite()->GetFileName();
+
+			jsonData[groupName][uiName] = {
+				{ "position", {uiPosition.x,uiPosition.y}},
+				{ "rotate",    uiRotate},
+				{ "size",     {uiSize.x, uiSize.y}},
+				{ "color",    {uiColor.x, uiColor.y, uiColor.z, uiColor.w}},
+				{ "fileName",  uiFileName}
+			};
+		}
+	}
+
+	std::filesystem::path dir(directoryPath);
+
+	if (!std::filesystem::exists(directoryPath)) {
+
+		std::filesystem::create_directory(directoryPath);
+	}
+
+	std::ofstream file;
+
+	file.open(filePath);
+
+	if (file.fail()) {
+		std::string message = "Failed open data file for write.";
+		MessageBoxA(nullptr, message.c_str(), "UIManager", 0);
+		assert(0);
+		return;
+	}
+
+	file << jsonData.dump(4);
+
+	file.close();
+}
+
+UIManager::UIGroup* UIManager::GetUIGroup(const std::string groupName) {
+
+	for (auto& uiGroup : uiGroups_) {
+		if (uiGroup->name.compare(groupName) == 0) {
+			return uiGroup.get();
+		}
+	}
+
+	return nullptr;
+}
+
+Object2D* UIManager::GetUIObject(const std::string groupName, const std::string uiName) {
+
+	UIGroup* uiGroup = GetUIGroup(groupName);
+
+	for (auto& ui : uiGroup->uiList) {
+		if (ui.name.compare(uiName) == 0) {
+			return ui.object.get();
+		}
+	}
+
+	return nullptr;
+}
+
+
+============================================================
+File Path: Application/UIManager.h
+============================================================
+#pragma once
+
+#include <2d/Object/Object2D.h>
+#include <Math/WorldTransform.h>
+
+#include <vector>
+#include <string>
+#include <memory>
+#include <map>
+
+class UIManager {
+
+public:
+
+	struct UIObject {
+		std::string name;
+		std::unique_ptr<Object2D> object;
+	};
+
+	struct UIGroup {
+		std::string name;
+		std::vector<UIObject> uiList;
+		WorldTransform transform;
+	};
+
+public:
+
+	static UIManager* GetInstance();
+
+	void Initialize();
+
+	void Update();
+
+	void Draw();
+
+	void ImGui();
+
+	void CreateUI(const std::string& groupName, const std::string uiName, const std::string& spriteName);
+
+	void LoadUI(const std::string& fileName);
+
+	void DeleteUI(const std::string& groupName);
+
+private:
+
+	void Edit();
+
+	void EditUIPosition(Object2D* uiObject, Vector2 uiMin, Vector2 uiMax, Vector2 mousePos);
+
+	void EditUISize(Object2D* uiObject, Vector2 uiMin, Vector2 uiMax, Vector2 mousePos);
+
+	bool CheckInZone(Vector2 uiMin, Vector2 uiMax, Vector2 mousePos);
+
+	void EnableEditMode(bool flag);
+
+	void CreateUIGroup(const std::string& groupName);
+
+	void SaveUIState(const std::string& fileName);
+
+private:
+
+	std::string directoryPath_;
+
+	std::vector<std::unique_ptr<UIGroup>> uiGroups_;
+
+	//座標編集中のUIオブジェクト
+	Object2D* activeRepositioningUI_ = nullptr;
+
+	Object2D* activeResizingUI_ = nullptr;
+
+	float resizeMargin_;
+
+	bool isEditMode_;
+
+public:
+
+	UIGroup* GetUIGroup(const std::string groupName);
+
+	Object2D* GetUIObject(const std::string groupName, const std::string uiName);
+
+};
+
+============================================================
 File Path: Engine/2d/Object/Object2D.cpp
 ============================================================
 #include "Object2D.h"
@@ -9858,37 +10135,17 @@ public:
 	/// <summary>
 	/// Object2Dの初期化を行います。
 	/// </summary>
-	/// <remarks>
-	/// - Object2DCommonのインスタンスを取得
-	/// - 座標変換用リソース(WVPResource)の作成とマッピング
-	/// - WVPデータを単位行列で初期化
-	/// - 座標(translate)、サイズ(size)、回転角(rotate)を初期値に設定
-	/// </remarks>
 	void Initialize();
 
 	/// <summary>
 	/// Object2Dのスプライトおよび座標変換行列(WVP)を更新します。
 	/// </summary>
-	/// <remarks>
-	/// - 登録されているスプライト(sprite_)のUpdate()を呼び出す
-	/// - 座標変換行列データの更新
-	/// </remarks>
 	void Update();
 
 	/// <summary>
 	/// Object2Dを指定したレイヤーに描画登録します。
 	/// </summary>
 	/// <param name="layer"> 描画するレイヤー </param>
-	/// <remarks>
-	/// - 描画用の関数をラムダ式で作成
-	///   - Object2DCommonの共通描画設定を適用
-	///   - 座標変換行列データの設定
-	///   - 割り当てられたスプライトを描画
-	/// - 作成した描画関数をRendererにAddDrawで登録
-	///
-	/// layerには描画順序を示すLayerTypeを指定します。
-	/// 描画登録のみを行い、実際の描画はRendererによってフレーム末に行われます。
-	/// </remarks>
 	void Draw(LayerType layer);
 
 	/// <summary>
@@ -9973,14 +10230,6 @@ public:
 	/// 名前で指定したスプライトをObject2Dに設定します。
 	/// </summary>
 	/// <param name="spriteName">割り当てるスプライトの登録名</param>
-	/// <remarks>
-	/// spriteNameで指定したスプライトをSpriteManagerから検索し、
-	/// 見つかった場合はObject2Dのsprite_に設定します。
-	/// 設定後、Object2Dのサイズ(size_)をスプライトのサイズに合わせます。
-	///
-	/// spriteNameに対応するスプライトが存在しない場合、
-	/// sprite_はnullptrになりますので注意してください。
-	/// </remarks>
 	void SetSprite(const std::string& spriteName);
 };
 
@@ -10544,7 +10793,10 @@ void Sprite::Initialize(const std::string& fileName) {
 	//マテリアルデータの設定
 	materialData_->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 	materialData_->enableLighting = false;
+	materialData_->enableEdit = false;
 	materialData_->uvTransform = MakeIdentity4x4();
+	materialData_->ratio = 1.0f;
+	materialData_->brightness = 0.1f;
 
 	/// === テクスチャの読み込み === ///
 
@@ -10767,8 +11019,12 @@ private:
 	struct Material {
 		Vector4 color;
 		int32_t enableLighting;
-		float padding[3];
+		int32_t enableEdit;
+		float padding[2];
 		Matrix4x4 uvTransform;
+		float ratio;
+		float brightness;
+		float padding2[2];
 	};
 
 	///-------------------------------------------/// 
@@ -10949,6 +11205,10 @@ public:
 	/// <returns>色</returns>
 	const Vector4& GetColor() const { return materialData_->color; }
 
+	const float& GetRatio() const { return materialData_->ratio; }
+
+	const float& GetBrightness() const { return materialData_->brightness; }
+
 	/// <summary>
 	/// アンカーポイントを取得
 	/// </summary>
@@ -11002,6 +11262,12 @@ public:
 	/// </summary>
 	/// <param name="color">色</param>
 	void SetColor(const Vector4& color) { materialData_->color = color; }
+
+	void SetRatio(const float ratio) { materialData_->ratio = ratio; }
+
+	void SetBrightness(const float brightness) { materialData_->brightness = brightness; }
+
+	void SetEnableEdit(const bool enableEdit) { materialData_->enableEdit = enableEdit ? 1 : 0; }
 
 	/// <summary>
 	/// アンカーポイントの設定
@@ -11126,6 +11392,9 @@ File Path: Engine/2d/Sprite/SpriteManager.cpp
 
 #include "2d/Sprite/SpriteCommon.h"
 
+#include "fstream"
+#include "filesystem"
+
 ///=====================================================/// 
 /// SpriteManagerのシングルトンインスタンスを取得
 ///=====================================================///
@@ -11141,12 +11410,21 @@ void SpriteManager::Initialize() {
 
 	//スプライト基底のインスタンスを取得
 	spriteCommon_ = SpriteCommon::GetInstance();
+
+	//スプライトデータを読み込む
+	for (const auto& entry : std::filesystem::directory_iterator("Resource/Sprite")) {
+
+		if (entry.is_directory()) {
+
+			LoadSprite(entry.path().filename().string());
+		}
+	}
 }
 
 ///=====================================================/// 
 /// 指定した名前のスプライトを検索し、未登録であれば読み込む
 ///=====================================================///
-void SpriteManager::LoadSprite(const std::string& spriteName,const std::string& spriteFileName) {
+void SpriteManager::LoadSprite(const std::string& spriteName) {
 
 	//引数の名前のスプライトが登録されているかを確認
 	if (sprites_.contains(spriteName)) {
@@ -11159,7 +11437,7 @@ void SpriteManager::LoadSprite(const std::string& spriteName,const std::string& 
 	std::unique_ptr<Sprite> newSprite = std::make_unique<Sprite>();
 
 	//スプライトを読み込む
-	newSprite->Initialize(spriteFileName);
+	newSprite->Initialize(spriteName);
 
 	//リストに登録
 	sprites_.insert(std::make_pair(spriteName, std::move(newSprite)));
@@ -11242,7 +11520,7 @@ public:
 	/// - 指定されたファイルからスプライトを初期化
 	/// - スプライト名と生成したスプライトをリストに登録
 	/// </remarks>
-	void LoadSprite(const std::string& spriteName, const std::string& spriteFileName);
+	void LoadSprite(const std::string& spriteName);
 
 	/// <summary>
 	/// 指定した名前のスプライトを検索して新しいインスタンスを生成します。
@@ -13369,20 +13647,20 @@ void DirectionalLight::SendDataForGPU() {
 /// ImGuiの表示
 ///=====================================================///
 void DirectionalLight::DisplayImGui() {
-
-#ifdef _USE_IMGUI
-
-	ImGui::Begin("DirectionalLight");
-
-	ImGui::ColorEdit4("Color", &lightData_->color.x);
-
-	ImGui::DragFloat3("Direction", &lightData_->direction.x, 0.01f);
-
-	ImGui::DragFloat("Intensity", &lightData_->intensity, 0.01f);
-
-	ImGui::End();
-
-#endif // _USE_IMGUI
+//
+//#ifdef _USE_IMGUI
+//
+//	ImGui::Begin("DirectionalLight");
+//
+//	ImGui::ColorEdit4("Color", &lightData_->color.x);
+//
+//	ImGui::DragFloat3("Direction", &lightData_->direction.x, 0.01f);
+//
+//	ImGui::DragFloat("Intensity", &lightData_->intensity, 0.01f);
+//
+//	ImGui::End();
+//
+//#endif // _USE_IMGUI
 
 }
 
@@ -13565,24 +13843,24 @@ void PointLight::SendDataForGPU() {
 /// ImGuiの表示
 ///=====================================================///
 void PointLight::DisplayImGui() {
-
-#ifdef _USE_IMGUI
-
-	ImGui::Begin("PointLight");
-
-	ImGui::ColorEdit4("Color", &lightData_->color.x);
-
-	ImGui::DragFloat3("Position", &lightData_->position.x, 0.1f);
-
-	ImGui::DragFloat("Intensity", &lightData_->intensity, 0.01f);
-
-	ImGui::DragFloat("Radius", &lightData_->radius, 0.01f);
-
-	ImGui::DragFloat("Decay", &lightData_->decay, 0.01f);
-
-	ImGui::End();
-
-#endif // _USE_IMGUI
+//
+//#ifdef _USE_IMGUI
+//
+//	ImGui::Begin("PointLight");
+//
+//	ImGui::ColorEdit4("Color", &lightData_->color.x);
+//
+//	ImGui::DragFloat3("Position", &lightData_->position.x, 0.1f);
+//
+//	ImGui::DragFloat("Intensity", &lightData_->intensity, 0.01f);
+//
+//	ImGui::DragFloat("Radius", &lightData_->radius, 0.01f);
+//
+//	ImGui::DragFloat("Decay", &lightData_->decay, 0.01f);
+//
+//	ImGui::End();
+//
+//#endif // _USE_IMGUI
 
 }
 
@@ -13800,30 +14078,30 @@ void SpotLight::SendDataForGPU() {
 /// ImGuiの表示
 ///=====================================================///
 void SpotLight::DisplayImGui() {
-
-#ifdef _USE_IMGUI
-
-	ImGui::Begin("SpotLight");
-
-	ImGui::ColorEdit4("Color", &lightData_->color.x);
-
-	ImGui::DragFloat3("Position", &lightData_->position.x, 0.1f);
-
-	ImGui::DragFloat("Intensity", &lightData_->intensity, 0.01f);
-
-	ImGui::DragFloat3("Direction", &lightData_->direction.x, 0.01f);
-
-	ImGui::DragFloat("Distance", &lightData_->distance, 0.01f);
-
-	ImGui::DragFloat("Decay", &lightData_->decay, 0.01f);
-
-	ImGui::DragFloat("Angle", &lightData_->diffusionAngle, 0.01f);
-
-	ImGui::DragFloat("FallOffStart", &lightData_->diffusionRate, 0.01f);
-
-	ImGui::End();
-
-#endif // _USE_IMGUI
+//
+//#ifdef _USE_IMGUI
+//
+//	ImGui::Begin("SpotLight");
+//
+//	ImGui::ColorEdit4("Color", &lightData_->color.x);
+//
+//	ImGui::DragFloat3("Position", &lightData_->position.x, 0.1f);
+//
+//	ImGui::DragFloat("Intensity", &lightData_->intensity, 0.01f);
+//
+//	ImGui::DragFloat3("Direction", &lightData_->direction.x, 0.01f);
+//
+//	ImGui::DragFloat("Distance", &lightData_->distance, 0.01f);
+//
+//	ImGui::DragFloat("Decay", &lightData_->decay, 0.01f);
+//
+//	ImGui::DragFloat("Angle", &lightData_->diffusionAngle, 0.01f);
+//
+//	ImGui::DragFloat("FallOffStart", &lightData_->diffusionRate, 0.01f);
+//
+//	ImGui::End();
+//
+//#endif // _USE_IMGUI
 
 }
 
@@ -29993,6 +30271,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Application\ObjectManager.cpp" />
     <ClCompile Include="Application\Player\State\AttackState\TankAttackState.cpp" />
     <ClCompile Include="Application\Player\State\MovementState\TankMoveState.cpp" />
+    <ClCompile Include="Application\UIManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application\LevelEditor\LevelDataLoader.h" />
@@ -30095,6 +30374,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Application\Player\State\MovementState\MovementState.h" />
     <ClInclude Include="Application\Player\State\MovementState\JetMoveState.h" />
     <ClInclude Include="Application\Player\State\MovementState\TankMoveState.h" />
+    <ClInclude Include="Application\UIManager.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Application\LevelEditor\Python\add_collider.py">
@@ -30597,6 +30877,7 @@ File Path: Engine.vcxproj.filters
     <ClCompile Include="Application\Enemy\State\EnemyAttackState.cpp" />
     <ClCompile Include="Application\Enemy\State\EnemyExitState.cpp" />
     <ClCompile Include="Application\Enemy\State\EnemyDeadState.cpp" />
+    <ClCompile Include="Application\UIManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application\Bullet\BulletBase.h">
@@ -30867,6 +31148,7 @@ File Path: Engine.vcxproj.filters
     <ClInclude Include="Application\Enemy\State\EnemyAttackState.h" />
     <ClInclude Include="Application\Enemy\State\EnemyExitState.h" />
     <ClInclude Include="Application\Enemy\State\EnemyDeadState.h" />
+    <ClInclude Include="Application\UIManager.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resource\Shader\DebugObject.hlsli">
@@ -167860,6 +168142,7 @@ File Path: main.cpp
 #include "Base/ImGuiManager.h"
 #include "Base/Renderer.h"
 #include "2d/Sprite/SpriteCommon.h"
+#include "2d/Sprite/SpriteManager.h"
 #include "2d/Object/Object2DCommon.h"
 #include "2d/Sprite/TextureManager.h"
 #include "3d/Object/Object3DCommon.h"
@@ -167870,6 +168153,7 @@ File Path: main.cpp
 #include "3d/Particle/ParticleCommon.h"
 #include "3d/Collider/ColliderManager.h"
 #include "ObjectManager.h"
+#include "UIManager.h"
 
 #include "Scene/SceneManager.h"
 #include "LevelEditor/LevelDataLoader.h"
@@ -167966,6 +168250,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	ObjectManager* objectManager = ObjectManager::GetInstance();
 	objectManager->Initialize();
 
+	//スプライトマネージャー
+	SpriteManager* spriteManager = SpriteManager::GetInstance();
+	spriteManager->Initialize();
+
+	//UIマネージャー
+	UIManager* uiManager = UIManager::GetInstance();
+	uiManager->Initialize();
+
 	//コライダーマネージャー
 	ColliderManager* colliderManager = ColliderManager::GetInstance();
 	colliderManager->Initialize();
@@ -168016,6 +168308,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 #ifdef _USE_IMGUI
 
+		//UIマネージャーのImGui
+		uiManager->ImGui();
+
 		//シーンのImGui
 		sceneManager->ImGui();
 
@@ -168029,6 +168324,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		//オブジェクトマネージャーの更新
 		objectManager->Update();
+
+		//UIマネージャーの更新
+		uiManager->Update();
 
 		//コライダーマネージャーの更新
 		colliderManager->Update();
@@ -168062,6 +168360,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		//オブジェクトマネージャーの描画
 		objectManager->Draw();
+
+		//uiマネージャーの描画
+		uiManager->Draw();
 
 		//シーンの描画
 		sceneManager->Draw();
