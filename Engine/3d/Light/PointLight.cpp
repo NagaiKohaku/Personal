@@ -65,23 +65,23 @@ void PointLight::SendDataForGPU() {
 /// ImGuiの表示
 ///=====================================================///
 void PointLight::DisplayImGui() {
-
-#ifdef _USE_IMGUI
-
-	ImGui::Begin("PointLight");
-
-	ImGui::ColorEdit4("Color", &lightData_->color.x);
-
-	ImGui::DragFloat3("Position", &lightData_->position.x, 0.1f);
-
-	ImGui::DragFloat("Intensity", &lightData_->intensity, 0.01f);
-
-	ImGui::DragFloat("Radius", &lightData_->radius, 0.01f);
-
-	ImGui::DragFloat("Decay", &lightData_->decay, 0.01f);
-
-	ImGui::End();
-
-#endif // _USE_IMGUI
+//
+//#ifdef _USE_IMGUI
+//
+//	ImGui::Begin("PointLight");
+//
+//	ImGui::ColorEdit4("Color", &lightData_->color.x);
+//
+//	ImGui::DragFloat3("Position", &lightData_->position.x, 0.1f);
+//
+//	ImGui::DragFloat("Intensity", &lightData_->intensity, 0.01f);
+//
+//	ImGui::DragFloat("Radius", &lightData_->radius, 0.01f);
+//
+//	ImGui::DragFloat("Decay", &lightData_->decay, 0.01f);
+//
+//	ImGui::End();
+//
+//#endif // _USE_IMGUI
 
 }

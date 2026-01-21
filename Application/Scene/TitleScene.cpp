@@ -10,6 +10,8 @@
 #include <Fade/Fade.h>
 #include <Shake/Shake.h>
 
+#include <UIManager.h>
+
 #include <Base/Input.h>
 
 #include <Math/Easing.h>
@@ -59,63 +61,19 @@ void TitleScene::Initialize() {
 
 	/// === 2Dオブジェクトの設定 === ///
 
-	//タイトルスプライトの生成
-	titleSprite_ = std::make_unique<Object2D>();
+	//UIManager::GetInstance()->CreateUI("Title", "Title", "RoadflightTitle");
 
-	titleSprite_->Initialize();
+	//UIManager::GetInstance()->CreateUI("Title", "SpaceButton", "GameOverSpace");
 
-	titleSprite_->SetSprite("RoadflightTitle");
+	//UIManager::GetInstance()->CreateUI("Title", "LeftArrow", "GameOverArrow");
 
-	titleSprite_->GetSprite()->SetAnchorPoint({ 0.5f,0.5f });
+	//UIManager::GetInstance()->CreateUI("Title", "RIghtArrow", "GameOverArrow");
 
-	titleSprite_->GetSprite()->SetColor({ 1.0f,1.0f,1.0f,1.0f });
+	UIManager::GetInstance()->LoadUI("TitleScene");
 
-	titleSprite_->SetTranslate({ 640.0f,100.0f });
+	spaceKeyPos_ = UIManager::GetInstance()->GetUIObject("Title", "SpaceButton")->GetTranslate();
 
-	//スペースキースプライトの生成
-	spaceKeySprite_ = std::make_unique<Object2D>();
-
-	spaceKeySprite_->Initialize();
-
-	spaceKeySprite_->SetSprite("GameOverSpace");
-
-	spaceKeySprite_->GetSprite()->SetAnchorPoint({ 0.5f,0.5f });
-
-	spaceKeySprite_->GetSprite()->SetColor({ 1.0f,1.0f,1.0f,1.0f });
-
-	spaceKeySprite_->SetTranslate({ 640.0f,600.0f });
-
-	spaceKeyPos_ = spaceKeySprite_->GetTranslate();
-
-	spaceKeySize_ = spaceKeySprite_->GetSize();
-
-	//左矢印スプライトの生成
-	leftArrowSprite_ = std::make_unique<Object2D>();
-
-	leftArrowSprite_->Initialize();
-
-	leftArrowSprite_->SetSprite("GameOverArrow");
-
-	leftArrowSprite_->GetSprite()->SetAnchorPoint({ 0.5f,0.5f });
-
-	leftArrowSprite_->GetSprite()->SetColor({ 1.0f,1.0f,1.0f,1.0f });
-
-	leftArrowSprite_->SetTranslate({ spaceKeyPos_.x - spaceKeySize_.x / 2.0f - 64.0f,spaceKeyPos_.y });
-
-	//右矢印スプライトの生成
-	rightArrowSprite_ = std::make_unique<Object2D>();
-
-	rightArrowSprite_->Initialize();
-
-	rightArrowSprite_->SetSprite("GameOverArrow");
-
-	rightArrowSprite_->GetSprite()->SetIsFlipX(true);
-
-	rightArrowSprite_->GetSprite()->SetAnchorPoint({ 0.5f,0.5f });
-
-	rightArrowSprite_->GetSprite()->SetColor({ 1.0f,1.0f,1.0f,1.0f });
-
-	rightArrowSprite_->SetTranslate({ spaceKeyPos_.x + spaceKeySize_.x / 2.0f + 64.0f,spaceKeyPos_.y });
+	spaceKeySize_ = UIManager::GetInstance()->GetUIObject("Title", "SpaceButton")->GetSize();
 
 	/// === エミッターの生成 === ///
 
@@ -186,6 +144,8 @@ void TitleScene::Finalize() {
 
 	//オブジェクトの破棄
 	ObjectManager::GetInstance()->ClearAll();
+
+	UIManager::GetInstance()->DeleteUI("Title");
 
 	//フェードのカメラとプレイヤーを解除
 	Fade::GetInstance()->SetCamera(nullptr);
@@ -265,9 +225,9 @@ void TitleScene::Update() {
 
 	float lerpNum = EaseOut(0.0f, arrowLength_, arrowTimer_ / 1.0f, 2.0f);
 
-	leftArrowSprite_->SetTranslate({ spaceKeyPos_.x - spaceKeySize_.x / 2.0f - 64.0f - lerpNum,spaceKeyPos_.y });
+	UIManager::GetInstance()->GetUIObject("Title", "LeftArrow")->SetTranslate({ spaceKeyPos_.x - spaceKeySize_.x / 2.0f - 64.0f - lerpNum,spaceKeyPos_.y });
 
-	rightArrowSprite_->SetTranslate({ spaceKeyPos_.x + spaceKeySize_.x / 2.0f + 64.0f + lerpNum,spaceKeyPos_.y });
+	UIManager::GetInstance()->GetUIObject("Title", "RightArrow")->SetTranslate({ spaceKeyPos_.x + spaceKeySize_.x / 2.0f + 64.0f + lerpNum,spaceKeyPos_.y });
 
 	//カメラの更新
 	camera_->Update();
@@ -283,18 +243,6 @@ void TitleScene::Update() {
 
 	//衝撃波エミッターの更新
 	shockWaveRightEmitter_->Update();
-
-	//タイトルスプライトの更新
-	titleSprite_->Update();
-
-	//スペースキースプライトの更新
-	spaceKeySprite_->Update();
-
-	//左矢印スプライトの更新
-	leftArrowSprite_->Update();
-
-	//右矢印スプライトの更新
-	rightArrowSprite_->Update();
 
 	if (isFade_) {
 
@@ -325,17 +273,6 @@ void TitleScene::Draw() {
 	//衝撃波エミッターの描画(右)
 	shockWaveRightEmitter_->Draw();
 
-	//タイトルスプライトの描画
-	titleSprite_->Draw(LayerType::UI);
-
-	//スペースキースプライトの描画
-	spaceKeySprite_->Draw(LayerType::UI);
-
-	//左矢印スプライトの描画
-	leftArrowSprite_->Draw(LayerType::UI);
-
-	//右矢印スプライトの描画
-	rightArrowSprite_->Draw(LayerType::UI);
 }
 
 ///=====================================================/// 
@@ -344,16 +281,6 @@ void TitleScene::Draw() {
 void TitleScene::ImGui() {
 
 #ifdef _USE_IMGUI
-
-	ImGui::Begin("TitleScene");
-
-	Vector4 color = titleSprite_->GetSprite()->GetColor();
-
-	ImGui::SliderFloat("alpha", &color.w, 0.0f, 1.0f);
-
-	titleSprite_->GetSprite()->SetColor(color);
-
-	ImGui::End();
 
 #endif // _USE_IMGUI
 
@@ -423,13 +350,13 @@ void TitleScene::Start() {
 	//最初のアニメーションの時はスプライトを一緒にフェードアウトさせる
 	if (animNum_ == 1) {
 
-		titleSprite_->GetSprite()->SetColor({ 1.0f,1.0f,1.0f,Lerp(1.0f,0.0f,t) });
+		UIManager::GetInstance()->GetUIObject("Title", "Title")->GetSprite()->SetColor({ 1.0f,1.0f,1.0f,Lerp(1.0f,0.0f,t) });
 
-		spaceKeySprite_->GetSprite()->SetColor({ 1.0f,1.0f,1.0f,Lerp(1.0f,0.0f,t) });
+		UIManager::GetInstance()->GetUIObject("Title", "SpaceButton")->GetSprite()->SetColor({ 1.0f,1.0f,1.0f,Lerp(1.0f,0.0f,t) });
 
-		leftArrowSprite_->GetSprite()->SetColor({ 1.0f,1.0f,1.0f,Lerp(1.0f,0.0f,t) });
+		UIManager::GetInstance()->GetUIObject("Title", "LeftArrow")->GetSprite()->SetColor({ 1.0f,1.0f,1.0f,Lerp(1.0f,0.0f,t) });
 
-		rightArrowSprite_->GetSprite()->SetColor({ 1.0f,1.0f,1.0f,Lerp(1.0f,0.0f,t) });
+		UIManager::GetInstance()->GetUIObject("Title", "RightArrow")->GetSprite()->SetColor({ 1.0f,1.0f,1.0f,Lerp(1.0f,0.0f,t) });
 	}
 
 	//最後のアニメーションの時はカメラをプレイヤーに向ける

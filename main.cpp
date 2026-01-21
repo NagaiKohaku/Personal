@@ -175,6 +175,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 #ifdef _USE_IMGUI
 
+		//UIマネージャーのImGui
+		uiManager->ImGui();
+
 		//シーンのImGui
 		sceneManager->ImGui();
 

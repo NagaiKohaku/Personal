@@ -40,7 +40,8 @@ private:
 	struct Material {
 		Vector4 color;
 		int32_t enableLighting;
-		float padding[3];
+		int32_t enableEdit;
+		float padding[2];
 		Matrix4x4 uvTransform;
 		float ratio;
 		float brightness;
@@ -286,6 +287,8 @@ public:
 	void SetRatio(const float ratio) { materialData_->ratio = ratio; }
 
 	void SetBrightness(const float brightness) { materialData_->brightness = brightness; }
+
+	void SetEnableEdit(const bool enableEdit) { materialData_->enableEdit = enableEdit ? 1 : 0; }
 
 	/// <summary>
 	/// アンカーポイントの設定

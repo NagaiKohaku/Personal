@@ -85,29 +85,29 @@ void SpotLight::SendDataForGPU() {
 /// ImGuiの表示
 ///=====================================================///
 void SpotLight::DisplayImGui() {
-
-#ifdef _USE_IMGUI
-
-	ImGui::Begin("SpotLight");
-
-	ImGui::ColorEdit4("Color", &lightData_->color.x);
-
-	ImGui::DragFloat3("Position", &lightData_->position.x, 0.1f);
-
-	ImGui::DragFloat("Intensity", &lightData_->intensity, 0.01f);
-
-	ImGui::DragFloat3("Direction", &lightData_->direction.x, 0.01f);
-
-	ImGui::DragFloat("Distance", &lightData_->distance, 0.01f);
-
-	ImGui::DragFloat("Decay", &lightData_->decay, 0.01f);
-
-	ImGui::DragFloat("Angle", &lightData_->diffusionAngle, 0.01f);
-
-	ImGui::DragFloat("FallOffStart", &lightData_->diffusionRate, 0.01f);
-
-	ImGui::End();
-
-#endif // _USE_IMGUI
+//
+//#ifdef _USE_IMGUI
+//
+//	ImGui::Begin("SpotLight");
+//
+//	ImGui::ColorEdit4("Color", &lightData_->color.x);
+//
+//	ImGui::DragFloat3("Position", &lightData_->position.x, 0.1f);
+//
+//	ImGui::DragFloat("Intensity", &lightData_->intensity, 0.01f);
+//
+//	ImGui::DragFloat3("Direction", &lightData_->direction.x, 0.01f);
+//
+//	ImGui::DragFloat("Distance", &lightData_->distance, 0.01f);
+//
+//	ImGui::DragFloat("Decay", &lightData_->decay, 0.01f);
+//
+//	ImGui::DragFloat("Angle", &lightData_->diffusionAngle, 0.01f);
+//
+//	ImGui::DragFloat("FallOffStart", &lightData_->diffusionRate, 0.01f);
+//
+//	ImGui::End();
+//
+//#endif // _USE_IMGUI
 
 }

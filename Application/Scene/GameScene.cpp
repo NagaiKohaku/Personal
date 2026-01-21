@@ -4,6 +4,7 @@
 #include "Base/Input.h"
 #include "Scene/SceneManager.h"
 #include "ObjectManager.h"
+#include "UIManager.h"
 
 #include "2d/Sprite/SpriteManager.h"
 #include "3d/Model/ModelManager.h"
@@ -82,183 +83,11 @@ void GameScene::Initialize() {
 
 	/// === ゲームオーバースプライトの生成 === ///
 
-	//テキストスプライトの生成
-	gameOverSprite_ = std::make_unique<Object2D>();
+	UIManager::GetInstance()->LoadUI("GameScene");
 
-	gameOverSprite_->Initialize();
+	spaceKeyPos_ = UIManager::GetInstance()->GetUIObject("GameOver", "Space")->GetTranslate();
 
-	gameOverSprite_->SetSprite("RoadFlightGameOver");
-
-	gameOverSprite_->GetSprite()->SetAnchorPoint({ 0.5f,0.5f });
-
-	gameOverSprite_->SetTranslate({ 640.0f,100.0f });
-
-	gameOverSprite_->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
-
-	//スペースキースプライトの生成
-	gameOverSpaceSprite_ = std::make_unique<Object2D>();
-
-	gameOverSpaceSprite_->Initialize();
-
-	gameOverSpaceSprite_->SetSprite("GameOverSpace");
-
-	gameOverSpaceSprite_->GetSprite()->SetAnchorPoint({ 0.5f,0.5f });
-
-	gameOverSpaceSprite_->GetSprite()->SetColor({ 1.0f,1.0f,1.0f,1.0f });
-
-	gameOverSpaceSprite_->SetTranslate({ 640.0f,600.0f });
-
-	gameOverSpaceSprite_->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
-
-	spaceKeyPos_ = gameOverSpaceSprite_->GetTranslate();
-
-	spaceKeySize_ = gameOverSpaceSprite_->GetSize();
-
-	//左矢印スプライトの生成
-	gameOverLeftArrowSprite_ = std::make_unique<Object2D>();
-
-	gameOverLeftArrowSprite_->Initialize();
-
-	gameOverLeftArrowSprite_->SetSprite("GameOverArrow");
-
-	gameOverLeftArrowSprite_->GetSprite()->SetAnchorPoint({ 0.5f,0.5f });
-
-	gameOverLeftArrowSprite_->GetSprite()->SetColor({ 1.0f,1.0f,1.0f,1.0f });
-
-	gameOverLeftArrowSprite_->SetTranslate({ spaceKeyPos_.x - spaceKeySize_.x / 2.0f - 64.0f,spaceKeyPos_.y });
-
-	gameOverLeftArrowSprite_->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
-
-	//右矢印スプライトの生成
-	gameOverRightArrowSprite_ = std::make_unique<Object2D>();
-
-	gameOverRightArrowSprite_->Initialize();
-
-	gameOverRightArrowSprite_->SetSprite("GameOverArrow");
-
-	gameOverRightArrowSprite_->GetSprite()->SetIsFlipX(true);
-
-	gameOverRightArrowSprite_->GetSprite()->SetAnchorPoint({ 0.5f,0.5f });
-
-	gameOverRightArrowSprite_->GetSprite()->SetColor({ 1.0f,1.0f,1.0f,1.0f });
-
-	gameOverRightArrowSprite_->SetTranslate({ spaceKeyPos_.x + spaceKeySize_.x / 2.0f + 64.0f,spaceKeyPos_.y });
-
-	gameOverRightArrowSprite_->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
-
-	/// === ゲームクリアスプライトの生成 === ///
-
-	//テキストスプライトの生成
-	gameClearSprite_ = std::make_unique<Object2D>();
-
-	gameClearSprite_->Initialize();
-
-	gameClearSprite_->SetSprite("RoadFlightGameClear");
-
-	gameClearSprite_->GetSprite()->SetAnchorPoint({ 0.5f,0.5f });
-
-	gameClearSprite_->SetTranslate({ 640.0f,100.0f });
-
-	gameClearSprite_->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
-
-	//スペースキースプライトの生成
-	gameClearSpaceSprite_ = std::make_unique<Object2D>();
-
-	gameClearSpaceSprite_->Initialize();
-
-	gameClearSpaceSprite_->SetSprite("GameClearSpace");
-
-	gameClearSpaceSprite_->GetSprite()->SetAnchorPoint({ 0.5f,0.5f });
-
-	gameClearSpaceSprite_->GetSprite()->SetColor({ 1.0f,1.0f,1.0f,1.0f });
-
-	gameClearSpaceSprite_->SetTranslate({ 640.0f,600.0f });
-
-	gameClearSpaceSprite_->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
-
-	//左矢印スプライトの生成
-	gameClearLeftArrowSprite_ = std::make_unique<Object2D>();
-
-	gameClearLeftArrowSprite_->Initialize();
-
-	gameClearLeftArrowSprite_->SetSprite("GameClearArrow");
-
-	gameClearLeftArrowSprite_->GetSprite()->SetAnchorPoint({ 0.5f,0.5f });
-
-	gameClearLeftArrowSprite_->GetSprite()->SetColor({ 1.0f,1.0f,1.0f,1.0f });
-
-	gameClearLeftArrowSprite_->SetTranslate({ spaceKeyPos_.x - spaceKeySize_.x / 2.0f - 64.0f,spaceKeyPos_.y });
-
-	gameClearLeftArrowSprite_->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
-
-	//右矢印スプライトの生成
-	gameClearRightArrowSprite_ = std::make_unique<Object2D>();
-
-	gameClearRightArrowSprite_->Initialize();
-
-	gameClearRightArrowSprite_->SetSprite("GameClearArrow");
-
-	gameClearRightArrowSprite_->GetSprite()->SetIsFlipX(true);
-
-	gameClearRightArrowSprite_->GetSprite()->SetAnchorPoint({ 0.5f,0.5f });
-
-	gameClearRightArrowSprite_->GetSprite()->SetColor({ 1.0f,1.0f,1.0f,1.0f });
-
-	gameClearRightArrowSprite_->SetTranslate({ spaceKeyPos_.x + spaceKeySize_.x / 2.0f + 64.0f,spaceKeyPos_.y });
-
-	gameClearRightArrowSprite_->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
-
-	/// === ヘルプスプライトの生成 === ///
-
-	helpSprite_ = std::make_unique<Object2D>();
-
-	helpSprite_->Initialize();
-
-	helpSprite_->SetSprite("KillToTitle");
-
-	helpSprite_->GetSprite()->SetAnchorPoint({ 0.5f,0.5f });
-
-	helpSprite_->SetTranslate({ 640.0f,360.0f });
-
-	spaceKeySprite_ = std::make_unique<Object2D>();
-
-	spaceKeySprite_->Initialize();
-
-	spaceKeySprite_->SetSprite("SpaceButton");
-
-	spaceKeySprite_->GetSprite()->SetAnchorPoint({ 0.5f,0.5f });
-
-	spaceKeySprite_->SetTranslate({ 50.0f,660.0f });
-
-	moveKeySprite_ = std::make_unique<Object2D>();
-
-	moveKeySprite_->Initialize();
-
-	moveKeySprite_->SetSprite("MoveButton");
-
-	moveKeySprite_->GetSprite()->SetAnchorPoint({ 0.5f,0.5f });
-
-	moveKeySprite_->SetTranslate({ 50.0f,600.0f });
-
-	attackHelpSprite_ = std::make_unique<Object2D>();
-
-	attackHelpSprite_->Initialize();
-
-	attackHelpSprite_->SetSprite("AttackHelp");
-
-	attackHelpSprite_->GetSprite()->SetAnchorPoint({ 0.5f,0.5f });
-
-	attackHelpSprite_->SetTranslate({ 50.0f,660.0f });
-
-	moveHelpSprite_ = std::make_unique<Object2D>();
-
-	moveHelpSprite_->Initialize();
-
-	moveHelpSprite_->SetSprite("MoveHelp");
-
-	moveHelpSprite_->GetSprite()->SetAnchorPoint({ 0.5f,0.5f });
-
-	moveHelpSprite_->SetTranslate({ 50.0f,600.0f });
+	spaceKeySize_ = UIManager::GetInstance()->GetUIObject("GameOver", "Space")->GetSize();
 
 	/// === エミッターの生成 === ///
 
@@ -321,6 +150,12 @@ void GameScene::Initialize() {
 void GameScene::Finalize() {
 
 	ObjectManager::GetInstance()->ClearAll();
+
+	UIManager::GetInstance()->DeleteUI("GameOver");
+
+	UIManager::GetInstance()->DeleteUI("Clear");
+
+	UIManager::GetInstance()->DeleteUI("Help");
 
 	//演出系の参照リセット
 	Fade::GetInstance()->SetCamera(nullptr);
@@ -396,41 +231,23 @@ void GameScene::Update() {
 
 	float lerpNum = EaseOut(0.0f, arrowLength_, arrowTimer_ / 1.0f);
 
-	gameOverLeftArrowSprite_->SetTranslate({ spaceKeyPos_.x - spaceKeySize_.x / 2.0f - 64.0f - lerpNum,spaceKeyPos_.y });
+	UIManager::GetInstance()->GetUIObject("GameOver","LeftArrow")->SetTranslate({spaceKeyPos_.x - spaceKeySize_.x / 2.0f - 64.0f - lerpNum,spaceKeyPos_.y});
 
-	gameOverRightArrowSprite_->SetTranslate({ spaceKeyPos_.x + spaceKeySize_.x / 2.0f + 64.0f + lerpNum,spaceKeyPos_.y });
+	UIManager::GetInstance()->GetUIObject("GameOver", "RightArrow")->SetTranslate({ spaceKeyPos_.x + spaceKeySize_.x / 2.0f + 64.0f + lerpNum,spaceKeyPos_.y });
 
-	gameClearLeftArrowSprite_->SetTranslate({ spaceKeyPos_.x - spaceKeySize_.x / 2.0f - 64.0f - lerpNum,spaceKeyPos_.y });
+	UIManager::GetInstance()->GetUIObject("Clear", "LeftArrow")->SetTranslate({ spaceKeyPos_.x - spaceKeySize_.x / 2.0f - 64.0f - lerpNum,spaceKeyPos_.y });
 
-	gameClearRightArrowSprite_->SetTranslate({ spaceKeyPos_.x + spaceKeySize_.x / 2.0f + 64.0f + lerpNum,spaceKeyPos_.y });
+	UIManager::GetInstance()->GetUIObject("Clear", "LeftArrow")->SetTranslate({ spaceKeyPos_.x + spaceKeySize_.x / 2.0f + 64.0f + lerpNum,spaceKeyPos_.y });
 
-	spaceKeySprite_->GetSprite()->SetRatio(player_->GetAttackTimeRatio());
+	UIManager::GetInstance()->GetUIObject("Help", "SpaceKey")->GetSprite()->SetRatio(player_->GetAttackTimeRatio());
 
 	if (Length(player_->GetInputDirection()) != 0.0f) {
 
-		moveKeySprite_->GetSprite()->SetRatio(1.0f);
+		UIManager::GetInstance()->GetUIObject("Help", "MoveKey")->GetSprite()->SetRatio(1.0f);
 	} else {
 
-		moveKeySprite_->GetSprite()->SetRatio(0.0f);
+		UIManager::GetInstance()->GetUIObject("Help", "MoveKey")->GetSprite()->SetRatio(0.0f);
 	}
-
-	//ゲームオーバースプライトの更新
-	gameOverSprite_->Update();
-	gameOverSpaceSprite_->Update();
-	gameOverLeftArrowSprite_->Update();
-	gameOverRightArrowSprite_->Update();
-
-	//ゲームクリアスプライトの更新
-	gameClearSprite_->Update();
-	gameClearSpaceSprite_->Update();
-	gameClearLeftArrowSprite_->Update();
-	gameClearRightArrowSprite_->Update();
-
-	helpSprite_->Update();
-	spaceKeySprite_->Update();
-	moveKeySprite_->Update();
-	attackHelpSprite_->Update();
-	moveHelpSprite_->Update();
 
 	//右衝撃波エミッターの更新
 	shockWaveRightEmitter_->Update();
@@ -446,13 +263,13 @@ void GameScene::Update() {
 			isGameOver_ = true;
 
 			//スプライトを映す
-			gameOverSprite_->GetSprite()->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+			UIManager::GetInstance()->GetUIObject("GameOver", "Text")->GetSprite()->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
 
-			gameOverSpaceSprite_->GetSprite()->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+			UIManager::GetInstance()->GetUIObject("GameOver", "Space")->GetSprite()->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
 
-			gameOverLeftArrowSprite_->GetSprite()->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+			UIManager::GetInstance()->GetUIObject("GameOver", "LeftArrow")->GetSprite()->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
 
-			gameOverRightArrowSprite_->GetSprite()->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+			UIManager::GetInstance()->GetUIObject("GameOver", "RightArrow")->GetSprite()->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
 
 			//シェイクを始める
 			Shake::GetInstance()->Start(1.0f, 0.5f);
@@ -491,13 +308,13 @@ void GameScene::Update() {
 					player_->SetIsMoveActive(false);
 
 					//スプライトを映す
-					gameClearSprite_->GetSprite()->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+					UIManager::GetInstance()->GetUIObject("Clear", "Text")->GetSprite()->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
 
-					gameClearSpaceSprite_->GetSprite()->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+					UIManager::GetInstance()->GetUIObject("Clear", "Space")->GetSprite()->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
 
-					gameClearLeftArrowSprite_->GetSprite()->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+					UIManager::GetInstance()->GetUIObject("Clear", "LeftArrow")->GetSprite()->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
 
-					gameClearRightArrowSprite_->GetSprite()->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+					UIManager::GetInstance()->GetUIObject("Clear", "RightArrow")->GetSprite()->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
 
 					//シェイクを始める
 					Shake::GetInstance()->Start(1.0f, 1.0f);
@@ -521,13 +338,13 @@ void GameScene::Update() {
 			isClear_ = false;
 
 			//スプライトを再度隠す
-			gameClearSprite_->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
+			UIManager::GetInstance()->GetUIObject("Clear", "Text")->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
 
-			gameClearSpaceSprite_->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
+			UIManager::GetInstance()->GetUIObject("Clear", "Space")->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
 
-			gameClearLeftArrowSprite_->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
+			UIManager::GetInstance()->GetUIObject("Clear", "LeftArrow")->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
 
-			gameClearRightArrowSprite_->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
+			UIManager::GetInstance()->GetUIObject("Clear", "RightArrow")->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
 
 			//画面をフラッシュさせる
 			Flash::GetInstance()->Start(0.5f, Vector4(1.0f, 1.0f, 1.0f, 1.0f));
@@ -535,6 +352,21 @@ void GameScene::Update() {
 			//色を反転させる
 			OffScreen::GetInstance()->SetColorReverseRatio(0.0f);
 		}
+	}
+
+	if (isClear_ || isGameOver_) {
+
+		//スプライトを再度隠す
+		UIManager::GetInstance()->GetUIObject("Help", "Attack")->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
+
+		UIManager::GetInstance()->GetUIObject("Help", "Move")->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
+
+		UIManager::GetInstance()->GetUIObject("Help", "MoveKey")->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
+
+		UIManager::GetInstance()->GetUIObject("Help", "SpaceKey")->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
+
+		UIManager::GetInstance()->GetUIObject("Help", "Target")->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
+
 	}
 
 	//フェードアウトが終わったら
@@ -565,32 +397,11 @@ void GameScene::Draw() {
 	//グラウンドマネージャーの描画
 	groundManager_->Draw();
 
-	if (!isClear_ && !isClearAnim_) {
-
-		helpSprite_->Draw(LayerType::UI);
-		spaceKeySprite_->Draw(LayerType::UI);
-		moveKeySprite_->Draw(LayerType::UI);
-		attackHelpSprite_->Draw(LayerType::UI);
-		moveHelpSprite_->Draw(LayerType::UI);
-	}
-
 	//右衝撃波エミッターの描画
 	shockWaveRightEmitter_->Draw();
 
 	//左衝撃波エミッターの描画
 	shockWaveLeftEmitter_->Draw();
-
-	//ゲームオーバースプライトの更新
-	gameOverSprite_->Draw(LayerType::UI);
-	gameOverSpaceSprite_->Draw(LayerType::UI);
-	gameOverLeftArrowSprite_->Draw(LayerType::UI);
-	gameOverRightArrowSprite_->Draw(LayerType::UI);
-
-	//ゲームクリアスプライトの更新
-	gameClearSprite_->Draw(LayerType::UI);
-	gameClearSpaceSprite_->Draw(LayerType::UI);
-	gameClearLeftArrowSprite_->Draw(LayerType::UI);
-	gameClearRightArrowSprite_->Draw(LayerType::UI);
 
 }
 

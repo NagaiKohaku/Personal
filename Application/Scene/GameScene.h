@@ -119,41 +119,6 @@ private:
 	//SkyBox
 	std::unique_ptr<SkyBox> skyBox_;
 
-	//ゲームオーバースプライト
-	std::unique_ptr<Object2D> gameOverSprite_;
-
-	//ゲームオーバースペーススプライト
-	std::unique_ptr<Object2D> gameOverSpaceSprite_;
-
-	//ゲームオーバー左矢印スプライト
-	std::unique_ptr<Object2D> gameOverLeftArrowSprite_;
-
-	//ゲームオーバー右矢印スプライト
-	std::unique_ptr<Object2D> gameOverRightArrowSprite_;
-
-	//ゲームクリアスプライト
-	std::unique_ptr<Object2D> gameClearSprite_;
-
-	//ゲームクリアスペーススプライト
-	std::unique_ptr<Object2D> gameClearSpaceSprite_;
-
-	//ゲームクリア左矢印スプライト
-	std::unique_ptr<Object2D> gameClearLeftArrowSprite_;
-
-	//ゲームクリア右矢印スプライト
-	std::unique_ptr<Object2D> gameClearRightArrowSprite_;
-
-	//ヘルプスプライト
-	std::unique_ptr<Object2D> helpSprite_;
-
-	std::unique_ptr<Object2D> spaceKeySprite_;
-
-	std::unique_ptr<Object2D> moveKeySprite_;
-
-	std::unique_ptr<Object2D> attackHelpSprite_;
-
-	std::unique_ptr<Object2D> moveHelpSprite_;
-
 	//スペースキースプライトの位置
 	Vector2 spaceKeyPos_;
 
