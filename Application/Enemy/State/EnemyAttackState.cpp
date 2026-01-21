@@ -55,7 +55,7 @@ void EnemyAttackState::Update(Enemy& enemy) {
 		enemy.GetBulletManager()->AddBullet(
 			enemy.GetWorldPos(),
 			Normalize(direction),
-			BulletManager::BULLETTYPE::ENEMY
+			BulletManager::BulletType::ENEMY
 		);
 
 		//攻撃タイマーのリセット

@@ -34,7 +34,7 @@ void Renderer::SwapChainDraw() {
 		//レイヤーに入っている描画コマンドすべてを実行する
 		for (int i = 0; i < drawQueue_[layer].size(); i++) {
 
-			if (layer == LayerType::Debug) {
+			if (layer == LayerType::DEBUG) {
 
 				if (isDebug()) {
 
@@ -65,7 +65,7 @@ void Renderer::OffScreenDraw() {
 		//レイヤーに入っている描画コマンドすべてを実行する
 		for (int i = 0; i < offScreenDrawQueue_[layer].size(); i++) {
 
-			if (layer == LayerType::Debug) {
+			if (layer == LayerType::DEBUG) {
 
 				if (isDebug()) {
 

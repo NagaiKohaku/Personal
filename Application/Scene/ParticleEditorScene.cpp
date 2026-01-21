@@ -140,7 +140,7 @@ void ParticleEditorScene::Draw() {
 	//デバッグラインの描画
 	for (auto& line : lines_) {
 
-		line->Draw(Object);
+		line->Draw(LayerType::OBJECT);
 	}
 }
 

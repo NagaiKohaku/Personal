@@ -227,7 +227,7 @@ void Enemy::Draw() {
 	if (!isInvisible_) {
 
 		//オブジェクトの描画
-		object_->Draw(LayerType::Object);
+		object_->Draw(LayerType::OBJECT);
 	}
 
 	//影オブジェクトの描画

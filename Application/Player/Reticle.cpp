@@ -109,6 +109,6 @@ void Reticle::Draw() {
 	if (isDraw3D_) {
 
 		//3Dオブジェクトの描画
-		object3D_->Draw(LayerType::Object);
+		object3D_->Draw(LayerType::OBJECT);
 	}
 }

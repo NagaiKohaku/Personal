@@ -7,12 +7,6 @@
 /// <summary>
 /// 弾丸の生成・管理・更新・描画を統括する仕組みです。
 /// </summary>
-/// <remarks>
-/// - この仕組みでは複数の種類の弾丸を一括で管理できます。  
-/// - 新しい弾丸を追加する場合は、指定された種類に応じた弾丸オブジェクトを生成し、初期座標と進行方向を設定してリストに登録します。  
-/// - 弾丸オブジェクトの生成は種類によって異なるクラスを生成し、生成後は管理用リストに追加して管理します。  
-/// - 不要になった弾丸はリストから削除され、メモリも解放されます。  
-/// </remarks>
 class BulletManager {
 
 	///-------------------------------------------/// 
@@ -23,7 +17,7 @@ public:
 	/// <summary>
 	/// 弾の種類
 	/// </summary>
-	enum BULLETTYPE {
+	enum class BulletType {
 		TANK, //戦車状態の弾
 		JET,  //戦闘機状態の弾
 		ENEMY //敵の弾
@@ -42,38 +36,22 @@ public:
 	/// <summary>
 	/// 登録されているすべての弾を更新します。
 	/// </summary>
-	/// <remarks>
-	/// - 弾のリストを順にチェックし、死亡している弾はリストから削除します。  
-	/// - 残った弾についてそれぞれ更新処理を行います。  
-	/// </remarks>
 	void Update();
 
 	/// <summary>
 	/// すべての弾の座標情報を更新します。
 	/// </summary>
-	/// <remarks>
-	/// - 弾のリストを順に処理し、各弾の座標更新処理を呼び出します。  
-	/// - 描画やその他の状態更新は行わず、座標情報のみを更新します。  
-	/// </remarks>
 	void TransformUpdate();
 
 	/// <summary>
 	/// 登録されているすべての弾を描画します。
 	/// </summary>
-	/// <remarks>
-	/// - 弾のリストを順に走査し、各弾の描画処理を実行します。  
-	/// </remarks>
 	void Draw();
 
 	/// <summary>
 	/// 新しい弾を生成して管理リストに追加します。
 	/// </summary>
-	/// <remarks>
-	/// - 指定された種類の弾を生成します。  
-	/// - 初期座標と進行方向を設定して弾を初期化します。  
-	/// - 初期化した弾を管理用のリストに追加します。  
-	/// </remarks>
-	void AddBullet(Vector3 pos, Vector3 direction, BULLETTYPE type);
+	void AddBullet(Vector3 pos, Vector3 direction, BulletType type);
 
 	///-------------------------------------------/// 
 	/// クラス内処理関数
@@ -83,19 +61,11 @@ private:
 	/// <summary>
 	/// 指定された種類に応じた弾のインスタンスを生成します。
 	/// </summary>
-	/// <remarks>
-	/// - 弾の種類によって異なるクラスのインスタンスを生成します。  
-	/// - 生成した弾は呼び出し元で管理されます。  
-	/// </remarks>
-	std::unique_ptr<BulletBase> CreateBullet(BULLETTYPE type);
+	std::unique_ptr<BulletBase> CreateBullet(BulletType type);
 
 	/// <summary>
 	/// 削除対象の弾をリストから削除します。
 	/// </summary>
-	/// <remarks>
-	/// - 弾のリストを順に確認し、削除対象の弾を判定します。  
-	/// - 判定された弾はリストから削除され、メモリも解放されます。  
-	/// </remarks>
 	void RemoveBullet();
 
 	///-------------------------------------------/// 

@@ -102,7 +102,7 @@ void EnemyBullet::TransformUpdate() {
 void EnemyBullet::Draw() {
 
 	//オブジェクトの描画
-	object_->Draw(LayerType::Object);
+	object_->Draw(LayerType::OBJECT);
 
 	//コライダーの描画
 	collider_->Draw();

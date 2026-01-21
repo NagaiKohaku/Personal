@@ -49,5 +49,5 @@ void Building::TransformUpdate() {
 void Building::Draw() {
 
 	//建物描画
-	object_->Draw(LayerType::Object);
+	object_->Draw(LayerType::OBJECT);
 }

@@ -28,7 +28,7 @@ void Object2DCommon::Initialize() {
 	CreateGraphicsPipeline();
 
 	//ブレンドモードをノーマル状態に設定
-	blendMode_ = Normal;
+	blendMode_ = BlendType2D::NORMAL;
 }
 
 ///=====================================================/// 
@@ -40,7 +40,7 @@ void Object2DCommon::CommonDrawSetting() {
 	dxCommon_->GetCommandList()->SetGraphicsRootSignature(rootSignature_.Get());
 
 	//PSOを設定
-	dxCommon_->GetCommandList()->SetPipelineState(graphicsPipelineState_[blendMode_].Get());
+	dxCommon_->GetCommandList()->SetPipelineState(graphicsPipelineState_[static_cast<size_t>(blendMode_)].Get());
 
 	//メッシュトポロジーを設定
 	dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);

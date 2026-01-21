@@ -165,11 +165,11 @@ void Player::Update() {
 		if (core_->GetWorldTransform().translate_.y <= 1.0f) {
 
 			//戦車状態に変更
-			moveState_ = TANK;
+			moveState_ = MoveState::TANK;
 		} else {
 
 			//飛行機状態に変更
-			moveState_ = JET;
+			moveState_ = MoveState::JET;
 		}
 
 		//移動
@@ -258,13 +258,13 @@ void Player::Draw() {
 	if (!isDestroy_) {
 
 		//コアオブジェクトの描画
-		core_->Draw(LayerType::Object);
+		core_->Draw(LayerType::OBJECT);
 
 		//右ウィングの描画
-		rightWing_->Draw(LayerType::Object);
+		rightWing_->Draw(LayerType::OBJECT);
 
 		//左ウィングの描画
-		leftWing_->Draw(LayerType::Object);
+		leftWing_->Draw(LayerType::OBJECT);
 
 		//影の描画
 		shadow_->Draw();
@@ -329,7 +329,7 @@ void Player::JetAttack() {
 	bulletManager_->AddBullet(
 		core_->GetWorldTransform().translate_,
 		Normalize(direction),
-		BulletManager::BULLETTYPE::JET
+		BulletManager::BulletType::JET
 	);
 
 }
@@ -351,7 +351,7 @@ void Player::TankAttack() {
 		bulletManager_->AddBullet(
 			core_->GetWorldTransform().translate_,
 			Normalize(direction),
-			BulletManager::BULLETTYPE::TANK
+			BulletManager::BulletType::TANK
 		);
 	}
 

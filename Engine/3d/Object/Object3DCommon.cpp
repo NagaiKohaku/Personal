@@ -63,7 +63,7 @@ void Object3DCommon::Initialize() {
 	cameraForGpuData->worldPosition = Vector3(0.0f, 0.0f, 0.0f);
 
 	//ブレンドモードをNormalに設定
-	blendMode_ = Normal;
+	blendMode_ = BlendType3D::NORMAL;
 
 	textureCubeFilePath_ = "Resource/Texture/CubeTexture/Transparent.png";
 
@@ -107,7 +107,7 @@ void Object3DCommon::CommonDrawSetting() {
 	dxCommon_->GetCommandList()->SetGraphicsRootSignature(rootSignature_.Get());
 
 	//グラフィックパイプラインを設定
-	dxCommon_->GetCommandList()->SetPipelineState(graphicsPipelineState_[blendMode_].Get());
+	dxCommon_->GetCommandList()->SetPipelineState(graphicsPipelineState_[static_cast<size_t>(blendMode_)].Get());
 
 	//メッシュトポロジーを設定
 	dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);

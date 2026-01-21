@@ -5,7 +5,7 @@
 #include "string"
 
 //オブジェクトのタイプ
-enum ObjectType {
+enum class ObjectType {
 	NONE,
 	PLAYER,
 	ENEMY,

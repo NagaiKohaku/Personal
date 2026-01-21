@@ -14,11 +14,6 @@
 /// <summary>
 /// Collider クラスは、ゲームオブジェクトの衝突領域を管理するための基底クラスです。
 /// </summary>
-/// <remarks>
-/// - 他のオブジェクトとの衝突判定を行うための基本的な機能を提供します。  
-/// - 各種コライダーは本クラスを継承して実装されます。  
-/// - ワールドトランスフォームの更新、識別タグの管理、衝突状態の記録を行います。  
-/// </remarks>
 class Collider {
 
 	///-------------------------------------------/// 
@@ -27,7 +22,7 @@ class Collider {
 public:
 
 	//識別タグ
-	enum Tag {
+	enum class Tag {
 		PLAYER,
 		ENEMY,
 		PLAYERBULLETLIGHT,
@@ -49,26 +44,11 @@ public:
 	/// Collider を初期化します。
 	/// </summary>
 	/// <param name="parent">このコライダーの親となるワールドトランスフォーム</param>
-	/// <remarks>
-	/// - 自身の worldTransform_ を初期化します。
-	/// - 親オブジェクトのワールドトランスフォームを設定します。
-	/// - 識別タグを NONE に初期化します。
-	/// - 衝突相手のタグリスト hitTag_ と前フレームの hitTagBefore_ をクリアします。
-	/// - 描画フラグ、アクティブフラグ、接触フラグ、トリガーフラグを設定します。
-	/// - デフォルトカラーと接触時カラーを設定します。
-	/// - DebugObject3D のインスタンスを生成し初期化します。
-	/// </remarks>
 	virtual void Initialize(WorldTransform* parent);
 
 	/// <summary>
 	/// Collider の状態を毎フレーム更新します。
 	/// </summary>
-	/// <remarks>
-	/// - ワールドトランスフォームを更新し、親オブジェクトの位置情報を反映します。  
-	/// - オブジェクトを更新します。  
-	/// - 接触判定情報を基に衝突状態およびトリガー状態を更新します。  
-	/// - 最後に現在の接触タグリストをクリアします。  
-	/// </remarks>
 	virtual void Update();
 
 	/// <summary>

@@ -11,10 +11,6 @@
 /// <summary>
 /// 平行光源（Directional Light）を管理するクラスです。
 /// </summary>
-/// <remarks>
-/// - DirectX 共通基底を使用して GPU バッファリソースを作成します。
-/// - 光源データ（色、方向、照度）を LightData 構造体で保持します。
-/// </remarks>
 class DirectionalLight {
 
 	///-------------------------------------------/// 
@@ -37,27 +33,16 @@ public:
 	/// <summary>
 	/// ディレクショナルライトを初期化します。
 	/// </summary>
-	/// <remarks>
-	/// - DirectXの共通基底インスタンスを取得
-	/// - GPU用のバッファリソースを生成し、光源データをマッピングします。
-	/// - 光源の色、向き、照度を初期設定
-	/// </remarks>
 	void Initialize();
 
 	/// <summary>
 	/// ディレクショナルライトの更新処理を行います。
 	/// </summary>
-	/// <remarks>
-	/// - ライトの向きを正規化して、常に単位ベクトルに保ちます。
-	/// </remarks>
 	void Update();
 
 	/// <summary>
 	/// GPUにディレクショナルライトのデータを送信します。
 	/// </summary>
-	/// <remarks>
-	/// - コマンドリストのルートパラメータ4にライトデータを設定します。
-	/// </remarks>
 	void SendDataForGPU();
 
 	/// <summary>

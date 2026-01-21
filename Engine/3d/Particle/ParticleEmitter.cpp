@@ -263,24 +263,24 @@ void ParticleEmitter::Update() {
 			/// === 色の計算 === ///
 
 			switch (colorUpdateState_) {
-			case ParticleEmitter::START:
+			case ParticleEmitter::UpdateState::START:
 
 				particle->color = particle->colorPara.startColor;
 
 				break;
-			case ParticleEmitter::VELOCITY:
+			case ParticleEmitter::UpdateState::VELOCITY:
 
 				particle->colorPara.velocity = particle->colorPara.velocity + particle->colorPara.acceleration * kDeltaTime;
 
 				particle->color = particle->color + particle->colorPara.velocity * kDeltaTime;
 
 				break;
-			case ParticleEmitter::EASING:
+			case ParticleEmitter::UpdateState::EASING:
 
 				float time = particle->currentTime / particle->lifeTime;
 
 				switch (colorEasingState_) {
-				case ParticleEmitter::LINEAR:
+				case ParticleEmitter::EasingState::LINEAR:
 
 					particle->color = Lerp(
 						particle->colorPara.startColor,
@@ -289,7 +289,7 @@ void ParticleEmitter::Update() {
 					);
 
 					break;
-				case ParticleEmitter::EASE_IN:
+				case ParticleEmitter::EasingState::EASE_IN:
 
 					particle->color = EaseIn(
 						particle->colorPara.startColor,
@@ -299,7 +299,7 @@ void ParticleEmitter::Update() {
 					);
 
 					break;
-				case ParticleEmitter::EASE_OUT:
+				case ParticleEmitter::EasingState::EASE_OUT:
 
 					particle->color = EaseOut(
 						particle->colorPara.startColor,
@@ -309,7 +309,7 @@ void ParticleEmitter::Update() {
 					);
 
 					break;
-				case ParticleEmitter::EASE_INOUT:
+				case ParticleEmitter::EasingState::EASE_INOUT:
 
 					particle->color = EaseInOut(
 						particle->colorPara.startColor,
@@ -611,7 +611,7 @@ void ParticleEmitter::ImGui() {
 			ImGui::NextColumn();
 
 			switch (colorUpdateState_) {
-			case ParticleEmitter::START:
+			case ParticleEmitter::UpdateState::START:
 
 				ImGui::Text("初期値");
 				ImGui::ColorEdit4(CreateLabelName("Color", "StartNum").c_str(), &colorParameter_.startColor.x);
@@ -622,7 +622,7 @@ void ParticleEmitter::ImGui() {
 				ImGui::NextColumn();
 
 				break;
-			case ParticleEmitter::VELOCITY:
+			case ParticleEmitter::UpdateState::VELOCITY:
 
 				ImGui::Text("初期値");
 				ImGui::ColorEdit4(CreateLabelName("Color", "StartNum").c_str(), &colorParameter_.startColor.x);
@@ -657,7 +657,7 @@ void ParticleEmitter::ImGui() {
 				ImGui::NextColumn();
 
 				break;
-			case ParticleEmitter::EASING:
+			case ParticleEmitter::UpdateState::EASING:
 
 				const char* easingStateItems[] = { "Lerp","EaseIn","EaseOut","EaseInOut" };
 
@@ -998,24 +998,24 @@ ParticleEmitter::Particle ParticleEmitter::MakeNewParticle() {
 void ParticleEmitter::UpdateParameter(Vector3& num, ParticleParameter& parameter, UpdateState& updateState, EasingState& easingState, float& easingStrength, float& currentTime, float& lifeTime) {
 
 	switch (updateState) {
-	case ParticleEmitter::START:
+	case ParticleEmitter::UpdateState::START:
 
 		num = parameter.startNum;
 
 		break;
-	case ParticleEmitter::VELOCITY:
+	case ParticleEmitter::UpdateState::VELOCITY:
 
 		parameter.velocity = parameter.velocity + parameter.acceleration * kDeltaTime;
 
 		num = num + parameter.velocity * kDeltaTime;
 
 		break;
-	case ParticleEmitter::EASING:
+	case ParticleEmitter::UpdateState::EASING:
 
 		float time = currentTime / lifeTime;
 
 		switch (easingState) {
-		case ParticleEmitter::LINEAR:
+		case ParticleEmitter::EasingState::LINEAR:
 
 			num = Lerp(
 				parameter.startNum,
@@ -1024,7 +1024,7 @@ void ParticleEmitter::UpdateParameter(Vector3& num, ParticleParameter& parameter
 			);
 
 			break;
-		case ParticleEmitter::EASE_IN:
+		case ParticleEmitter::EasingState::EASE_IN:
 
 			num = EaseIn(
 				parameter.startNum,
@@ -1034,7 +1034,7 @@ void ParticleEmitter::UpdateParameter(Vector3& num, ParticleParameter& parameter
 			);
 
 			break;
-		case ParticleEmitter::EASE_OUT:
+		case ParticleEmitter::EasingState::EASE_OUT:
 
 			num = EaseOut(
 				parameter.startNum,
@@ -1044,7 +1044,7 @@ void ParticleEmitter::UpdateParameter(Vector3& num, ParticleParameter& parameter
 			);
 
 			break;
-		case ParticleEmitter::EASE_INOUT:
+		case ParticleEmitter::EasingState::EASE_INOUT:
 
 			num = EaseInOut(
 				parameter.startNum,
@@ -1081,7 +1081,7 @@ void ParticleEmitter::ImGuiParameter(std::string labelName, EmitterParameter& pa
 	ImGui::NextColumn();
 
 	switch (updateState) {
-	case ParticleEmitter::START:
+	case ParticleEmitter::UpdateState::START:
 
 		ImGui::Text("初期値");
 		ImGui::DragFloat3(CreateLabelName(labelName, "StartNum").c_str(), &parameter.startNum.x, 0.1f);
@@ -1092,7 +1092,7 @@ void ParticleEmitter::ImGuiParameter(std::string labelName, EmitterParameter& pa
 		ImGui::NextColumn();
 
 		break;
-	case ParticleEmitter::VELOCITY:
+	case ParticleEmitter::UpdateState::VELOCITY:
 
 		ImGui::Text("初期値");
 		ImGui::DragFloat3(CreateLabelName(labelName, "StartNum").c_str(), &parameter.startNum.x, 0.1f);
@@ -1127,7 +1127,7 @@ void ParticleEmitter::ImGuiParameter(std::string labelName, EmitterParameter& pa
 		ImGui::NextColumn();
 
 		break;
-	case ParticleEmitter::EASING:
+	case ParticleEmitter::UpdateState::EASING:
 
 		const char* easingStateItems[] = { "Lerp","EaseIn","EaseOut","EaseInOut" };
 
