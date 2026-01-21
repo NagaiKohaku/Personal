@@ -515,7 +515,7 @@ void BulletManager::Draw() {
 ///=====================================================/// 
 /// 新しい弾を生成して管理リストに追加
 ///=====================================================///
-void BulletManager::AddBullet(Vector3 pos, Vector3 direction, BULLETTYPE type) {
+void BulletManager::AddBullet(Vector3 pos, Vector3 direction, BulletType type) {
 
 	//弾の生成
 	std::unique_ptr<BulletBase> bullet = CreateBullet(type);
@@ -530,21 +530,21 @@ void BulletManager::AddBullet(Vector3 pos, Vector3 direction, BULLETTYPE type) {
 ///=====================================================/// 
 /// 指定された種類に応じた弾のインスタンスを生成
 ///=====================================================///
-std::unique_ptr<BulletBase> BulletManager::CreateBullet(BULLETTYPE type) {
+std::unique_ptr<BulletBase> BulletManager::CreateBullet(BulletType type) {
 
 	std::unique_ptr<BulletBase> newBullet;
 
 	//弾のタイプによってインスタンスを生成
 	switch (type) {
-	case BulletManager::TANK:
+	case BulletType::TANK:
 
 		newBullet = std::make_unique<TankBullet>();
 		break;
-	case BulletManager::JET:
+	case BulletType::JET:
 
 		newBullet = std::make_unique<JetBullet>();
 		break;
-	case BulletManager::ENEMY:
+	case BulletType::ENEMY:
 
 		newBullet = std::make_unique<EnemyBullet>();
 		break;
@@ -583,12 +583,6 @@ File Path: Application/Bullet/BulletManager.h
 /// <summary>
 /// 弾丸の生成・管理・更新・描画を統括する仕組みです。
 /// </summary>
-/// <remarks>
-/// - この仕組みでは複数の種類の弾丸を一括で管理できます。  
-/// - 新しい弾丸を追加する場合は、指定された種類に応じた弾丸オブジェクトを生成し、初期座標と進行方向を設定してリストに登録します。  
-/// - 弾丸オブジェクトの生成は種類によって異なるクラスを生成し、生成後は管理用リストに追加して管理します。  
-/// - 不要になった弾丸はリストから削除され、メモリも解放されます。  
-/// </remarks>
 class BulletManager {
 
 	///-------------------------------------------/// 
@@ -599,7 +593,7 @@ public:
 	/// <summary>
 	/// 弾の種類
 	/// </summary>
-	enum BULLETTYPE {
+	enum class BulletType {
 		TANK, //戦車状態の弾
 		JET,  //戦闘機状態の弾
 		ENEMY //敵の弾
@@ -618,38 +612,22 @@ public:
 	/// <summary>
 	/// 登録されているすべての弾を更新します。
 	/// </summary>
-	/// <remarks>
-	/// - 弾のリストを順にチェックし、死亡している弾はリストから削除します。  
-	/// - 残った弾についてそれぞれ更新処理を行います。  
-	/// </remarks>
 	void Update();
 
 	/// <summary>
 	/// すべての弾の座標情報を更新します。
 	/// </summary>
-	/// <remarks>
-	/// - 弾のリストを順に処理し、各弾の座標更新処理を呼び出します。  
-	/// - 描画やその他の状態更新は行わず、座標情報のみを更新します。  
-	/// </remarks>
 	void TransformUpdate();
 
 	/// <summary>
 	/// 登録されているすべての弾を描画します。
 	/// </summary>
-	/// <remarks>
-	/// - 弾のリストを順に走査し、各弾の描画処理を実行します。  
-	/// </remarks>
 	void Draw();
 
 	/// <summary>
 	/// 新しい弾を生成して管理リストに追加します。
 	/// </summary>
-	/// <remarks>
-	/// - 指定された種類の弾を生成します。  
-	/// - 初期座標と進行方向を設定して弾を初期化します。  
-	/// - 初期化した弾を管理用のリストに追加します。  
-	/// </remarks>
-	void AddBullet(Vector3 pos, Vector3 direction, BULLETTYPE type);
+	void AddBullet(Vector3 pos, Vector3 direction, BulletType type);
 
 	///-------------------------------------------/// 
 	/// クラス内処理関数
@@ -659,19 +637,11 @@ private:
 	/// <summary>
 	/// 指定された種類に応じた弾のインスタンスを生成します。
 	/// </summary>
-	/// <remarks>
-	/// - 弾の種類によって異なるクラスのインスタンスを生成します。  
-	/// - 生成した弾は呼び出し元で管理されます。  
-	/// </remarks>
-	std::unique_ptr<BulletBase> CreateBullet(BULLETTYPE type);
+	std::unique_ptr<BulletBase> CreateBullet(BulletType type);
 
 	/// <summary>
 	/// 削除対象の弾をリストから削除します。
 	/// </summary>
-	/// <remarks>
-	/// - 弾のリストを順に確認し、削除対象の弾を判定します。  
-	/// - 判定された弾はリストから削除され、メモリも解放されます。  
-	/// </remarks>
 	void RemoveBullet();
 
 	///-------------------------------------------/// 
@@ -790,7 +760,7 @@ void EnemyBullet::TransformUpdate() {
 void EnemyBullet::Draw() {
 
 	//オブジェクトの描画
-	object_->Draw(LayerType::Object);
+	object_->Draw(LayerType::OBJECT);
 
 	//コライダーの描画
 	collider_->Draw();
@@ -835,12 +805,6 @@ File Path: Application/Bullet/EnemyBullet.h
 /// <summary>
 /// 敵弾を管理するクラスです。
 /// </summary>
-/// <remarks>
-/// - 敵弾の生成から移動、衝突判定、描画までの一連の処理を管理します。  
-/// - フレームごとの更新や寿命管理を行い、必要に応じて消滅処理を実行します。  
-/// - 当たり判定用の球体コライダーを保持し、プレイヤーとの衝突判定を行います。  
-/// - 描画用オブジェクトとコライダーの状態を常に最新の状態へ同期します。  
-/// </remarks>
 class EnemyBullet : public BulletBase {
 
 	///-------------------------------------------/// 
@@ -851,10 +815,6 @@ public:
 	/// <summary>
 	/// 弾が破棄される際に関連するコライダーを削除します。
 	/// </summary>
-	/// <remarks>
-	/// - 弾が存在しなくなるタイミングで、衝突判定に使用していた要素を登録先から取り除きます。  
-	/// - これにより不要な衝突判定が残らないようにします。
-	/// </remarks>
 	~EnemyBullet();
 
 	/// <summary>
@@ -862,40 +822,21 @@ public:
 	/// </summary>
 	/// <param name="pos">生成時の座標を指定します。</param>
 	/// <param name="direction">移動方向を指定します。</param>
-	/// <remarks>
-	/// - 大きさや移動速度などのパラメータを設定します。
-	/// - 描画用オブジェクトを生成し、座標やサイズをパラメータで設定します。  
-	/// - 衝突判定用の球体コライダーを生成し、敵弾としての識別タグを設定します。  
-	/// </remarks>
 	void Initialize(Vector3 pos, Vector3 direction) override;
 
 	/// <summary>
 	/// 弾の状態を更新します
 	/// </summary>
-	/// <remarks>
-	/// - 経過時間を用いて寿命を進め、上限に達した場合は消滅状態にします。  
-	/// - 弾を前進させる処理を行います。  
-	/// - 接触していた場合の処理を行います。  
-	/// - 表示用オブジェクトの情報を最新化します。  
-	/// - 当たり判定用コライダーの位置や状態を更新します。  
-	/// </remarks>
 	void Update() override;
 
 	/// <summary>
 	/// 弾の座標更新処理を行います
 	/// </summary>
-	/// <remarks>
-	/// - 表示用オブジェクトの位置情報のみを最新の状態に反映します。  
-	/// </remarks>
 	void TransformUpdate() override;
 
 	/// <summary>
 	/// 弾の描画処理を行います
 	/// </summary>
-	/// <remarks>
-	/// - 表示用オブジェクトを描画します。  
-	/// - 当たり判定用コライダーの描画を行います。  
-	/// </remarks>
 	void Draw() override;
 
 	///-------------------------------------------/// 
@@ -906,18 +847,11 @@ private:
 	/// <summary>
 	/// 弾の移動処理を行います
 	/// </summary>
-	/// <remarks>
-	/// - 現在の座標に移動量を加算し、次のフレームの位置を決定します。  
-	/// </remarks>
 	void Move();
 
 	/// <summary>
 	/// 他オブジェクトと接触している場合の処理を行います
 	/// </summary>
-	/// <remarks>
-	/// - 当たり判定用コライダーが接触した瞬間であるかを確認します。  
-	/// - 接触している相手がプレイヤーである場合、弾を消滅状態にします。  
-	/// </remarks>
 	void IsCollision();
 
 	///-------------------------------------------/// 
@@ -1034,7 +968,7 @@ void JetBullet::TransformUpdate() {
 void JetBullet::Draw() {
 
 	//オブジェクトの描画
-	object_->Draw(LayerType::Object);
+	object_->Draw(LayerType::OBJECT);
 
 	//コライダーの描画
 	collider_->Draw();
@@ -1079,12 +1013,6 @@ File Path: Application/Bullet/JetBullet.h
 /// <summary>
 /// 飛行機状態の弾を管理するクラスです。
 /// </summary>
-/// <remarks>
-/// - 飛行機状態の弾の生成から移動、衝突判定、描画までの一連の処理を管理します。  
-/// - フレームごとの更新や寿命管理を行い、必要に応じて消滅処理を実行します。  
-/// - 当たり判定用の球体コライダーを保持し、プレイヤーとの衝突判定を行います。  
-/// - 描画用オブジェクトとコライダーの状態を常に最新の状態へ同期します。  
-/// </remarks>
 class JetBullet : public BulletBase {
 
 	///-------------------------------------------/// 
@@ -1095,10 +1023,6 @@ public:
 	/// <summary>
 	/// 弾が破棄される際に関連するコライダーを削除します。
 	/// </summary>
-	/// <remarks>
-	/// - 弾が存在しなくなるタイミングで、衝突判定に使用していた要素を登録先から取り除きます。  
-	/// - これにより不要な衝突判定が残らないようにします。
-	/// </remarks>
 	~JetBullet();
 
 	/// <summary>
@@ -1106,40 +1030,21 @@ public:
 	/// </summary>
 	/// <param name="pos">生成時の座標を指定します。</param>
 	/// <param name="direction">移動方向を指定します。</param>
-	/// <remarks>
-	/// - 大きさや移動速度などのパラメータを設定します。
-	/// - 描画用オブジェクトを生成し、座標やサイズをパラメータで設定します。  
-	/// - 衝突判定用の球体コライダーを生成し、プレイヤーの弱攻撃としての識別タグを設定します。  
-	/// </remarks>
 	void Initialize(Vector3 pos, Vector3 direction) override;
 
 	/// <summary>
 	/// 弾の状態を更新します
 	/// </summary>
-	/// <remarks>
-	/// - 経過時間を用いて寿命を進め、上限に達した場合は消滅状態にします。  
-	/// - 弾を前進させる処理を行います。  
-	/// - 接触していた場合の処理を行います。  
-	/// - 表示用オブジェクトの情報を最新化します。  
-	/// - 当たり判定用コライダーの位置や状態を更新します。  
-	/// </remarks>
 	void Update() override;
 
 	/// <summary>
 	/// 弾の座標更新処理を行います
 	/// </summary>
-	/// <remarks>
-	/// - 表示用オブジェクトの位置情報のみを最新の状態に反映します。  
-	/// </remarks>
 	void TransformUpdate() override;
 
 	/// <summary>
 	/// 弾の描画処理を行います
 	/// </summary>
-	/// <remarks>
-	/// - 表示用オブジェクトを描画します。  
-	/// - 当たり判定用コライダーの描画を行います。  
-	/// </remarks>
 	void Draw() override;
 
 	///-------------------------------------------/// 
@@ -1150,18 +1055,11 @@ private:
 	/// <summary>
 	/// 弾の移動処理を行います
 	/// </summary>
-	/// <remarks>
-	/// - 現在の座標に移動量を加算し、次のフレームの位置を決定します。  
-	/// </remarks>
 	void Move();
 
 	/// <summary>
 	/// 他オブジェクトと接触している場合の処理を行います
 	/// </summary>
-	/// <remarks>
-	/// - 当たり判定用コライダーが接触した瞬間であるかを確認します。  
-	/// - 接触している相手が敵である場合、弾を消滅状態にします。  
-	/// </remarks>
 	void IsCollision();
 
 	///-------------------------------------------/// 
@@ -1270,7 +1168,7 @@ void TankBullet::TransformUpdate() {
 void TankBullet::Draw() {
 
 	//オブジェクトの描画
-	object_->Draw(LayerType::Object);
+	object_->Draw(LayerType::OBJECT);
 
 	//コライダーの描画
 	collider_->Draw();
@@ -1315,12 +1213,6 @@ File Path: Application/Bullet/TankBullet.h
 /// <summary>
 /// 戦車状態の弾を管理するクラスです。
 /// </summary>
-/// <remarks>
-/// - 戦車状態の弾の生成から移動、衝突判定、描画までの一連の処理を管理します。  
-/// - フレームごとの更新や寿命管理を行い、必要に応じて消滅処理を実行します。  
-/// - 当たり判定用の球体コライダーを保持し、プレイヤーとの衝突判定を行います。  
-/// - 描画用オブジェクトとコライダーの状態を常に最新の状態へ同期します。  
-/// </remarks>
 class TankBullet : public BulletBase {
 
 	///-------------------------------------------/// 
@@ -1331,10 +1223,6 @@ public:
 	/// <summary>
 	/// 弾が破棄される際に関連するコライダーを削除します。
 	/// </summary>
-	/// <remarks>
-	/// - 弾が存在しなくなるタイミングで、衝突判定に使用していた要素を登録先から取り除きます。  
-	/// - これにより不要な衝突判定が残らないようにします。
-	/// </remarks>
 	~TankBullet();
 
 	/// <summary>
@@ -1342,40 +1230,21 @@ public:
 	/// </summary>
 	/// <param name="pos">生成時の座標を指定します。</param>
 	/// <param name="direction">移動方向を指定します。</param>
-	/// <remarks>
-	/// - 大きさや移動速度などのパラメータを設定します。
-	/// - 描画用オブジェクトを生成し、座標やサイズをパラメータで設定します。  
-	/// - 衝突判定用の球体コライダーを生成し、プレイヤーの弱攻撃としての識別タグを設定します。  
-	/// </remarks>
 	void Initialize(Vector3 pos, Vector3 direction) override;
 
 	/// <summary>
 	/// 弾の状態を更新します
 	/// </summary>
-	/// <remarks>
-	/// - 経過時間を用いて寿命を進め、上限に達した場合は消滅状態にします。  
-	/// - 弾を前進させる処理を行います。  
-	/// - 接触していた場合の処理を行います。  
-	/// - 表示用オブジェクトの情報を最新化します。  
-	/// - 当たり判定用コライダーの位置や状態を更新します。  
-	/// </remarks>
 	void Update() override;
 
 	/// <summary>
 	/// 弾の座標更新処理を行います
 	/// </summary>
-	/// <remarks>
-	/// - 表示用オブジェクトの位置情報のみを最新の状態に反映します。  
-	/// </remarks>
 	void TransformUpdate() override;
 
 	/// <summary>
 	/// 弾の描画処理を行います
 	/// </summary>
-	/// <remarks>
-	/// - 表示用オブジェクトを描画します。  
-	/// - 当たり判定用コライダーの描画を行います。  
-	/// </remarks>
 	void Draw() override;
 
 	///-------------------------------------------/// 
@@ -1385,19 +1254,11 @@ private:
 
 	/// <summary>
 	/// 弾の移動処理を行います
-	/// </summary>
-	/// <remarks>
-	/// - 現在の座標に移動量を加算し、次のフレームの位置を決定します。  
-	/// </remarks>
 	void Move();
 
 	/// <summary>
 	/// 他オブジェクトと接触している場合の処理を行います
 	/// </summary>
-	/// <remarks>
-	/// - 当たり判定用コライダーが接触した瞬間であるかを確認します。  
-	/// - 接触している相手が敵である場合、弾を消滅状態にします。  
-	/// </remarks>
 	void IsCollision();
 
 	///-------------------------------------------/// 
@@ -1492,7 +1353,7 @@ void FollowCamera::Update() {
 	Vector3 cameraSlope = { 0.0f,0.0f,0.0f };
 
 	//プレイヤーが戦闘機状態の時のみ傾きを計算
-	if (player_->GetMoveState() == Player::MOVESTATE::JET) {
+	if (player_->GetMoveState() == Player::MoveState::JET) {
 
 		cameraSlope = {
 			playerVelocity.y * -(slopeStrength_ / 100.0f),
@@ -1525,10 +1386,6 @@ File Path: Application/Camera/FollowCamera.h
 /// <summary>
 /// プレイヤーに追従するカメラクラスです。
 /// </summary>
-/// <remarks>
-/// - プレイヤーの位置や移動方向に応じてカメラの方向を追従させます
-/// - パラメータで追尾範囲や強度を調節可能
-/// </remarks>
 class FollowCamera {
 
 	///-------------------------------------------/// 
@@ -1540,20 +1397,11 @@ public:
 	/// </summary>
 	/// <param name="camera">カメラを指定します。</param>
 	/// <param name="player">追従先となるプレイヤーを指定します。</param>
-	/// <remarks>
-	/// - カメラとプレイヤーのポインタを保持します。  
-	/// - パラメータの値を設定します。
-	/// - パラメータを基にカメラの座標と距離を設定します。  
-	/// </remarks>
 	void Initialize(Camera* camera, Player* player);
 
 	/// <summary>
 	/// プレイヤーにカメラを追従させるために毎フレーム更新します。
 	/// </summary>
-	/// <remarks>
-	/// - デバッグカメラの場合や無効化されている場合は処理を行いません。  
-	/// - カメラとプレイヤーの位置関係からカメラの角度を計算します。
-	/// </remarks>
 	void Update();
 
 	///-------------------------------------------/// 
@@ -1829,7 +1677,7 @@ void Enemy::Draw() {
 	if (!isInvisible_) {
 
 		//オブジェクトの描画
-		object_->Draw(LayerType::Object);
+		object_->Draw(LayerType::OBJECT);
 	}
 
 	//影オブジェクトの描画
@@ -2077,16 +1925,6 @@ class Player;
 /// <summary>
 /// 敵キャラクターを管理するクラスです。
 /// </summary>
-/// <remarks>
-/// - 敵の行動状態（ENTRY, MOVE, ATTACK, EXIT, DEAD）を管理します。  
-/// - 敵オブジェクトや影オブジェクト、当たり判定用コライダーを保持します。  
-/// - 死亡、クリア、破壊、ダメージ用の各種エミッターを管理します。  
-/// - 移動座標、回転角度、移動強度などの物理情報を保持します。  
-/// - 体力や攻撃力、攻撃間隔など戦闘に関する情報を保持します。  
-/// - 点滅や被弾揺れ、画面揺れなどの演出に関する情報を保持します。  
-/// - 各種アニメーションタイマーや最大時間、削除フラグ、透明化フラグを管理します。  
-/// - 敵の初期化、更新、描画、攻撃、移動、死亡処理などの一連の動作を提供します。  
-/// </remarks>
 class Enemy {
 
 	///-------------------------------------------/// 
@@ -2101,69 +1939,31 @@ public:
 	/// <param name="bulletPtr">弾管理クラスのポインタを指定します。</param>
 	/// <param name="playerPtr">プレイヤーオブジェクトのポインタを指定します。</param>
 	/// <param name="objectData">敵オブジェクト生成に必要なデータを指定します。</param>
-	/// <remarks>
-	/// - カメラ、弾管理、プレイヤーのポインタを保持します。  
-	/// - 敵オブジェクトおよび影オブジェクトを生成し初期化します。  
-	/// - 当たり判定用の球体コライダーを生成し、タグや大きさを設定します。  
-	/// - 死亡、クリア、破壊、ダメージ用のエミッターを生成し、設定ファイルから情報を読み込みます。  
-	/// - 行動状態や体力、被ダメージ量、移動強度など各種変数を初期化します。  
-	/// - 点滅や画面揺れ、アニメーションのタイマーや最大時間を初期化します。  
-	/// - 削除可能フラグや透明化フラグなどの状態フラグを初期化します。  
-	/// </remarks>
 	void Initialize(Camera* cameraPtr, BulletManager* bulletPtr, Player* playerPtr, ObjectData objectData);
 
 	/// <summary>
 	/// 敵オブジェクトの状態を毎フレーム更新します。
 	/// </summary>
-	/// <remarks>
-	/// - 前フレームの座標を保存します。  
-	/// - 死亡状態や衝突判定を確認します。  
-	/// - 現在の行動状態に応じて、エントリー、移動、攻撃、離脱、死亡処理を実行します。  
-	/// - 被弾による揺れや点滅処理を行います。  
-	/// - コライダーと影オブジェクトを更新します。  
-	/// - 目標座標や角度に向かってオブジェクトを滑らかに移動・回転させます。  
-	/// - 各種エミッターを敵の中心座標に同期させ、更新処理を実行します。  
-	/// </remarks>
 	void Update();
 
 	/// <summary>
 	/// 敵オブジェクトと影オブジェクトの座標情報のみを更新します。
 	/// </summary>
-	/// <remarks>
-	/// - 表示用オブジェクトの更新処理を行います。  
-	/// - 影オブジェクトの座標を敵オブジェクトの現在座標に同期します。  
-	/// </remarks>
 	void TransformUpdate();
 
 	/// <summary>
 	/// クリア時の敵オブジェクトの移動・回転処理を更新します。
 	/// </summary>
-	/// <remarks>
-	/// - オブジェクトを下方向に移動させます。  
-	/// - オブジェクトをランダムに回転させます。  
-	/// - 敵オブジェクトと影オブジェクトを更新します。  
-	/// - クリア時用の爆発エミッターを更新します。  
-	/// </remarks>
 	void ClearUpdate();
 
 	/// <summary>
 	/// 敵オブジェクトおよび関連する要素の描画処理を行います。
 	/// </summary>
-	/// <remarks>
-	/// - 透明化中でなければ敵オブジェクトを描画します。  
-	/// - 影オブジェクトを描画します。  
-	/// - 当たり判定用コライダーを描画します。  
-	/// - 死亡、クリア、破壊、ダメージ用の各エミッターを描画します。  
-	/// </remarks>
 	void Draw();
 
 	/// <summary>
 	/// 敵のクリア時爆発エミッターを起動します。
 	/// </summary>
-	/// <remarks>
-	/// - 敵の状態を死亡状態に設定します。  
-	/// - クリア時用の爆発エミッターを発生させます。  
-	/// </remarks>
 	void EmitClearExplosive();
 
 	/// <summary>
@@ -2190,98 +1990,21 @@ private:
 	/// <summary>
 	/// 他オブジェクトの接触時の処理を行います。
 	/// </summary>
-	/// <remarks>
-	/// - コライダーが存在しない場合は処理を行いません。  
-	/// - 当たり判定用コライダーが接触状態であるかを確認します。  
-	/// - 接触相手がプレイヤーの攻撃であれば、ダメージエミッターを発生させ、体力を減少させます。  
-	/// - 被弾による揺れタイマーをリセットします。  
-	/// </remarks>
 	void IsCollision();
-
-	/// <summary>
-	/// 敵オブジェクトのエントリー時の処理を行います。
-	/// </summary>
-	/// <remarks>
-	/// - アニメーションタイマーを進め、終了時間に達したら状態を移動（MOVE）に変更します。  
-	/// - タイマーの進行比率に基づき、出現座標から待機座標まで滑らかに移動させます。  
-	/// - 前フレームとの座標差から移動方向を計算し、前方を向くように回転角度を設定します。  
-	/// </remarks>
-	void Entry();
-
-	/// <summary>
-	/// 敵オブジェクトの移動時の処理を行います。
-	/// </summary>
-	/// <remarks>
-	/// - アニメーションタイマーを進め、終了時間に達したら攻撃状態（ATTACK）に移行します。  
-	/// - タイマー比率に応じて待機座標から離脱開始座標まで滑らかに移動させます。  
-	/// - 前方を向くように回転角度を設定します。  
-	/// - 終了2秒前から点滅を開始します。  
-	/// </remarks>
-	void Move();
-
-	/// <summary>
-	/// 敵オブジェクトの攻撃時の処理を行います。
-	/// </summary>
-	/// <remarks>
-	/// - アニメーションタイマーと攻撃タイマーを進めます。  
-	/// - アニメーションタイマーが終了時間に達したら離脱状態（EXIT）に移行します。  
-	/// - 攻撃タイマーが攻撃間隔に達した場合、プレイヤーの方向を計算し、敵弾を発射します。  
-	/// - 攻撃後は攻撃タイマーをリセットして次の攻撃準備を行います。  
-	/// </remarks>
-	void Attack();
-
-	/// <summary>
-	/// 敵オブジェクトの離脱時の処理を行います。
-	/// </summary>
-	/// <remarks>
-	/// - アニメーションタイマーを進め、終了時間に達したら削除可能フラグを立て、コライダーを削除します。  
-	/// - タイマー比率に基づき、離脱開始座標から離脱終了座標まで滑らかに移動させます。  
-	/// - 前フレームからの移動量を計算し、前方を向くように回転角度を設定します。  
-	/// </remarks>
-	void Exit();
-
-	/// <summary>
-	/// 敵オブジェクトの死亡時の処理を行います。
-	/// </summary>
-	/// <remarks>
-	/// - アニメーションタイマーを進め、終了時間に達したら削除可能フラグを立てます。  
-	/// - タイマー比率に基づき、下方向への移動とY/Z軸での回転を滑らかに行います。  
-	/// - オブジェクトが地面より下に到達した場合、透明化を有効化、破壊時エミッターと画面シェイクを開始します。  
-	/// </remarks>
-	void Dead();
 
 	/// <summary>
 	/// 敵オブジェクトの点滅処理を行います。
 	/// </summary>
-	/// <remarks>
-	/// - 点滅フラグが有効な場合のみ処理を行います。  
-	/// - 点滅タイマーを進め、0.0f～1.0fの範囲で往復する値を計算します。  
-	/// - 計算した値に応じてオブジェクトの赤色以外のチャンネルを減少させ、赤色に点滅するように設定します。  
-	/// - 設定後の色情報をオブジェクトに反映させます。  
-	/// </remarks>
 	void Blink();
 
 	/// <summary>
 	/// 敵オブジェクトの被弾時のシェイク処理を行います。
 	/// </summary>
-	/// <remarks>
-	/// - シェイクタイマーが最大時間以下の場合のみ処理を行い、タイマーを進めます。  
-	/// - タイマー比率に応じてシェイクの長さを減衰させます。  
-	/// - オブジェクトの座標にランダムなオフセットを加え、揺れを表現します。  
-	/// - 座標変換データを更新し、オブジェクトの表示に反映させます。  
-	/// </remarks>
 	void Shake();
 
 	/// <summary>
 	/// 敵のHPを確認し、死亡状態に遷移させる処理を行います。
 	/// </summary>
-	/// <remarks>
-	/// - HPが0以下の場合にのみ処理を行います。  
-	/// - すでに死亡状態であれば処理を行いません。  
-	/// - 死亡状態に変更し、コライダーを削除します。  
-	/// - 死亡時エミッターを発生させ、アニメーションタイマーとシェイクタイマーを初期化します。  
-	/// - キル数をカウントアップします。  
-	/// </remarks>
 	void CheckDead();
 
 	///-------------------------------------------/// 
@@ -2718,13 +2441,6 @@ class Player;
 /// <summary>
 /// 敵の生成・管理・削除を一括して行うクラスです。
 /// </summary>
-/// <remarks>
-/// - ステージ上に出現する敵オブジェクトの生成・初期化を担当します。  
-/// - 各敵の更新処理や描画処理をまとめて管理し、ゲームループ内で呼び出されます。  
-/// - 編成データやランダム座標に基づき複数の敵をタイミングよく出現させます。  
-/// - クリア演出や削除処理も統括して実行し、不要になった敵を安全にゲーム内から取り除きます。  
-/// - カメラや弾管理、プレイヤー参照など、敵の挙動に必要な外部リソースを保持します。  
-/// </remarks>
 class EnemyManager {
 
 	///-------------------------------------------/// 
@@ -2738,52 +2454,26 @@ public:
 	/// <param name="cameraPtr">追従や位置参照に使用するカメラのポインタ。</param>
 	/// <param name="bulletPtr">敵が発射する弾を管理するバレットマネージャのポインタ。</param>
 	/// <param name="playerPtr">敵が追跡・攻撃対象とするプレイヤーのポインタ。</param>
-	/// <remarks>
-	/// - レベルデータローダーを取得し、敵出現データの読み込み準備を行います。  
-	/// - カメラ、弾管理、プレイヤーの各ポインタを保持します。  
-	/// - 敵の出現に使用するディレクトリパスを設定します。  
-	/// - 敵出現用タイマー、出現間隔、同時最大数などのスポーン管理パラメータを初期化します。  
-	/// - 出現位置計算に使用する基準角度・距離・オフセットを設定します。  
-	/// - スポーンを許可するフラグを初期化し、敵生成可能な状態で開始します。  
-	/// </remarks>
 	void Initialize(Camera* cameraPtr, BulletManager* bulletPtr, Player* playerPtr);
 
 	/// <summary>
 	/// 敵の生成処理および各敵オブジェクトの更新処理を行います。
 	/// </summary>
-	/// <remarks>
-	/// - スポーンが許可されている場合、敵出現タイマーの更新と出現処理を実行します。  
-	/// - 出現済みの敵の削除判定を行い、削除可能なものを適切に破棄します。  
-	/// - 管理中の全ての敵に対して更新処理を呼び出し、挙動・座標・アニメーションなどを更新します。  
-	/// </remarks>
 	void Update();
 
 	/// <summary>
 	/// 管理中の全ての敵オブジェクトに対して、座標変換のみの更新処理を行います。
 	/// </summary>
-	/// <remarks>
-	/// - 描画用の変換行列や座標情報のみを更新します。  
-	/// - 挙動やアニメーションなどのロジック更新は行わず、位置同期のみを目的とした処理です。  
-	/// </remarks>
 	void TransformUpdate();
 
 	/// <summary>
 	/// 管理中の全ての敵オブジェクトを描画します。
 	/// </summary>
-	/// <remarks>
-	/// - 各敵オブジェクトに対して個別の描画処理を呼び出します。  
-	/// - 敵ごとに持つモデル、影、エミッターなどの描画を内部で実行します。  
-	/// </remarks>
 	void Draw();
 
 	/// <summary>
 	/// 全敵に対してクリア演出を適用します。
 	/// </summary>
-	/// <remarks>
-	/// - 敵のスポーン処理を停止します。  
-	/// - 全ての敵に対してクリア用爆発エミッターを起動します。  
-	/// - クリア演出を強調するため、各敵に対して複数回のクリア更新処理を実行します。  
-	/// </remarks>
 	void StartClearUpdate();
 
 	///-------------------------------------------/// 
@@ -2794,13 +2484,6 @@ private:
 	/// <summary>
 	/// 敵のスポーン処理を更新し、一定間隔で編成データに基づく複数の敵を出現させます。
 	/// </summary>
-	/// <remarks>
-	/// - スポーン用タイマーを毎フレーム進行させます。  
-	/// - タイマーがスポーン間隔を超えると、ランダムに編成データを選択します。  
-	/// - ランダムな基準オフセット座標を生成し、編成データの敵配置位置に加算します。  
-	/// - 各敵の待機座標からスポーン方向を算出し、一定距離手前の出現座標を決定します。  
-	/// - 計算した出現座標・待機座標・編成データを基に個別の敵生成処理を呼び出します。  
-	/// </remarks>
 	void SpawnUpdate();
 
 	/// <summary>
@@ -2809,21 +2492,11 @@ private:
 	/// <param name="entryPos">敵がステージ外から侵入してくるエントリー座標</param>
 	/// <param name="standbyPos">侵入後に移動し停止する待機座標</param>
 	/// <param name="objectData">敵の見た目やパラメータを含むオブジェクトデータ</param>
-	/// <remarks>
-	/// - ObjectManager から敵インスタンスを生成します。  
-	/// - 敵リストへ追加し、必要なマネージャやプレイヤー参照を渡して初期化します。  
-	/// - エントリー→待機→離脱へ向かうための座標情報を設定します。  
-	/// </remarks>
 	void Spawn(Vector3 entryPos, Vector3 standbyPos, ObjectData objectData);
 
 	/// <summary>
 	/// 管理している敵オブジェクトの削除処理を行います。
 	/// </summary>
-	/// <remarks>
-	/// - 各敵オブジェクトの削除可能状態を確認します。  
-	/// - 削除可能な場合は、削除中の状態に変更した上で管理リストから除外します。  
-	/// - これにより、不要になった敵オブジェクトを安全にゲーム内から取り除くことができます。  
-	/// </remarks>
 	void DeleteEnemy();
 
 	///-------------------------------------------/// 
@@ -2943,7 +2616,7 @@ void EnemyAttackState::Update(Enemy& enemy) {
 		enemy.GetBulletManager()->AddBullet(
 			enemy.GetWorldPos(),
 			Normalize(direction),
-			BulletManager::BULLETTYPE::ENEMY
+			BulletManager::BulletType::ENEMY
 		);
 
 		//攻撃タイマーのリセット
@@ -3737,15 +3410,6 @@ File Path: Application/Fade/Fade.h
 /// <summary>
 /// フェード演出を管理するクラスです。
 /// </summary>
-/// <remarks>
-/// - フェードインおよびフェードアウトの処理を統括し、画面全体に対する視覚効果を提供します。  
-/// - リング形状や円形のスプライトを用いたアニメーション表現を行います。  
-/// - プレイヤーの位置を2D座標に変換し、スプライトの中心位置に同期させることが可能です。  
-/// - 状態管理により、フェードイン、フェードイン完了、フェードアウト、フェードアウト完了の各フェーズを制御します。  
-/// - 内部でスプライトのサイズや表示時間を管理し、イージング計算による滑らかな変化を実現します。  
-/// - カメラおよびプレイヤーの参照を保持し、視点や対象の位置に応じたフェード演出が可能です。  
-/// - シングルトンとして提供され、アプリケーション全体で一つのインスタンスを使用して管理されます。  
-/// </remarks>
 class Fade {
 
 	///-------------------------------------------/// 
@@ -3754,7 +3418,7 @@ class Fade {
 public:
 
 	//フェードの状態
-	enum FadeState {
+	enum class FadeState {
 		NONE,
 		FADE_IN,
 		FADE_IN_END,
@@ -3779,83 +3443,89 @@ public:
 	/// <summary>
 	/// Fadeのシングルトンインスタンスを取得します。
 	/// </summary>
-	/// <remarks>
-	/// 返り値に静的インスタンスを返します。
-	/// </remarks>
 	static Fade* GetInstance();
 
 	/// <summary>
 	/// フェード処理に必要なスプライトやリソースを初期化する関数です。
 	/// </summary>
-	/// <remarks>
-	/// - 使用するテクスチャをスプライト管理クラスを通じてロードします。  
-	/// - フェード演出に使用するリング状のスプライトを複数生成します。  
-	/// - 中心部分の円形スプライトも生成し、フェード時の表現に利用します。  
-	/// </remarks>
 	void Initialize();
 
 	/// <summary>
 	/// フェード処理の状態を毎フレーム更新する関数です。
 	/// </summary>
-	/// <remarks>
-	/// - フェードインおよびフェードアウトの進行を管理し、各タイマーや状態を更新します。  
-	/// - カメラとプレイヤーが設定されている場合、プレイヤーの3D座標を画面上の2D座標に変換し、フェード演出に反映します。  
-	/// - プレイヤーの座標が正しく変換できた場合のみ2D座標を更新します。  
-	/// - 管理している全てのフェード用スプライトに対して、個別の更新処理を呼び出し描画準備を整えます。  
-	/// </remarks>
 	void Update();
 
 	/// <summary>
 	/// 管理しているフェード用スプライトを画面に描画する関数です。
 	/// </summary>
-	/// <remarks>
-	/// - 全てのフェード用スプライトに対して、描画レイヤーを指定して描画処理を呼び出します。  
-	/// </remarks>
 	void Draw();
 
 	/// <summary>
 	/// フェードイン処理を開始する関数です。
 	/// </summary>
-	/// <remarks>
-	/// - フェードの状態をフェードインに切り替え、処理を開始します。  
-	/// - 内部タイマーをリセットして、フレーム単位で進行できるようにします。  
-	/// - 管理している全てのスプライトの座標を画面中央に設定し、サイズを開始サイズに初期化します。  
-	/// </remarks>
 	void StartFadeIn();
 
 	/// <summary>
 	/// フェードインの進行処理を行います。
 	/// </summary>
-	/// <remarks>
-	/// - フェードがフェードイン状態のときのみ処理が行われます。  
-	/// - 内部タイマーをフレーム単位で減少させ、スプライトの開始・終了時間に応じて更新します。  
-	/// - スプライトごとに経過時間の割合を算出し、イージング関数を用いてサイズを補間します。  
-	/// - スプライトの位置はプレイヤーの2D座標に同期されます。  
-	/// - 全てのスプライトのフェードインが完了すると、状態をフェードイン終了に切り替えます。  
-	/// </remarks>
 	void FadeInUpdate();
 
 	/// <summary>
 	/// フェードアウト処理を開始する関数です。
 	/// </summary>
-	/// <remarks>
-	/// - フェードの状態をフェードアウトに切り替え、処理を開始します。  
-	/// - 内部タイマーをリセットして、フレーム単位で進行できるようにします。  
-	/// - 管理している全てのスプライトの座標を画面中央に設定し、サイズを開始サイズに初期化します。  
-	/// </remarks>
 	void StartFadeOut();
 
 	/// <summary>
 	/// フェードアウトの進行処理を行います。
 	/// </summary>
-	/// <remarks>
-	/// - フェードがフェードアウト状態のときのみ処理が行われます。  
-	/// - 内部タイマーをフレーム単位で増加させ、スプライトの開始・終了時間に応じて更新します。  
-	/// - スプライトごとに経過時間の割合を算出し、イージング関数を用いてサイズを補間します。  
-	/// - スプライトの位置はプレイヤーの2D座標に同期されます。  
-	/// - 全てのスプライトのフェードアウトが完了すると、状態をフェードアウト終了に切り替えます。  
-	/// </remarks>
 	void FadeOutUpdate();
+
+	///=====================================================/// 
+	/// クラス内関数
+	///=====================================================///
+private:
+
+	/// <summary>
+	/// リング形状のスプライトを生成し、フェード用の管理リストに追加します。
+	/// </summary>
+	void CreateRingSprite();
+
+	/// <summary>
+	/// 円形のスプライトを生成し、フェード用の管理リストに追加します。
+	/// </summary>
+	void CreateCircleSprite();
+
+	///=====================================================/// 
+	/// メンバ変数
+	///=====================================================///
+private:
+
+	//フェード状態
+	FadeState state_ = FadeState::NONE;
+
+	//フェードスプライト
+	std::vector<FadeSprite> fadeSprites_;
+
+	//カメラ
+	Camera* camera_;
+
+	//プレイヤー
+	Player* player_;
+
+	//プレイヤーの2D座標
+	Vector2 playerPos2D_;
+
+	//アルファ値
+	float alpha_ = 0.0f;
+
+	//タイマー
+	float timer_ = 0.0f;
+
+	//最大タイマー
+	float maxTimer_ = 1.0f;
+
+	//フェード速度
+	float fadeSpeed_ = 0.02f;
 
 	///=====================================================/// 
 	/// ゲッター・セッター
@@ -3892,66 +3562,6 @@ public:
 	/// </summary>
 	void SetPlayer(Player* ptr) { player_ = ptr; }
 
-	///=====================================================/// 
-	/// クラス内関数
-	///=====================================================///
-private:
-
-	/// <summary>
-	/// リング形状のスプライトを生成し、フェード用の管理リストに追加します。
-	/// </summary>
-	/// <remarks>
-	/// - 新しい2Dオブジェクトを生成し、初期化処理を行います。  
-	/// - リング用の画像を設定し、パラメータを設定します。  
-	/// - 管理リストに追加する際、最初のスプライトであればタイマーを0から開始し、  
-	///   それ以降は前のスプライトの終了時間を基準に開始時間を調整します。  
-	/// - 各スプライトに開始サイズ、終了サイズ、開始時間、終了時間を設定します。  
-	/// </remarks>
-	void CreateRingSprite();
-
-	/// <summary>
-	/// 円形のスプライトを生成し、フェード用の管理リストに追加します。
-	/// </summary>
-	/// <remarks>
-	/// - 新しい2Dオブジェクトを生成して初期化します。  
-	/// - 円形用の画像を設定し、パラメータを設定します。  
-	/// - 初期サイズと画面中央の位置を設定します。  
-	/// - 管理リストへの追加時、開始時間は前のスプライトの終了時間を基準に少し前倒しに設定します。  
-	/// - 各スプライトに開始サイズ、終了サイズ、開始時間、終了時間を設定し、リストに追加します。  
-	/// </remarks>
-	void CreateCircleSprite();
-
-	///=====================================================/// 
-	/// メンバ変数
-	///=====================================================///
-private:
-
-	//フェード状態
-	FadeState state_ = FadeState::NONE;
-
-	//フェードスプライト
-	std::vector<FadeSprite> fadeSprites_;
-
-	//カメラ
-	Camera* camera_;
-
-	//プレイヤー
-	Player* player_;
-
-	//プレイヤーの2D座標
-	Vector2 playerPos2D_;
-
-	//アルファ値
-	float alpha_ = 0.0f;
-
-	//タイマー
-	float timer_ = 0.0f;
-
-	//最大タイマー
-	float maxTimer_ = 1.0f;
-
-	//フェード速度
-	float fadeSpeed_ = 0.02f;
 };
 
 ============================================================
@@ -4076,11 +3686,6 @@ File Path: Application/Flash/Flash.h
 /// <summary>
 /// 画面全体にフラッシュエフェクトを表示する管理クラスです。
 /// </summary>
-/// <remarks>
-/// - シングルトンとして管理され、ゲーム内の任意のタイミングでフラッシュを開始できます。
-/// - 内部でフラッシュ用の2Dオブジェクトを保持し、更新・描画処理を行います。
-/// - フラッシュの色や表示時間を柔軟に指定可能です。
-/// </remarks>
 class Flash {
 
 public:
@@ -4088,39 +3693,21 @@ public:
 	/// <summary>
 	/// Flashのシングルトンインスタンスを取得します。
 	/// </summary>
-	/// <remarks>
-	/// 返り値に静的インスタンスを返します。
-	/// </remarks>
 	static Flash* GetInstance();
 
 	/// <summary>
 	/// フラッシュエフェクトの初期化を行います。
 	/// </summary>
-	/// <remarks>
-	/// - フラッシュ用のスプライトを読み込みます。
-	/// - フラッシュ表示用の2Dオブジェクトを生成し、初期化します。
-	/// - オブジェクトの位置、サイズ、スプライトのアンカーポイントおよび色を設定します。
-	/// - フラッシュの透明度、実行フラグ、タイマー、最大表示時間、表示色を初期状態に設定します。
-	/// </remarks>
 	void Initialize();
 
 	/// <summary>
 	/// フラッシュエフェクトの更新処理を行います。
 	/// </summary>
-	/// <remarks>
-	/// - フラッシュ中であればタイマーを更新し、透明度を計算します。
-	/// - 透明度が0以下になった場合はフラッシュを終了します。
-	/// - スプライトの色に現在の透明度を反映させます。
-	/// - フラッシュ用オブジェクトの内部更新処理を呼び出します。
-	/// </remarks>
 	void Update();
 
 	/// <summary>
 	/// フラッシュエフェクトを描画します。
 	/// </summary>
-	/// <remarks>
-	/// - フラッシュ用の2DオブジェクトをUIレイヤーに描画します。
-	/// </remarks>
 	void Draw();
 
 	/// <summary>
@@ -4128,12 +3715,6 @@ public:
 	/// </summary>
 	/// <param name="maxTime">フラッシュが表示される最大時間（秒単位）です。</param>
 	/// <param name="color">フラッシュの色をRGBAで指定します。</param>
-	/// <remarks>
-	/// - 透明度とタイマーを初期化します。
-	/// - 最大表示時間を設定します。
-	/// - フラッシュ中フラグを有効にします。
-	/// - 指定された色をフラッシュ色として設定します。
-	/// </remarks>
 	void Start(float maxTime, Vector4 color);
 
 private:
@@ -4211,7 +3792,7 @@ void Building::TransformUpdate() {
 void Building::Draw() {
 
 	//建物描画
-	object_->Draw(LayerType::Object);
+	object_->Draw(LayerType::OBJECT);
 }
 
 ============================================================
@@ -4229,10 +3810,6 @@ File Path: Application/Ground/Building.h
 /// <summary>
 /// 建物オブジェクトを管理するクラスです。
 /// </summary>
-/// <remarks>
-/// - 内部に3Dオブジェクトを保持し、初期化・更新・描画処理を行います。
-/// - 建物の位置やスケール、移動速度を設定可能です。
-/// </remarks>
 class Building {
 
 	///-------------------------------------------/// 
@@ -4245,36 +3822,21 @@ public:
 	/// </summary>
 	/// <param name="pos">建物の配置位置を指定します。</param>
 	/// <param name="scale">建物のスケール（大きさ）を指定します。</param>
-	/// <remarks>
-	/// - 3Dオブジェクトを生成し、初期化します。
-	/// - キューブモデルを設定し、指定された位置とスケールを適用します。
-	/// - 建物の移動速度を初期値として設定します。
-	/// </remarks>
 	void Initialize(Vector3 pos, Vector3 scale);
 
 	/// <summary>
 	/// 建物オブジェクトの更新処理を行います。
 	/// </summary>
-	/// <remarks>
-	/// - 内部の3Dオブジェクトの更新処理を呼び出します。
-	/// - 建物をZ方向に速度に応じて移動させます。
-	/// </remarks>
 	void Update();
 
 	/// <summary>
 	/// 建物オブジェクトの座標更新を行います。
 	/// </summary>
-	/// <remarks>
-	/// - 内部の3Dオブジェクトの更新処理を呼び出し、ワールド変換を反映させます。
-	/// </remarks>
 	void TransformUpdate();
 
 	/// <summary>
 	/// 建物オブジェクトを描画します。
 	/// </summary>
-	/// <remarks>
-	/// - 内部の3Dオブジェクトをオブジェクトレイヤーに描画します。
-	/// </remarks>
 	void Draw();
 
 	///-------------------------------------------/// 
@@ -4384,7 +3946,7 @@ void Ground::TransformUpdate() {
 void Ground::Draw() {
 
 	// オブジェクトの描画
-	object_->Draw(LayerType::Object);
+	object_->Draw(LayerType::OBJECT);
 }
 
 ============================================================
@@ -4399,10 +3961,6 @@ class Object3D;
 /// <summary>
 /// 3D空間内の地面オブジェクトを管理するクラスです。
 /// </summary>
-/// <remarks>
-/// - 内部に3Dオブジェクトを保持し、初期化・更新・描画処理を行います。
-/// - UV座標のスクロールを用いたテクスチャアニメーションを実装しています。
-/// </remarks>
 class Ground {
 
 	///-------------------------------------------/// 
@@ -4413,41 +3971,21 @@ public:
 	/// <summary>
 	/// 地面オブジェクトを初期化します。
 	/// </summary>
-	/// <remarks>
-	/// - 3Dオブジェクトを生成し、初期化します。
-	/// - 平面モデルを設定し、テクスチャを読み込み適用します。
-	/// - オブジェクトのスケールと回転を設定します。
-	/// - 環境光係数を初期化します。
-	/// - UV座標Yを初期値に設定します。
-	/// </remarks>
 	void Initialize();
 
 	/// <summary>
 	/// 地面オブジェクトの更新処理を行います。
 	/// </summary>
-	/// <remarks>
-	/// - 内部の3Dオブジェクトの更新処理を呼び出します。
-	/// - UV座標Yを時間経過に応じて更新します。
-	/// - UV変換行列（移動、回転、スケール）を計算し、モデルに設定します。
-	/// - これによりテクスチャのスクロール表現を実現します。
-	/// </remarks>
 	void Update();
 
 	/// <summary>
 	/// 地面オブジェクトの座標更新を行います。
 	/// </summary>
-	/// <remarks>
-	/// - 内部の3Dオブジェクトの更新処理を呼び出し、ワールド変換を反映させます。
-	/// - UVスクロールやその他の更新処理は行いません。
-	/// </remarks>
 	void TransformUpdate();
 
 	/// <summary>
 	/// 地面オブジェクトを描画します。
 	/// </summary>
-	/// <remarks>
-	/// - 内部の3Dオブジェクトをオブジェクトレイヤーに描画します。
-	/// </remarks>
 	void Draw();
 
 	///-------------------------------------------/// 
@@ -4643,52 +4181,26 @@ public:
 	/// <summary>
 	/// 地面と建物群を初期化します。
 	/// </summary>
-	/// <remarks>
-	/// - 建物の幅、高さ、生成範囲、距離、開始位置、最大数などのパラメータを設定します。
-	/// - 地面オブジェクトを生成し、初期化します。
-	/// - 建物を行・列に沿って生成し、ランダムな高さを付与します。
-	/// - 偶数列の建物はX座標を反転させ、左右対称に配置します。
-	/// - 生成した建物は内部コンテナに保持されます。
-	/// - Z方向の配置が開始位置を超えた場合、建物の生成を停止します。
-	/// </remarks>
 	void Initialize();
 
 	/// <summary>
 	/// 地面と建物群の後片付けを行います。
 	/// </summary>
-	/// <remarks>
-	/// - 内部で保持している建物オブジェクトのコンテナをクリアし、メモリを解放します。
-	/// - 地面オブジェクト自体はスマートポインタにより自動的に破棄されます。
-	/// </remarks>
 	void Finalize();
 
 	/// <summary>
 	/// 地面と建物群の更新処理を行います。
 	/// </summary>
-	/// <remarks>
-	/// - 地面オブジェクトの更新処理を呼び出します。
-	/// - 各建物オブジェクトを更新し、Z座標が開始位置を超えた場合はリセットします。
-	/// - 建物の移動やワールド変換が反映されます。
-	/// </remarks>
 	void Update();
 
 	/// <summary>
 	/// 地面と建物群の座標更新を行います。
 	/// </summary>
-	/// <remarks>
-	/// - 地面オブジェクトの座標更新を呼び出します。
-	/// - 各建物オブジェクトの座標更新を呼び出し、ワールド変換を反映させます。
-	/// </remarks>
 	void TransformUpdate();
 
 	/// <summary>
 	/// 地面と建物群を描画します。
 	/// </summary>
-	/// <remarks>
-	/// - 地面オブジェクトを描画します。
-	/// - 各建物オブジェクトを描画します。
-	/// - 描画はそれぞれの内部オブジェクトの描画処理を通じて行われます。
-	/// </remarks>
 	void Draw();
 
 	/// <summary>
@@ -4812,13 +4324,13 @@ void LineGround::Draw() {
 	//縦ライン描画
 	for (auto& line : verticalLines_) {
 
-		line->Draw(LayerType::Object);
+		line->Draw(LayerType::OBJECT);
 	}
 
 	//横ライン描画
 	for (auto& line : horizontalLines_) {
 
-		line->Draw(LayerType::Object);
+		line->Draw(LayerType::OBJECT);
 	}
 }
 
@@ -4854,12 +4366,6 @@ File Path: Application/Ground/LineGround.h
 /// <summary>
 /// ライン状の床オブジェクトを管理するクラスです。
 /// </summary>
-/// <remarks>
-/// - 床を構成する縦ラインと横ラインを保持し、初期化・更新・描画を行います。
-/// - 横ラインはスクロール移動し、範囲外に出た場合はループさせます。
-/// - 縦ラインは固定表示され、中央ラインのみ赤色で強調されます。
-/// - デバッグ用のライン表現や床の動きの視覚化に使用されます。
-/// </remarks>
 class LineGround {
 
 	///-------------------------------------------/// 
@@ -4870,31 +4376,16 @@ public:
 	/// <summary>
 	/// ライン状の床オブジェクトを初期化します。
 	/// </summary>
-	/// <remarks>
-	/// - 床を構成する縦および横のラインを生成します。
-	/// - ラインの分割数、間隔、移動速度などのパラメータを設定します。
-	/// - 縦ラインの中央は赤色で表示し、それ以外は白色で表示します。
-	/// - 各ラインはDebugLineオブジェクトとして生成・初期化され、内部コンテナに保持されます。
-	/// </remarks>
 	void Initialize();
 
 	/// <summary>
 	/// ライン状の床オブジェクトの更新処理を行います。
 	/// </summary>
-	/// <remarks>
-	/// - 床全体の移動処理を行います。
-	/// - 縦ラインおよび横ラインの各DebugLineオブジェクトの更新処理を呼び出します。
-	/// - ラインの位置や状態が毎フレーム反映されます。
-	/// </remarks>
 	void Update();
 
 	/// <summary>
 	/// ライン状の床オブジェクトを描画します。
 	/// </summary>
-	/// <remarks>
-	/// - 縦ラインおよび横ラインの各DebugLineオブジェクトをオブジェクトレイヤーに描画します。
-	/// - ラインの色や位置に応じて描画が反映されます。
-	/// </remarks>
 	void Draw();
 
 	///-------------------------------------------/// 
@@ -4905,11 +4396,6 @@ private:
 	/// <summary>
 	/// ライン状の床オブジェクトの横ラインを移動させます。
 	/// </summary>
-	/// <remarks>
-	/// - 横ラインのZ座標を速度に応じて減少させます。
-	/// - ラインが表示範囲外に出た場合は、Z座標をリセットしてループさせます。
-	/// - 縦ラインは移動させず、横ラインのみスクロールさせます。
-	/// </remarks>
 	void Move();
 
 	///-------------------------------------------/// 
@@ -5084,7 +4570,7 @@ void LevelDataLoader::Load(const std::string& fileName) {
 				//モデルのファイル名を取得
 				newObject.filename = object["file_name"].get<std::string>();
 
-				if (newObject.type != NONE) {
+				if (newObject.type != ObjectType::NONE) {
 
 					//モデルの読み込み
 					ModelManager::GetInstance()->LoadModel(newObject.filename, objectType, newObject.filename);
@@ -5219,12 +4705,6 @@ File Path: Application/LevelEditor/LevelDataLoader.h
 /// <summary>
 /// レベルデータを管理するクラスです。
 /// </summary>
-/// <remarks>
-/// - JSON形式で保存されたレベルデータを読み込み、内部コンテナに保持します。
-/// - 各オブジェクトの種類（PLAYER, ENEMY, OBJECTなど）やトランスフォーム情報を管理します。
-/// - 指定ファイルやディレクトリ単位でオブジェクトの数を取得したり、特定タイプのオブジェクトデータを抽出することが可能です。
-/// - シングルトンとして利用され、ゲーム全体で共通のレベルデータ管理を提供します。
-/// </remarks>
 class LevelDataLoader {
 
 	///-------------------------------------------/// 
@@ -5235,20 +4715,11 @@ public:
 	/// <summary>
 	/// LevelDataLoaderのシングルトンインスタンスを取得します。
 	/// </summary>
-	/// <remarks>
-	/// 返り値に静的インスタンスを返します。
-	/// </remarks>
 	static LevelDataLoader* GetInstance();
 
 	/// <summary>
 	/// レベルデータの読み込みを初期化します。
 	/// </summary>
-	/// <remarks>
-	/// - JSONファイルが格納されているディレクトリパスを設定します。
-	/// - ディレクトリ内の全てのファイルを再帰的に走査します。
-	/// - 拡張子が ".json" のファイルのみ対象とし、相対パスを取得します。
-	/// - 取得した相対パスを使用して各レベルデータを読み込みます。
-	/// </remarks>
 	void Initialize();
 
 	///-------------------------------------------/// 
@@ -5260,15 +4731,6 @@ private:
 	/// 指定されたJSONファイルからレベルデータを読み込みます。
 	/// </summary>
 	/// <param name="fileName">読み込むJSONファイルの相対パス</param>
-	/// <remarks>
-	/// - ファイルを開き、JSON形式でデータを読み込みます。
-	/// - レベルデータが正しい形式であるかチェックします（"name"キーが "scene" であることなど）。
-	/// - "objects" 配列内の各オブジェクトを走査し、無効フラグが立っていればスキップします。
-	/// - オブジェクトの "type" および "object_group" を確認し、ObjectType を設定します。
-	/// - モデルのファイル名が存在する場合は ModelManager を用いてモデルを読み込みます。
-	/// - トランスフォーム情報（平行移動、回転、スケーリング）を ObjectData に格納します。
-	/// - 読み込んだオブジェクトデータをファイル名をキーとしてレベルデータコンテナに保存します。
-	/// </remarks>
 	void Load(const std::string& filePath);
 
 	///-------------------------------------------/// 
@@ -5301,10 +4763,6 @@ public:
 	/// <param name="fileName">対象のレベルデータのファイル名</param>
 	/// <param name="type">カウントしたいオブジェクトのタイプ</param>
 	/// <returns>指定したタイプのオブジェクトの数</returns>
-	/// <remarks>
-	/// - ファイル名が存在しない場合は0を返します。
-	/// - レベルデータ内の全オブジェクトを走査し、タイプが一致する場合にカウントを増加させます。
-	/// </remarks>
 	int GetObjectCount(const std::string& fileName, const ObjectType type);
 
 	/// <summary>
@@ -5312,10 +4770,6 @@ public:
 	/// </summary>
 	/// <param name="directoryName">対象のディレクトリ名（相対パスの先頭部分）</param>
 	/// <returns>指定ディレクトリに属するレベルデータの件数</returns>
-	/// <remarks>
-	/// - レベルデータのキー（ファイル名）が指定されたディレクトリ名で始まる場合にカウントします。
-	/// - ディレクトリ内の全てのレベルデータを走査し、該当するデータの数を返します。
-	/// </remarks>
 	int GetObjectDataCount(const std::string& directoryName);
 
 	/// <summary>
@@ -5324,11 +4778,6 @@ public:
 	/// <param name="fileName">対象のレベルデータのファイル名</param>
 	/// <param name="type">抽出したいオブジェクトのタイプ</param>
 	/// <returns>指定タイプのオブジェクトデータを格納したベクター</returns>
-	/// <remarks>
-	/// - ファイル名が存在しない場合は空のベクターを返します。
-	/// - レベルデータ内の全オブジェクトを走査し、タイプが一致する場合にベクターに追加します。
-	/// - 抽出結果として複数のオブジェクトデータを返すことが可能です。
-	/// </remarks>
 	std::vector<ObjectData> PickObjectData(const std::string& fileName, const ObjectType type);
 
 };
@@ -5343,7 +4792,7 @@ File Path: Application/LevelEditor/ObjectData.h
 #include "string"
 
 //オブジェクトのタイプ
-enum ObjectType {
+enum class ObjectType {
 	NONE,
 	PLAYER,
 	ENEMY,
@@ -5762,11 +5211,6 @@ class Camera;
 /// <summary>
 /// ロックオンシステムを管理するクラスです。
 /// </summary>
-/// <remarks>
-/// - プレイヤーの周囲にメインレティクルとロックオンレティクルを表示し、敵を自動でロックオンします。
-/// - ロックオン対象の敵情報を管理し、レティクルの更新・描画を行います。
-/// - 最大ロックオン数に応じて複数の敵を同時に追尾可能です。
-/// </remarks>
 class LockOn {
 
 	///-------------------------------------------/// 
@@ -5796,12 +5240,6 @@ public:
 	/// <summary>
 	/// ロックオンシステムを初期化します。
 	/// </summary>
-	/// <remarks>
-	/// - カメラとプレイヤーの参照を取得します。
-	/// - メインレティクルを生成・初期化します。
-	/// - プレイヤーからのオフセットと移動範囲・移動強度を設定します。
-	/// - 最大ロックオン数分のロックオンレティクルを生成し、初期状態として非アクティブに設定します。
-	/// </remarks>
 	/// <param name="cameraPtr">使用するカメラへのポインタ</param>
 	/// <param name="playerPtr">対象となるプレイヤーへのポインタ</param>
 	void Initialize(Camera* cameraPtr, Player* playerPtr);
@@ -5809,32 +5247,16 @@ public:
 	/// <summary>
 	/// ロックオンシステムを更新します。
 	/// </summary>
-	/// <remarks>
-	/// - プレイヤーの移動に応じてメインレティクルの位置を補間して更新します。
-	/// - メインレティクルが地面に埋まらないように高さを制限します。
-	/// - 前回のターゲットを優先してロックオンレティクルに割り当てます。
-	/// - 未割り当ての敵に対して残りのロックオンレティクルを割り当てます。
-	/// - 各ロックオンレティクルのターゲット座標を設定し、アクティブ状態を更新します。
-	/// - 更新後、ロックオン対象リストをクリアします。
-	/// </remarks>
 	void Update();
 
 	/// <summary>
 	/// メインおよびロックオンレティクルを描画します。
 	/// </summary>
-	/// <remarks>
-	/// - メインレティクルを描画します。
-	/// - 各ロックオンレティクルはアクティブ状態の場合のみ描画します。
-	/// </remarks>
 	void Draw();
 
 	/// <summary>
 	/// 指定した敵をロックオン対象に追加します。
 	/// </summary>
-	/// <remarks>
-	/// - 既にロックオンされている敵は追加されません。
-	/// - 新しい敵は未割り当て状態でリストに追加されます。
-	/// </remarks>
 	/// <param name="target">ロックオン対象とする敵のポインタ</param>
 	void AddLockOnEnemy(Enemy* target);
 
@@ -5884,9 +5306,6 @@ public:
 	/// <summary>
 	/// アクティブなロックオンレティクルの座標を取得します。
 	/// </summary>
-	/// <remarks>
-	/// - 現在アクティブ状態のロックオンレティクルのワールド座標を収集して返します。
-	/// </remarks>
 	/// <return>アクティブなロックオンレティクルの座標リスト</return>
 	std::vector<Vector3> GetLockOnReticlePos();
 
@@ -6069,11 +5488,11 @@ void Player::Update() {
 		if (core_->GetWorldTransform().translate_.y <= 1.0f) {
 
 			//戦車状態に変更
-			moveState_ = TANK;
+			moveState_ = MoveState::TANK;
 		} else {
 
 			//飛行機状態に変更
-			moveState_ = JET;
+			moveState_ = MoveState::JET;
 		}
 
 		//移動
@@ -6162,13 +5581,13 @@ void Player::Draw() {
 	if (!isDestroy_) {
 
 		//コアオブジェクトの描画
-		core_->Draw(LayerType::Object);
+		core_->Draw(LayerType::OBJECT);
 
 		//右ウィングの描画
-		rightWing_->Draw(LayerType::Object);
+		rightWing_->Draw(LayerType::OBJECT);
 
 		//左ウィングの描画
-		leftWing_->Draw(LayerType::Object);
+		leftWing_->Draw(LayerType::OBJECT);
 
 		//影の描画
 		shadow_->Draw();
@@ -6233,7 +5652,7 @@ void Player::JetAttack() {
 	bulletManager_->AddBullet(
 		core_->GetWorldTransform().translate_,
 		Normalize(direction),
-		BulletManager::BULLETTYPE::JET
+		BulletManager::BulletType::JET
 	);
 
 }
@@ -6255,7 +5674,7 @@ void Player::TankAttack() {
 		bulletManager_->AddBullet(
 			core_->GetWorldTransform().translate_,
 			Normalize(direction),
-			BulletManager::BULLETTYPE::TANK
+			BulletManager::BulletType::TANK
 		);
 	}
 
@@ -6427,7 +5846,7 @@ class Player {
 public:
 
 	//移動状態
-	enum MOVESTATE {
+	enum class MoveState {
 		TANK,
 		JET,
 	};
@@ -6440,43 +5859,21 @@ public:
 	/// <summary>
 	/// プレイヤーを初期化します。
 	/// </summary>
-	/// <remarks>
-	/// - カメラ・弾マネージャー・レベルデータの参照を取得します。  
-	/// - プレイヤーオブジェクト（本体・翼）と各エミッターを生成し、階層構造を構築します。  
-	/// - コライダー、影、ロックオンシステムを初期化します。  
-	/// - 攻撃間隔・移動速度・回転強度など各種パラメータを設定します。  
-	/// - 初期座標を設定し、移動と生存状態を初期化します。  
-	/// </remarks>
 	void Initialize(Camera* cameraPtr, BulletManager* bulletPtr, bool isMoveActive);
 
 	/// <summary>
 	/// プレイヤーの状態を更新します。
 	/// </summary>
-	/// <remarks>
-	/// - 生存状態に応じて移動形態を切り替え、移動処理を行います。  
-	/// - 移動可能な場合は攻撃・衝突判定を実行します。  
-	/// - 死亡時は専用処理を行います。  
-	/// - 本体、ウィング、エミッター、影など関連オブジェクトを順に更新します。  
-	/// - 移動可能な場合はコライダーとロックオンも更新します。  
-	/// </remarks>
 	void Update();
 
 	/// <summary>
 	/// プレイヤーの座標のみを更新します。
 	/// </summary>
-	/// <remarks>
-	/// - 本体（コア）、左右ウィング、影のワールド変換を更新します。  
-	/// </remarks>
 	void TransformUpdate();
 
 	/// <summary>
 	/// プレイヤーの各種描画処理を行います。
 	/// </summary>
-	/// <remarks>
-	/// - 破壊状態でなければ、コアオブジェクトや両ウィング、影の描画を行います。  
-	/// - 破壊状態に関係なく、両トレイルや各種エミッターの描画を行います。  
-	/// - 移動が可能な状態であれば、当たり判定用のコライダーや照準用オブジェクトの描画を行います。  
-	/// </remarks>
 	void Draw();
 
 	void UpdateLockOn(float lockOnRange);
@@ -6497,43 +5894,21 @@ private:
 	/// <summary>
 	/// プレイヤーの移動処理を行います。
 	/// </summary>
-	/// <remarks>
-	/// - 移動量を初期化した後、移動が可能な状態であれば入力された方向に応じて移動量を加算します。  
-	/// - 移動量がある場合は、現在位置に移動量を加えた位置を求め、あらかじめ決められた範囲からはみ出さないように位置を制限します。  
-	/// - 制限後の位置へ補間しながら移動し、地面より下に行かないように高さを調整します。  
-	/// - 最終的な位置をオブジェクトへ反映します。  
-	/// - 現在の移動状態に応じて戦車モードまたは飛行機モードの専用移動処理を呼び出します。  
-	/// </remarks>
 	void Move();
 
 	/// <summary>
 	/// プレイヤーの攻撃処理を行います。
 	/// </summary>
-	/// <remarks>
-	/// - 攻撃タイマーを進め、現在の移動状態に応じて戦車モードまたは飛行機モードの攻撃処理を呼び出します。  
-	/// - 各モードごとに異なる攻撃方法が適用されます。  
-	/// </remarks>
 	void Attack();
 
 	/// <summary>
 	/// プレイヤーと他オブジェクトの衝突判定を行います。
 	/// </summary>
-	/// <remarks>
-	/// - コライダーが接触状態であるかを確認します。  
-	/// - 接触相手が敵の弾である場合、プレイヤーの移動を無効化し、死亡フラグを立てます。  
-	/// - 死亡時には爆発エミッターを発生させ、視覚的な演出を行います。  
-	/// </remarks>
 	void IsCollision();
 
 	/// <summary>
 	/// プレイヤーが死亡した際の処理を行います。
 	/// </summary>
-	/// <remarks>
-	/// - プレイヤー本体を下方向に移動させつつ、コアを中心に回転させます。  
-	/// - 地面に到達した場合、Y座標を固定し、破壊されていなければ破壊フラグを立てます。  
-	/// - トレイルや爆発エミッターを停止し、破壊用エミッターを発生させます。  
-	/// - 同時に画面揺れ演出を開始し、視覚的な死亡演出を行います。  
-	/// </remarks>
 	void Dead();
 
 	///-------------------------------------------/// 
@@ -6593,7 +5968,7 @@ private:
 	std::unique_ptr<AttackState> attackState_;
 
 	//移動状態
-	MOVESTATE moveState_;
+	MoveState moveState_;
 
 	//移動量
 	Vector3 inputDirection_;
@@ -6638,7 +6013,7 @@ public:
 	/// 移動状態を取得
 	/// </summary>
 	/// <returns>移動状態</returns>
-	MOVESTATE GetMoveState() { return moveState_; }
+	MoveState GetMoveState() { return moveState_; }
 
 	/// <summary>
 	/// 死亡フラグを取得
@@ -6789,7 +6164,7 @@ void Reticle::Draw() {
 	if (isDraw3D_) {
 
 		//3Dオブジェクトの描画
-		object3D_->Draw(LayerType::Object);
+		object3D_->Draw(LayerType::OBJECT);
 	}
 }
 
@@ -6810,12 +6185,6 @@ class Camera;
 /// <summary>
 /// レティクルを管理するクラスです。
 /// </summary>
-/// <remarks>
-/// - 2Dおよび3Dの表示形式を持ち、UI上での描画やゲーム内オブジェクトとしての位置を管理します。  
-/// - 起動アニメーションや更新処理を行い、3D座標とスクリーン座標の同期を自動で行います。  
-/// - 描画フラグに応じて2Dまたは3Dオブジェクトを描画し、状態に応じた表示切替をサポートします。  
-/// - アニメーションタイマーを保持し、必要に応じてリセットできます。  
-/// </remarks>
 class Reticle {
 
 	///-------------------------------------------/// 
@@ -6827,33 +6196,16 @@ public:
 	/// レティクルを初期化します。
 	/// </summary>
 	/// <param name="cameraPtr">描画やスクリーン座標変換に使用するカメラのポインタです。</param>
-	/// <remarks>
-	/// - 2Dスプライトとして使用するレティクルを生成・初期化し、サイズやアンカーポイントを設定します。  
-	/// - 3Dオブジェクトとして使用するレティクルも生成・初期化し、モデルを設定します。  
-	/// - 描画フラグを設定し、2D描画を有効、3D描画を無効にします。  
-	/// - アニメーション用のタイマーを初期化し、最大アニメーション時間を設定します。  
-	/// </remarks>
 	void Initialize(Camera* cameraPtr);
 
 	/// <summary>
 	/// レティクルの更新処理を行います。
 	/// </summary>
-	/// <remarks>
-	/// - 起動時のアニメーションタイマーを進め、0から1への補間で2Dスプライトの色を変化させます。  
-	/// - 3Dオブジェクトの位置や状態を更新します。  
-	/// - 3Dオブジェクトのワールド座標をスクリーン座標に変換し、2Dオブジェクトの位置を同期させます。  
-	/// - 2Dオブジェクトの状態も更新し、描画準備を行います。  
-	/// </remarks>
 	void Update();
 
 	/// <summary>
 	/// レティクルの描画処理を行います。
 	/// </summary>
-	/// <remarks>
-	/// - 2D描画フラグが有効な場合、UIレイヤーとして2Dオブジェクトを描画します。  
-	/// - 3D描画フラグが有効な場合、オブジェクトレイヤーとして3Dオブジェクトを描画します。  
-	/// - 状態に応じて2D・3D描画を切り替えながら表示を行います。  
-	/// </remarks>
 	void Draw();
 
 	/// <summary>
@@ -7604,8 +6956,8 @@ void GameScene::Finalize() {
 ///=====================================================///
 void GameScene::Update() {
 
-	if (Fade::GetInstance()->GetState() == Fade::FADE_IN_END) {
-		Fade::GetInstance()->SetState(Fade::NONE);
+	if (Fade::GetInstance()->GetState() == Fade::FadeState::FADE_IN_END) {
+		Fade::GetInstance()->SetState(Fade::FadeState::NONE);
 	}
 
 	//スタート時のアニメーションの更新
@@ -7720,7 +7072,7 @@ void GameScene::Update() {
 
 	if (ObjectManager::GetInstance()->GetKillCount() >= 30) {
 
-		if (Fade::GetInstance()->GetState() != Fade::FADE_OUT && Fade::GetInstance()->GetState() != Fade::FADE_OUT_END) {
+		if (Fade::GetInstance()->GetState() != Fade::FadeState::FADE_OUT && Fade::GetInstance()->GetState() != Fade::FadeState::FADE_OUT_END) {
 
 			if (!isClearAnim_) {
 
@@ -7801,13 +7153,13 @@ void GameScene::Update() {
 	}
 
 	//フェードアウトが終わったら
-	if (Fade::GetInstance()->GetState() == Fade::FADE_OUT_END) {
+	if (Fade::GetInstance()->GetState() == Fade::FadeState::FADE_OUT_END) {
 
 		//フェードの状態をリセット
-		Fade::GetInstance()->SetState(Fade::NONE);
+		Fade::GetInstance()->SetState(Fade::FadeState::NONE);
 
 		//タイトルシーンに遷移
-		SceneManager::GetInstance()->ChangeScene(SceneManager::kTitle);
+		SceneManager::GetInstance()->ChangeScene(SceneManager::SceneType::kTitle);
 	}
 }
 
@@ -8285,7 +7637,7 @@ void ParticleEditorScene::Draw() {
 	//デバッグラインの描画
 	for (auto& line : lines_) {
 
-		line->Draw(Object);
+		line->Draw(LayerType::OBJECT);
 	}
 }
 
@@ -8414,34 +7766,16 @@ public:
 	/// <summary>
 	/// パーティクルエディタ用シーンの初期化を行います。
 	/// </summary>
-	/// <remarks>
-	/// - カメラを生成・初期化し、デバッグカメラとして設定。カメラの位置・回転を設定し、デフォルトカメラとして登録します。  
-	/// - Particle用スプライトテクスチャをResourceディレクトリから取得し、TextureManagerでロードします。  
-	/// - エミッターグループ用のディレクトリからグループ名を取得し、デフォルトグループを生成します。  
-	/// - 床オブジェクト（ライン）を生成し、X方向・Z方向のグリッドラインを描画。中央ラインは赤・緑で色分けします。  
-	/// - lines_に格納することで描画・更新時に利用可能にします。  
-	/// </remarks>
 	void Initialize() override;
 
 	/// <summary>
 	/// パーティクルエディタシーンの毎フレーム更新処理を行います。
 	/// </summary>
-	/// <remarks>
-	/// - カメラをデバッグモードで更新します。  
-	/// - 登録されているすべてのエミッターグループを更新し、パーティクルの生成・移動・ライフサイクルを進めます。  
-	/// - 床用のデバッグラインを更新し、描画や座標情報を最新化します。  
-	/// </remarks>
 	void Update() override;
 
 	/// <summary>
 	/// パーティクルエディタシーンの描画処理を行います。
 	/// </summary>
-	/// <remarks>
-	/// - 登録されているすべてのエミッターグループを描画します。  
-	///   各グループは内部のパーティクルを描画します。  
-	/// - 床用のデバッグラインを描画し、シーン内の座標やガイドラインとして表示します。  
-	/// - 描画順はパーティクル → デバッグラインの順で行います。  
-	/// </remarks>
 	void Draw() override;
 
 	/// <summary>
@@ -8457,24 +7791,12 @@ private:
 	/// <summary>
 	/// デフォルトのパーティクルエミッターグループを生成します。
 	/// </summary>
-	/// <remarks>
-	/// - 新しいEmitterGroupを生成し、カメラ参照を設定します。  
-	/// - 利用可能なテクスチャリストを渡します。  
-	/// - "defaultGroup" のエミッター設定を読み込みます。  
-	/// - 作成したグループをemitterGroups_に追加します。  
-	/// </remarks>
 	void CreateGroup();
 
 	/// <summary>
 	/// 指定した名前のパーティクルエミッターグループを読み込みます。
 	/// </summary>
 	/// <param name="groupName">読み込むエミッターグループの名前</param>
-	/// <remarks>
-	/// - 新しいEmitterGroupを生成し、カメラ参照を設定します。  
-	/// - 利用可能なテクスチャリストを渡します。  
-	/// - 指定されたgroupNameのエミッター設定を読み込みます。  
-	/// - 作成したグループをemitterGroups_に追加します。  
-	/// </remarks>
 	void LoadGroup(const std::string& groupName = "defaultGroup");
 
 	///-------------------------------------------/// 
@@ -8753,7 +8075,7 @@ void TitleScene::Update() {
 
 			Fade::GetInstance()->SetState(Fade::FadeState::NONE);
 
-			SceneManager::GetInstance()->ChangeScene(SceneManager::kGame);
+			SceneManager::GetInstance()->ChangeScene(SceneManager::SceneType::kGame);
 		}
 	}
 }
@@ -8812,8 +8134,8 @@ void TitleScene::Start() {
 			shockWaveRightEmitter_->GetWorldTransform().translate_ = player_->GetWorldPos() + Vector3(1.75f, 0.0f, 0.0f);
 			shockWaveRightEmitter_->Emit();
 
-			if (Fade::GetInstance()->GetState() != Fade::FADE_OUT) {
-				if (Fade::GetInstance()->GetState() != Fade::FADE_OUT_END) {
+			if (Fade::GetInstance()->GetState() != Fade::FadeState::FADE_OUT) {
+				if (Fade::GetInstance()->GetState() != Fade::FadeState::FADE_OUT_END) {
 
 					Fade::GetInstance()->StartFadeOut();
 				}
@@ -8905,11 +8227,6 @@ File Path: Application/Scene/TitleScene.h
 /// <summary>
 /// タイトルシーンの処理と演出を管理するクラスです
 /// </summary>
-/// <remarks>
-/// - 初期化から描画まで一連の流れを制御する  
-/// - 入力に応じて開始演出や遷移演出を行う  
-/// - 各オブジェクトの更新と表示を統括する
-/// </remarks>
 class TitleScene : public BaseScene {
 
 	///-------------------------------------------/// 
@@ -8920,44 +8237,21 @@ public:
 	/// <summary>
 	/// タイトルシーンの各種オブジェクトを初期化する関数です
 	/// </summary>
-	/// <remarks>
-	/// - カメラ生成や設定を行い描画準備を整える  
-	/// - モデルと2D画像を読み込み表示位置を設定する  
-	/// - プレイヤーや地面を生成し初期状態を構築する  
-	/// - エミッターを読み込んで作動準備を行う  
-	/// - フェードやアニメ関連の値を初期化する
-	/// </remarks>
 	void Initialize() override;
 
 	/// <summary>
 	/// タイトルシーン終了時に各種オブジェクトを解放する関数です
 	/// </summary>
-	/// <remarks>
-	/// - オブジェクト群を消去してメモリを解放する  
-	/// - フェード用の参照を解除して依存をなくす  
-	/// - シェイク用カメラを無効化して影響を止める
-	/// </remarks>
 	void Finalize() override;
 
 	/// <summary>
 	/// タイトルシーンの毎フレーム更新処理を行う関数です
 	/// </summary>
-	/// <remarks>
-	/// - 入力監視し開始状態へ移行する  
-	/// - カメラ回転や矢印演出を補間で制御する  
-	/// - 各オブジェクトを更新し描画準備する  
-	/// - フェード完了時にゲームシーンへ遷移する
-	/// </remarks>
 	void Update() override;
 
 	/// <summary>
 	/// タイトルシーンに必要な描画処理を行う関数です
 	/// </summary>
-	/// <remarks>
-	/// - プレイヤーと地形を描画する  
-	/// - エミッターの視覚効果を表示する  
-	/// - タイトル関連のUIスプライトを描画する
-	/// </remarks>
 	void Draw() override;
 
 	/// <summary>
@@ -8973,11 +8267,6 @@ private:
 	/// <summary>
 	/// タイトル開始時の演出アニメーションを管理する関数です
 	/// </summary>
-	/// <remarks>
-	/// - タイマーで区切った区間ごとに演出を進行する  
-	/// - 補間で座標や色を変化させ演出を構成する  
-	/// - 終盤で衝撃波発生とフェード開始を行う
-	/// </remarks>
 	void Start();
 
 	///-------------------------------------------/// 
@@ -9118,7 +8407,7 @@ void Shadow::Draw() {
 	if (isDraw_) {
 
 		// オブジェクトの描画
-		shadow_->Draw(LayerType::Object);
+		shadow_->Draw(LayerType::OBJECT);
 	}
 }
 
@@ -9136,12 +8425,6 @@ File Path: Application/Shadow/Shadow.h
 /// <summary>
 /// キャラクターや物体の位置に応じて影を生成・管理するクラス
 /// </summary>
-/// <remarks>
-/// - 3Dオブジェクトを利用して影を表現する
-/// - 高さに応じて影のサイズを変化させる
-/// - 地面に潜った場合は描画を無効化する
-/// - 初期化・更新・描画の3つの操作を提供する
-/// </remarks>
 class Shadow {
 
 	///-------------------------------------------/// 
@@ -9152,36 +8435,17 @@ public:
 	/// <summary>
 	/// 影用オブジェクトを生成し初期設定を行う
 	/// </summary>
-	/// <remarks>
-	/// - 影として利用する3Dオブジェクトを生成する
-	/// - モデルを球形に設定し扁平な形状へ変更する
-	/// - 影色を黒に設定し環境反射を無効化する
-	/// - 影用パラメータの最大長と最大拡大率を設定する
-	/// - 描画を行うかどうかの初期状態を有効にする
-	/// </remarks>
 	void Initialize();
 
 	/// <summary>
 	/// 指定座標に応じて影の位置とサイズを更新する
 	/// </summary>
 	/// <param name="pos">影の基準となる座標</param>
-	/// <remarks>
-	/// - 引数座標を影オブジェクトの位置に反映する
-	/// - 高さに応じて影の拡大率を計算する
-	/// - 拡大率が極端に小さくならないよう制限する
-	/// - 計算したサイズを影オブジェクトに適用する
-	/// - 影オブジェクトを毎フレーム更新する
-	/// - 座標が地面以下なら描画フラグを無効にする
-	/// </remarks>
 	void Update(Vector3 pos);
 
 	/// <summary>
 	/// 影オブジェクトを描画する
 	/// </summary>
-	/// <remarks>
-	/// - 描画フラグが有効な場合のみ影を描画する
-	/// - 影オブジェクトを指定レイヤーで描画する
-	/// </remarks>
 	void Draw();
 
 	///-------------------------------------------/// 
@@ -9301,12 +8565,6 @@ File Path: Application/Shake/Shake.h
 /// <summary>
 /// カメラに対してシェイク処理を管理するクラス
 /// </summary>
-/// <remarks>
-/// - シングルトンとしてインスタンスを取得できる
-/// - 初期化・更新・開始の操作を提供する
-/// - カメラの変換情報を元に揺れを加算する
-/// - 揺れの強さや持続時間を制御可能
-/// </remarks>
 class Shake {
 
 	///-------------------------------------------/// 
@@ -9317,31 +8575,16 @@ public:
 	/// <summary>
 	/// Shakeのシングルトンインスタンスを取得します。
 	/// </summary>
-	/// <remarks>
-	/// 返り値に静的インスタンスを返します。
-	/// </remarks>
 	static Shake* GetInstance();
 
 	/// <summary>
 	/// シェイク処理用の初期化を行う
 	/// </summary>
-	/// <remarks>
-	/// - 変換情報を初期状態にリセットする
-	/// - 揺れタイマーを0に設定する
-	/// </remarks>
 	void Initialize();
 
 	/// <summary>
 	/// カメラに対してシェイク効果を適用する
 	/// </summary>
-	/// <remarks>
-	/// - カメラが存在しなければ処理をスキップする
-	/// - 揺れタイマーを進めて経過率を計算する
-	/// - 揺れの強さを徐々に0に減衰させる
-	/// - カメラの変換情報をコピーし揺れ分を加算する
-	/// - 変換行列を更新しビュー行列を計算する
-	/// - ビュープロジェクション行列を計算してカメラに設定する
-	/// </remarks>
 	void Update();
 
 	/// <summary>
@@ -9349,11 +8592,6 @@ public:
 	/// </summary>
 	/// <param name="num">揺れの強さ</param>
 	/// <param name="time">揺れの持続時間</param>
-	/// <remarks>
-	/// - タイマーをリセットする
-	/// - 揺れの持続時間を設定する
-	/// - 揺れの初期強さを設定する
-	/// </remarks>
 	void Start(float length, float time);
 
 	///-------------------------------------------/// 
@@ -10101,11 +9339,6 @@ File Path: Engine/2d/Object/Object2D.h
 /// <summary>
 /// 2Dオブジェクトを表すクラス
 /// </summary>
-/// <remarks>
-/// - スプライトの管理
-/// - 座標変換行列の更新
-/// - 描画登録をRendererに対して行う
-/// </remarks>
 class Object2D {
 
 	///-------------------------------------------/// 
@@ -10266,7 +9499,7 @@ void Object2DCommon::Initialize() {
 	CreateGraphicsPipeline();
 
 	//ブレンドモードをノーマル状態に設定
-	blendMode_ = Normal;
+	blendMode_ = BlendType2D::NORMAL;
 }
 
 ///=====================================================/// 
@@ -10278,7 +9511,7 @@ void Object2DCommon::CommonDrawSetting() {
 	dxCommon_->GetCommandList()->SetGraphicsRootSignature(rootSignature_.Get());
 
 	//PSOを設定
-	dxCommon_->GetCommandList()->SetPipelineState(graphicsPipelineState_[blendMode_].Get());
+	dxCommon_->GetCommandList()->SetPipelineState(graphicsPipelineState_[static_cast<size_t>(blendMode_)].Get());
 
 	//メッシュトポロジーを設定
 	dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -10590,12 +9823,6 @@ File Path: Engine/2d/Object/Object2DCommon.h
 /// <summary>
 /// 2Dオブジェクト描画用の共通機能を提供するクラスです。
 /// </summary>
-/// <remarks>
-/// - DirectX 12 を使用した描画共通設定の管理
-/// - ルートシグネチャ、グラフィックパイプラインステート（PSO）の生成
-/// - 複数ブレンドモードのサポート
-/// - すべての 2D オブジェクトはこのクラスを通じて描画設定を適用します
-/// </remarks>
 class Object2DCommon {
 
 	///-------------------------------------------/// 
@@ -10604,12 +9831,12 @@ class Object2DCommon {
 public:
 
 	//ブレンドモードの種類
-	enum BlendType {
-		Normal,   //通常
-		Add,      //加算
-		Subtruct, //減算
-		Multily,  //乗算
-		Screen    //スクリーン
+	enum class BlendType2D {
+		NORMAL,   //通常
+		ADD,      //加算
+		SUBTRUCT, //減算
+		MUTILY,  //乗算
+		SCREEN    //スクリーン
 	};
 
 	///-------------------------------------------/// 
@@ -10620,29 +9847,16 @@ public:
 	/// <summary>
 	/// Object2DCommonのシングルトンインスタンスを取得します。
 	/// </summary>
-	/// <remarks>
-	/// 返り値に静的インスタンスを返します。
-	/// </remarks>
 	static Object2DCommon* GetInstance();
 
 	/// <summary>
 	/// Object2DCommonの初期化を行います。
 	/// </summary>
-	/// <remarks>
-	/// - DirectXCommonのインスタンスを取得
-	/// - グラフィックパイプラインの生成
-	/// - ブレンドモードをノーマルに初期化
-	/// </remarks>
 	void Initialize();
 
 	/// <summary>
 	/// 2Dオブジェクトの描画に必要な共通設定を行います。
 	/// </summary>
-	/// <remarks>
-	/// - RootSignatureの設定
-	/// - 現在のブレンドモードに対応するPSOの設定
-	/// - メッシュの描画トポロジーの設定
-	/// </remarks>
 	void CommonDrawSetting();
 
 	///-------------------------------------------/// 
@@ -10653,28 +9867,11 @@ private:
 	/// <summary>
 	/// 2Dオブジェクト描画用のルートシグネチャを作成します。
 	/// </summary>
-	/// <remarks>
-	/// この関数では以下の設定を行います:
-	/// - RootParameterの設定
-	/// - DescriptorRangeでSRVの指定
-	/// - PixelShader用のStaticSamplerを設定
-	/// - RootSignatureの生成後、エラーがあればログ出力とアサートで停止
-	/// </remarks>
 	void CreateRootSignature();
 
 	/// <summary>
 	/// 2Dオブジェクト描画用のグラフィックパイプラインステートを作成します。
 	/// </summary>
-	/// <remarks>
-	/// この関数では以下の処理を行います:
-	/// - RootSignatureの生成
-	/// - InputLayoutの設定
-	/// - BlendStateの設定
-	/// - RasterizerStateの設定
-	/// - VertexShader/PixelShaderのコンパイル
-	/// - DepthStencilStateの設定
-	/// - 複数のブレンドモード用のPSOを生成し配列に格納
-	/// </remarks>
 	void CreateGraphicsPipeline();
 
 	///-------------------------------------------/// 
@@ -10686,7 +9883,7 @@ private:
 	DirectXCommon* dxCommon_ = nullptr;
 
 	//ブレンドモード
-	BlendType blendMode_;
+	BlendType2D blendMode_;
 
 	//ルートシグネチャ
 	Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature_ = nullptr;
@@ -10709,7 +9906,7 @@ public:
 	/// 描画時のブレンドモードを設定します。
 	/// </summary>
 	/// <param name="blendType"> 設定するブレンドモード </param>
-	void SetBlendMode(BlendType blendType) { blendMode_ = blendType; }
+	void SetBlendMode(BlendType2D blendType) { blendMode_ = blendType; }
 
 };
 
@@ -10996,11 +10193,6 @@ File Path: Engine/2d/Sprite/Sprite.h
 /// <summary>
 /// 2Dスプライトを表すクラス。
 /// </summary>
-/// <remarks>
-/// - テクスチャ読み込み・頂点/インデックス/マテリアルバッファ管理
-/// - 座標、回転、サイズ、アンカーポイントの管理
-/// - X/Y軸反転対応
-/// </remarks>
 class Sprite {
 
 	///-------------------------------------------/// 
@@ -11036,45 +10228,21 @@ public:
 	/// スプライトの描画に必要なリソースを初期化します。
 	/// </summary>
 	/// <param name="fileName">ファイル名(.png切り捨て)</param>
-	/// <remarks>
-	/// - SpriteCommonのインスタンス取得
-	/// - 頂点バッファの作成およびマッピング
-	/// - 頂点インデックスバッファの作成および初期化
-	/// - マテリアルリソースの作成および初期化
-	/// - テクスチャを読み込み、サイズを調整
-	/// - 座標、回転、アンカーポイント、反転フラグなどの変数を初期化
-	/// </remarks>
 	void Initialize(const std::string& fileName);
 
 	/// <summary>
 	/// スプライトの頂点データを更新します。
 	/// </summary>
-	/// <remarks>
-	/// - アンカーポイントに基づいて四隅の頂点位置を計算
-	/// - X軸・Y軸反転フラグを反映
-	/// - テクスチャUV座標を計算
-	/// - 計算した頂点位置とUVをvertexData_に書き込む
-	/// </remarks>
 	void Update();
 
 	/// <summary>
 	/// スプライトを描画します。
 	/// </summary>
-	/// <remarks>
-	/// - 頂点バッファを設定
-	/// - インデックスバッファを設定
-	/// - マテリアルを設定
-	/// - テクスチャを設定
-	/// - インデックス付き描画を実行
-	/// </remarks>
 	void Draw();
 
 	/// <summary>
 	/// 現在のテクスチャを次のものに切り替えます。
 	/// </summary>
-	/// <remarks>
-	/// - テクスチャ番号をインクリメント
-	/// </remarks>
 	void NextTexture();
 
 	/// <summary>
@@ -11090,11 +10258,6 @@ private:
 	/// <summary>
 	/// スプライトのサイズを現在のテクスチャの解像度に合わせます。
 	/// </summary>
-	/// <remarks>
-	/// - texturePath_からテクスチャのメタデータを取得
-	/// - メタデータからテクスチャの高さ・幅を取得
-	/// - スプライトのサイズをテクスチャのサイズに合わせる
-	/// </remarks>
 	void AdjustTextureSize();
 
 	///-------------------------------------------/// 
@@ -11339,9 +10502,6 @@ File Path: Engine/2d/Sprite/SpriteCommon.h
 /// <summary>
 /// スプライト描画共通処理を管理するシングルトンクラス。
 /// </summary>
-/// <remarks>
-/// - DirectXCommonのインスタンスを保持
-/// </remarks>
 class SpriteCommon {
 
 	///-------------------------------------------/// 
@@ -11352,17 +10512,11 @@ public:
 	/// <summary>
 	/// SpriteCommonのシングルトンインスタンスを取得します。
 	/// </summary>
-	/// <remarks>
-	/// 返り値に静的インスタンスを返します。
-	/// </remarks>
 	static SpriteCommon* GetInstance();
 
 	/// <summary>
 	/// SpriteCommonを初期化します。
 	/// </summary>
-	/// <remarks>
-	/// DirectXCommonのシングルトンインスタンスを取得し、内部メンバ(dxCommon_)に保持します。
-	/// </remarks>
 	void Initialize();
 
 	///-------------------------------------------/// 
@@ -11481,10 +10635,6 @@ File Path: Engine/2d/Sprite/SpriteManager.h
 /// <summary>
 /// スプライトの管理を行うクラス。
 /// </summary>
-/// <remarks>
-/// - 読み込まれたスプライトを一元管理
-/// - 登録済みのスプライトを基に別ポインタのスプライトインスタンスを生成・引き渡す
-/// </remarks>
 class SpriteManager {
 
 	///-------------------------------------------/// 
@@ -11495,17 +10645,11 @@ public:
 	/// <summary>
 	/// SpriteManagerのシングルトンインスタンスを取得します。
 	/// </summary>
-	/// <remarks>
-	/// 返り値に静的インスタンスを返します。
-	/// </remarks>
 	static SpriteManager* GetInstance();
 
 	/// <summary>
 	/// SpriteManagerを初期化します。
 	/// </summary>
-	/// <remarks>
-	/// SpriteCommonのシングルトンインスタンスを取得し、内部メンバ(spriteCommon_)に保持します。
-	/// </remarks>
 	void Initialize();
 
 	/// <summary>
@@ -11513,13 +10657,6 @@ public:
 	/// </summary>
 	/// <param name="spriteName"> スプライト名 </param>
 	/// <param name="spriteFileName"> スプライトファイル名 </param>
-	/// <remarks>
-	/// - リストから検索して登録されているかを確認
-	///   - 存在する場合は何もせず早期リターン
-	/// - スプライトを生成
-	/// - 指定されたファイルからスプライトを初期化
-	/// - スプライト名と生成したスプライトをリストに登録
-	/// </remarks>
 	void LoadSprite(const std::string& spriteName);
 
 	/// <summary>
@@ -11529,11 +10666,6 @@ public:
 	/// <returns>
 	/// 新しいスプライトインスタンス (登録されていなかったらnullptr)
 	/// </returns>
-	/// <remarks>
-	/// - リストから検索して登録されているかを確認
-	///   - 存在する場合は新しくスプライトを生成後、インスタンスを返す
-	/// - 登録されていなかったらnullptrを返す
-	/// </remarks>
 	std::unique_ptr<Sprite> FindSprite(const std::string& spriteName);
 
 	///-------------------------------------------/// 
@@ -11999,10 +11131,6 @@ File Path: Engine/2d/Sprite/TextureManager.h
 /// <summary>
 /// テクスチャ管理を行うシングルトンクラス。
 /// </summary>
-/// <remarks>
-/// - テクスチャの読み込み・GPU展開・SRV管理を一元管理
-/// - 重複ロードを防ぎ、効率的にGPUリソースを利用
-/// </remarks>
 class TextureManager {
 
 	///-------------------------------------------/// 
@@ -12037,44 +11165,23 @@ public:
 	/// <summary>
 	/// TextureManagerのシングルトンインスタンスを取得します。
 	/// </summary>
-	/// <remarks>
-	/// 返り値に静的インスタンスを返します。
-	/// </remarks>
 	static TextureManager* GetInstance();
 
 	/// <summary>
 	/// TextureManagerを初期化します。
 	/// </summary>
-	/// <remarks>
-	/// - DirectX基盤のインスタンスを取得
-	/// - SRVマネージャーのインスタンスを取得
-	/// - テクスチャデータを格納するコンテナの容量を最大SRV数分だけ事前に確保します。
-	/// </remarks>
 	void Initialize();
 
 	/// <summary>
 	/// 指定されたファイルパスのテクスチャを読み込み、GPU上に展開します。
 	/// </summary>
 	/// <param name="filePath"> 読み込むテクスチャファイルのパス </param>
-	/// <remarks>
-	/// - DirectXTexを使用してテクスチャを読み込み、ミップマップを生成します（非圧縮テクスチャのみ）。
-	/// - GPU上にリソースを確保し、SRVを生成します。
-	/// - 読み込んだ情報は内部のテクスチャデータを格納するマップコンテナに登録され、同一ファイルの重複ロードを防ぎます。
-	/// </remarks>
 	void LoadTexture(const std::string& filePath);
 
 	/// <summary>
 	/// 指定されたファイルパスのキューブマップテクスチャを読み込み、GPU上に展開します。
 	/// </summary>
 	/// <param name="filePath"> 読み込むキューブマップテクスチャファイルのパス </param>
-	/// <remarks>
-	/// - DDS形式の場合は DirectXTex の LoadFromDDSFile() を使用して読み込みます。
-	/// - その他の形式（PNGなど）の場合は LoadFromWICFile() を使用して読み込みます。
-	/// - 非圧縮テクスチャの場合はミップマップを自動生成します。
-	/// - テクスチャの内容をGPUにアップロードし、SRVを生成します。
-	/// - SRVはキューブマップとして作成されます。
-	/// - 読み込んだ情報は内部のテクスチャデータを格納するマップコンテナに登録され、同一ファイルの重複ロードを防ぎます。
-	/// </remarks>
 	void LoadCubeTexture(const std::string& filePath);
 
 	///-------------------------------------------/// 
@@ -12404,12 +11511,6 @@ File Path: Engine/3d/Camera/Camera.h
 /// <summary>
 /// 3Dシーンの視点制御を行うカメラクラスです。
 /// </summary>
-/// <remarks>
-/// - ビュー行列、プロジェクション行列、ビュープロジェクション行列を管理し、描画に必要なカメラ空間変換を提供します。  
-/// - 通常カメラとデバッグカメラの2種類のモードをサポートします。  
-/// - デバッグカメラモードではマウス操作による自由視点移動やズーム操作が可能です。  
-/// - 通常カメラモードでは、設定された 3D オブジェクトを追従するカメラ挙動を実現します。  
-/// </remarks>
 class Camera {
 
 	///-------------------------------------------/// 
@@ -12420,22 +11521,11 @@ public:
 	/// <summary>
 	/// カメラの各種パラメータを初期化します。
 	/// </summary>
-	/// <remarks>
-	/// 座標、ビュー・プロジェクション行列、クリップ距離、視野角、アスペクト比などを設定します。
-	/// また、デバッグカメラや関連描画モジュールにこのカメラをデフォルトとして登録します。
-	/// </remarks>
 	void Initialize();
 
 	/// <summary>
 	/// カメラの状態を更新します。
 	/// </summary>
-	/// <remarks>
-	/// 通常カメラまたはデバッグカメラのどちらを使用するかを判定し、
-	/// 現在の入力状況に応じてカメラの位置や回転を更新します。
-	/// デバッグカメラ状態ではマウス操作による移動・回転・ズームが可能です。
-	/// 通常カメラ状態では、追従対象が存在する場合にそのオブジェクトへ追従します。
-	/// 各モードの更新後、ビュー行列・プロジェクション行列・ビュープロジェクション行列を再計算します。
-	/// </remarks>
 	void Update();
 
 	/// <summary>
@@ -12659,11 +11749,6 @@ File Path: Engine/3d/Collider/AABBCollider.h
 /// <summary>
 /// AABBコライダー
 /// </summary>
-/// <remarks>
-/// - 3Dオブジェクトの衝突判定に使用
-/// - 基底クラス Collider を継承しています。
-/// - 立方体（AABB）として表現され、最小座標と最大座標で衝突範囲を持ちます。
-/// </remarks>
 class AABBCollider : public Collider {
 
 	///-------------------------------------------/// 
@@ -12675,13 +11760,6 @@ public:
 	/// AABBCollider を初期化します。
 	/// </summary>
 	/// <param name="parent"> コライダーの親ワールドトランスフォーム </param>
-	/// <remarks>
-	/// - 基底クラス Collider の初期化を行います。
-	/// - AABB の最小値・最大値を設定します。
-	/// - AABB の中心座標を設定します。
-	/// - AABB のサイズに応じてスケールを設定します。
-	/// - ColliderManager に自身を登録します。
-	/// </remarks>
 	void Initialize(WorldTransform* parent) override;
 
 	/// <summary>
@@ -12736,7 +11814,7 @@ void Collider::Initialize(WorldTransform* parent) {
 	parentTransform_ = parent;
 
 	//識別タグの初期化
-	tag_ = NONE;
+	tag_ = Tag::NONE;
 
 	//衝突相手の識別タグの初期化
 	hitTag_.clear();
@@ -12862,11 +11940,6 @@ File Path: Engine/3d/Collider/Collider.h
 /// <summary>
 /// Collider クラスは、ゲームオブジェクトの衝突領域を管理するための基底クラスです。
 /// </summary>
-/// <remarks>
-/// - 他のオブジェクトとの衝突判定を行うための基本的な機能を提供します。  
-/// - 各種コライダーは本クラスを継承して実装されます。  
-/// - ワールドトランスフォームの更新、識別タグの管理、衝突状態の記録を行います。  
-/// </remarks>
 class Collider {
 
 	///-------------------------------------------/// 
@@ -12875,7 +11948,7 @@ class Collider {
 public:
 
 	//識別タグ
-	enum Tag {
+	enum class Tag {
 		PLAYER,
 		ENEMY,
 		PLAYERBULLETLIGHT,
@@ -12897,26 +11970,11 @@ public:
 	/// Collider を初期化します。
 	/// </summary>
 	/// <param name="parent">このコライダーの親となるワールドトランスフォーム</param>
-	/// <remarks>
-	/// - 自身の worldTransform_ を初期化します。
-	/// - 親オブジェクトのワールドトランスフォームを設定します。
-	/// - 識別タグを NONE に初期化します。
-	/// - 衝突相手のタグリスト hitTag_ と前フレームの hitTagBefore_ をクリアします。
-	/// - 描画フラグ、アクティブフラグ、接触フラグ、トリガーフラグを設定します。
-	/// - デフォルトカラーと接触時カラーを設定します。
-	/// - DebugObject3D のインスタンスを生成し初期化します。
-	/// </remarks>
 	virtual void Initialize(WorldTransform* parent);
 
 	/// <summary>
 	/// Collider の状態を毎フレーム更新します。
 	/// </summary>
-	/// <remarks>
-	/// - ワールドトランスフォームを更新し、親オブジェクトの位置情報を反映します。  
-	/// - オブジェクトを更新します。  
-	/// - 接触判定情報を基に衝突状態およびトリガー状態を更新します。  
-	/// - 最後に現在の接触タグリストをクリアします。  
-	/// </remarks>
 	virtual void Update();
 
 	/// <summary>
@@ -13297,52 +12355,33 @@ public:
 	/// <summary>
 	/// ColliderManagerのシングルトンインスタンスを取得します。
 	/// </summary>
-	/// <remarks>
-	/// 返り値に静的インスタンスを返します。
-	/// </remarks>
 	static ColliderManager* GetInstance();
 
 	/// <summary>
 	/// ColliderManager を初期化します。
 	/// </summary>
-	/// <remarks>
-	/// - コライダーリストを初期状態に戻し、次のフレームから新規登録を受け付ける準備を行います。  
-	/// </remarks>
 	void Initialize();
 
 	/// <summary>
 	/// ColliderManager を更新します。
 	/// </summary>
-	/// <remarks>
-	/// - 登録されているすべてのコライダー同士の衝突判定を実行します。  
-	/// - 各コライダー間での接触情報を更新し、衝突・トリガーの状態を反映します。  
-	/// </remarks>
 	void Update();
 
 	/// <summary>
 	/// コライダーを登録します。
 	/// </summary>
 	/// <param name="collider"> 登録するコライダー </param>
-	/// <remarks>
-	/// - 渡されたコライダーを管理リストに追加します。  
-	/// </remarks>
 	void AddCollider(Collider* collider);
 
 	/// <summary>
 	/// 指定されたコライダーを登録リストから削除します。
 	/// </summary>
 	/// <param name="collider"> 削除するコライダー </param>
-	/// <remarks>
-	/// - 一致するコライダーが見つかった場合、その要素をリストから削除します。  
-	/// </remarks>
 	void RemoveCollider(Collider* collider);
 
 	/// <summary>
 	/// 管理しているすべてのコライダーをクリアします。
 	/// </summary>
-	/// <remarks>
-	/// - コライダーリストを空にします。  
-	/// </remarks>
 	void ClearColliders() { colliders_.clear(); }
 
 	///-------------------------------------------/// 
@@ -13353,10 +12392,6 @@ private:
 	/// <summary>
 	/// 登録されている全てのコライダー同士の衝突判定を行います。
 	/// </summary>
-	/// <remarks>
-	/// - アクティブ状態のコライダーのみを対象とします。
-	/// - 各コライダーの接触相手タグを更新します。
-	/// </remarks>
 	void CheckAllCollision();
 
 	/// <summary>
@@ -13365,14 +12400,6 @@ private:
 	/// <param name="first">1つ目のコライダー</param>
 	/// <param name="second">2つ目のコライダー</param>
 	/// <returns>衝突している場合は true、していない場合は false</returns>
-	/// <remarks>
-	/// - 判定対象は AABB と Sphere の組み合わせをサポートしています。
-	/// - 具体的には以下の組み合わせに対応します:
-	///   - AABB vs AABB
-	///   - Sphere vs Sphere
-	///   - AABB vs Sphere / Sphere vs AABB
-	/// - その他の組み合わせの場合は false を返します。
-	/// </remarks>
 	bool CheckPair(Collider* first, Collider* second);
 
 	/// <summary>
@@ -13381,11 +12408,6 @@ private:
 	/// <param name="first">1つ目のコライダー</param>
 	/// <param name="second">2つ目のコライダー</param>
 	/// <returns>衝突している場合は true、していない場合は false</returns>
-	/// <remarks>
-	/// - 引数のColliderをAABBColliderにキャストして扱います。
-	/// - 各AABBの最小座標・最大座標にワールド座標を加算して現在座標に変換します。
-	/// - 3軸(x, y, z)すべてで範囲が重なっている場合に衝突と判定します。
-	/// </remarks>
 	bool IsCollisionAABBWithAABB(Collider* first, Collider* second);
 
 	/// <summary>
@@ -13394,11 +12416,6 @@ private:
 	/// <param name="first">1つ目のコライダー</param>
 	/// <param name="second">2つ目のコライダー</param>
 	/// <returns>衝突している場合は true、していない場合は false</returns>
-	/// <remarks>
-	/// - 引数のColliderをSphereColliderにキャストして扱います。
-	/// - 各Sphereの中心座標にワールド座標を加算して現在座標に変換します。
-	/// - 2つの中心間距離が半径の和以下であれば衝突と判定します。
-	/// </remarks>
 	bool IsCollisionSphereWithSphere(Collider* first, Collider* second);
 
 	/// <summary>
@@ -13407,12 +12424,6 @@ private:
 	/// <param name="aabb">AABB コライダー</param>
 	/// <param name="sphere">Sphere コライダー</param>
 	/// <returns>衝突している場合は true、していない場合は false</returns>
-	/// <remarks>
-	/// - 引数の Collider をそれぞれ AABBCollider と SphereCollider にキャストして扱います。
-	/// - AABB と Sphere のワールド座標を考慮して現在の座標を計算します。
-	/// - Sphere の中心に対して AABB の最近接点を求めます。
-	/// - その最近接点と Sphere の中心の距離が半径以下であれば衝突と判定します。
-	/// </remarks>
 	bool IsCollisionAABBWithSphere(Collider* first, Collider* second);
 
 	///-------------------------------------------/// 
@@ -13512,11 +12523,6 @@ File Path: Engine/3d/Collider/SphereCollider.h
 /// <summary>
 /// 球状のコライダーを管理するクラスです。
 /// </summary>
-/// <remarks>
-/// - 3Dオブジェクトの衝突判定に使用
-/// - 基底クラス Collider を継承しています。
-/// - 球体（Sphere）として表現され、中心座標と半径で衝突範囲を持ちます。
-/// </remarks>
 class SphereCollider : public Collider{
 
 	///-------------------------------------------/// 
@@ -13528,26 +12534,11 @@ public:
 	/// SphereCollider を初期化します。
 	/// </summary>
 	/// <param name="parent">コライダーの親ワールドトランスフォーム</param>
-	/// <remarks>
-	/// - 基底クラス Collider の初期化を行います。
-	/// - 球の中心座標を設定します。
-	/// - ワールドトランスフォームに球の中心を設定します。
-	/// - ワールドトランスフォームに球の半径を設定します。
-	/// - ModelManager を使用して球体モデルを作成します。
-	/// - 球体モデルを設定します。
-	/// - 親ワールドトランスフォームを設定します。
-	/// - ColliderManager に自身を登録します。
-	/// </remarks>
 	void Initialize(WorldTransform* parent) override;
 
 	/// <summary>
 	/// SphereCollider を毎フレーム更新します。
 	/// </summary>
-	/// <remarks>
-	/// - 球の中心座標をワールドトランスフォームに反映します。
-	/// - 球の半径をワールドトランスフォームに反映します。
-	/// - 基底クラス Collider の Update() を呼び出して衝突判定情報などを更新します。
-	/// </remarks>
 	void Update() override;
 
 	/// <summary>
@@ -13680,10 +12671,6 @@ File Path: Engine/3d/Light/DirectionalLight.h
 /// <summary>
 /// 平行光源（Directional Light）を管理するクラスです。
 /// </summary>
-/// <remarks>
-/// - DirectX 共通基底を使用して GPU バッファリソースを作成します。
-/// - 光源データ（色、方向、照度）を LightData 構造体で保持します。
-/// </remarks>
 class DirectionalLight {
 
 	///-------------------------------------------/// 
@@ -13706,27 +12693,16 @@ public:
 	/// <summary>
 	/// ディレクショナルライトを初期化します。
 	/// </summary>
-	/// <remarks>
-	/// - DirectXの共通基底インスタンスを取得
-	/// - GPU用のバッファリソースを生成し、光源データをマッピングします。
-	/// - 光源の色、向き、照度を初期設定
-	/// </remarks>
 	void Initialize();
 
 	/// <summary>
 	/// ディレクショナルライトの更新処理を行います。
 	/// </summary>
-	/// <remarks>
-	/// - ライトの向きを正規化して、常に単位ベクトルに保ちます。
-	/// </remarks>
 	void Update();
 
 	/// <summary>
 	/// GPUにディレクショナルライトのデータを送信します。
 	/// </summary>
-	/// <remarks>
-	/// - コマンドリストのルートパラメータ4にライトデータを設定します。
-	/// </remarks>
 	void SendDataForGPU();
 
 	/// <summary>
@@ -13881,10 +12857,6 @@ File Path: Engine/3d/Light/PointLight.h
 /// <summary>
 /// 点光源（Point Light）を管理するクラスです。
 /// </summary>
-/// <remarks>
-/// - DirectX 共通基底を使用して GPU バッファリソースを作成します。
-/// - 光源データ（色、座標、照度、半径、減衰率）を LightData 構造体で保持します。
-/// </remarks>
 class PointLight {
 
 	///-------------------------------------------/// 
@@ -13910,27 +12882,16 @@ public:
 	/// <summary>
 	/// ポイントライトの初期化を行います。
 	/// </summary>
-	/// <remarks>
-	/// - DirectXの共通インスタンスを取得します。
-	/// - GPU用のバッファリソースを生成し、光源データをマッピングします。
-	/// - 光源の色、座標、照度、半径、減衰率を初期設定
-	/// </remarks>
 	void Initialize();
 
 	/// <summary>
 	/// ポイントライトのデータを毎フレーム更新します。
 	/// </summary>
-	/// <remarks>
-	/// - 光源のパラメータの値をを0以上に制限します。
-	/// </remarks>
 	void Update();
 
 	/// <summary>
 	/// GPUにポイントライトのデータを送信します。
 	/// </summary>
-	/// <remarks>
-	/// - コマンドリストのルートパラメータ5にライトデータを設定します。
-	/// </remarks>
 	void SendDataForGPU();
 
 	/// <summary>
@@ -14123,10 +13084,6 @@ class DirectXCommon;
 /// <summary>
 /// スポットライト（Spot Light）を管理するクラスです。
 /// </summary>
-/// <remarks>
-/// - DirectX 共通基底を使用して GPU バッファリソースを作成します。
-/// - 光源データ（色、座標、照度、方向、距離、減衰率、拡散角度、拡散率）を LightData 構造体で保持します。
-/// </remarks>
 class SpotLight {
 
 	///-------------------------------------------/// 
@@ -14156,21 +13113,11 @@ public:
 	/// <summary>
 	/// スポットライトを初期化します。
 	/// </summary>
-	/// <remarks>
-	/// - DirectXの共通基底インスタンスを取得
-	/// - GPU用のバッファリソースを生成し、光源データをマッピングします。
-	/// - 光源の色、位置、照度、方向、最大距離、減衰率、拡散角度、拡散率を初期設定
-	/// </remarks>
 	void Initialize();
 
 	/// <summary>
 	/// スポットライトを毎フレーム更新します。
 	/// </summary>
-	/// <remarks>
-	/// - 照度、距離、減衰率、拡散率を0以上に制限します。
-	/// - 光源の方向を正規化します。
-	/// - 拡散角度を0.0f～1.0fの範囲にクランプします。
-	/// </remarks>
 	void Update();
 
 	/// <summary>
@@ -14435,10 +13382,6 @@ File Path: Engine/3d/Mesh/CubeMesh.h
 /// <summary>
 /// 立方体メッシュ（Cube Mesh）を管理するクラスです。
 /// </summary>
-/// <remarks>
-/// - MeshBase を継承しており、基本的なメッシュ機能を利用可能です。
-/// - 立方体で表現されて、頂点データとインデックスデータを保有します。
-/// </remarks>
 class CubeMesh : public MeshBase {
 
 	///-------------------------------------------/// 
@@ -14449,11 +13392,6 @@ public:
 	/// <summary>
 	/// CubeMeshの初期化を行います。
 	/// </summary>
-	/// <remarks>
-	/// - 頂点リソースとインデックスリソースを生成します。
-	/// - 頂点データには位置・法線・UVを設定します。
-	/// - インデックスデータは各面を2つの三角形で描画するために構成します。
-	/// </remarks>
 	void Initialize() override;
 
 	///-------------------------------------------/// 
@@ -14571,10 +13509,6 @@ File Path: Engine/3d/Mesh/CylinderMesh.h
 /// <summary>
 /// 円柱メッシュ（Cylinder Mesh）を管理するクラスです。
 /// </summary>
-/// <remarks>
-/// - MeshBase を継承しており、基本的なメッシュ機能を利用可能です。
-/// - 円柱で表現されて、頂点データとインデックスデータを保有します。
-/// </remarks>
 class CylinderMesh : public MeshBase {
 
 	///-------------------------------------------/// 
@@ -14585,11 +13519,6 @@ public:
 	/// <summary>
 	/// CylinderMeshの初期化を行います。
 	/// </summary>
-	/// <remarks>
-	/// - 円柱の側面の頂点リソースとインデックスリソースを生成します。
-	/// - 頂点データには位置・法線・UVを設定します。
-	/// - インデックスデータは各面を2つの三角形で描画するために構成します。
-	/// </remarks>
 	void Initialize() override;
 
 	///-------------------------------------------/// 
@@ -14661,12 +13590,6 @@ File Path: Engine/3d/Mesh/MeshBase.h
 /// <summary>
 /// メッシュ基底クラス（Mesh Base）です。
 /// </summary>
-/// <remarks>
-/// - 頂点(VertexData)とインデックスデータを保持し、GPUバッファとバッファビューを管理します。
-/// - 派生クラスで Initialize() を実装することで具体的な形状のメッシュを作成できます。
-/// - Draw() で頂点・インデックスバッファを入力アセンブリにバインドし描画可能な状態にします。
-/// - CopyMeshData() により外部データでメッシュの頂点・インデックス情報を更新可能です。
-/// </remarks>
 class MeshBase {
 
 	///-------------------------------------------/// 
@@ -14694,18 +13617,11 @@ public:
 	/// <summary>
 	/// メッシュを初期化する純粋仮想関数。
 	/// </summary>
-	/// <remarks>
-	/// - 派生クラスで必ず実装する必要があります。
-	/// - 頂点・インデックスリソースの生成や初期データ設定などを行います。
-	/// </remarks>
 	virtual void Initialize() = 0;
 
 	/// <summary>
 	/// GPUにメッシュのデータを送信します。
 	/// </summary>
-	/// <remarks>
-	/// - 頂点バッファとインデックスバッファを入力アセンブリステージにバインドします。
-	/// </remarks>
 	void SendDataForGPU();
 
 	/// <summary>
@@ -14713,9 +13629,6 @@ public:
 	/// </summary>
 	/// <param name="indices">コピーするインデックスデータの配列</param>
 	/// <param name="vertices">コピーする頂点データの配列</param>
-	/// <remarks>
-	/// - 引数のデータを内部バッファ(vertexData_ / indexData_)に直接コピーします。
-	/// </remarks>
 	void CopyMeshData(std::vector<uint32_t> indices, std::vector<VertexData> vertices);
 
 	///-------------------------------------------/// 
@@ -14900,7 +13813,7 @@ File Path: Engine/3d/Mesh/MeshType.h
 class Model;
 
 //メッシュの種類を列挙型で定義
-enum MeshType {
+enum class MeshType {
 	PLANE,
 	RING,
 	CYLINDER,
@@ -14922,10 +13835,6 @@ std::unique_ptr<MeshBase> CreateMesh(MeshType type);
 /// </summary>
 /// <param name="model">メッシュを持つ Model インスタンス</param>
 /// <returns>該当する MeshType、該当なしの場合は MeshType::END</returns>
-/// <remarks>
-/// - dynamic_cast を使って Model 内の MeshBase 派生クラスを判定します。
-/// - 各メッシュタイプは MeshType 列挙型に対応しています。
-/// </remarks>
 MeshType GetMeshType(Model* model);
 
 ============================================================
@@ -14988,10 +13897,6 @@ File Path: Engine/3d/Mesh/ModelMesh.h
 /// <summary>
 /// モデルメッシュ（Model Mesh）を管理するクラスです。
 /// </summary>
-/// <remarks>
-/// - MeshBase を継承しており、基本的なメッシュ機能を利用可能です。
-/// - 初期化前に設定された頂点データとインデックスデータを基に生成されます。
-/// </remarks>
 class ModelMesh : public MeshBase {
 
 	///-------------------------------------------/// 
@@ -15002,10 +13907,6 @@ public:
 	/// <summary>
 	/// ModelMeshの初期化を行います。
 	/// </summary>
-	/// <remarks>
-	/// - 頂点リソースとインデックスリソースを生成します。。
-	/// - vertexCount_ と indexCount_ は事前に設定されている必要があります。
-	/// </remarks>
 	void Initialize() override;
 };
 
@@ -15098,10 +13999,6 @@ File Path: Engine/3d/Mesh/PlaneMesh.h
 /// <summary>
 /// 平面メッシュ（Plane Mesh）を管理するクラスです。
 /// </summary>
-/// <remarks>
-/// - MeshBase を継承しており、基本的なメッシュ機能を利用可能です。
-/// - 平面体で表現されて、頂点データとインデックスデータを保有します。
-/// </remarks>
 class PlaneMesh : public MeshBase {
 
 	///-------------------------------------------/// 
@@ -15112,11 +14009,6 @@ public:
 	/// <summary>
 	/// PlaneMeshの初期化を行います。
 	/// </summary>
-	/// <remarks>
-	/// - 頂点リソースとインデックスリソースを生成します。
-	/// - 頂点データには位置・法線・UVを設定します。
-	/// - インデックスデータは各面を2つの三角形で描画するために構成します。
-	/// </remarks>
 	void Initialize() override;
 
 	///-------------------------------------------/// 
@@ -15227,10 +14119,6 @@ File Path: Engine/3d/Mesh/RingMesh.h
 /// <summary>
 /// 円環メッシュ（Ring Mesh）を管理するクラスです。
 /// </summary>
-/// <remarks>
-/// - MeshBase を継承しており、基本的なメッシュ機能を利用可能です。
-/// - 円環で表現されて、頂点データとインデックスデータを保有します。
-/// </remarks>
 class RingMesh : public MeshBase {
 
 	///-------------------------------------------/// 
@@ -15241,11 +14129,6 @@ public:
 	/// <summary>
 	/// RingMeshの初期化を行います。
 	/// </summary>
-	/// <remarks>
-	/// - 頂点リソースとインデックスリソースを生成します。
-	/// - 頂点データには位置・法線・UVを設定します。
-	/// - インデックスデータは各面を2つの三角形で描画するために構成します。
-	/// </remarks>
 	void Initialize() override;
 
 	///-------------------------------------------/// 
@@ -15449,10 +14332,6 @@ File Path: Engine/3d/Mesh/SphereMesh.h
 /// <summary>
 /// 球面体メッシュ（Sphere Mesh）を管理するクラスです。
 /// </summary>
-/// <remarks>
-/// - MeshBase を継承しており、基本的なメッシュ機能を利用可能です。
-/// - 球面体で表現されて、頂点データとインデックスデータを保有します。
-/// </remarks>
 class SphereMesh : public MeshBase {
 
 	///-------------------------------------------/// 
@@ -15463,11 +14342,6 @@ public:
 	/// <summary>
 	/// SphereMeshの初期化を行います。
 	/// </summary>
-	/// <remarks>
-	/// - 頂点リソースとインデックスリソースを生成します。
-	/// - 頂点データには位置・法線・UVを設定します。
-	/// - インデックスデータは各面を2つの三角形で描画するために構成します。
-	/// </remarks>
 	void Initialize() override;
 
 	///-------------------------------------------/// 
@@ -15916,10 +14790,6 @@ File Path: Engine/3d/Model/Model.h
 /// <summary>
 /// 3Dモデル（Model）を管理するクラスです。
 /// </summary>
-/// <remarks>
-/// - メッシュとマテリアル情報を保持し、GPUへの転送と描画を管理します。
-/// - OBJ形式のファイル読み込み、またはプリミティブメッシュ生成により初期化可能です。
-/// </remarks>
 class Model {
 
 	///-------------------------------------------/// 
@@ -15953,11 +14823,6 @@ public:
 	/// </summary>
 	/// <param name="directoryPath">モデルファイルのディレクトリパス</param>
 	/// <param name="filename">モデルファイル名（OBJ 形式を想定）</param>
-	/// <remarks>
-	/// - OBJ ファイルを読み込み、頂点・インデックスデータを設定します。
-	/// - マテリアル用のGPUバッファを作成し、初期データを設定します。
-	/// - テクスチャが設定されていれば読み込みます。
-	/// </remarks>
 	void Initialize(const std::string& directoryPath, const std::string& filename);
 
 	/// <summary>
@@ -15965,12 +14830,6 @@ public:
 	/// </summary>
 	/// <param name="type">生成するメッシュの種類（PLANE, CUBE, SPHERE 等）</param>
 	/// <param name="textureFilePath">テクスチャファイルのパス</param>
-	/// <remarks>
-	/// - MeshType に応じたプリミティブメッシュを生成して初期化します。
-	/// - 頂点・インデックスデータをコピーします。
-	/// - マテリアル用のGPUバッファを作成し、初期データを設定します。
-	/// - 指定されたテクスチャを読み込みます。
-	/// </remarks>
 	void Initialize(MeshType type, const std::string& textureFilePath);
 
 	/// <summary>
@@ -15978,58 +14837,32 @@ public:
 	/// </summary>
 	/// <param name="type">生成するメッシュの種類（PLANE, CUBE, SPHERE 等）</param>
 	/// <param name="model">コピー元のモデルインスタンス</param>
-	/// <remarks>
-	/// - 引数で渡されたモデルの頂点・インデックス・マテリアルデータをコピーします。
-	/// - マテリアル用の GPU バッファを生成して初期データを設定します。
-	/// </remarks>
 	void Initialize(MeshType type, Model* model);
 
 	/// <summary>
 	/// モデルを描画します。
 	/// </summary>
-	/// <remarks>
-	/// - メッシュの頂点・インデックスデータを GPU に設定します。
-	/// - マテリアルの定数バッファをルートパラメータに設定します。
-	/// - テクスチャをシェーダリソースビューとして設定します。
-	/// - インデックス描画コマンドを発行します。
-	/// </remarks>
 	void Draw();
 
 	/// <summary>
 	/// モデルのメッシュデータを GPU に転送します。
 	/// </summary>
-	/// <remarks>
-	/// - メッシュデータを描画用に GPU に設定します。
-	/// - 描画コマンドは発行されません。
-	/// </remarks>
 	void SendMeshDataForGPU();
 
 	/// <summary>
 	/// モデルのマテリアルデータを GPU に転送します。
 	/// </summary>
-	/// <remarks>
-	/// - マテリアルデータを描画用に GPU に設定します。
-	/// - 描画コマンドは発行されません。
-	/// </remarks>
 	void SendMaterialDataForGPU();
 
 	/// <summary>
 	/// モデルのテクスチャデータを GPU に転送します。
 	/// </summary>
-	/// <remarks>
-	/// - テクスチャデータを描画用に GPU に設定します。
-	/// - 描画コマンドは発行されません。
-	/// </remarks>
 	void SendTextureDataForGPU();
 
 	/// <summary>
 	/// 指定したモデルのデータをコピーします。
 	/// </summary>
 	/// <param name="model">コピー元のモデル</param>
-	/// <remarks>
-	/// - モデルの頂点・インデックス情報をコピーします。
-	/// - 使用するテクスチャファイルパスもコピーします。
-	/// </remarks>
 	void Copy(Model* model);
 
 	///-------------------------------------------/// 
@@ -16042,10 +14875,6 @@ private:
 	/// </summary>
 	/// <param name="directoryPath">OBJファイルが存在するディレクトリパス</param>
 	/// <param name="filename">OBJファイル名</param>
-	/// <remarks>
-	/// - OBJ内で参照される頂点/UV/法線のインデックスを基に VertexData を構築します。
-	/// - mtllib 識別子があれば、マテリアルファイルも読み込みます。
-	/// </remarks>
 	void LoadObjFile(const std::string& directoryPath, const std::string& filename);
 
 	/// <summary>
@@ -16053,9 +14882,6 @@ private:
 	/// </summary>
 	/// <param name="directoryPath">MTLファイルが存在するディレクトリパス</param>
 	/// <param name="filename">MTLファイル名</param>
-	/// <remarks>
-	/// - テクスチャファイル名を読み込み、メンバ変数に格納します
-	/// </remarks>
 	void LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename);
 
 	///-------------------------------------------/// 
@@ -16200,10 +15026,6 @@ File Path: Engine/3d/Model/ModelCommon.h
 /// <summary>
 /// モデル共通処理を管理するシングルトンクラスです。
 /// </summary>
-/// <remarks>
-/// - DirectX共通基底(DirectXCommon)へのアクセスを提供します。
-/// - モデル生成や描画処理で必要となる共通リソースを保持します。
-/// </remarks>
 class ModelCommon {
 
 	///-------------------------------------------/// 
@@ -16214,17 +15036,11 @@ public:
 	/// <summary>
 	/// ModelCommonのシングルトンインスタンスを取得します。
 	/// </summary>
-	/// <remarks>
-	/// 返り値に静的インスタンスを返します。
-	/// </remarks>
 	static ModelCommon* GetInstance();
 
 	/// <summary>
 	/// ModelCommonの初期化を行います。
 	/// </summary>
-	/// <remarks>
-	/// - DirectXCommonのインスタンスを取得
-	/// </remarks>
 	void Initialize();
 
 	///-------------------------------------------/// 
@@ -16395,12 +15211,6 @@ File Path: Engine/3d/Model/ModelManager.h
 /// <summary>
 /// ゲーム内で使用するモデルを管理するクラスです。
 /// </summary>
-/// <remarks>
-/// - ModelCommon を利用して DirectX 用の共通リソースにアクセスします。
-/// - プリミティブメッシュを初期化時に生成します。
-/// - OBJファイルやプリミティブメッシュからモデルを生成し、管理コンテナに登録します。
-/// - 登録されたモデルは unique_ptr で保持され、モデル名をキーに検索可能です。
-/// </remarks>
 class ModelManager {
 
 	///-------------------------------------------/// 
@@ -16411,19 +15221,11 @@ public:
 	/// <summary>
 	/// ModelManagerのシングルトンインスタンスを取得します。
 	/// </summary>
-	/// <remarks>
-	/// 返り値に静的インスタンスを返します。
-	/// </remarks>
 	static ModelManager* GetInstance();
 
 	/// <summary>
 	/// モデルマネージャを初期化し、基本的なプリミティブモデルを生成します。
 	/// </summary>
-	/// <remarks>
-	/// - ModelCommon のインスタンスを取得します。
-	/// - Plane, Ring, Cylinder, Sphere, Cube の各プリミティブモデルを生成します。
-	/// - 各モデルには共通の白テクスチャを設定します。
-	/// </remarks>
 	void Initialize();
 
 	/// <summary>
@@ -16431,11 +15233,6 @@ public:
 	/// </summary>
 	/// <param name="modelName">管理用のモデル名</param>
 	/// <param name="modelFileName">モデルファイルの名前</param>
-	/// <remarks>
-	/// - すでに同名のモデルが読み込まれている場合は処理をスキップします。
-	/// - ModelクラスのInitialize関数を使用して objファイルを読み込みます。
-	/// - 読み込んだモデルはunique_ptrで管理され、マップコンテナに登録されます。
-	/// </remarks>
 	void LoadModel(const std::string& modelName, const std::string& modelFileName);
 
 	/// <summary>
@@ -16444,11 +15241,6 @@ public:
 	/// <param name="modelName">管理用のモデル名</param>
 	/// <param name="modelDirectory">モデルファイルが格納されているディレクトリ名</param>
 	/// <param name="modelFileName">モデルファイルの名前</param>
-	/// <remarks>
-	/// - すでに同名のモデルが読み込まれている場合は処理をスキップします。
-	/// - ModelクラスのInitialize関数を使用して objファイルを読み込みます。
-	/// - 読み込んだモデルはunique_ptrで管理され、マップコンテナに登録されます。
-	/// </remarks>
 	void LoadModel(const std::string& modelName, const std::string& modelDirectory, const std::string& modelFileName);
 
 	/// <summary>
@@ -16457,11 +15249,6 @@ public:
 	/// <param name="modelName">管理用のモデル名</param>
 	/// <param name="type">生成するメッシュの種類</param>
 	/// <param name="textureFilePath">モデルに適用するテクスチャファイルのパス</param>
-	/// <remarks>
-	/// - すでに同名のモデルが読み込まれている場合は処理をスキップします。
-	/// - ModelクラスのInitialize関数を使用して objファイルを読み込みます。
-	/// - 読み込んだモデルはunique_ptrで管理され、マップコンテナに登録されます。
-	/// </remarks>
 	void CreateMeshModel(const std::string& modelName, MeshType type, const std::string& textureFilePath);
 
 	/// <summary>
@@ -16469,9 +15256,6 @@ public:
 	/// </summary>
 	/// <param name="modelName">検索するモデルの名前</param>
 	/// <returns>名前が合致したモデルをコピーしたインスタンス</returns>
-	/// <remarks>
-	/// - 返されるモデルは新規生成されるため、呼び出し元が独自に管理できます。
-	/// </remarks>
 	std::unique_ptr<Model> FindModel(const std::string& modelName);
 
 	///-------------------------------------------/// 
@@ -16723,7 +15507,7 @@ void DebugLine::Draw(LayerType layerType) {
 		debugCommon_->GetDxCommon()->GetCommandList()->DrawIndexedInstanced(UINT(modelData_.vertices.size()), 1, 0, 0, 0);
 		};
 
-	if (layerType == Debug) {
+	if (layerType == LayerType::DEBUG) {
 
 		//DebugであればSwapChainの描画を行う
 		Renderer::GetInstance()->AddDraw(layerType, false, command);
@@ -16792,10 +15576,6 @@ class Camera;
 /// <summary>
 /// デバッグ用のラインを描画するクラス。
 /// </summary>
-/// <remarks>
-/// - 主にシーン内のベクトル方向や衝突判定の可視化など、デバッグ目的で使用します。  
-/// - 頂点／インデックスバッファ、マテリアル、座標変換行列などのリソースを内部で生成・管理します。  
-/// </remarks>
 class DebugLine {
 
 	///-------------------------------------------/// 
@@ -16833,10 +15613,6 @@ public:
 	/// </summary>
 	/// <param name="direction">ラインの方向ベクトル</param>
 	/// <param name="color">ラインの描画色</param>
-	/// <remarks>
-	/// - この関数ではライン用の頂点・インデックスバッファ、マテリアル、変換行列リソースを生成します。  
-	/// - 頂点は (0,0,0) を始点、方向ベクトルを終点として設定されます。  
-	/// </remarks>
 	void Initialize(Vector3 direction, Vector4 color);
 
 	/// <summary>
@@ -16845,31 +15621,18 @@ public:
 	/// <param name="start">ラインの始点</param>
 	/// <param name="end">ラインの終点</param>
 	/// <param name="color">ラインの描画色</param>
-	/// <remarks>
-	/// - この関数ではライン用の頂点・インデックスバッファ、マテリアル、変換行列リソースを生成します。  
-	/// - 始点と終点の中点をラインの中心として設定します。
-	/// </remarks>
 	void Initialize(Vector3 start, Vector3 end, Vector4 color);
 
 	/// <summary>
 	/// デバッグラインのワールド変換および座標変換行列を更新します。
 	/// </summary>
-	/// <remarks>
-	/// - ワールドトランスフォームを更新し、現在の位置・回転・スケールを反映します。
-	/// - カメラが設定されている場合は、ワールドビュープロジェクション行列（WVP）を生成します。
-	/// </remarks>
 	void Update();
 
 	/// <summary>
 	/// デバッグラインを描画キューに登録します。
 	/// </summary>
 	/// <param name="layerType">描画レイヤーの種類</param>
-	/// <remarks>
-	/// - Renderクラスへ描画処理コマンドを登録します。  
-	/// - コマンド内容は、頂点／インデックスバッファの設定、マテリアルおよび座標変換行列の送信、描画命令の発行です。  
-	/// - layerTypeがDebugの場合はスワップチェーンへ直接描画し、それ以外の場合はオフスクリーンレンダーターゲットへ描画します。  
-	/// </remarks>
-	void Draw(LayerType layerType = Debug);
+	void Draw(LayerType layerType = LayerType::DEBUG);
 
 	///-------------------------------------------/// 
 	/// メンバ変数
@@ -17033,7 +15796,7 @@ void DebugObject3D::Draw() {
 		};
 
 	//レンダラーに描画コマンドを追加
-	Renderer::GetInstance()->AddDraw(LayerType::Debug, true, command);
+	Renderer::GetInstance()->AddDraw(LayerType::DEBUG, true, command);
 }
 
 ///=====================================================/// 
@@ -17065,9 +15828,6 @@ class Camera;
 /// <summary>
 /// 3D空間上のデバッグ用オブジェクトを管理・描画するクラスです。
 /// </summary>
-/// <remarks>
-/// - 主に開発時の可視化やデバッグ目的で使用されます。  
-/// </remarks>
 class DebugObject3D {
 
 	///-------------------------------------------/// 
@@ -17090,28 +15850,16 @@ public:
 	/// <summary>
 	/// 3Dデバッグオブジェクトを初期化します。
 	/// </summary>
-	/// <remarks>
-	/// - DebugObjectCommonのインスタンスを取得します。  
-	/// - 座標変換行列リソースを作成し、GPUにマッピングします。  
-	/// - Transformクラスの初期化を行い、位置・回転・スケールの初期値を設定します。  
-	/// </remarks>
 	void Initialize();
 
 	/// <summary>
 	/// 3Dデバッグオブジェクトのトランスフォームを更新します。
 	/// </summary>
-	/// <remarks>
-	/// - Transformクラスの位置・回転・スケールを更新します。  
-	/// - カメラが存在する場合はワールドビュープロジェクション行列を計算します。  
-	/// </remarks>
 	void Update();
 
 	/// <summary>
 	/// 3Dデバッグオブジェクトを描画します。
 	/// </summary>
-	/// <remarks>
-	/// - Rendererクラスに描画コマンドを登録します。  
-	/// </remarks>
 	void Draw();
 
 	///-------------------------------------------/// 
@@ -17454,12 +16202,6 @@ class Camera;
 /// <summary>
 /// デバッグオブジェクト描画用の共通機能を提供するクラスです。
 /// </summary>
-/// <remarks>
-/// - DirectX 12 を使用した描画共通設定の管理
-/// - ルートシグネチャ、グラフィックパイプラインステート（PSO）の生成
-/// - 複数ブレンドモードのサポート
-/// - すべてのデバッグオブジェクトはこのクラスを通じて描画設定を適用します
-/// </remarks>
 class DebugObjectCommon {
 
 	///-------------------------------------------/// 
@@ -17470,28 +16212,16 @@ public:
 	/// <summary>
 	/// DebugObjectCommonのシングルトンインスタンスを取得します。
 	/// </summary>
-	/// <remarks>
-	/// 返り値に静的インスタンスを返します。
-	/// </remarks>
 	static DebugObjectCommon* GetInstance();
 
 	/// <summary>
 	/// DebugObjectCommonの初期化を行います。
 	/// </summary>
-	/// <remarks>
-	/// - DirectXCommonのインスタンスを取得
-	/// - グラフィックパイプラインの生成
-	/// </remarks>
 	void Initialize();
 
 	/// <summary>
 	/// デバッグオブジェクトの描画に必要な共通設定を行います。
 	/// </summary>
-	/// <remarks>
-	/// - RootSignatureの設定
-	/// - 現在のブレンドモードに対応するPSOの設定
-	/// - メッシュの描画トポロジーの設定
-	/// </remarks>
 	void CommonDrawSetting();
 
 	///-------------------------------------------/// 
@@ -17502,28 +16232,11 @@ private:
 	/// <summary>
 	/// デバッグオブジェクト描画用のルートシグネチャを作成します。
 	/// </summary>
-	/// <remarks>
-	/// この関数では以下の設定を行います:
-	/// - RootParameterの設定
-	/// - DescriptorRangeでSRVの指定
-	/// - PixelShader用のStaticSamplerを設定
-	/// - RootSignatureの生成後、エラーがあればログ出力とアサートで停止
-	/// </remarks>
 	void CreateRootSignature();
 
 	/// <summary>
 	/// デバッグオブジェクト描画用のグラフィックパイプラインステートを作成します。
 	/// </summary>
-	/// <remarks>
-	/// この関数では以下の処理を行います:
-	/// - RootSignatureの生成
-	/// - InputLayoutの設定
-	/// - BlendStateの設定
-	/// - RasterizerStateの設定
-	/// - VertexShader/PixelShaderのコンパイル
-	/// - DepthStencilStateの設定
-	/// - 複数のブレンドモード用のPSOを生成し配列に格納
-	/// </remarks>
 	void CreateGraphicsPipeline();
 
 	///-------------------------------------------/// 
@@ -17882,11 +16595,6 @@ class Camera;
 /// <summary>
 /// 3D空間上のオブジェクトを管理・描画するクラスです。
 /// </summary>
-/// <remarks>
-/// - 空間内での位置、回転、拡大縮小などの変換情報を管理します。  
-/// - 3Dモデルを内部に保持し、描画処理を通じて画面に表示します。  
-/// - デバッグ用として、オブジェクトの方向を示す軸ラインを生成し表示できます。  
-/// </remarks>
 class Object3D {
 
 	///-------------------------------------------/// 
@@ -17909,36 +16617,17 @@ public:
 	/// <summary>
 	/// 3Dオブジェクトの初期化を行います。
 	/// </summary>
-	/// <remarks>
-	/// - 3Dオブジェクト共通の管理クラスからインスタンスを取得します。
-	/// - 座標変換用の行列リソースを生成し、初期値として単位行列を設定します。
-	/// - オブジェクトの位置・回転・スケールを管理するワールドトランスフォームを初期化します。
-	/// - デバッグ表示用の軸ラインを3方向（X、Y、Z）作成します。
-	/// - 初期化用のモデルを設定します。
-	/// </remarks>
 	void Initialize();
 
 	/// <summary>
 	/// オブジェクトデータを基に3Dオブジェクトの初期化を行います。
 	/// </summary>
 	/// <param name="objectData">オブジェクトデータ</param>
-	/// <remarks>
-	/// - 3Dオブジェクト共通の管理クラスからインスタンスを取得します。
-	/// - 座標変換用の行列リソースを生成し、初期値として単位行列を設定します。
-	/// - オブジェクトの位置・回転・スケールを管理するワールドトランスフォームを初期化します。
-	/// - デバッグ表示用の軸ラインを3方向（X、Y、Z）作成します。
-	/// - オブジェクトデータを基にモデル・トランスフォームを設定します。
-	/// </remarks>
 	void Initialize(ObjectData objectData);
 
 	/// <summary>
 	/// 3Dオブジェクトの状態を更新します。
 	/// </summary>
-	/// <remarks>
-	/// - オブジェクトの位置・回転・スケールに基づいてトランスフォームを更新します。
-	/// - カメラが設定されている場合は、ワールドビュープロジェクション行列を計算します。
-	/// - デバッグ表示用に作成された3方向の軸ラインもそれぞれ更新します。
-	/// </remarks>
 	void Update();
 
 	void TransformUpdate();
@@ -17947,13 +16636,6 @@ public:
 	/// 3Dオブジェクトの描画を行います。
 	/// </summary>
 	/// <param name="layer">描画するレイヤー</param>
-	/// <remarks>
-	/// - 描画コマンドを作成し、描画前処理として共通設定を行います。
-	/// - 座標変換行列リソースをGPUに送信します。
-	/// - モデルが存在する場合はモデルの描画処理を実行します。
-	/// - 描画コマンドをレンダラーに登録して、指定された描画レイヤーに反映させます。
-	/// - デバッグモードが有効な場合は、オブジェクトの軸方向を示すラインも描画します。
-	/// </remarks>
 	void Draw(LayerType layer);
 
 	/// <summary>
@@ -18089,7 +16771,7 @@ void Object3DCommon::Initialize() {
 	cameraForGpuData->worldPosition = Vector3(0.0f, 0.0f, 0.0f);
 
 	//ブレンドモードをNormalに設定
-	blendMode_ = Normal;
+	blendMode_ = BlendType3D::NORMAL;
 
 	textureCubeFilePath_ = "Resource/Texture/CubeTexture/Transparent.png";
 
@@ -18133,7 +16815,7 @@ void Object3DCommon::CommonDrawSetting() {
 	dxCommon_->GetCommandList()->SetGraphicsRootSignature(rootSignature_.Get());
 
 	//グラフィックパイプラインを設定
-	dxCommon_->GetCommandList()->SetPipelineState(graphicsPipelineState_[blendMode_].Get());
+	dxCommon_->GetCommandList()->SetPipelineState(graphicsPipelineState_[static_cast<size_t>(blendMode_)].Get());
 
 	//メッシュトポロジーを設定
 	dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -18505,12 +17187,6 @@ class Camera;
 /// <summary>
 /// 2Dオブジェクト描画用の共通機能を提供するクラスです。
 /// </summary>
-/// <remarks>
-/// - DirectX 12 を使用した描画共通設定の管理
-/// - ルートシグネチャ、グラフィックパイプラインステート（PSO）の生成
-/// - 複数ブレンドモードのサポート
-/// - すべての 3D オブジェクトはこのクラスを通じて描画設定を適用します
-/// </remarks>
 class Object3DCommon {
 
 	///-------------------------------------------/// 
@@ -18519,12 +17195,12 @@ class Object3DCommon {
 public:
 
 	//ブレンドモードの種類
-	enum BlendType {
-		Normal,   //通常
-		Add,      //加算
-		Subtruct, //減算
-		Multily,  //乗算
-		Screen    //スクリーン
+	enum class BlendType3D {
+		NORMAL,   //通常
+		ADD,      //加算
+		SUBTRUCT, //減算
+		MULTILY,  //乗算
+		SCREEN    //スクリーン
 	};
 
 	///-------------------------------------------/// 
@@ -18544,41 +17220,21 @@ public:
 	/// <summary>
 	/// Object3DCommonのシングルトンインスタンスを取得します。
 	/// </summary>
-	/// <remarks>
-	/// 返り値に静的インスタンスを返します。
-	/// </remarks>
 	static Object3DCommon* GetInstance();
 
 	/// <summary>
 	/// Object3DCommonの初期化を行います。
 	/// </summary>
-	/// <remarks>
-	/// - DirectXCommonのインスタンスを取得
-	/// - グラフィックパイプラインの生成
-	/// - ライト系の初期設定
-	/// - ブレンドモードをノーマルに初期化
-	/// </remarks>
 	void Initialize();
 
 	/// <summary>
 	/// Object3DCommonの更新処理を行います。
 	/// </summary>
-	/// <remarks>
-	/// - カメラの位置を取得し、GPU用のカメラデータに反映
-	/// - ライト系の更新処理
-	/// </remarks>
 	void Update();
 
 	/// <summary>
 	/// 3Dオブジェクトの描画に必要な共通設定を行います。
 	/// </summary>
-	/// <remarks>
-	/// - RootSignatureの設定
-	/// - 現在のブレンドモードに対応するPSOの設定
-	/// - メッシュの描画トポロジーの設定
-	/// - カメラ情報の設定
-	/// - ライト情報の設定
-	/// </remarks>
 	void CommonDrawSetting();
 
 	///-------------------------------------------/// 
@@ -18589,28 +17245,11 @@ private:
 	/// <summary>
 	/// 3Dオブジェクト描画用のルートシグネチャを作成します。
 	/// </summary>
-	/// <remarks>
-	/// この関数では以下の設定を行います:
-	/// - RootParameterの設定
-	/// - DescriptorRangeでSRVの指定
-	/// - PixelShader用のStaticSamplerを設定
-	/// - RootSignatureの生成後、エラーがあればログ出力とアサートで停止
-	/// </remarks>
 	void CreateRootSignature();
 
 	/// <summary>
 	/// 3Dオブジェクト描画用のグラフィックパイプラインステートを作成します。
 	/// </summary>
-	/// <remarks>
-	/// この関数では以下の処理を行います:
-	/// - RootSignatureの生成
-	/// - InputLayoutの設定
-	/// - BlendStateの設定
-	/// - RasterizerStateの設定
-	/// - VertexShader/PixelShaderのコンパイル
-	/// - DepthStencilStateの設定
-	/// - 複数のブレンドモード用のPSOを生成し配列に格納
-	/// </remarks>
 	void CreateGraphicsPipeline();
 
 	///-------------------------------------------/// 
@@ -18622,7 +17261,7 @@ private:
 	DirectXCommon* dxCommon_ = nullptr;
 
 	//ブレンドモード
-	BlendType blendMode_;
+	BlendType3D blendMode_;
 
 	//デフォルトカメラ
 	Camera* defaultCamera_ = nullptr;
@@ -18678,7 +17317,7 @@ public:
 	/// ブレンドモードの設定
 	/// </summary>
 	/// <param name="blendType">ブレンドタイプ</param>
-	void SetBlendMode(BlendType blendType) { blendMode_ = blendType; }
+	void SetBlendMode(BlendType3D blendType) { blendMode_ = blendType; }
 
 	/// <summary>
 	/// キューブテクスチャのファイルパスの設定
@@ -18969,7 +17608,7 @@ void SkyBox::Draw() {
 		};
 
 	//コマンドをレンダラーに登録
-	Renderer::GetInstance()->AddDraw(LayerType::BackGround, true, command);
+	Renderer::GetInstance()->AddDraw(LayerType::BACKGROUND, true, command);
 }
 
 ============================================================
@@ -18997,9 +17636,6 @@ class Camera;
 /// <summary>
 /// 3D空間の背景として表示されるスカイボックスを管理・描画するクラスです。
 /// </summary>
-/// <remarks>
-/// - ゲームやシーンの背景として、遠景に広がる空や空間を立方体の内側に描画します。  
-/// </remarks>
 class SkyBox {
 
 	///-------------------------------------------/// 
@@ -19036,34 +17672,16 @@ public:
 	/// <summary>
 	/// スカイボックスを初期化します。
 	/// </summary>
-	/// <remarks>
-	/// - スカイボックス共通クラスのシングルトンインスタンスを取得し、必要なリソースの生成を行います。  
-	/// - スカイボックスは6面体で構成されるため、頂点とインデックスを6面分用意します。  
-	/// - 頂点リソースを作成し、GPUに送信できるようマッピングします。  
-	/// - マテリアルリソースを生成し、基本色やライティング有効設定、光沢度、UV変換行列などを初期化します。  
-	/// - 指定されたファイルパスからキューブテクスチャを読み込み、スカイボックス全体に適用します。  
-	/// - WVP行列用のリソースを生成し、初期化した変換データを設定します。  
-	/// </remarks>
 	void Initialize(std::string filePath);
 
 	/// <summary>
 	/// スカイボックスの更新処理を行います。
 	/// </summary>
-	/// <remarks>
-	/// - トランスフォームの行列を更新し、スカイボックスの現在の位置・回転・スケールを反映します。  
-	/// - ワールド行列を基にWVP行列を作成します。  
-	/// - 計算結果をGPU用の座標変換行列リソースに書き込みます。  
-	/// </remarks>
 	void Update();
 
 	/// <summary>
 	/// スカイボックスの描画処理を行います。
 	/// </summary>
-	/// <remarks>
-	/// - スカイボックスを描画するためのコマンドを生成し、レンダラーに登録します。  
-	/// - コマンド内では、描画に必要な共通設定を適用し、頂点・インデックス・マテリアル・テクスチャ・変換行列などをGPUに転送します。  
-	/// - 最後に描画命令を発行し、背景層としてスカイボックスを描画できるようにします。  
-	/// </remarks>
 	void Draw();
 
 	///-------------------------------------------/// 
@@ -19444,12 +18062,6 @@ class Camera;
 /// <summary>
 /// スカイボックス描画用の共通機能を提供するクラスです。
 /// </summary>
-/// <remarks>
-/// - DirectX 12 を使用した描画共通設定の管理
-/// - ルートシグネチャ、グラフィックパイプラインステート（PSO）の生成
-/// - 複数ブレンドモードのサポート
-/// - スカイボックスはこのクラスを通じて描画設定を適用します
-/// </remarks>
 class SkyBoxCommon {
 
 	///-------------------------------------------/// 
@@ -19460,18 +18072,11 @@ public:
 	/// <summary>
 	/// SkyBoxCommonのシングルトンインスタンスを取得します。
 	/// </summary>
-	/// <remarks>
-	/// 返り値に静的インスタンスを返します。
-	/// </remarks>
 	static SkyBoxCommon* GetInstance();
 
 	/// <summary>
 	/// SkyBoxCommonの初期化を行います。
 	/// </summary>
-	/// <remarks>
-	/// - DirectXCommonのインスタンスを取得
-	/// - グラフィックパイプラインの生成
-	/// </remarks>
 	void Initialize();
 
 	/// <summary>
@@ -19482,11 +18087,6 @@ public:
 	/// <summary>
 	/// スカイボックスの描画に必要な共通設定を行います。
 	/// </summary>
-	/// <remarks>
-	/// - RootSignatureの設定
-	/// - 現在のブレンドモードに対応するPSOの設定
-	/// - メッシュの描画トポロジーの設定
-	/// </remarks>
 	void CommonDrawSetting();
 
 	///-------------------------------------------/// 
@@ -19497,28 +18097,11 @@ private:
 	/// <summary>
 	/// スカイボックス描画用のルートシグネチャを作成します。
 	/// </summary>
-	/// <remarks>
-	/// この関数では以下の設定を行います:
-	/// - RootParameterの設定
-	/// - DescriptorRangeでSRVの指定
-	/// - PixelShader用のStaticSamplerを設定
-	/// - RootSignatureの生成後、エラーがあればログ出力とアサートで停止
-	/// </remarks>
 	void CreateRootSignature();
 
 	/// <summary>
 	/// スカイボックス描画用のグラフィックパイプラインステートを作成します。
 	/// </summary>
-	/// <remarks>
-	/// この関数では以下の処理を行います:
-	/// - RootSignatureの生成
-	/// - InputLayoutの設定
-	/// - BlendStateの設定
-	/// - RasterizerStateの設定
-	/// - VertexShader/PixelShaderのコンパイル
-	/// - DepthStencilStateの設定
-	/// - 複数のブレンドモード用のPSOを生成し配列に格納
-	/// </remarks>
 	void CreateGraphicsPipeline();
 
 	///-------------------------------------------/// 
@@ -19622,7 +18205,7 @@ void EmitterGroup::Draw() {
 	for (auto& emitter : particleEmitters_) {
 
 		//エミッターの描画
-		emitter->Draw(Particle);
+		emitter->Draw(LayerType::PARTICLE);
 	}
 }
 
@@ -19921,15 +18504,6 @@ File Path: Engine/3d/Particle/EmitterGroup.h
 /// <summary>
 /// 複数のパーティクルエミッターをまとめて管理し、更新・描画を行うクラスです。
 /// </summary>
-/// <remarks>
-/// - グループ全体で使用するカメラ情報を管理し、各エミッターに適用します。  
-/// - 初期化処理では、エミッター設定ファイルを読み込み、グループの座標・回転・スケールなどの初期状態を設定します。  
-/// - 更新処理では、グループ全体の変換情報を反映した上で、個々のエミッターの状態を更新します。  
-/// - 描画処理では、すべてのエミッターから描画コマンドを発行し、画面にパーティクルを表示します。  
-/// - JSONファイルを読み込むことで、エミッターの設定やグループ構成を登録できます。  
-/// - 現在のグループ構成や各エミッターの情報をJSON形式で保存することも可能です。  
-/// - デフォルトエミッターの追加、すべてのエミッターのパーティクル発生・停止の制御ができます。  
-/// </remarks>
 class EmitterGroup {
 
 	///-------------------------------------------/// 
@@ -19940,30 +18514,16 @@ public:
 	/// <summary>
 	/// パーティクルエミッターグループの初期化を行います。
 	/// </summary>
-	/// <remarks>
-	/// - グループ全体で使用するカメラの参照を設定します。  
-	/// - パーティクルエミッターの設定ファイルが格納されているディレクトリパスを設定します。  
-	/// - 既存のエミッターリストをクリアし、新しい初期状態から生成を行えるようにします。  
-	/// - グループのトランスフォームを初期化し、位置・回転・スケールなどの初期値を設定します。  
-	/// </remarks>
 	void Initialize(Camera* ptr);
 
 	/// <summary>
 	/// パーティクルエミッターグループの更新処理を行います。
 	/// </summary>
-	/// <remarks>
-	/// - グループ全体のトランスフォームを更新し、位置・回転・スケールの変化を反映します。  
-	/// - 各パーティクルエミッターに対して、グループのワールド変換を適用します。  
-	/// - 各エミッターの状態を更新し、パーティクルの生成・移動・消滅などを行います。  
-	/// </remarks>
 	void Update();
 
 	/// <summary>
 	/// パーティクルエミッターグループの描画処理を行います。
 	/// </summary>
-	/// <remarks>
-	/// - グループ内のすべてのパーティクルエミッターで描画コマンドを発行します。  
-	/// </remarks>
 	void Draw();
 
 	/// <summary>
@@ -19974,55 +18534,26 @@ public:
 	/// <summary>
 	/// 指定されたJSONファイルからパーティクルエミッター情報を読み込み、グループに登録します。
 	/// </summary>
-	/// <remarks>
-	/// - ファイル名をもとにディレクトリパスを構築し、JSON形式のデータを読み込みます。  
-	/// - ファイルが開けない場合はエラーメッセージを表示し、プログラムを停止します。  
-	/// - 読み込んだJSONデータからグループ名を取得し、グループに設定します。  
-	/// - JSON内に定義された各エミッター情報に基づき、エミッターインスタンスを生成・初期化します。  
-	/// - エミッターにはあらかじめ設定されたテクスチャリストを登録し、カメラ情報を渡して初期化します。  
-	/// - 初期化が完了したエミッターは、グループのリストに追加されます。  
-	/// </remarks>
 	void LoadEmitter(std::string fileName);
 
 	/// <summary>
 	/// 現在のパーティクルエミッターグループの情報をJSONファイルに保存します。
 	/// </summary>
-	/// <remarks>
-	/// - グループ名と登録されているすべてのエミッター名をJSON形式で構築します。  
-	/// - 保存先のディレクトリが存在しない場合は、自動でディレクトリを作成します。  
-	/// - ファイル書き込みに失敗した場合はエラーメッセージを表示し、処理を中断します。  
-	/// - JSONデータは見やすいようインデント付きでファイルに書き込みます。  
-	/// - 各エミッターについて個別のパラメータもファイルにエクスポートして、詳細情報を保存します。  
-	/// </remarks>
 	void SaveEmitter();
 
 	/// <summary>
 	/// デフォルトのパーティクルエミッターをグループに追加します。
 	/// </summary>
-	/// <remarks>
-	/// - すでに「default」という名前のエミッターが存在する場合は追加処理を行いません。  
-	/// - 新しいエミッターを生成し、テクスチャリストを設定して初期化します。  
-	/// - 初期化後、エミッターを管理リストに登録し、描画や更新処理の対象とします。  
-	/// </remarks>
 	void AddEmitter();
 
 	/// <summary>
 	/// グループ内のすべてのパーティクルエミッターからパーティクルを発生させます。
 	/// </summary>
-	/// <remarks>
-	/// - 管理リストに登録されているすべてのエミッターに対して、個別にパーティクルの発生処理を呼び出します。  
-	/// - 各エミッターの発生条件やタイミングに基づき、パーティクルが生成されて更新対象として描画されます。  
-	/// </remarks>
 	void Emit();
 
 	/// <summary>
 	/// グループ内のすべてのパーティクルエミッターの発生を停止します。
 	/// </summary>
-	/// <remarks>
-	/// - 管理リストに登録されているすべてのエミッターに対して、発生フラグをfalseに設定します。  
-	/// - この処理を行うことで、エミッターは新たなパーティクルを生成しなくなりますが、
-	///   すでに生成済みのパーティクルは引き続き更新・描画されます。  
-	/// </remarks>
 	void Stop();
 
 	///-------------------------------------------/// 
@@ -20115,7 +18646,7 @@ void ParticleCommon::Initialize() {
 	CreateGraphicsPipeline();
 
 	//ブレンドモードをノーマル状態に設定
-	blendMode_ = Add;
+	blendMode_ = BlendTypeParticle::ADD;
 }
 
 ///=====================================================/// 
@@ -20127,7 +18658,7 @@ void ParticleCommon::CommonDrawSetting() {
 	dxCommon_->GetCommandList()->SetGraphicsRootSignature(rootSignature_.Get());
 
 	//PSOの設定
-	dxCommon_->GetCommandList()->SetPipelineState(graphicsPipelineState_[blendMode_].Get());
+	dxCommon_->GetCommandList()->SetPipelineState(graphicsPipelineState_[static_cast<size_t>(blendMode_)].Get());
 
 	//メッシュトポロジーの設定
 	dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -20444,12 +18975,6 @@ class DirectXCommon;
 /// <summary>
 /// パーティクル描画用の共通機能を提供するクラスです。
 /// </summary>
-/// <remarks>
-/// - DirectX 12 を使用した描画共通設定の管理
-/// - ルートシグネチャ、グラフィックパイプラインステート（PSO）の生成
-/// - 複数ブレンドモードのサポート
-/// - すべてのパーティクルはこのクラスを通じて描画設定を適用します
-/// </remarks>
 class ParticleCommon {
 
 	///-------------------------------------------/// 
@@ -20458,12 +18983,12 @@ class ParticleCommon {
 public:
 
 	//ブレンドモードの種類
-	enum BlendType {
-		Normal,   //通常
-		Add,      //加算
-		Subtruct, //減算
-		Multily,  //乗算
-		Screen    //スクリーン
+	enum class BlendTypeParticle {
+		NORMAL,   //通常
+		ADD,      //加算
+		SUBTRUCT, //減算
+		MULTILY,  //乗算
+		SCREEN    //スクリーン
 	};
 
 	///-------------------------------------------/// 
@@ -20474,29 +18999,16 @@ public:
 	/// <summary>
 	/// ParticleCommonのシングルトンインスタンスを取得します。
 	/// </summary>
-	/// <remarks>
-	/// 返り値に静的インスタンスを返します。
-	/// </remarks>
 	static ParticleCommon* GetInstance();
 
 	/// <summary>
 	/// ParticleCommonの初期化を行います。
 	/// </summary>
-	/// <remarks>
-	/// - DirectXCommonのインスタンスを取得
-	/// - グラフィックパイプラインの生成
-	/// - ブレンドモードをノーマルに初期化
-	/// </remarks>
 	void Initialize();
 
 	/// <summary>
 	/// パーティクルの描画に必要な共通設定を行います。
 	/// </summary>
-	/// <remarks>
-	/// - RootSignatureの設定
-	/// - 現在のブレンドモードに対応するPSOの設定
-	/// - メッシュの描画トポロジーの設定
-	/// </remarks>
 	void CommonDrawSetting();
 
 	///-------------------------------------------/// 
@@ -20507,28 +19019,11 @@ private:
 	/// <summary>
 	/// パーティクル描画用のルートシグネチャを作成します。
 	/// </summary>
-	/// <remarks>
-	/// この関数では以下の設定を行います:
-	/// - RootParameterの設定
-	/// - DescriptorRangeでSRVの指定
-	/// - PixelShader用のStaticSamplerを設定
-	/// - RootSignatureの生成後、エラーがあればログ出力とアサートで停止
-	/// </remarks>
 	void CreateRootSignature();
 
 	/// <summary>
 	/// パーティクル描画用のグラフィックパイプラインステートを作成します。
 	/// </summary>
-	/// <remarks>
-	/// この関数では以下の処理を行います:
-	/// - RootSignatureの生成
-	/// - InputLayoutの設定
-	/// - BlendStateの設定
-	/// - RasterizerStateの設定
-	/// - VertexShader/PixelShaderのコンパイル
-	/// - DepthStencilStateの設定
-	/// - 複数のブレンドモード用のPSOを生成し配列に格納
-	/// </remarks>
 	void CreateGraphicsPipeline();
 
 	///-------------------------------------------/// 
@@ -20540,7 +19035,7 @@ private:
 	DirectXCommon* dxCommon_ = nullptr;
 
 	//ブレンドモード
-	BlendType blendMode_;
+	BlendTypeParticle blendMode_;
 
 	//ルートシグネチャ
 	Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature_ = nullptr;
@@ -20563,7 +19058,7 @@ public:
 	/// ブレンドモードの設定
 	/// </summary>
 	/// <param name="blendType">ブレンドタイプ</param>
-	void SetBlendMode(BlendType blendType) { blendMode_ = blendType; }
+	void SetBlendMode(BlendTypeParticle blendType) { blendMode_ = blendType; }
 
 };
 
@@ -20835,24 +19330,24 @@ void ParticleEmitter::Update() {
 			/// === 色の計算 === ///
 
 			switch (colorUpdateState_) {
-			case ParticleEmitter::START:
+			case ParticleEmitter::UpdateState::START:
 
 				particle->color = particle->colorPara.startColor;
 
 				break;
-			case ParticleEmitter::VELOCITY:
+			case ParticleEmitter::UpdateState::VELOCITY:
 
 				particle->colorPara.velocity = particle->colorPara.velocity + particle->colorPara.acceleration * kDeltaTime;
 
 				particle->color = particle->color + particle->colorPara.velocity * kDeltaTime;
 
 				break;
-			case ParticleEmitter::EASING:
+			case ParticleEmitter::UpdateState::EASING:
 
 				float time = particle->currentTime / particle->lifeTime;
 
 				switch (colorEasingState_) {
-				case ParticleEmitter::LINEAR:
+				case ParticleEmitter::EasingState::LINEAR:
 
 					particle->color = Lerp(
 						particle->colorPara.startColor,
@@ -20861,7 +19356,7 @@ void ParticleEmitter::Update() {
 					);
 
 					break;
-				case ParticleEmitter::EASE_IN:
+				case ParticleEmitter::EasingState::EASE_IN:
 
 					particle->color = EaseIn(
 						particle->colorPara.startColor,
@@ -20871,7 +19366,7 @@ void ParticleEmitter::Update() {
 					);
 
 					break;
-				case ParticleEmitter::EASE_OUT:
+				case ParticleEmitter::EasingState::EASE_OUT:
 
 					particle->color = EaseOut(
 						particle->colorPara.startColor,
@@ -20881,7 +19376,7 @@ void ParticleEmitter::Update() {
 					);
 
 					break;
-				case ParticleEmitter::EASE_INOUT:
+				case ParticleEmitter::EasingState::EASE_INOUT:
 
 					particle->color = EaseInOut(
 						particle->colorPara.startColor,
@@ -21183,7 +19678,7 @@ void ParticleEmitter::ImGui() {
 			ImGui::NextColumn();
 
 			switch (colorUpdateState_) {
-			case ParticleEmitter::START:
+			case ParticleEmitter::UpdateState::START:
 
 				ImGui::Text("初期値");
 				ImGui::ColorEdit4(CreateLabelName("Color", "StartNum").c_str(), &colorParameter_.startColor.x);
@@ -21194,7 +19689,7 @@ void ParticleEmitter::ImGui() {
 				ImGui::NextColumn();
 
 				break;
-			case ParticleEmitter::VELOCITY:
+			case ParticleEmitter::UpdateState::VELOCITY:
 
 				ImGui::Text("初期値");
 				ImGui::ColorEdit4(CreateLabelName("Color", "StartNum").c_str(), &colorParameter_.startColor.x);
@@ -21229,7 +19724,7 @@ void ParticleEmitter::ImGui() {
 				ImGui::NextColumn();
 
 				break;
-			case ParticleEmitter::EASING:
+			case ParticleEmitter::UpdateState::EASING:
 
 				const char* easingStateItems[] = { "Lerp","EaseIn","EaseOut","EaseInOut" };
 
@@ -21570,24 +20065,24 @@ ParticleEmitter::Particle ParticleEmitter::MakeNewParticle() {
 void ParticleEmitter::UpdateParameter(Vector3& num, ParticleParameter& parameter, UpdateState& updateState, EasingState& easingState, float& easingStrength, float& currentTime, float& lifeTime) {
 
 	switch (updateState) {
-	case ParticleEmitter::START:
+	case ParticleEmitter::UpdateState::START:
 
 		num = parameter.startNum;
 
 		break;
-	case ParticleEmitter::VELOCITY:
+	case ParticleEmitter::UpdateState::VELOCITY:
 
 		parameter.velocity = parameter.velocity + parameter.acceleration * kDeltaTime;
 
 		num = num + parameter.velocity * kDeltaTime;
 
 		break;
-	case ParticleEmitter::EASING:
+	case ParticleEmitter::UpdateState::EASING:
 
 		float time = currentTime / lifeTime;
 
 		switch (easingState) {
-		case ParticleEmitter::LINEAR:
+		case ParticleEmitter::EasingState::LINEAR:
 
 			num = Lerp(
 				parameter.startNum,
@@ -21596,7 +20091,7 @@ void ParticleEmitter::UpdateParameter(Vector3& num, ParticleParameter& parameter
 			);
 
 			break;
-		case ParticleEmitter::EASE_IN:
+		case ParticleEmitter::EasingState::EASE_IN:
 
 			num = EaseIn(
 				parameter.startNum,
@@ -21606,7 +20101,7 @@ void ParticleEmitter::UpdateParameter(Vector3& num, ParticleParameter& parameter
 			);
 
 			break;
-		case ParticleEmitter::EASE_OUT:
+		case ParticleEmitter::EasingState::EASE_OUT:
 
 			num = EaseOut(
 				parameter.startNum,
@@ -21616,7 +20111,7 @@ void ParticleEmitter::UpdateParameter(Vector3& num, ParticleParameter& parameter
 			);
 
 			break;
-		case ParticleEmitter::EASE_INOUT:
+		case ParticleEmitter::EasingState::EASE_INOUT:
 
 			num = EaseInOut(
 				parameter.startNum,
@@ -21653,7 +20148,7 @@ void ParticleEmitter::ImGuiParameter(std::string labelName, EmitterParameter& pa
 	ImGui::NextColumn();
 
 	switch (updateState) {
-	case ParticleEmitter::START:
+	case ParticleEmitter::UpdateState::START:
 
 		ImGui::Text("初期値");
 		ImGui::DragFloat3(CreateLabelName(labelName, "StartNum").c_str(), &parameter.startNum.x, 0.1f);
@@ -21664,7 +20159,7 @@ void ParticleEmitter::ImGuiParameter(std::string labelName, EmitterParameter& pa
 		ImGui::NextColumn();
 
 		break;
-	case ParticleEmitter::VELOCITY:
+	case ParticleEmitter::UpdateState::VELOCITY:
 
 		ImGui::Text("初期値");
 		ImGui::DragFloat3(CreateLabelName(labelName, "StartNum").c_str(), &parameter.startNum.x, 0.1f);
@@ -21699,7 +20194,7 @@ void ParticleEmitter::ImGuiParameter(std::string labelName, EmitterParameter& pa
 		ImGui::NextColumn();
 
 		break;
-	case ParticleEmitter::EASING:
+	case ParticleEmitter::UpdateState::EASING:
 
 		const char* easingStateItems[] = { "Lerp","EaseIn","EaseOut","EaseInOut" };
 
@@ -21786,12 +20281,6 @@ class ParticleManager;
 /// <summary>
 /// 個別のパーティクル生成・管理・描画を行うエミッタークラスです。
 /// </summary>
-/// <remarks>
-/// - パーティクルエミッターは、指定された位置・回転・スケール・色に基づきパーティクルを生成します。  
-/// - JSONファイルからエミッター情報を読み込み、ワールドトランスフォームやパラメータ（位置・回転・スケール・色）を設定します。  
-/// - 発生・停止フラグの管理により、パーティクルの生成を制御できます。  
-/// - エミッター単位でのJSON保存・読み込みにより、パーティクル設定の再利用や管理が可能です。  
-/// </remarks>
 class ParticleEmitter {
 
 	///-------------------------------------------/// 
@@ -21859,14 +20348,14 @@ private:
 	};
 
 	//更新状態
-	enum UpdateState {
+	enum class UpdateState {
 		START,
 		VELOCITY,
 		EASING
 	};
 
 	//イージング状態
-	enum EasingState {
+	enum class EasingState {
 		LINEAR,
 		EASE_IN,
 		EASE_OUT,
@@ -21874,7 +20363,7 @@ private:
 	};
 
 	//メッシュの種類
-	enum MeshType {
+	enum class MeshType {
 		PLANE,
 		RING,
 		CYLINDER,
@@ -21914,60 +20403,21 @@ public:
 	/// <summary>
 	/// パーティクルエミッターのデストラクタ
 	/// </summary>
-	/// <remarks>
-	/// - エミッターが使用していたGPUリソースの管理番号を解放します。  
-	/// - SRV管理クラスに対して、使用していたインデックスを再利用可能として登録します。  
-	/// </remarks>
 	~ParticleEmitter();
 
 	/// <summary>
 	/// パーティクルエミッターを初期化します。
 	/// </summary>
-	/// <remarks>
-	/// - DirectX共通インスタンス、テクスチャマネージャー、SRVマネージャーを取得して準備します。  
-	/// - 指定されたカメラ情報を保持し、描画時に使用します。  
-	/// - マテリアルリソースを生成し、初期色・照明フラグ・UV変換行列を設定します。  
-	/// - GPU用インスタンシングバッファを生成し、最大インスタンス数分の座標変換行列や色を初期化します。  
-	/// - SRVを確保して、構造化バッファに対応するビューを作成します。  
-	/// - エミッター情報をJSONファイルから読み込み、ワールドトランスフォームを初期化します。  
-	/// - 発生タイマー、生成数、発生フラグ、アクティブフラグを初期化します。  
-	/// - モデルファイルが存在する場合はロードし、テクスチャを読み込み、モデルに設定します。  
-	/// </remarks>
 	void Initialize(const std::string& groupName, const std::string& fileName, Camera* camera);
 
 	/// <summary>
 	/// パーティクルエミッターの更新処理を行います。
 	/// </summary>
-	/// <remarks>
-	/// - エミッター自身のワールドトランスフォームを更新します。  
-	/// - アクティブ状態でない場合は更新処理をスキップします。  
-	/// - パーティクル生成処理：  
-	///   - 発生フラグが立っている場合、タイマーに基づきパーティクルを生成します。  
-	///   - 最大生成数や無限生成フラグに応じて生成を制御します。  
-	///   - 新規生成したパーティクルを管理リストに追加します。  
-	/// - パーティクル更新処理：  
-	///   - カメラのビュー・プロジェクション行列を取得し、ビルボード行列を計算します。  
-	///   - 各パーティクルについて生存時間をチェックし、寿命を超えたパーティクルは削除します。  
-	///   - 座標、回転、スケール、色を個別の更新モード（開始値、速度、イージング）に基づき計算します。  
-	///   - 非ループ設定の場合はパーティクルの経過時間を進めます。  
-	///   - ワールド行列を生成し、ビルボードやスケーリングを適用します。  
-	///   - ワールド行列とビュー・プロジェクション行列を掛け合わせてWVP行列を作成し、インスタンシングデータに書き込みます。  
-	/// - この更新により、描画時にGPU側で正しい変換や色が適用されるパーティクルデータが準備されます。  
-	/// </remarks>
 	void Update();
 
 	/// <summary>
 	/// パーティクルエミッターの描画処理を行います。
 	/// </summary>
-	/// <remarks>
-	/// - アクティブ状態でない場合やインスタンス数が0の場合は描画をスキップします。  
-	/// - 描画コマンドをラムダ式として作成し、レンダラーに登録します。  
-	/// - 描画コマンド内で以下の処理を実施します：  
-	///   - 共通描画設定を適用します。  
-	///   - メッシュ、マテリアル、テクスチャのデータをGPUに送信します。  
-	///   - インスタンシング用のSRVをバインドします。  
-	///   - 登録されたパーティクルインスタンス数分、インスタンス描画コマンドを発行します。  
-	/// </remarks>
 	void Draw(LayerType layer);
 
 	/// <summary>
@@ -21978,22 +20428,12 @@ public:
 	/// <summary>
 	/// パーティクルの生成を開始します。
 	/// </summary>
-	/// <remarks>
-	/// - 発生フラグを有効化し、パーティクル生成のカウンタとタイマーをリセットします。  
-	/// </remarks>
 	void Emit();
 
 	/// <summary>
 	/// エミッターの設定情報をJSONファイルに書き出します。
 	/// </summary>
 	/// <param name="groupName">エミッターが所属するグループ名。</param>
-	/// <remarks>
-	/// - エミッター名、モデル名、テクスチャ名、パーティクル生成条件などの各種パラメータをJSON形式で保存します。  
-	/// - 位置・回転・拡縮・色のパラメータについては、開始値、終了値、ランダム範囲、速度、加速度なども含めて保存されます。  
-	/// - ディレクトリが存在しない場合は自動で作成されます。  
-	/// - 保存処理に失敗した場合はメッセージボックスで通知され、処理が停止します。  
-	/// - JSONは見やすいようにインデント付きで出力されます。
-	/// </remarks>
 	void ExportEmitterData(const std::string& groupName);
 
 	/// <summary>
@@ -22001,12 +20441,6 @@ public:
 	/// </summary>
 	/// <param name="groupName">エミッターが所属するグループ名。</param>
 	/// <param name="fileName">読み込むエミッターファイル名</param>
-	/// <remarks>
-	/// - エミッター名、モデル名、テクスチャ名、パーティクル生成条件などをJSONから復元します。  
-	/// - 位置・回転・拡縮・色の各パラメータについて、開始値、終了値、ランダム範囲、速度、加速度などを読み込みます。  
-	/// - JSONファイルが存在しない場合や読み込みに失敗した場合は、メッセージボックスで通知され処理が停止します。  
-	/// - 読み込んだデータは、内部メンバ変数に設定され、後続のパーティクル生成や描画処理で使用されます。
-	/// </remarks>
 	void ImportEmitterData(const std::string& groupName, const std::string& fileName);
 
 	///-------------------------------------------/// 
@@ -22053,13 +20487,6 @@ private:
 	/// 新しいパーティクルを生成し、初期パラメータを設定します。
 	/// </summary>
 	/// <returns>初期化済みのParticle構造体</returns>
-	/// <remarks>
-	/// - 位置、回転、拡縮、色に関するパラメータを、設定されている開始値とランダム範囲から初期化します。  
-	/// - パーティクルのワールド座標はエミッターのワールド座標に基づき補正されます。  
-	/// - transformメンバには、初期のスケール、回転、座標を設定します。  
-	/// - パーティクルの寿命は、設定された寿命とランダム範囲からランダムに決定されます。  
-	/// - currentTimeは0で初期化され、生成後の経過時間管理に使用されます。
-	/// </remarks>
 	Particle MakeNewParticle();
 
 	/// <summary>
@@ -22072,11 +20499,6 @@ private:
 	/// <param name="easingStrength">補間強度</param>
 	/// <param name="currentTime">パーティクルの経過時間</param>
 	/// <param name="lifeTime">パーティクルの寿命</param>
-	/// <remarks>
-	/// - STARTの場合は、パラメータを開始値に固定します。  
-	/// - VELOCITYの場合は速度と加速度に基づき数値を更新します。  
-	/// - EASINGの場合は経過時間に応じて補間を行い、指定された補間方法に従って値を計算します。  
-	/// </remarks>
 	void UpdateParameter(Vector3& num, ParticleParameter& parameter, UpdateState& updateState, EasingState& easingState, float& easingStrength, float& currentTime, float& lifeTime);
 
 	/// <summary>
@@ -22095,9 +20517,6 @@ private:
 	/// <param name="labelName">ラベルのベースとなる文字列</param>
 	/// <param name="label">追加で付与する識別用文字列（C文字列）</param>
 	/// <returns>「##ベース名+識別子」という形式の文字列を返す</returns>
-	/// <remarks>
-	/// - ImGuiでは「##」以降の文字列が内部IDとして扱われるため、同じ表示名でも異なるIDを持たせたい場合に使用します。
-	/// </remarks>
 	std::string CreateLabelName(std::string labelName, const char* label);
 
 	///-------------------------------------------/// 
@@ -22645,11 +21064,6 @@ File Path: Engine/Base/Audio.h
 /// <summary>
 /// XAudio2 を使用したオーディオ管理クラスです。
 /// </summary>
-/// <remarks>
-/// - シングルトンパターンで実装され、アプリケーション全体で1つのインスタンスを共有します。  
-/// - WAVファイルを読み込み、SoundObject構造体として管理します。  
-/// - サウンドインスタンスを生成し、再生・停止・ループ制御を行います。  
-/// </remarks>
 class Audio {
 
 	///-------------------------------------------/// 
@@ -22703,37 +21117,21 @@ public:
 	/// <summary>
 	/// Audioのシングルトンインスタンスを取得します。
 	/// </summary>
-	/// <remarks>
-	/// 返り値に静的インスタンスを返します。
-	/// </remarks>
 	static Audio* GetInstance();
 
 	/// <summary>
 	/// XAudio2の初期化を行います。
 	/// </summary>
-	/// <remarks>
-	/// - XAudio2インスタンスを生成し、マスターボイスを作成します。
-	/// </remarks>
 	void Initialize();
 
 	/// <summary>
 	/// 登録されている全オーディオの状態を更新します。
 	/// </summary>
-	/// <remarks>
-	/// - リストに登録されている全てのサウンドを確認します。
-	/// - 各サウンドのインスタンスをチェックし、再生が終了している場合は削除します。
-	/// </remarks>
 	void Update();
 
 	/// <summary>
 	/// オーディオシステムの終了処理します。
 	/// </summary>
-	/// <remarks>
-	/// - 登録されている全サウンドの再生を停止し、インスタンスを削除します。
-	/// - SoundUnLoad関数を使用して各サウンドのリソースを解放します。
-	/// - リストをクリアして管理データをリセットします。
-	/// - XAudio2インスタンスをリセットして終了します。
-	/// </remarks>
 	void Finalize();
 
 	/// <summary>
@@ -22741,10 +21139,6 @@ public:
 	/// </summary>
 	/// <param name="soundName">管理用のサウンド名</param>
 	/// <param name="fileName">読み込むWAVファイル名</param>
-	/// <remarks>
-	/// - すでに同名のサウンドが登録されている場合は何もせずに終了します。
-	/// - WAVファイルを読み込み、SoundObject構造体に格納してリストに登録します。
-	/// </remarks>
 	void SoundLoad(std::string soundName, std::string fileName);
 
 	/// <summary>
@@ -22752,44 +21146,24 @@ public:
 	/// </summary>
 	/// <param name="soundName">再生するサウンドの管理名</param>
 	/// <param name="isLoop">ループ再生するかどうか</param>
-	/// <remarks>
-	/// - 指定したサウンド名が登録されていない場合は何もせずに終了します。
-	/// - サウンドデータから新しいSoundInstanceを作成し、XAudio2で再生開始します。
-	/// - 作成したSoundInstanceはインスタンスリストに追加されます。
-	/// </remarks>
 	void StartSound(std::string soundName, bool isLoop);
 
 	/// <summary>
 	/// 指定したサウンドを停止します。
 	/// </summary>
 	/// <param name="soundName">停止するサウンドの管理名</param>
-	/// <remarks>
-	/// - 指定したサウンド名が登録されていない場合は何もせずに終了します。
-	/// - 登録されているすべてのサウンドインスタンスを停止し、バッファをフラッシュします。
-	/// - サウンドインスタンス自体は削除せず、再利用可能な状態にします。
-	/// </remarks>
 	void StopSound(std::string soundName);
 
 	/// <summary>
 	/// 指定したサウンドをアンロード（メモリ解放）します。
 	/// </summary>
 	/// <param name="soundName">アンロードするサウンドの管理名</param>
-	/// <remarks>
-	/// - 登録されていないサウンド名の場合は何も行わずに終了します。
-	/// - サウンドデータのバッファを解放し、構造体の内容を初期化します。
-	/// - サウンドインスタンスは停止済みであることを前提としています。
-	/// </remarks>
 	void SoundUnLoad(std::string soundName);
 
 	/// <summary>
 	/// 指定したサウンドインスタンスが再生中かどうかを確認します。
 	/// </summary>
 	/// <param name="soundInstance">確認する音声インスタンス</param>
-	/// <remarks>
-	/// - XAUDIO2_VOICE_STATE の BuffersQueued を確認することで、
-	///   音声の再生状態を判定しています。
-	/// - 再生中にバッファがキューに残っていない場合は false を返します。
-	/// </remarks>
 	bool isPlayed(SoundInstance soundInstance);
 
 private:
@@ -22799,13 +21173,6 @@ private:
 	/// </summary>
 	/// <param name="fileName">読み込むWAVファイルのパス</param>
 	/// <returns>読み込んだ音声データを格納した SoundData 構造体</returns>
-	/// <remarks>
-	/// - ファイルはバイナリモードで開かれ、RIFF/WAVE形式であることを確認します。
-	/// - "fmt "チャンクを読み込み、フォーマット情報を設定します。
-	/// - "data"チャンクの音声データをバッファに読み込みます。
-	/// - "bext"、"junk"、"LIST"チャンクはスキップして読み込みを続行します。
-	/// - 音声バッファは動的確保されるため、不要になったら delete[] で解放する必要があります。
-	/// </remarks>
 	SoundData LoadWavFile(std::string fileName);
 
 	/// <summary>
@@ -22814,11 +21181,6 @@ private:
 	/// <param name="soundData">再生する音声データ</param>
 	/// <param name="isLoop">ループ再生するかどうか</param>
 	/// <returns>生成された SoundInstance</returns>
-	/// <remarks>
-	/// - IXAudio2SourceVoice を生成し、指定された波形フォーマットを設定します。
-	/// - XAUDIO2_BUFFER に音声データを設定し、必要に応じて無限ループを指定します。
-	/// - 戻り値として SoundInstance 構造体を返します。
-	/// </remarks>
 	SoundInstance CreateSoundInstance(SoundData soundData, bool isLoop);
 
 	///-------------------------------------------///
@@ -22989,15 +21351,6 @@ class DirectXCommon;
 /// <summary>
 /// DirectX12 の深度ステンシルビュー (DSV) を管理するクラスです。
 /// </summary>
-/// <remarks>
-/// - シングルトンパターンで実装され、アプリケーション全体で 1 つのインスタンスを共有します。  
-/// - DSV用のデスクリプタヒープを生成・管理し、CPU/GPU用ハンドルを提供します。  
-/// - DSVの割り当てや利用可能チェック、インデックス管理を行います。  
-/// - 指定されたリソースに対して標準的な深度ステンシルビューを生成可能です。  
-/// - 32ビット浮動小数点形式の深度テクスチャ用DSVも生成できます。  
-/// - DirectXCommon インスタンスを利用して、デバイス経由でDSVを作成します。  
-/// - ゲッターを通じてCPU/GPUデスクリプタを取得可能です。  
-/// </remarks>
 class DSVManager {
 
 	///-------------------------------------------/// 
@@ -23016,19 +21369,11 @@ public:
 	/// <summary>
 	/// DSVManagerのシングルトンインスタンスを取得します。
 	/// </summary>
-	/// <remarks>
-	/// 返り値に静的インスタンスを返します。
-	/// </remarks>
 	static DSVManager* GetInstance();
 
 	/// <summary>
 	/// DSV用のデスクリプタヒープを初期化します。
 	/// </summary>
-	/// <remarks>
-	/// - DirectXCommonのインスタンスを取得します。  
-	/// - 指定した最大数のDSV用デスクリプタヒープを生成します。  
-	/// - ヒープ内の1つ分のデスクリプタサイズを取得して保持します。  
-	/// </remarks>
 	void Initialize();
 
 	/// <summary>
@@ -23040,20 +21385,12 @@ public:
 	/// DSVの番号を割り当てます。
 	/// </summary>
 	/// <returns>割り当てられたDSV番号</returns>
-	/// <remarks>
-	/// - 現在使用中のDSV番号が最大数を超えていないか確認します。  
-	/// - 現在のDSV番号を返却し、次回の割り当て用にインデックスを増加させます。  
-	/// </remarks>
 	uint32_t Allocate();
 
 	/// <summary>
 	/// DSVを割り当て可能かどうかを確認します。
 	/// </summary>
 	/// <returns>true: 割り当て可能 / false: 割り当て不可</returns>
-	/// <remarks>
-	/// - 現在の使用中インデックスが最大数を超えていないかをチェックします。  
-	/// - 最大数に達していなければ true を返し、超えていれば false を返します。  
-	/// </remarks>
 	bool AllocateCheck();
 
 	/// <summary>
@@ -23061,10 +21398,6 @@ public:
 	/// </summary>
 	/// <param name="dsvIndex">割り当て済みのDSV番号</param>
 	/// <param name="pResource">DSVを作成する対象のリソース</param>
-	/// <remarks>
-	/// - 2Dテクスチャ用の標準的な深度ステンシルフォーマットを使用してDSVを設定します。  
-	/// - DSVのディスクリプタハンドルを取得し、デバイスにCreateDepthStencilViewを呼び出してDSVを生成します。  
-	/// </remarks>
 	void CreateDepthStencilView(uint32_t dsvIndex, ID3D12Resource* pResource);
 
 	/// <summary>
@@ -23072,10 +21405,6 @@ public:
 	/// </summary>
 	/// <param name="dsvIndex">割り当て済みのDSV番号</param>
 	/// <param name="pResource">DSVを作成する対象のリソース</param>
-	/// <remarks>
-	/// - 32ビット浮動小数点深度用フォーマットを使用してDSVを設定します。  
-	/// - DSVのディスクリプタハンドルを取得し、デバイスにCreateDepthStencilViewを呼び出してDSVを生成します。  
-	/// </remarks>
 	void CreateDepthTexture(uint32_t dsvIndex, ID3D12Resource* pResource);
 
 	///-------------------------------------------/// 
@@ -24051,17 +22380,6 @@ struct D3DResourceLeakChecker {
 /// <summary>
 /// DirectX12 の基本描画管理クラスです。
 /// </summary>
-/// <remarks>
-/// - シングルトンパターンで実装され、アプリケーション全体で 1 つのインスタンスを共有します。  
-/// - WinApp からウィンドウ情報を取得し、描画に必要な DirectX12 デバイスやコマンド関連リソースを初期化します。  
-/// - スワップチェーン、バックバッファ、深度ステンシルバッファ、RTV/DSV を管理し描画環境を整えます。  
-/// - コマンドリストの準備、描画前後処理（PreDraw / PostDraw）により、フレームごとの描画フローを制御します。  
-/// - HLSL ファイルのコンパイルをサポートし、シェーダーバイナリを取得可能です。  
-/// - GPU バッファリソース、デスクリプタヒープの生成を行い、レンダリングで利用します。  
-/// - フレームレート固定処理により、60FPS に安定した描画が可能です。  
-/// - 内部で DXC コンパイラ、フェンス、ビューポート、シザー矩形などを管理し描画の正確性と同期を確保します。  
-/// - ゲッターを通じてデバイス、コマンドリスト、バックバッファ、ビューポート、シザー矩形を取得できます。  
-/// </remarks>
 class DirectXCommon {
 
 	///-------------------------------------------/// 
@@ -24072,59 +22390,26 @@ public:
 	/// <summary>
 	/// DirectXCommonのシングルトンインスタンスを取得します。
 	/// </summary>
-	/// <remarks>
-	/// 返り値に静的インスタンスを返します。
-	/// </remarks>
 	static DirectXCommon* GetInstance();
 
 	/// <summary>
 	/// DirectX12 の動作に必要な基本コンポーネントを初期化します。
 	/// </summary>
-	/// <remarks>
-	/// - WinApp からウィンドウ情報を取得します。  
-	/// - FPS を固定するための初期化を行います。  
-	/// - DirectX12 デバイス（GPU）を生成し使用可能な状態にします。  
-	/// - コマンドキュー・アロケータ・コマンドリストなど、描画に必要なコマンド関連の初期化を行います。  
-	/// </remarks>
 	void Initialize();
 
 	/// <summary>
 	/// DirectX12 による描画処理を行うための各種レンダリング関連リソースを初期化します。
 	/// </summary>
-	/// <remarks>
-	/// - RTVManager / DSVManager を取得し、レンダーターゲットと深度ステンシルの管理体制を整えます。  
-	/// - スワップチェーンを生成してフロント／バックバッファを扱えるようにします。  
-	/// - 深度バッファを作成し、DSV を初期化します。  
-	/// - RTV を初期化し、描画先の設定を行えるようにします。  
-	/// - GPU 同期のためのフェンスを作成します。  
-	/// - ビューポート矩形とシザリング矩形を設定します。  
-	/// - HLSL をコンパイルするための DXC コンパイラを初期化します。  
-	/// </remarks>
 	void InitializeRendering();
 
 	/// <summary>
 	/// 次の描画に向けてコマンドリストを準備し、バックバッファを描画可能な状態にします。
 	/// </summary>
-	/// <remarks>
-	/// - 現在のスワップチェーンのバックバッファを描画状態に遷移させます。  
-	/// - 描画先としてバックバッファと深度ステンシルを設定します。  
-	/// - 指定した色でバックバッファをクリアし、深度値もクリアします。  
-	/// - ビューポートとシザー矩形を設定して描画範囲を決定します。  
-	/// - この処理により、次の描画コマンドが正しく実行できる状態になります。  
-	/// </remarks>
 	void PreDraw();
 
 	/// <summary>
 	/// 描画処理の終了処理を行い、バックバッファを画面に表示します。
 	/// </summary>
-	/// <remarks>
-	/// - 現在のバックバッファを描画状態からプレゼント状態に遷移させます。  
-	/// - コマンドリストをクローズして内容を確定し、GPUに実行させます。  
-	/// - スワップチェーンを通じて画面に描画結果を表示します。  
-	/// - GPUが描画処理を完了するまでフェンスを用いて待機します。  
-	/// - フレームレート固定用の時間管理処理を更新します。  
-	/// - 次フレーム用にコマンドアロケータとコマンドリストをリセットして準備します。  
-	/// </remarks>
 	void PostDraw();
 
 	/// <summary>
@@ -24133,14 +22418,6 @@ public:
 	/// <param name="filePath">コンパイル対象のHLSLファイルパス</param>
 	/// <param name="profile">使用するシェーダープロファイル</param>
 	/// <returns>コンパイル後のシェーダーバイナリ</returns>
-	/// <remarks>
-	/// - HLSLファイルをUTF-8形式で読み込みます。  
-	/// - エントリーポイントを "main" に固定してコンパイルします。  
-	/// - デバッグ情報の埋め込みや最適化オプションを設定します。  
-	/// - コンパイルエラーや警告がある場合はログを出力してプログラムを停止します。  
-	/// - 成功した場合、実行可能なバイナリ部分を取得して返します。  
-	/// - 使用済みのリソースは解放されます。  
-	/// </remarks>
 	Microsoft::WRL::ComPtr<IDxcBlob> CompileShader(
 		const std::wstring& filePath,
 		const wchar_t* profile
@@ -24151,12 +22428,6 @@ public:
 	/// </summary>
 	/// <param name="sizeInBytes">バッファのサイズ（バイト単位）</param>
 	/// <returns>生成されたバッファリソース</returns>
-	/// <remarks>
-	/// - GPUにアップロード可能なヒープを利用してバッファ用リソースを確保します。  
-	/// - リソースはバッファ用として設定し、行優先レイアウトで作成します。  
-	/// - 高さ、深さ、ミップレベル、サンプル数はバッファ用の標準値に設定します。  
-	/// - リソース生成後、読み取り可能な状態に初期化します。  
-	/// </remarks>
 	Microsoft::WRL::ComPtr<ID3D12Resource> CreateBufferResource(size_t sizeInBytes);
 
 	/// <summary>
@@ -24166,10 +22437,6 @@ public:
 	/// <param name="numDescriptors">ヒープに含めるデスクリプタの数</param>
 	/// <param name="shaderVisible">シェーダーから参照可能にするかどうか</param>
 	/// <returns>生成されたデスクリプタヒープ</returns>
-	/// <remarks>
-	/// - ヒープの種類、デスクリプタ数、シェーダー可視フラグを設定して生成します。  
-	/// - シェーダー可視にする場合は、フラグに SHADER_VISIBLE を設定します。  
-	/// </remarks>
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> CreateDescriptorHeap(
 		D3D12_DESCRIPTOR_HEAP_TYPE heapType,
 		UINT numDescriptors,
@@ -24184,124 +22451,61 @@ private:
 	/// <summary>
 	/// DirectX12 のデバイスおよび関連コンポーネントを初期化します。
 	/// </summary>
-	/// <remarks>
-	/// - デバッグビルド時に D3D12 デバッグレイヤーと GPU ベース検証を有効化します。  
-	/// - グラフィックデバイス管理のため DXGI ファクトリを生成します。  
-	/// - 高パフォーマンス順にアダプタを列挙し、物理 GPU を選択します。  
-	/// - 対応している最高の D3D12 機能レベルでデバイス生成を試行します。  
-	/// - デバッグビルド時にエラー・警告でブレークし不要メッセージを抑制します。  
-	/// - デバイス初期化完了のログを出力します。  
-	/// </remarks>
 	void InitializeDevice();
 
 	/// <summary>
 	/// コマンドキュー、コマンドアロケータ、コマンドリストを初期化します。
 	/// </summary>
-	/// <remarks>
-	/// - D3D12_COMMAND_QUEUE_DESC を用いてコマンドキューを生成します。  
-	/// - DIRECT タイプのコマンドアロケータを生成します。  
-	/// - コマンドアロケータを基にコマンドリストを生成します。  
-	/// </remarks>
 	void InitializeCommand();
 
 	/// <summary>
 	/// スワップチェーンを初期化し、画面に描画するためのバックバッファを構築します。
 	/// </summary>
-	/// <remarks>
-	/// - クライアント領域サイズ・色情報・バッファ数などを設定します。  
-	/// - ダブルバッファ・FLIP_DISCARD を利用した標準的なスワップチェーンを作成します。  
-	/// - コマンドキューとウィンドウハンドルからスワップチェーンを生成します。  
-	/// </remarks>
 	void InitializeSwapChain();
 
 	/// <summary>
 	/// 画面描画で使用する深度バッファとステンシルバッファを生成し、初期化します。
 	/// </summary>
-	/// <remarks>
-	/// - ウィンドウの幅と高さに合わせて深度バッファ用のメモリを確保します。  
-	/// - 深度値を扱うためのテクスチャを作成し、ステンシル情報も含めて設定します。  
-	/// - バッファをビデオメモリ上に作成し、書き込み可能な状態に初期化します。  
-	/// - 初期化時に深度値を最大値でクリアする設定を行います。  
-	/// </remarks>
 	void InitializeDepthBuffer();
 
 	/// <summary>
 	/// バックバッファに描画するためのレンダーターゲットビューを初期化します。
 	/// </summary>
-	/// <remarks>
-	/// - スワップチェーンから画面描画用の全てのバッファを取得します。  
-	/// - 取得した各バッファを内部リストに登録します。  
-	/// - バッファごとにレンダーターゲットビュー用のメモリを確保し、CPU側のハンドルを取得します。  
-	/// - 各バッファに対してレンダーターゲットビューを生成します。  
-	/// </remarks>
 	void InitializeRenderTargetView();
 
 	/// <summary>
 	/// 深度ステンシルバッファ用のビューを初期化します。
 	/// </summary>
-	/// <remarks>
-	/// - 深度ステンシル用のメモリを確保します。  
-	/// - CPU側でアクセス可能なハンドルを取得します。  
-	/// - 確保したメモリと深度バッファを関連付け、DSVを生成します。  
-	/// </remarks>
 	void InitializeDepthStencilView();
 
 	/// <summary>
 	/// GPUとCPU間で処理の同期を行うフェンスを初期化します。
 	/// </summary>
-	/// <remarks>
-	/// - フェンスの初期値を設定します。  
-	/// - デバイスを用いてフェンスを生成します。  
-	/// </remarks>
 	void InitializeFence();
 
 	/// <summary>
 	/// 描画時のビューポート（表示領域）を初期化します。
 	/// </summary>
-	/// <remarks>
-	/// - ビューポートの幅と高さをウィンドウのクライアント領域サイズに合わせます。  
-	/// - 左上座標を (0,0) に設定し、深度範囲を 0.0 から 1.0 に設定します。  
-	/// - これにより画面全体に描画が行われるようになります。  
-	/// </remarks>
 	void InitializeViewportRect();
 
 	/// <summary>
 	/// 描画領域を限定するシザー矩形を初期化します。
 	/// </summary>
-	/// <remarks>
-	/// - 描画対象となる矩形の左上と右下の座標をウィンドウのクライアント領域に合わせて設定します。  
-	/// - これによりビューポートと同じ範囲で描画が制限されます。  
-	/// </remarks>
 	void InitializeScissorRect();
 
 	/// <summary>
 	/// DirectX Shader Compiler（DXC）関連のコンパイル環境を初期化します。
 	/// </summary>
-	/// <remarks>
-	/// - DXCのユーティリティ（dxcUtils）を生成して初期化します。  
-	/// - DXCのコンパイラオブジェクト（dxcCompiler）を生成して初期化します。  
-	/// - シェーダーのインクルードを扱うための標準ハンドラ（includeHandler）を生成します。  
-	/// </remarks>
 	void InitializeDXCCompile();
 
 	/// <summary>
 	/// フレームレート固定用の基準時間を初期化します。
 	/// </summary>
-	/// <remarks>
-	/// - 現在の時間を取得して内部の基準時間として記録します。  
-	/// - この時間を元にフレームごとの処理速度を制御し、一定FPSでの描画を可能にします。  
-	/// </remarks>
 	void InitializeFixFPS();
 
 	/// <summary>
 	/// 1フレームあたりの処理時間を制御して、描画を60FPSに固定します。
 	/// </summary>
-	/// <remarks>
-	/// - 前回のフレームからの経過時間を計測します。  
-	/// - 1/60秒より短ければ、経過時間が1/60秒になるまで微小なスリープを繰り返します。  
-	/// - 現在時間を基準時間として更新し、次のフレームの制御に利用します。  
-	/// - この処理によりフレームレートを安定させ、描画速度の変動を防ぎます。  
-	/// </remarks>
 	void UpdateFixFPS();
 
 	///-------------------------------------------/// 
@@ -24583,15 +22787,6 @@ class DirectXCommon;
 /// <summary>
 /// ImGuiを管理・描画するクラスです。
 /// </summary>
-/// <remarks>
-/// - シングルトンパターンで実装され、アプリケーション全体で1つのインスタンスを共有します。  
-/// - ImGui コンテキストの生成、描画コマンドの生成を行います。  
-/// - DirectX 12 用のシェーダー用デスクリプタヒープを作成し、描画時にコマンドリストにセットします。  
-/// - Begin() / End() によりフレーム単位でGUI描画を制御できます。  
-/// - Draw() により生成済みの描画コマンドをコマンドリストに積み込み、画面上にGUIを描画します。  
-/// - Initialize() でフォント読み込みやWin32/DX12へのバインドを行い、Finalize() でリソース解放します。  
-/// - 日本語フォント対応済みで、デフォルトフォントとして設定可能です。  
-/// </remarks>
 class ImGuiManager {
 
 	///-------------------------------------------/// 
@@ -24602,60 +22797,31 @@ public:
 	/// <summary>
 	/// ImGuiManagerのシングルトンインスタンスを取得します。
 	/// </summary>
-	/// <remarks>
-	/// 返り値に静的インスタンスを返します。
-	/// </remarks>
 	static ImGuiManager* GetInstance();
 
 	/// <summary>
 	/// ImGuiを初期化します。
 	/// </summary>
-	/// <remarks>
-	/// - ウィンドウ管理とDirectX基底のインスタンスを取得します。  
-	/// - シェーダーから参照可能なデスクリプタヒープを1つ作成します。  
-	/// - ImGuiコンテキストを生成します。  
-	/// - ImGuiをWin32とDX12にバインドします。  
-	/// - 日本語フォントを読み込み、デフォルトフォントとして設定します。  
-	/// </remarks>
 	void Initialize();
 
 	/// <summary>
 	/// ImGuiのリソースを解放し、終了処理を行います。
 	/// </summary>
-	/// <remarks>
-	/// - DirectX 12およびWin32向けのImGuiバックエンドを終了します。  
-	/// - ImGuiのコンテキストを破棄します。  
-	/// - 作成したシェーダー用デスクリプタヒープを解放します。  
-	/// </remarks>
 	void Finalize();
 
 	/// <summary>
 	/// ImGuiの描画コマンドを生成し、DirectX 12のコマンドリストに積み込みます。
 	/// </summary>
-	/// <remarks>
-	/// - 現在のコマンドリストを取得します。  
-	/// - ImGui用に作成したシェーダー用デスクリプタヒープをコマンドリストにセットします。  
-	/// - ImGuiが生成した描画データをコマンドリストに積むことで、画面にGUIを描画可能にします。  
-	/// </remarks>
 	void Draw();
 
 	/// <summary>
 	/// ImGuiの新しいフレームを開始します。
 	/// </summary>
-	/// <remarks>
-	/// - DirectX 12用のImGuiフレームを開始します。  
-	/// - Win32用のImGuiフレームを開始します。  
-	/// - ImGuiの内部で新しいフレームを生成し、GUI描画の準備を行います。  
-	/// </remarks>
 	void Begin();
 
 	/// <summary>
 	/// ImGuiのフレームを終了し、描画用コマンドを生成します。
 	/// </summary>
-	/// <remarks>
-	/// - ImGuiの内部で描画コマンドを生成します。  
-	/// - これにより、Draw() でコマンドリストにGUI描画命令を積む準備が整います。  
-	/// </remarks>
 	void End();
 
 	///-------------------------------------------/// 
@@ -24965,13 +23131,6 @@ class WinApp;
 /// <summary>
 /// キーボード、マウスなどの入力デバイスを統括して管理するクラスです。
 /// </summary>
-/// <remarks>
-/// - シングルトンパターンで実装され、アプリケーション全体で 1 つのインスタンスを共有します。  
-/// - 初期化時にウィンドウ情報を取得し、各入力デバイスを生成・設定して使用可能な状態にします。  
-/// - Update()を呼び出すことで、前フレームの入力状態を記録し、最新の入力状態を取得します。  
-/// - キーやボタンが押されているか、離されているか、押した瞬間や離した瞬間かを判定できます。  
-/// - マウス座標や移動量も取得可能で、ユーザー操作に応じた処理に利用できます。  
-/// </remarks>
 class Input {
 
 	///-------------------------------------------/// 
@@ -24982,31 +23141,16 @@ public:
 	/// <summary>
 	/// Inputのシングルトンインスタンスを取得します。
 	/// </summary>
-	/// <remarks>
-	/// 返り値に静的インスタンスを返します。
-	/// </remarks>
 	static Input* GetInstance();
 
 	/// <summary>
 	/// DirectInputを使用してキーボードとマウスの入力デバイスを初期化します。
 	/// </summary>
-	/// <remarks>
-	/// - ウィンドウ管理のインスタンスからアプリケーションハンドルを取得します。  
-	/// - DirectInputオブジェクトを生成します。  
-	/// - キーボードデバイスを生成し、データ形式と排他制御レベルを設定します。  
-	/// - マウスデバイスを生成し、データ形式と排他制御レベルを設定します。  
-	/// </remarks>
 	void Initialize();
 
 	/// <summary>
 	/// 毎フレーム、キーボードとマウスの入力状態を更新します。
 	/// </summary>
-	/// <remarks>
-	/// - 前フレームのキーボードとマウスの状態を保存します。  
-	/// - キーボードデバイスを取得し、全キーの入力状態を取得します。  
-	/// - マウスデバイスを取得し、ポーリングを行い、現在の入力状態を取得します。  
-	/// - この更新により、押下・離上などの入力判定に利用可能な最新状態が保持されます。  
-	/// </remarks>
 	void Update();
 
 	/// <summary>
@@ -25116,14 +23260,14 @@ File Path: Engine/Base/LayerType.h
 #pragma once
 
 //レイヤータイプ
-enum LayerType {
-	First,       //最後列
-	BackGround,  //背景
-	Object,      //オブジェクト
-	Particle,    //パーティクル
-	Debug,       //デバッグ
+enum class LayerType {
+	FIRST,       //最後列
+	BACKGROUND,  //背景
+	OBJECT,      //オブジェクト
+	PARTICLE,    //パーティクル
+	DEBUG,       //デバッグ
 	UI,          //UI
-	Last         //最前列
+	LAST         //最前列
 };
 
 ============================================================
@@ -25939,17 +24083,6 @@ class Camera;
 /// <summary>
 /// オフスクリーン描画用のレンダーテクスチャや深度バッファを管理し、描画結果をスワップチェーンに転送できるクラスです。
 /// </summary>
-/// <remarks>
-/// - シングルトンパターンで実装され、アプリケーション全体で 1 つのインスタンスを共有します。  
-/// - 初期化時にレンダーテクスチャ、深度テクスチャ、マテリアル用バッファを生成し、描画パイプラインやビューを設定します。  
-/// - PreDraw() で描画準備を行い、PostDraw() で描画結果をシェーダーで使用可能な状態に戻します。  
-/// - DrawToSwapChain() によりオフスクリーンで描画した内容をスワップチェーンに転送して画面に表示できます。  
-/// - ルートシグネチャとグラフィックスパイプラインを生成し、複数のブレンドモードや描画設定に対応します。  
-/// - RenderTargetView、DepthStencilView、シェーダーリソースビューを生成し、リソース管理を統括します。  
-/// - マテリアル情報として投影逆行列や色反転係数を保持し、描画時に利用できます。  
-/// - 描画範囲の設定やクリア処理も行い、オフスクリーン描画を安定して行える設計です。  
-/// - カメラやマテリアル設定の変更も可能で、柔軟な描画制御が可能です。  
-/// </remarks>
 class OffScreen {
 
 	///-------------------------------------------/// 
@@ -25971,58 +24104,26 @@ public:
 	/// <summary>
 	/// OffScreenのシングルトンインスタンスを取得します。
 	/// </summary>
-	/// <remarks>
-	/// 返り値に静的インスタンスを返します。
-	/// </remarks>
 	static OffScreen* GetInstance();
 
 	/// <summary>
 	/// オフスクリーン描画用のリソースやパイプラインを初期化します。
 	/// </summary>
-	/// <remarks>
-	/// - DirectX共通管理、RTV/DSV/SRVマネージャーのインスタンスを取得します。  
-	/// - レンダーテクスチャと深度テクスチャを生成します。  
-	/// - マテリアル用のバッファを生成し、データを書き込み可能にマッピングします。  
-	/// - 投影逆行列や色反転比率などマテリアル初期値を設定します。  
-	/// - レンダーターゲットビュー(RTV)と深度ステンシルビュー(DSV)を生成します。  
-	/// - レンダーテクスチャと深度テクスチャのシェーダーリソースビュー(SRV)を作成します。  
-	/// - 描画用のパイプラインを生成し、オフスクリーン描画が行える状態にします。  
-	/// </remarks>
 	void Initialize();
 
 	/// <summary>
 	/// オフスクリーン描画用のレンダーターゲットと深度バッファの描画準備を行います。
 	/// </summary>
-	/// <remarks>
-	/// - レンダーテクスチャと深度テクスチャの状態を描画可能な状態に遷移させるバリアを設定します。  
-	/// - オフスクリーン用のRTVとDSVを描画先に設定します。  
-	/// - 指定したクリアカラーでレンダーテクスチャを初期化します。  
-	/// - 深度バッファを初期深度値でクリアします。  
-	/// - 描画範囲としてViewportとScissor矩形を設定し、描画命令を受け付ける状態にします。  
-	/// </remarks>
 	void PreDraw();
 
 	/// <summary>
 	/// オフスクリーン描画後にレンダーターゲットと深度バッファをシェーダーで使用できる状態に戻します。
 	/// </summary>
-	/// <remarks>
-	/// - レンダーテクスチャを描画状態からピクセルシェーダーで参照可能な状態に遷移させます。  
-	/// - 深度テクスチャを書き込み状態からピクセルシェーダーで参照可能な状態に遷移させます。  
-	/// - これにより、次の描画パスでオフスクリーンの結果をテクスチャとして利用できます。  
-	/// </remarks>
 	void PostDraw();
 
 	/// <summary>
 	/// オフスクリーンで描画した内容をスワップチェーンのバックバッファに転送して描画します。
 	/// </summary>
-	/// <remarks>
-	/// - オフスクリーン描画用のルートシグネチャをコマンドリストに設定します。  
-	/// - 使用するパイプラインステートオブジェクトを設定します。  
-	/// - 三角形リストとして描画するようにプリミティブトポロジーを設定します。  
-	/// - オフスクリーンのレンダーテクスチャと深度テクスチャをシェーダーで使用できるようSRVをルートに設定します。  
-	/// - マテリアル情報を定数バッファとしてルートに設定します。  
-	/// - 三角形1つ分の描画命令を発行し、オフスクリーンの内容をスワップチェーンに描画します。  
-	/// </remarks>
 	void DrawToSwapChain();
 
 	/// <summary>
@@ -26038,78 +24139,36 @@ private:
 	/// <summary>
 	/// オフスクリーン描画用のルートシグネチャを作成します。
 	/// </summary>
-	/// <remarks>
-	/// - ルートパラメータを作成し、テクスチャSRV、深度テクスチャSRV、マテリアルCBVを設定します。  
-	/// - 静的サンプラーを2種類設定し、バイリニアとポイントフィルタをPixelShaderで使用可能にします。  
-	/// - D3D12SerializeRootSignatureでルートシグネチャをシリアライズし、デバイスで作成します。  
-	/// </remarks>
 	void CreateRootSignature();
 
 	/// <summary>
 	/// オフスクリーン描画用のグラフィックスパイプラインを生成します。
 	/// </summary>
-	/// <remarks>
-	/// - ルートシグネチャを生成し設定します。  
-	/// - InputLayoutを設定し、頂点データなしで描画可能にします。  
-	/// - BlendStateとRasterizerStateを設定し、色書き込み・カリング・塗りつぶし方法を指定します。  
-	/// - VertexShaderとPixelShaderをコンパイルしてバイナリを取得します。  
-	/// - DepthStencilStateを設定し、深度機能を有効/無効にします。  
-	/// - 基本PSOを生成し、RenderTarget・DepthStencil・BlendState・RasterizerState・トポロジ・サンプル情報を指定します。  
-	/// - BlendModeごとにPSOを生成し、Add・Subtract・Multily・Screenモードを配列に追加します。  
-	/// - 生成後は各PSOをoffScreenGraphicsPipelineState_配列に格納します。  
-	/// - 各PSO生成時にHRESULTを確認し、失敗時はassertで停止します。  
-	/// </remarks>
 	void CreatePipeline();
 
 	/// <summary>
 	/// オフスクリーン用のRenderTargetView(RTV)を生成します。
 	/// </summary>
-	/// <remarks>
-	/// - RTV番号をRTVManagerから確保します。  
-	/// - 確保したRTV番号からCPUデスクリプタハンドルを取得します。  
-	/// - RTVManagerを使用してRenderTextureリソースに対してRTVを生成します。  
-	/// </remarks>
 	void CreateRenderTargetView();
 
 	/// <summary>
 	/// オフスクリーン用のDepthStencilView(DSV)を生成します。
 	/// </summary>
-	/// <remarks>
-	/// - DSV番号をDSVManagerから確保します。  
-	/// - 確保したDSV番号からCPUデスクリプタハンドルを取得します。  
-	/// - DSVManagerを使用してDepthTextureリソースに対してDSVを生成します。  
-	/// </remarks>
 	void CreateDepthStencilView();
 
 	/// <summary>
 	/// オフスクリーン用のレンダーテクスチャSRVを生成します。
 	/// </summary>
-	/// <remarks>
-	/// - SRV番号をSrvManagerから確保します。  
-	/// - 確保したSRV番号からCPUデスクリプタハンドルを取得します。  
-	/// - SrvManagerを使用してレンダーテクスチャリソースに対してSRVを生成します。  
-	/// </remarks>
 	void CreateRenderTextureSRV();
 
 	/// <summary>
 	/// 深度テクスチャ用のSRVを生成します。
 	/// </summary>
-	/// <remarks>
-	/// - SRV番号をSrvManagerから確保します。  
-	/// - 確保したSRV番号からCPUデスクリプタハンドルを取得します。  
-	/// - SrvManagerを使用して深度テクスチャリソースに対してSRVを生成します。  
-	/// </remarks>
 	void CreateDepthTextureSRV();
 
 	/// <summary>
 	/// 指定サイズ・フォーマットのレンダーターゲット用テクスチャを生成します。
 	/// </summary>
-	/// <remarks>
-	/// - 2Dテクスチャとしてリソース情報を設定します。  
-	/// - VRAM上にDefaultHeapとして作成します。  
-	/// - RenderTarget用のクリア値を設定します。  
-	/// - CreateCommittedResourceでリソースを生成し、初期状態をPixelShaderResourceに設定します。  
-	/// </remarks>
 	Microsoft::WRL::ComPtr<ID3D12Resource> CreateRenderTexture(
 		Microsoft::WRL::ComPtr<ID3D12Device> device,
 		uint32_t width,
@@ -26121,12 +24180,6 @@ private:
 	/// <summary>
 	/// 指定サイズ・フォーマットの深度ステンシル用テクスチャを生成します。
 	/// </summary>
-	/// <remarks>
-	/// - 2Dテクスチャとしてリソース情報を設定します。  
-	/// - VRAM上にDefaultHeapとして作成します。  
-	/// - DepthStencil用のクリア値をDepth=1.0fに設定します。  
-	/// - CreateCommittedResourceでリソースを生成し、初期状態をPixelShaderResourceに設定します。  
-	/// </remarks>
 	Microsoft::WRL::ComPtr<ID3D12Resource> CreateDepthTexture(
 		Microsoft::WRL::ComPtr<ID3D12Device> device,
 		uint32_t width,
@@ -26360,13 +24413,6 @@ class DirectXCommon;
 /// <summary>
 /// 描画用レンダーターゲットビュー(RTV)の管理を行うクラスです。
 /// </summary>
-/// <remarks>
-/// - シングルトンパターンで実装され、アプリケーション全体で 1 つのインスタンスを共有します。  
-/// - RTV用のデスクリプタヒープを生成し、各RTVに対するCPU/GPUデスクリプタを管理します。  
-/// - 最大数を設定しており、使用可能かどうかをチェックしながらRTV番号を割り当てます。  
-/// - 指定したリソースに対してRTVを作成し、描画パイプラインで使用可能にします。  
-/// - CPUおよびGPU用のデスクリプタハンドルを取得可能で、描画コマンド設定時に利用できます。  
-/// </remarks>
 class RTVManager {
 
 	///-------------------------------------------/// 
@@ -26385,19 +24431,11 @@ public:
 	/// <summary>
 	/// RTVManagerのシングルトンインスタンスを取得します。
 	/// </summary>
-	/// <remarks>
-	/// 返り値に静的インスタンスを返します。
-	/// </remarks>
 	static RTVManager* GetInstance();
 
 	/// <summary>
 	/// RTV用のデスクリプタヒープを初期化します。
 	/// </summary>
-	/// <remarks>
-	/// - DirectXCommonのインスタンスを取得します。  
-	/// - 指定した最大数のRTV用デスクリプタヒープを生成します。  
-	/// - ヒープ内の1つ分のデスクリプタサイズを取得して保持します。  
-	/// </remarks>
 	void Initialize();
 
 	/// <summary>
@@ -26409,30 +24447,17 @@ public:
 	/// RTVの番号を割り当てます。
 	/// </summary>
 	/// <returns>割り当てられたRTV番号</returns>
-	/// <remarks>
-	/// - 現在使用中のRTV番号が最大数を超えていないか確認します。  
-	/// - 現在のRTV番号を返却し、次回の割り当て用にインデックスを増加させます。  
-	/// </remarks>
 	uint32_t Allocate();
 
 	/// <summary>
 	/// RTVを割り当て可能かどうかを確認します。
 	/// </summary>
 	/// <returns>true: 割り当て可能 / false: 割り当て不可</returns>
-	/// <remarks>
-	/// - 現在の使用中インデックスが最大数を超えていないかをチェックします。  
-	/// - 最大数に達していなければ true を返し、超えていれば false を返します。  
-	/// </remarks>
 	bool AllocateCheck();
 
 	/// <summary>
 	/// 指定したリソースにRTVを作成します。
 	/// </summary>
-	/// <remarks>
-	/// - 指定したRTVインデックスに対応するハンドルを取得します。  
-	/// - RTVのフォーマットをSRGBに設定し、2Dテクスチャとしてビューを作成します。  
-	/// - DirectXのCreateRenderTargetView関数を使ってリソースにRTVを割り当てます。  
-	/// </remarks>
 	void CreateRenderTargetView(uint32_t rtvIndex, ID3D12Resource* pResource);
 
 	///-------------------------------------------/// 
@@ -26512,7 +24537,7 @@ void Renderer::SwapChainDraw() {
 		//レイヤーに入っている描画コマンドすべてを実行する
 		for (int i = 0; i < drawQueue_[layer].size(); i++) {
 
-			if (layer == LayerType::Debug) {
+			if (layer == LayerType::DEBUG) {
 
 				if (isDebug()) {
 
@@ -26543,7 +24568,7 @@ void Renderer::OffScreenDraw() {
 		//レイヤーに入っている描画コマンドすべてを実行する
 		for (int i = 0; i < offScreenDrawQueue_[layer].size(); i++) {
 
-			if (layer == LayerType::Debug) {
+			if (layer == LayerType::DEBUG) {
 
 				if (isDebug()) {
 
@@ -26632,14 +24657,6 @@ File Path: Engine/Base/Renderer.h
 /// <summary>
 /// 描画処理を統括し、登録された描画コマンドをレイヤー順に実行するクラスです。
 /// </summary>
-/// <remarks>
-/// - シングルトンパターンで実装され、アプリケーション全体で 1 つのインスタンスを共有します。  
-/// - 描画キューに登録された描画処理を順序に従って実行し、スワップチェーンやオフスクリーンに描画します。  
-/// - 通常描画とオフスクリーン描画を分けて管理でき、レイヤーごとの描画順序を制御可能です。  
-/// - デバッグレイヤーの場合は、デバッグ表示が有効なときのみ描画コマンドを実行します。  
-/// - 描画後は各描画キューをクリアし、次フレーム用に初期化します。  
-/// - AddDraw() により、描画処理を通常描画またはオフスクリーン描画のいずれかに追加できます。  
-/// </remarks>
 class Renderer {
 
 	///-------------------------------------------/// 
@@ -26650,49 +24667,26 @@ public:
 	/// <summary>
 	/// Rendererのシングルトンインスタンスを取得します。
 	/// </summary>
-	/// <remarks>
-	/// 返り値に静的インスタンスを返します。
-	/// </remarks>
 	static Renderer* GetInstance();
 
 	/// <summary>
 	/// レンダラーを初期化します。
 	/// </summary>
-	/// <remarks>
-	/// - 描画キューをクリアして初期状態にします。
-	/// </remarks>
 	void Initialize();
 
 	/// <summary>
 	/// 登録された描画コマンドをレイヤー順に実行し、スワップチェーンに描画します。
 	/// </summary>
-	/// <remarks>
-	/// - 下位レイヤーから順に描画キューを処理します。  
-	/// - デバッグレイヤーの場合、デバッグ表示が有効な場合のみ描画コマンドを実行します。  
-	/// - 通常レイヤーはすべての描画コマンドを実行します。  
-	/// - 描画後、描画キューをクリアして初期状態に戻します。  
-	/// </remarks>
 	void SwapChainDraw();
 
 	/// <summary>
 	/// 登録されたオフスクリーン描画コマンドをレイヤー順に実行します。
 	/// </summary>
-	/// <remarks>
-	/// - 下位レイヤーから順にオフスクリーン描画キューを処理します。  
-	/// - デバッグレイヤーの場合、デバッグ表示が有効な場合のみ描画コマンドを実行します。  
-	/// - 通常レイヤーはすべての描画コマンドを実行します。  
-	/// - 描画後、オフスクリーン描画キューをクリアして初期化します。  
-	/// </remarks>
 	void OffScreenDraw();
 
 	/// <summary>
 	/// 描画コマンドを指定したレイヤーと描画先に追加します。
 	/// </summary>
-	/// <remarks>
-	/// - isOffScreenがtrueの場合、オフスクリーン描画キューに追加します。  
-	/// - isOffScreenがfalseの場合、通常描画キューに追加します。  
-	/// - funcに指定した描画処理が登録され、後で描画時に実行されます。  
-	/// </remarks>
 	void AddDraw(LayerType layer, bool isOffScreen,std::function<void()> func);
 
 	///-------------------------------------------/// 
@@ -26703,28 +24697,16 @@ private:
 	/// <summary>
 	/// 通常描画キューに登録されている全ての描画コマンドをクリアします。
 	/// </summary>
-	/// <remarks>
-	/// - レイヤーごとに保持している描画コマンドをすべて削除します。  
-	/// - 描画キューを初期状態に戻すことで、次フレームの描画準備を行います。  
-	/// </remarks>
 	void ClearQueue();
 
 	/// <summary>
 	/// オフスクリーン描画キューに登録されている全ての描画コマンドをクリアします。
 	/// </summary>
-	/// <remarks>
-	/// - レイヤーごとに保持しているオフスクリーン描画コマンドをすべて削除します。  
-	/// - 描画キューを初期状態に戻すことで、次フレームのオフスクリーン描画準備を行います。  
-	/// </remarks>
 	void ClearOffScreenQueue();
 
 	/// <summary>
 	/// 現在のビルドがデバッグモードかどうかを判定します。
 	/// </summary>
-	/// <returns>
-	/// デバッグビルドの場合はtrue、リリースビルドの場合はfalseを返します。
-	/// Defineだと改行がおかしくなるため関数として実装しました。
-	/// </returns>
 	bool isDebug();
 
 	///-------------------------------------------/// 
@@ -26958,13 +24940,6 @@ class DirectXCommon;
 /// <summary>
 /// シェーダーリソースビューを管理する仕組みです。
 /// </summary>
-/// <remarks>
-/// - シングルトンパターンで実装され、アプリケーション全体で 1 つのインスタンスを共有します。  
-/// - グラフィックス描画で使用するリソースビューを保持するための専用領域を用意します。  
-/// - 使用後に解放された番号は記録され、将来的な割り当てで再利用されます。  
-/// - 2D画像データや構造化データ、描画先用テクスチャ、深度情報用テクスチャなど、さまざまな形式のリソースビューを作成できます。  
-/// - ゲッターを通じてCPU/GPUデスクリプタを取得可能です。  
-/// </remarks>
 class SrvManager {
 
 	///-------------------------------------------/// 
@@ -26983,100 +24958,52 @@ public:
 	/// <summary>
 	/// SrvManagerのシングルトンインスタンスを取得します。
 	/// </summary>
-	/// <remarks>
-	/// 返り値に静的インスタンスを返します。
-	/// </remarks>
 	static SrvManager* GetInstance();
 
 	/// <summary>
 	/// SRV用のデスクリプタヒープを初期化します。
 	/// </summary>
-	/// <remarks>
-	/// - DirectXCommonのインスタンスを取得します。  
-	/// - 指定した最大数のSRV用デスクリプタヒープを生成します。  
-	/// - ヒープ内の1つ分のデスクリプタサイズを取得して保持します。  
-	/// </remarks>
 	void Initialize();
 
 	/// <summary>
 	/// 描画前にSRV用のデスクリプタヒープをコマンドリストに設定します。
 	/// </summary>
-	/// <remarks>
-	/// - 描画に使用するSRVデスクリプタヒープを配列にまとめます。  
-	/// - コマンドリストのSetDescriptorHeaps関数を呼び出してSRVヒープを設定します。  
-	/// </remarks>
 	void PreDraw();
 
 	/// <summary>
 	/// SRV番号を割り当てます。
 	/// </summary>
-	/// <remarks>
-	/// - すでに解放された番号が存在する場合は、それを再利用します。  
-	/// - 解放された番号がない場合は、新しい番号を順番に割り当てます。  
-	/// - 割り当て可能な最大数を超えないように確認します。  
-	/// </remarks>
 	uint32_t Allocate();
 
 	/// <summary>
 	/// SRVを割り当て可能かどうかを確認します。
 	/// </summary>
 	/// <returns>true: 割り当て可能 / false: 割り当て不可</returns>
-	/// <remarks>
-	/// - 現在の使用中インデックスが最大数を超えていないかをチェックします。  
-	/// - 最大数に達していなければ true を返し、超えていれば false を返します。  
-	/// </remarks>
 	bool AllocateCheck();
 
 	/// <summary>
 	/// 解放されたメモリ番号を記録します。
 	/// </summary>
-	/// <remarks>
-	/// - 解放された番号は内部の管理リストに追加されます。  
-	/// - 将来の割り当て時にこの番号が再利用されます。  
-	/// </remarks>
 	void RecordFreeIndex(uint32_t index);
 
 	/// <summary>
 	/// 2Dテクスチャ用のシェーダーリソースビュー(SRV)を生成します。
 	/// </summary>
-	/// <remarks>
-	/// - 指定されたテクスチャリソースに対してSRVを作成します。  
-	/// - SRVのフォーマットとミップマップレベルを設定します。  
-	/// - 作成したSRVは指定された番号で管理されます。  
-	/// </remarks>
 	void CreateSRVForTexture2D(uint32_t srvIndex, ID3D12Resource* pResource, DXGI_FORMAT Format, UINT MipLevels);
 
 	/// <summary>
 	/// 構造化バッファ用のシェーダーリソースビュー(SRV)を生成します。
 	/// </summary>
-	/// <remarks>
-	/// - 指定されたバッファリソースに対してSRVを作成します。  
-	/// - バッファの要素数と1要素あたりのバイトサイズを設定します。  
-	/// - SRVのフォーマットは不明として扱い、シェーダーで構造化バッファとしてアクセス可能にします。  
-	/// - 作成したSRVは指定された番号で管理されます。  
-	/// </remarks>
 	void CreateSRVForStructuredBuffer(uint32_t srvIndex, ID3D12Resource* pResource, UINT numElements, UINT structureByteStride);
 
 	/// <summary>
 	/// レンダーターゲット用のシェーダーリソースビュー(SRV)を生成します。
 	/// </summary>
-	/// <remarks>
-	/// - 指定された2Dテクスチャリソースに対してSRVを作成します。  
-	/// - 色のフォーマットをsRGBの8ビット4チャンネルに設定します。  
-	/// - シェーダーからテクスチャとしてアクセス可能にします。  
-	/// - 作成したSRVは指定された番号で管理されます。  
-	/// </remarks>
 	void CreateRenderTargetSRV(uint32_t srvIndex, ID3D12Resource* pResource);
 
 	/// <summary>
 	/// 深度テクスチャ用のシェーダーリソースビュー(SRV)を生成します。
 	/// </summary>
-	/// <remarks>
-	/// - 指定された2D深度テクスチャリソースに対してSRVを作成します。  
-	/// - フォーマットを深度専用の24ビットに設定します。  
-	/// - シェーダーからテクスチャとしてアクセス可能にします。  
-	/// - 作成したSRVは指定された番号で管理されます。  
-	/// </remarks>
 	void CreateDepthTextureSRV(uint32_t srvIndex, ID3D12Resource* pResource);
 
 	///-------------------------------------------/// 
@@ -27285,12 +25212,6 @@ File Path: Engine/Base/WinApp.h
 /// <summary>
 /// OSのウィンドウ管理を行う仕組みです。
 /// </summary>
-/// <remarks>
-/// - この仕組みはアプリケーション全体で一つのインスタンスとして共有されます。  
-/// - OSから送られてくるウィンドウ操作や入力イベントを受け取り、適切に処理します。  
-/// - メッセージ処理関数により、メッセージキューから取得した情報を変換・送信して処理し、終了要求があれば処理終了を示す値を返します。  
-/// - ウィンドウのサイズやハンドル、インスタンス情報を取得するためのインターフェースを提供します。  
-/// </remarks>
 class WinApp {
 
 	///-------------------------------------------/// 
@@ -27301,51 +25222,26 @@ public:
 	/// <summary>
 	/// WinAppのシングルトンインスタンスを取得します。
 	/// </summary>
-	/// <remarks>
-	/// 返り値に静的インスタンスを返します。
-	/// </remarks>
 	static WinApp* GetInstance();
 
 	/// <summary>
 	/// OSから送られてくるウィンドウメッセージを処理します。
 	/// </summary>
-	/// <remarks>
-	/// - ImGuiによるウィンドウ操作用のメッセージは専用ハンドラーで処理します。  
-	/// - ウィンドウが破棄された場合はアプリケーション終了をOSに通知します。  
-	/// - それ以外のメッセージは標準のウィンドウプロシージャで処理されます。  
-	/// </remarks>
 	static LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 
 	/// <summary>
 	/// ウィンドウを初期化して表示します。
 	/// </summary>
-	/// <remarks>
-	/// - マルチスレッド対応のCOMを初期化します。  
-	/// - ウィンドウクラスにウィンドウプロシージャ、クラス名、カーソルなどを設定して登録します。  
-	/// - 指定したクライアント領域のサイズに基づきウィンドウの矩形を調整します。  
-	/// - タイトル、スタイル、座標、親ウィンドウやメニューの有無を設定してウィンドウを生成します。  
-	/// - 生成したウィンドウを画面に表示し、タイマの精度を1ミリ秒に設定します。  
-	/// </remarks>
 	void Initialize();
 
 	/// <summary>
 	/// ウィンドウを閉じ、COMを解放します。
 	/// </summary>
-	/// <remarks>
-	/// - 生成したウィンドウを閉じます。  
-	/// - 初期化したCOMライブラリを解放してクリーンアップします。  
-	/// </remarks>
 	void Finalize();
 
 	/// <summary>
 	/// ウィンドウに送られてきたメッセージを取得して処理します。
 	/// </summary>
-	/// <remarks>
-	/// - メッセージキューからウィンドウへの操作情報を取得します。  
-	/// - 取得したメッセージを変換・送信して適切な処理を行います。  
-	/// - ウィンドウ終了要求が来た場合は処理終了を示す値を返します。  
-	/// - それ以外の場合は処理を継続します。  
-	/// </remarks>
 	bool ProcessMessage();
 
 	///-------------------------------------------/// 
@@ -29915,11 +27811,7 @@ class BaseScene;
 /// <summary>
 /// シーンの状態を管理するクラスです。
 /// </summary>
-/// <remarks>
-/// - この仕組みはアプリケーション全体で一つのインスタンスとして共有されます。  
-/// - 現在表示・操作対象となるシーンを保持します。  
-/// - 現在のシーンが存在する場合、その初期化処理、フレーム更新処理、描画処理、GUI処理を順に実行します。  
-/// </remarks>
+
 class SceneManager {
 
 	///-------------------------------------------/// 
@@ -29930,7 +27822,7 @@ public:
 	/// <summary>
 	/// シーンの種類
 	/// </summary>
-	enum SceneType {
+	enum class SceneType {
 		kTitle,
 		kGame,
 		kParticleEditor
@@ -29944,67 +27836,36 @@ public:
 	/// <summary>
 	/// SceneManagerのシングルトンインスタンスを取得します。
 	/// </summary>
-	/// <remarks>
-	/// 返り値に静的インスタンスを返します。
-	/// </remarks>
 	static SceneManager* GetInstance();
 
 	/// <summary>
 	/// 現在設定されているシーンの初期化処理を実行します。
 	/// </summary>
-	/// <remarks>
-	/// - 現在のシーンが存在する場合、そのシーンの初期化処理を呼び出します。  
-	/// - シーンが存在しない場合は何も行いません。  
-	/// </remarks>
 	void Initialize();
 
 	/// <summary>
 	/// 現在設定されているシーンの更新処理を実行します。
 	/// </summary>
-	/// <remarks>
-	/// - 現在のシーンが存在する場合、そのシーンのフレーム更新処理を呼び出します。  
-	/// - シーンが存在しない場合は何も行いません。  
-	/// </remarks>
 	void Update();
 
 	/// <summary>
 	/// 現在設定されているシーンの描画処理を実行します。
 	/// </summary>
-	/// <remarks>
-	/// - 現在のシーンが存在する場合、そのシーンの描画処理を呼び出します。  
-	/// - シーンが存在しない場合は描画を行いません。  
-	/// </remarks>
 	void Draw();
 
 	/// <summary>
 	/// 現在設定されているシーンのImGui処理を実行します。
 	/// </summary>
-	/// <remarks>
-	/// - 現在のシーンが存在する場合、そのシーンのImGui処理を呼び出します。  
-	/// - シーンが存在しない場合は描画を行いません。  
-	/// </remarks>
 	void ImGui();
 
 	/// <summary>
 	/// 現在のシーンを指定された種類の新しいシーンに切り替えます。
 	/// </summary>
-	/// <remarks>
-	/// - すべての衝突判定オブジェクトを破棄してシーンをリセットします。  
-	/// - 現在のシーンが存在する場合は終了処理を行います。  
-	/// - 指定された種類の新しいシーンを生成します。  
-	/// - 新しいシーンの初期化処理を実行します。  
-	/// </remarks>
 	void ChangeScene(SceneType sceneType);
 
 	/// <summary>
 	/// 指定された種類に応じたシーンオブジェクトを生成して返します。
 	/// </summary>
-	/// <remarks>
-	/// - タイトルシーンが指定された場合はタイトルシーンのオブジェクトを生成します。  
-	/// - ゲームシーンが指定された場合はゲームシーンのオブジェクトを生成します。  
-	/// - パーティクルエディターシーンが指定された場合はパーティクルエディターシーンのオブジェクトを生成します。  
-	/// - いずれにも該当しない場合はnullptrを返します。  
-	/// </remarks>
 	std::unique_ptr<BaseScene> CreateScene(SceneType sceneType);
 
 	///-------------------------------------------/// 
@@ -168283,7 +166144,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	sceneManager->Initialize();
 
 	//シーンを設定
-	sceneManager->ChangeScene(SceneManager::kTitle);
+	sceneManager->ChangeScene(SceneManager::SceneType::kTitle);
 
 	///-------------------------------------------/// 
 	/// メインループ
