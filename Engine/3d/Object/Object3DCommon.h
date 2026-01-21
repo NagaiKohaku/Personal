@@ -22,12 +22,6 @@ class Camera;
 /// <summary>
 /// 2Dオブジェクト描画用の共通機能を提供するクラスです。
 /// </summary>
-/// <remarks>
-/// - DirectX 12 を使用した描画共通設定の管理
-/// - ルートシグネチャ、グラフィックパイプラインステート（PSO）の生成
-/// - 複数ブレンドモードのサポート
-/// - すべての 3D オブジェクトはこのクラスを通じて描画設定を適用します
-/// </remarks>
 class Object3DCommon {
 
 	///-------------------------------------------/// 
@@ -36,12 +30,12 @@ class Object3DCommon {
 public:
 
 	//ブレンドモードの種類
-	enum BlendType {
-		Normal,   //通常
-		Add,      //加算
-		Subtruct, //減算
-		Multily,  //乗算
-		Screen    //スクリーン
+	enum class BlendType3D {
+		NORMAL,   //通常
+		ADD,      //加算
+		SUBTRUCT, //減算
+		MULTILY,  //乗算
+		SCREEN    //スクリーン
 	};
 
 	///-------------------------------------------/// 
@@ -61,41 +55,21 @@ public:
 	/// <summary>
 	/// Object3DCommonのシングルトンインスタンスを取得します。
 	/// </summary>
-	/// <remarks>
-	/// 返り値に静的インスタンスを返します。
-	/// </remarks>
 	static Object3DCommon* GetInstance();
 
 	/// <summary>
 	/// Object3DCommonの初期化を行います。
 	/// </summary>
-	/// <remarks>
-	/// - DirectXCommonのインスタンスを取得
-	/// - グラフィックパイプラインの生成
-	/// - ライト系の初期設定
-	/// - ブレンドモードをノーマルに初期化
-	/// </remarks>
 	void Initialize();
 
 	/// <summary>
 	/// Object3DCommonの更新処理を行います。
 	/// </summary>
-	/// <remarks>
-	/// - カメラの位置を取得し、GPU用のカメラデータに反映
-	/// - ライト系の更新処理
-	/// </remarks>
 	void Update();
 
 	/// <summary>
 	/// 3Dオブジェクトの描画に必要な共通設定を行います。
 	/// </summary>
-	/// <remarks>
-	/// - RootSignatureの設定
-	/// - 現在のブレンドモードに対応するPSOの設定
-	/// - メッシュの描画トポロジーの設定
-	/// - カメラ情報の設定
-	/// - ライト情報の設定
-	/// </remarks>
 	void CommonDrawSetting();
 
 	///-------------------------------------------/// 
@@ -106,28 +80,11 @@ private:
 	/// <summary>
 	/// 3Dオブジェクト描画用のルートシグネチャを作成します。
 	/// </summary>
-	/// <remarks>
-	/// この関数では以下の設定を行います:
-	/// - RootParameterの設定
-	/// - DescriptorRangeでSRVの指定
-	/// - PixelShader用のStaticSamplerを設定
-	/// - RootSignatureの生成後、エラーがあればログ出力とアサートで停止
-	/// </remarks>
 	void CreateRootSignature();
 
 	/// <summary>
 	/// 3Dオブジェクト描画用のグラフィックパイプラインステートを作成します。
 	/// </summary>
-	/// <remarks>
-	/// この関数では以下の処理を行います:
-	/// - RootSignatureの生成
-	/// - InputLayoutの設定
-	/// - BlendStateの設定
-	/// - RasterizerStateの設定
-	/// - VertexShader/PixelShaderのコンパイル
-	/// - DepthStencilStateの設定
-	/// - 複数のブレンドモード用のPSOを生成し配列に格納
-	/// </remarks>
 	void CreateGraphicsPipeline();
 
 	///-------------------------------------------/// 
@@ -139,7 +96,7 @@ private:
 	DirectXCommon* dxCommon_ = nullptr;
 
 	//ブレンドモード
-	BlendType blendMode_;
+	BlendType3D blendMode_;
 
 	//デフォルトカメラ
 	Camera* defaultCamera_ = nullptr;
@@ -195,7 +152,7 @@ public:
 	/// ブレンドモードの設定
 	/// </summary>
 	/// <param name="blendType">ブレンドタイプ</param>
-	void SetBlendMode(BlendType blendType) { blendMode_ = blendType; }
+	void SetBlendMode(BlendType3D blendType) { blendMode_ = blendType; }
 
 	/// <summary>
 	/// キューブテクスチャのファイルパスの設定

@@ -11,10 +11,6 @@
 /// <summary>
 /// 点光源（Point Light）を管理するクラスです。
 /// </summary>
-/// <remarks>
-/// - DirectX 共通基底を使用して GPU バッファリソースを作成します。
-/// - 光源データ（色、座標、照度、半径、減衰率）を LightData 構造体で保持します。
-/// </remarks>
 class PointLight {
 
 	///-------------------------------------------/// 
@@ -40,27 +36,16 @@ public:
 	/// <summary>
 	/// ポイントライトの初期化を行います。
 	/// </summary>
-	/// <remarks>
-	/// - DirectXの共通インスタンスを取得します。
-	/// - GPU用のバッファリソースを生成し、光源データをマッピングします。
-	/// - 光源の色、座標、照度、半径、減衰率を初期設定
-	/// </remarks>
 	void Initialize();
 
 	/// <summary>
 	/// ポイントライトのデータを毎フレーム更新します。
 	/// </summary>
-	/// <remarks>
-	/// - 光源のパラメータの値をを0以上に制限します。
-	/// </remarks>
 	void Update();
 
 	/// <summary>
 	/// GPUにポイントライトのデータを送信します。
 	/// </summary>
-	/// <remarks>
-	/// - コマンドリストのルートパラメータ5にライトデータを設定します。
-	/// </remarks>
 	void SendDataForGPU();
 
 	/// <summary>

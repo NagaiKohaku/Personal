@@ -232,7 +232,7 @@ void DebugLine::Draw(LayerType layerType) {
 		debugCommon_->GetDxCommon()->GetCommandList()->DrawIndexedInstanced(UINT(modelData_.vertices.size()), 1, 0, 0, 0);
 		};
 
-	if (layerType == Debug) {
+	if (layerType == LayerType::DEBUG) {
 
 		//DebugであればSwapChainの描画を行う
 		Renderer::GetInstance()->AddDraw(layerType, false, command);

@@ -26,7 +26,7 @@ void ParticleCommon::Initialize() {
 	CreateGraphicsPipeline();
 
 	//ブレンドモードをノーマル状態に設定
-	blendMode_ = Add;
+	blendMode_ = BlendTypeParticle::ADD;
 }
 
 ///=====================================================/// 
@@ -38,7 +38,7 @@ void ParticleCommon::CommonDrawSetting() {
 	dxCommon_->GetCommandList()->SetGraphicsRootSignature(rootSignature_.Get());
 
 	//PSOの設定
-	dxCommon_->GetCommandList()->SetPipelineState(graphicsPipelineState_[blendMode_].Get());
+	dxCommon_->GetCommandList()->SetPipelineState(graphicsPipelineState_[static_cast<size_t>(blendMode_)].Get());
 
 	//メッシュトポロジーの設定
 	dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);

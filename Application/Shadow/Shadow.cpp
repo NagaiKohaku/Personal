@@ -76,6 +76,6 @@ void Shadow::Draw() {
 	if (isDraw_) {
 
 		// オブジェクトの描画
-		shadow_->Draw(LayerType::Object);
+		shadow_->Draw(LayerType::OBJECT);
 	}
 }

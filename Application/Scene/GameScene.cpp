@@ -173,8 +173,8 @@ void GameScene::Finalize() {
 ///=====================================================///
 void GameScene::Update() {
 
-	if (Fade::GetInstance()->GetState() == Fade::FADE_IN_END) {
-		Fade::GetInstance()->SetState(Fade::NONE);
+	if (Fade::GetInstance()->GetState() == Fade::FadeState::FADE_IN_END) {
+		Fade::GetInstance()->SetState(Fade::FadeState::NONE);
 	}
 
 	//スタート時のアニメーションの更新
@@ -289,7 +289,7 @@ void GameScene::Update() {
 
 	if (ObjectManager::GetInstance()->GetKillCount() >= 30) {
 
-		if (Fade::GetInstance()->GetState() != Fade::FADE_OUT && Fade::GetInstance()->GetState() != Fade::FADE_OUT_END) {
+		if (Fade::GetInstance()->GetState() != Fade::FadeState::FADE_OUT && Fade::GetInstance()->GetState() != Fade::FadeState::FADE_OUT_END) {
 
 			if (!isClearAnim_) {
 
@@ -370,13 +370,13 @@ void GameScene::Update() {
 	}
 
 	//フェードアウトが終わったら
-	if (Fade::GetInstance()->GetState() == Fade::FADE_OUT_END) {
+	if (Fade::GetInstance()->GetState() == Fade::FadeState::FADE_OUT_END) {
 
 		//フェードの状態をリセット
-		Fade::GetInstance()->SetState(Fade::NONE);
+		Fade::GetInstance()->SetState(Fade::FadeState::NONE);
 
 		//タイトルシーンに遷移
-		SceneManager::GetInstance()->ChangeScene(SceneManager::kTitle);
+		SceneManager::GetInstance()->ChangeScene(SceneManager::SceneType::kTitle);
 	}
 }
 

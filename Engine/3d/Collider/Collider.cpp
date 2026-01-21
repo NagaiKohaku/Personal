@@ -16,7 +16,7 @@ void Collider::Initialize(WorldTransform* parent) {
 	parentTransform_ = parent;
 
 	//識別タグの初期化
-	tag_ = NONE;
+	tag_ = Tag::NONE;
 
 	//衝突相手の識別タグの初期化
 	hitTag_.clear();

@@ -77,7 +77,7 @@ void FollowCamera::Update() {
 	Vector3 cameraSlope = { 0.0f,0.0f,0.0f };
 
 	//プレイヤーが戦闘機状態の時のみ傾きを計算
-	if (player_->GetMoveState() == Player::MOVESTATE::JET) {
+	if (player_->GetMoveState() == Player::MoveState::JET) {
 
 		cameraSlope = {
 			playerVelocity.y * -(slopeStrength_ / 100.0f),

@@ -61,5 +61,5 @@ void Ground::TransformUpdate() {
 void Ground::Draw() {
 
 	// オブジェクトの描画
-	object_->Draw(LayerType::Object);
+	object_->Draw(LayerType::OBJECT);
 }

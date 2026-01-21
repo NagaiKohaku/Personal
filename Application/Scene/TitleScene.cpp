@@ -251,7 +251,7 @@ void TitleScene::Update() {
 
 			Fade::GetInstance()->SetState(Fade::FadeState::NONE);
 
-			SceneManager::GetInstance()->ChangeScene(SceneManager::kGame);
+			SceneManager::GetInstance()->ChangeScene(SceneManager::SceneType::kGame);
 		}
 	}
 }
@@ -310,8 +310,8 @@ void TitleScene::Start() {
 			shockWaveRightEmitter_->GetWorldTransform().translate_ = player_->GetWorldPos() + Vector3(1.75f, 0.0f, 0.0f);
 			shockWaveRightEmitter_->Emit();
 
-			if (Fade::GetInstance()->GetState() != Fade::FADE_OUT) {
-				if (Fade::GetInstance()->GetState() != Fade::FADE_OUT_END) {
+			if (Fade::GetInstance()->GetState() != Fade::FadeState::FADE_OUT) {
+				if (Fade::GetInstance()->GetState() != Fade::FadeState::FADE_OUT_END) {
 
 					Fade::GetInstance()->StartFadeOut();
 				}

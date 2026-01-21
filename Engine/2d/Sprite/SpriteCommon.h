@@ -9,9 +9,6 @@
 /// <summary>
 /// スプライト描画共通処理を管理するシングルトンクラス。
 /// </summary>
-/// <remarks>
-/// - DirectXCommonのインスタンスを保持
-/// </remarks>
 class SpriteCommon {
 
 	///-------------------------------------------/// 
@@ -22,17 +19,11 @@ public:
 	/// <summary>
 	/// SpriteCommonのシングルトンインスタンスを取得します。
 	/// </summary>
-	/// <remarks>
-	/// 返り値に静的インスタンスを返します。
-	/// </remarks>
 	static SpriteCommon* GetInstance();
 
 	/// <summary>
 	/// SpriteCommonを初期化します。
 	/// </summary>
-	/// <remarks>
-	/// DirectXCommonのシングルトンインスタンスを取得し、内部メンバ(dxCommon_)に保持します。
-	/// </remarks>
 	void Initialize();
 
 	///-------------------------------------------/// 

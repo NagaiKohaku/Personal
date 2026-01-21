@@ -77,13 +77,13 @@ void LineGround::Draw() {
 	//縦ライン描画
 	for (auto& line : verticalLines_) {
 
-		line->Draw(LayerType::Object);
+		line->Draw(LayerType::OBJECT);
 	}
 
 	//横ライン描画
 	for (auto& line : horizontalLines_) {
 
-		line->Draw(LayerType::Object);
+		line->Draw(LayerType::OBJECT);
 	}
 }
 

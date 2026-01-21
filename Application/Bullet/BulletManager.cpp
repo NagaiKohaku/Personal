@@ -52,7 +52,7 @@ void BulletManager::Draw() {
 ///=====================================================/// 
 /// 新しい弾を生成して管理リストに追加
 ///=====================================================///
-void BulletManager::AddBullet(Vector3 pos, Vector3 direction, BULLETTYPE type) {
+void BulletManager::AddBullet(Vector3 pos, Vector3 direction, BulletType type) {
 
 	//弾の生成
 	std::unique_ptr<BulletBase> bullet = CreateBullet(type);
@@ -67,21 +67,21 @@ void BulletManager::AddBullet(Vector3 pos, Vector3 direction, BULLETTYPE type) {
 ///=====================================================/// 
 /// 指定された種類に応じた弾のインスタンスを生成
 ///=====================================================///
-std::unique_ptr<BulletBase> BulletManager::CreateBullet(BULLETTYPE type) {
+std::unique_ptr<BulletBase> BulletManager::CreateBullet(BulletType type) {
 
 	std::unique_ptr<BulletBase> newBullet;
 
 	//弾のタイプによってインスタンスを生成
 	switch (type) {
-	case BulletManager::TANK:
+	case BulletType::TANK:
 
 		newBullet = std::make_unique<TankBullet>();
 		break;
-	case BulletManager::JET:
+	case BulletType::JET:
 
 		newBullet = std::make_unique<JetBullet>();
 		break;
-	case BulletManager::ENEMY:
+	case BulletType::ENEMY:
 
 		newBullet = std::make_unique<EnemyBullet>();
 		break;

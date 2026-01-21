@@ -16,10 +16,6 @@
 /// <summary>
 /// テクスチャ管理を行うシングルトンクラス。
 /// </summary>
-/// <remarks>
-/// - テクスチャの読み込み・GPU展開・SRV管理を一元管理
-/// - 重複ロードを防ぎ、効率的にGPUリソースを利用
-/// </remarks>
 class TextureManager {
 
 	///-------------------------------------------/// 
@@ -54,44 +50,23 @@ public:
 	/// <summary>
 	/// TextureManagerのシングルトンインスタンスを取得します。
 	/// </summary>
-	/// <remarks>
-	/// 返り値に静的インスタンスを返します。
-	/// </remarks>
 	static TextureManager* GetInstance();
 
 	/// <summary>
 	/// TextureManagerを初期化します。
 	/// </summary>
-	/// <remarks>
-	/// - DirectX基盤のインスタンスを取得
-	/// - SRVマネージャーのインスタンスを取得
-	/// - テクスチャデータを格納するコンテナの容量を最大SRV数分だけ事前に確保します。
-	/// </remarks>
 	void Initialize();
 
 	/// <summary>
 	/// 指定されたファイルパスのテクスチャを読み込み、GPU上に展開します。
 	/// </summary>
 	/// <param name="filePath"> 読み込むテクスチャファイルのパス </param>
-	/// <remarks>
-	/// - DirectXTexを使用してテクスチャを読み込み、ミップマップを生成します（非圧縮テクスチャのみ）。
-	/// - GPU上にリソースを確保し、SRVを生成します。
-	/// - 読み込んだ情報は内部のテクスチャデータを格納するマップコンテナに登録され、同一ファイルの重複ロードを防ぎます。
-	/// </remarks>
 	void LoadTexture(const std::string& filePath);
 
 	/// <summary>
 	/// 指定されたファイルパスのキューブマップテクスチャを読み込み、GPU上に展開します。
 	/// </summary>
 	/// <param name="filePath"> 読み込むキューブマップテクスチャファイルのパス </param>
-	/// <remarks>
-	/// - DDS形式の場合は DirectXTex の LoadFromDDSFile() を使用して読み込みます。
-	/// - その他の形式（PNGなど）の場合は LoadFromWICFile() を使用して読み込みます。
-	/// - 非圧縮テクスチャの場合はミップマップを自動生成します。
-	/// - テクスチャの内容をGPUにアップロードし、SRVを生成します。
-	/// - SRVはキューブマップとして作成されます。
-	/// - 読み込んだ情報は内部のテクスチャデータを格納するマップコンテナに登録され、同一ファイルの重複ロードを防ぎます。
-	/// </remarks>
 	void LoadCubeTexture(const std::string& filePath);
 
 	///-------------------------------------------/// 

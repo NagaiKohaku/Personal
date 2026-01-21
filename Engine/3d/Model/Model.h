@@ -18,10 +18,6 @@
 /// <summary>
 /// 3Dモデル（Model）を管理するクラスです。
 /// </summary>
-/// <remarks>
-/// - メッシュとマテリアル情報を保持し、GPUへの転送と描画を管理します。
-/// - OBJ形式のファイル読み込み、またはプリミティブメッシュ生成により初期化可能です。
-/// </remarks>
 class Model {
 
 	///-------------------------------------------/// 
@@ -55,11 +51,6 @@ public:
 	/// </summary>
 	/// <param name="directoryPath">モデルファイルのディレクトリパス</param>
 	/// <param name="filename">モデルファイル名（OBJ 形式を想定）</param>
-	/// <remarks>
-	/// - OBJ ファイルを読み込み、頂点・インデックスデータを設定します。
-	/// - マテリアル用のGPUバッファを作成し、初期データを設定します。
-	/// - テクスチャが設定されていれば読み込みます。
-	/// </remarks>
 	void Initialize(const std::string& directoryPath, const std::string& filename);
 
 	/// <summary>
@@ -67,12 +58,6 @@ public:
 	/// </summary>
 	/// <param name="type">生成するメッシュの種類（PLANE, CUBE, SPHERE 等）</param>
 	/// <param name="textureFilePath">テクスチャファイルのパス</param>
-	/// <remarks>
-	/// - MeshType に応じたプリミティブメッシュを生成して初期化します。
-	/// - 頂点・インデックスデータをコピーします。
-	/// - マテリアル用のGPUバッファを作成し、初期データを設定します。
-	/// - 指定されたテクスチャを読み込みます。
-	/// </remarks>
 	void Initialize(MeshType type, const std::string& textureFilePath);
 
 	/// <summary>
@@ -80,58 +65,32 @@ public:
 	/// </summary>
 	/// <param name="type">生成するメッシュの種類（PLANE, CUBE, SPHERE 等）</param>
 	/// <param name="model">コピー元のモデルインスタンス</param>
-	/// <remarks>
-	/// - 引数で渡されたモデルの頂点・インデックス・マテリアルデータをコピーします。
-	/// - マテリアル用の GPU バッファを生成して初期データを設定します。
-	/// </remarks>
 	void Initialize(MeshType type, Model* model);
 
 	/// <summary>
 	/// モデルを描画します。
 	/// </summary>
-	/// <remarks>
-	/// - メッシュの頂点・インデックスデータを GPU に設定します。
-	/// - マテリアルの定数バッファをルートパラメータに設定します。
-	/// - テクスチャをシェーダリソースビューとして設定します。
-	/// - インデックス描画コマンドを発行します。
-	/// </remarks>
 	void Draw();
 
 	/// <summary>
 	/// モデルのメッシュデータを GPU に転送します。
 	/// </summary>
-	/// <remarks>
-	/// - メッシュデータを描画用に GPU に設定します。
-	/// - 描画コマンドは発行されません。
-	/// </remarks>
 	void SendMeshDataForGPU();
 
 	/// <summary>
 	/// モデルのマテリアルデータを GPU に転送します。
 	/// </summary>
-	/// <remarks>
-	/// - マテリアルデータを描画用に GPU に設定します。
-	/// - 描画コマンドは発行されません。
-	/// </remarks>
 	void SendMaterialDataForGPU();
 
 	/// <summary>
 	/// モデルのテクスチャデータを GPU に転送します。
 	/// </summary>
-	/// <remarks>
-	/// - テクスチャデータを描画用に GPU に設定します。
-	/// - 描画コマンドは発行されません。
-	/// </remarks>
 	void SendTextureDataForGPU();
 
 	/// <summary>
 	/// 指定したモデルのデータをコピーします。
 	/// </summary>
 	/// <param name="model">コピー元のモデル</param>
-	/// <remarks>
-	/// - モデルの頂点・インデックス情報をコピーします。
-	/// - 使用するテクスチャファイルパスもコピーします。
-	/// </remarks>
 	void Copy(Model* model);
 
 	///-------------------------------------------/// 
@@ -144,10 +103,6 @@ private:
 	/// </summary>
 	/// <param name="directoryPath">OBJファイルが存在するディレクトリパス</param>
 	/// <param name="filename">OBJファイル名</param>
-	/// <remarks>
-	/// - OBJ内で参照される頂点/UV/法線のインデックスを基に VertexData を構築します。
-	/// - mtllib 識別子があれば、マテリアルファイルも読み込みます。
-	/// </remarks>
 	void LoadObjFile(const std::string& directoryPath, const std::string& filename);
 
 	/// <summary>
@@ -155,9 +110,6 @@ private:
 	/// </summary>
 	/// <param name="directoryPath">MTLファイルが存在するディレクトリパス</param>
 	/// <param name="filename">MTLファイル名</param>
-	/// <remarks>
-	/// - テクスチャファイル名を読み込み、メンバ変数に格納します
-	/// </remarks>
 	void LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename);
 
 	///-------------------------------------------/// 

@@ -87,7 +87,7 @@ void DebugObject3D::Draw() {
 		};
 
 	//レンダラーに描画コマンドを追加
-	Renderer::GetInstance()->AddDraw(LayerType::Debug, true, command);
+	Renderer::GetInstance()->AddDraw(LayerType::DEBUG, true, command);
 }
 
 ///=====================================================/// 

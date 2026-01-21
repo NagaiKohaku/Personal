@@ -5,7 +5,7 @@
 class Model;
 
 //メッシュの種類を列挙型で定義
-enum MeshType {
+enum class MeshType {
 	PLANE,
 	RING,
 	CYLINDER,
@@ -27,8 +27,4 @@ std::unique_ptr<MeshBase> CreateMesh(MeshType type);
 /// </summary>
 /// <param name="model">メッシュを持つ Model インスタンス</param>
 /// <returns>該当する MeshType、該当なしの場合は MeshType::END</returns>
-/// <remarks>
-/// - dynamic_cast を使って Model 内の MeshBase 派生クラスを判定します。
-/// - 各メッシュタイプは MeshType 列挙型に対応しています。
-/// </remarks>
 MeshType GetMeshType(Model* model);

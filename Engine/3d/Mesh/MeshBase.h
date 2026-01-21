@@ -15,12 +15,6 @@
 /// <summary>
 /// メッシュ基底クラス（Mesh Base）です。
 /// </summary>
-/// <remarks>
-/// - 頂点(VertexData)とインデックスデータを保持し、GPUバッファとバッファビューを管理します。
-/// - 派生クラスで Initialize() を実装することで具体的な形状のメッシュを作成できます。
-/// - Draw() で頂点・インデックスバッファを入力アセンブリにバインドし描画可能な状態にします。
-/// - CopyMeshData() により外部データでメッシュの頂点・インデックス情報を更新可能です。
-/// </remarks>
 class MeshBase {
 
 	///-------------------------------------------/// 
@@ -48,18 +42,11 @@ public:
 	/// <summary>
 	/// メッシュを初期化する純粋仮想関数。
 	/// </summary>
-	/// <remarks>
-	/// - 派生クラスで必ず実装する必要があります。
-	/// - 頂点・インデックスリソースの生成や初期データ設定などを行います。
-	/// </remarks>
 	virtual void Initialize() = 0;
 
 	/// <summary>
 	/// GPUにメッシュのデータを送信します。
 	/// </summary>
-	/// <remarks>
-	/// - 頂点バッファとインデックスバッファを入力アセンブリステージにバインドします。
-	/// </remarks>
 	void SendDataForGPU();
 
 	/// <summary>
@@ -67,9 +54,6 @@ public:
 	/// </summary>
 	/// <param name="indices">コピーするインデックスデータの配列</param>
 	/// <param name="vertices">コピーする頂点データの配列</param>
-	/// <remarks>
-	/// - 引数のデータを内部バッファ(vertexData_ / indexData_)に直接コピーします。
-	/// </remarks>
 	void CopyMeshData(std::vector<uint32_t> indices, std::vector<VertexData> vertices);
 
 	///-------------------------------------------/// 

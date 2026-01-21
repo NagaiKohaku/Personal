@@ -276,5 +276,5 @@ void SkyBox::Draw() {
 		};
 
 	//コマンドをレンダラーに登録
-	Renderer::GetInstance()->AddDraw(LayerType::BackGround, true, command);
+	Renderer::GetInstance()->AddDraw(LayerType::BACKGROUND, true, command);
 }
