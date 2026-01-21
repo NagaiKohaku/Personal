@@ -5,7 +5,10 @@ struct Material
 {
     float4 color;
     int enableLighting;
+    int enableEdit;
     float4x4 uvTransform;
+    float ratio;
+    float brightness;
 };
 
 //マテリアル
@@ -36,6 +39,30 @@ PixelShaderOutPut main(VertexShaderOutput input)
     //テクスチャの色
     float4 textureColor = gTexture.Sample(gSampler, transformedUV.xy);
 
+    if (gMaterial.enableEdit == 1)
+    {
+
+        float borderPixel = 2.0f;
+
+        float2 uvPerPixel;
+        uvPerPixel.x = abs(ddx(input.texcoord.x));
+        uvPerPixel.y = abs(ddy(input.texcoord.y));
+
+        float2 borderUV = uvPerPixel * borderPixel;
+
+        bool isBorder =
+            input.texcoord.x < borderUV.x ||
+            input.texcoord.x > 1.0f - borderUV.x ||
+            input.texcoord.y < borderUV.y ||
+            input.texcoord.y > 1.0f - borderUV.y;
+
+        if (isBorder)
+        {
+            output.color = float4(1, 1, 1, 1);
+            return output;
+        }
+    }
+
     //アルファ値が0であれば
     if (textureColor.a == 0.0)
     {
@@ -45,7 +72,11 @@ PixelShaderOutPut main(VertexShaderOutput input)
 
     //マテリアル情報とテクスチャの色を合わせる
     output.color = gMaterial.color * FXAA_PS(input);
- 
+
+    float isUnderRatio = step(input.texcoord.x, gMaterial.ratio);
+
+    output.color.rgb *= lerp(gMaterial.brightness, 1.0f, isUnderRatio);
+
     return output;
 }
 

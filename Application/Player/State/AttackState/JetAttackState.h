@@ -10,10 +10,4 @@ public:
 
 	void Update(Player& player) override;
 
-private:
-
-	float attackTimer_;
-
-	float attackInterval_;
-
 };

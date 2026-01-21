@@ -50,19 +50,19 @@ void DirectionalLight::SendDataForGPU() {
 /// ImGuiの表示
 ///=====================================================///
 void DirectionalLight::DisplayImGui() {
-
-#ifdef _USE_IMGUI
-
-	ImGui::Begin("DirectionalLight");
-
-	ImGui::ColorEdit4("Color", &lightData_->color.x);
-
-	ImGui::DragFloat3("Direction", &lightData_->direction.x, 0.01f);
-
-	ImGui::DragFloat("Intensity", &lightData_->intensity, 0.01f);
-
-	ImGui::End();
-
-#endif // _USE_IMGUI
+//
+//#ifdef _USE_IMGUI
+//
+//	ImGui::Begin("DirectionalLight");
+//
+//	ImGui::ColorEdit4("Color", &lightData_->color.x);
+//
+//	ImGui::DragFloat3("Direction", &lightData_->direction.x, 0.01f);
+//
+//	ImGui::DragFloat("Intensity", &lightData_->intensity, 0.01f);
+//
+//	ImGui::End();
+//
+//#endif // _USE_IMGUI
 
 }

@@ -52,37 +52,17 @@ public:
 	/// <summary>
 	/// Object2Dの初期化を行います。
 	/// </summary>
-	/// <remarks>
-	/// - Object2DCommonのインスタンスを取得
-	/// - 座標変換用リソース(WVPResource)の作成とマッピング
-	/// - WVPデータを単位行列で初期化
-	/// - 座標(translate)、サイズ(size)、回転角(rotate)を初期値に設定
-	/// </remarks>
 	void Initialize();
 
 	/// <summary>
 	/// Object2Dのスプライトおよび座標変換行列(WVP)を更新します。
 	/// </summary>
-	/// <remarks>
-	/// - 登録されているスプライト(sprite_)のUpdate()を呼び出す
-	/// - 座標変換行列データの更新
-	/// </remarks>
 	void Update();
 
 	/// <summary>
 	/// Object2Dを指定したレイヤーに描画登録します。
 	/// </summary>
 	/// <param name="layer"> 描画するレイヤー </param>
-	/// <remarks>
-	/// - 描画用の関数をラムダ式で作成
-	///   - Object2DCommonの共通描画設定を適用
-	///   - 座標変換行列データの設定
-	///   - 割り当てられたスプライトを描画
-	/// - 作成した描画関数をRendererにAddDrawで登録
-	///
-	/// layerには描画順序を示すLayerTypeを指定します。
-	/// 描画登録のみを行い、実際の描画はRendererによってフレーム末に行われます。
-	/// </remarks>
 	void Draw(LayerType layer);
 
 	/// <summary>
@@ -167,13 +147,5 @@ public:
 	/// 名前で指定したスプライトをObject2Dに設定します。
 	/// </summary>
 	/// <param name="spriteName">割り当てるスプライトの登録名</param>
-	/// <remarks>
-	/// spriteNameで指定したスプライトをSpriteManagerから検索し、
-	/// 見つかった場合はObject2Dのsprite_に設定します。
-	/// 設定後、Object2Dのサイズ(size_)をスプライトのサイズに合わせます。
-	///
-	/// spriteNameに対応するスプライトが存在しない場合、
-	/// sprite_はnullptrになりますので注意してください。
-	/// </remarks>
 	void SetSprite(const std::string& spriteName);
 };

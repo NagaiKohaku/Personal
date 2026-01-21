@@ -20,12 +20,6 @@ Fade* Fade::GetInstance() {
 ///=====================================================///
 void Fade::Initialize() {
 
-	/// === テクスチャのロード === ///
-
-	SpriteManager::GetInstance()->LoadSprite("Ring", "BigRing");
-
-	SpriteManager::GetInstance()->LoadSprite("Circle", "BigCircle");
-
 	/// === フェードに使うスプライトの生成 === ///
 
 	//リングスプライトの生成
@@ -237,7 +231,7 @@ void Fade::CreateRingSprite() {
 	newObject->Initialize();
 
 	//リングスプライトをセット
-	newObject->SetSprite("Ring");
+	newObject->SetSprite("BigRing");
 
 	newObject->GetSprite()->SetAnchorPoint({ 0.5f,0.5f });
 
@@ -285,7 +279,7 @@ void Fade::CreateCircleSprite() {
 	newObject->Initialize();
 
 	//円形スプライトをセット
-	newObject->SetSprite("Circle");
+	newObject->SetSprite("BigCircle");
 
 	newObject->GetSprite()->SetAnchorPoint({ 0.5f,0.5f });
 

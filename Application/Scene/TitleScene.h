@@ -104,18 +104,6 @@ private:
 	//グラウンドマネージャー
 	std::unique_ptr<GroundManager> groundManager_;
 
-	//タイトル
-	std::unique_ptr<Object2D> titleSprite_;
-
-	//スペースキー
-	std::unique_ptr<Object2D> spaceKeySprite_;
-
-	//左矢印
-	std::unique_ptr<Object2D> leftArrowSprite_;
-
-	//右矢印
-	std::unique_ptr<Object2D> rightArrowSprite_;
-
 	//衝撃波エミッター(左)
 	std::unique_ptr<EmitterGroup> shockWaveLeftEmitter_;
 

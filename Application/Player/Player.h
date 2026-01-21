@@ -254,6 +254,12 @@ public:
 	/// <returns>死亡フラグ</returns>
 	bool GetIsDead() { return isDead_; }
 
+	bool GetIsMoveActive() { return isMoveActive_; }
+
+	float GetAttackTimeRatio() {
+		return attackState_->GetAttackTimer() / attackState_->GetAttackInterval();
+	}
+
 	/// <summary>
 	/// 座標を設定
 	/// </summary>

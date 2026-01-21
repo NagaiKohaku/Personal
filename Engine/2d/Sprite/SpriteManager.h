@@ -46,7 +46,7 @@ public:
 	/// - 指定されたファイルからスプライトを初期化
 	/// - スプライト名と生成したスプライトをリストに登録
 	/// </remarks>
-	void LoadSprite(const std::string& spriteName, const std::string& spriteFileName);
+	void LoadSprite(const std::string& spriteName);
 
 	/// <summary>
 	/// 指定した名前のスプライトを検索して新しいインスタンスを生成します。

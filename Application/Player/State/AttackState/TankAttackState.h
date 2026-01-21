@@ -12,9 +12,5 @@ public:
 
 private:
 
-	float attackTimer_;
-
-	float attackInterval_;
-
 	float lockOnRange_;
 };

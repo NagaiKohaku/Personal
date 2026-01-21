@@ -1,0 +1,242 @@
+{
+    "Clear": {
+        "LeftArrow": {
+            "color": [
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "fileName": "GameClearArrow",
+            "position": [
+                370.0,
+                600.0
+            ],
+            "rotate": 0.0,
+            "size": [
+                64.0,
+                64.0
+            ]
+        },
+        "RightArrow": {
+            "color": [
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "fileName": "GameClearArrow",
+            "position": [
+                910.0,
+                600.0
+            ],
+            "rotate": 3.140000104904175,
+            "size": [
+                64.0,
+                64.0
+            ]
+        },
+        "Space": {
+            "color": [
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "fileName": "GameClearSpace",
+            "position": [
+                640.0,
+                600.0
+            ],
+            "rotate": 0.0,
+            "size": [
+                375.0,
+                122.0
+            ]
+        },
+        "Text": {
+            "color": [
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "fileName": "RoadFlightGameClear",
+            "position": [
+                640.0,
+                100.0
+            ],
+            "rotate": 0.0,
+            "size": [
+                773.0,
+                142.0
+            ]
+        }
+    },
+    "GameOver": {
+        "LeftArrow": {
+            "color": [
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "fileName": "GameOverArrow",
+            "position": [
+                370.0,
+                600.0
+            ],
+            "rotate": 0.0,
+            "size": [
+                64.0,
+                64.0
+            ]
+        },
+        "RightArrow": {
+            "color": [
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "fileName": "GameOverArrow",
+            "position": [
+                910.0,
+                600.0
+            ],
+            "rotate": 3.140000104904175,
+            "size": [
+                64.0,
+                64.0
+            ]
+        },
+        "Space": {
+            "color": [
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "fileName": "GameOverSpace",
+            "position": [
+                640.0,
+                600.0
+            ],
+            "rotate": 0.0,
+            "size": [
+                375.0,
+                122.0
+            ]
+        },
+        "Text": {
+            "color": [
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "fileName": "RoadFlightGameOver",
+            "position": [
+                640.0,
+                100.0
+            ],
+            "rotate": 0.0,
+            "size": [
+                705.0,
+                153.0
+            ]
+        }
+    },
+    "Help": {
+        "Attack": {
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "fileName": "AttackHelp",
+            "position": [
+                50.0,
+                660.0
+            ],
+            "rotate": 0.0,
+            "size": [
+                612.0,
+                64.0
+            ]
+        },
+        "Move": {
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "fileName": "MoveHelp",
+            "position": [
+                50.0,
+                600.0
+            ],
+            "rotate": 0.0,
+            "size": [
+                612.0,
+                64.0
+            ]
+        },
+        "MoveKey": {
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "fileName": "MoveButton",
+            "position": [
+                50.0,
+                600.0
+            ],
+            "rotate": 0.0,
+            "size": [
+                64.0,
+                64.0
+            ]
+        },
+        "SpaceKey": {
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "fileName": "SpaceButton",
+            "position": [
+                50.0,
+                660.0
+            ],
+            "rotate": 0.0,
+            "size": [
+                64.0,
+                64.0
+            ]
+        },
+        "Target": {
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "fileName": "KillToTitle",
+            "position": [
+                640.0,
+                360.0
+            ],
+            "rotate": 0.0,
+            "size": [
+                1280.0,
+                720.0
+            ]
+        }
+    }
+}

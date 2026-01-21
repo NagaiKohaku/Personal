@@ -2,6 +2,9 @@
 
 #include "2d/Sprite/SpriteCommon.h"
 
+#include "fstream"
+#include "filesystem"
+
 ///=====================================================/// 
 /// SpriteManagerのシングルトンインスタンスを取得
 ///=====================================================///
@@ -17,12 +20,21 @@ void SpriteManager::Initialize() {
 
 	//スプライト基底のインスタンスを取得
 	spriteCommon_ = SpriteCommon::GetInstance();
+
+	//スプライトデータを読み込む
+	for (const auto& entry : std::filesystem::directory_iterator("Resource/Sprite")) {
+
+		if (entry.is_directory()) {
+
+			LoadSprite(entry.path().filename().string());
+		}
+	}
 }
 
 ///=====================================================/// 
 /// 指定した名前のスプライトを検索し、未登録であれば読み込む
 ///=====================================================///
-void SpriteManager::LoadSprite(const std::string& spriteName,const std::string& spriteFileName) {
+void SpriteManager::LoadSprite(const std::string& spriteName) {
 
 	//引数の名前のスプライトが登録されているかを確認
 	if (sprites_.contains(spriteName)) {
@@ -35,7 +47,7 @@ void SpriteManager::LoadSprite(const std::string& spriteName,const std::string& 
 	std::unique_ptr<Sprite> newSprite = std::make_unique<Sprite>();
 
 	//スプライトを読み込む
-	newSprite->Initialize(spriteFileName);
+	newSprite->Initialize(spriteName);
 
 	//リストに登録
 	sprites_.insert(std::make_pair(spriteName, std::move(newSprite)));
