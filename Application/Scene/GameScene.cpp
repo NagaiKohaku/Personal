@@ -5,6 +5,7 @@
 #include "Scene/SceneManager.h"
 #include "ObjectManager.h"
 #include "UIManager.h"
+#include "EmitterManager.h"
 
 #include "2d/Sprite/SpriteManager.h"
 #include "3d/Model/ModelManager.h"
@@ -41,6 +42,8 @@ void GameScene::Initialize() {
 
 	//シェイクにカメラをセット
 	Shake::GetInstance()->SetCamera(camera_.get());
+
+	EmitterManager::GetInstance()->SetCamera(camera_.get());
 
 	/// === エネミーマネージャーの生成 === ///
 
