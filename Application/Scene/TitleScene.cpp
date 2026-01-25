@@ -4,6 +4,7 @@
 
 #include <Base/OffScreen.h>
 #include <ObjectManager.h>
+#include <EmitterManager.h>
 
 #include <3d/Model/ModelManager.h>
 #include <2d/Sprite/SpriteManager.h>
@@ -43,6 +44,8 @@ void TitleScene::Initialize() {
 
 	Shake::GetInstance()->SetCamera(camera_.get());
 
+	EmitterManager::GetInstance()->SetCamera(camera_.get());
+
 	/// === 3Dオブジェクトの設定 === ///
 
 	//グラウンドマネージャーの生成
@@ -60,14 +63,6 @@ void TitleScene::Initialize() {
 	player_->SetPosition({ 0.0f,1.0f,0.0f });
 
 	/// === 2Dオブジェクトの設定 === ///
-
-	//UIManager::GetInstance()->CreateUI("Title", "Title", "RoadflightTitle");
-
-	//UIManager::GetInstance()->CreateUI("Title", "SpaceButton", "GameOverSpace");
-
-	//UIManager::GetInstance()->CreateUI("Title", "LeftArrow", "GameOverArrow");
-
-	//UIManager::GetInstance()->CreateUI("Title", "RIghtArrow", "GameOverArrow");
 
 	UIManager::GetInstance()->LoadUI("TitleScene");
 

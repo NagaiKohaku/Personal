@@ -21,6 +21,7 @@
 #include "3d/Collider/ColliderManager.h"
 #include "ObjectManager.h"
 #include "UIManager.h"
+#include "EmitterManager.h"
 
 #include "Scene/SceneManager.h"
 #include "LevelEditor/LevelDataLoader.h"
@@ -125,6 +126,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	UIManager* uiManager = UIManager::GetInstance();
 	uiManager->Initialize();
 
+	//エミッターマネージャー
+	EmitterManager* emitterManager = EmitterManager::GetInstance();
+	emitterManager->Initialize();
+
 	//コライダーマネージャー
 	ColliderManager* colliderManager = ColliderManager::GetInstance();
 	colliderManager->Initialize();
@@ -195,6 +200,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//UIマネージャーの更新
 		uiManager->Update();
 
+		//エミッターマネージャーの更新
+		emitterManager->Update();
+
 		//コライダーマネージャーの更新
 		colliderManager->Update();
 
@@ -227,6 +235,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		//オブジェクトマネージャーの描画
 		objectManager->Draw();
+
+		//エミッターマネージャーの描画
+		emitterManager->Draw();
 
 		//uiマネージャーの描画
 		uiManager->Draw();

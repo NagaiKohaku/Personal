@@ -7,6 +7,7 @@
 #include "LevelEditor/LevelDataLoader.h"
 #include "ObjectManager.h"
 #include "Bullet/BulletManager.h"
+#include "EmitterManager.h"
 
 #include "Enemy/Enemy.h"
 
@@ -17,6 +18,13 @@
 
 #include "algorithm"
 #include "numbers"
+
+Player::~Player() {
+
+	for (auto& emitter : emitterList_) {
+		EmitterManager::GetInstance()->DeleteEmitter(emitter);
+	}
+}
 
 ///=====================================================/// 
 /// プレイヤーを初期化
@@ -56,54 +64,19 @@ void Player::Initialize(Camera* cameraPtr, BulletManager* bulletPtr, bool isMove
 
 	leftWing_->GetWorldTransform().SetParent(&core_->GetWorldTransform());
 
-	//右トレイルエミッターの生成
-	rightTrail_ = std::make_unique<EmitterGroup>();
+	emitterList_.push_back(EmitterManager::GetInstance()->CreateEmitter("RightTrail", "Trail", &rightWing_->GetWorldTransform()));
 
-	rightTrail_->Initialize(camera_);
+	emitterList_.push_back(EmitterManager::GetInstance()->CreateEmitter("LeftTrail", "Trail", &leftWing_->GetWorldTransform()));
 
-	rightTrail_->LoadEmitter("Trail");
+	emitterList_.push_back(EmitterManager::GetInstance()->CreateEmitter("Ecplosive", "PlayerExplosive", &core_->GetWorldTransform()));
 
-	rightTrail_->GetWorldTransform().SetParent(&rightWing_->GetWorldTransform());
+	emitterList_.push_back(EmitterManager::GetInstance()->CreateEmitter("Destroy", "Destroy", &core_->GetWorldTransform()));
 
-	rightTrail_->Emit();
+	emitterList_.push_back(EmitterManager::GetInstance()->CreateEmitter("MuzzleFlash", "MuzzleFlash", &core_->GetWorldTransform()));
 
-	//左トレイルエミッターの生成
-	leftTrail_ = std::make_unique<EmitterGroup>();
+	emitterList_[static_cast<size_t>(EmitterType::RIGHTTRAIL)]->Emit();
 
-	leftTrail_->Initialize(camera_);
-
-	leftTrail_->LoadEmitter("Trail");
-
-	leftTrail_->GetWorldTransform().SetParent(&leftWing_->GetWorldTransform());
-
-	leftTrail_->Emit();
-
-	//死亡時エミッターの生成
-	explosiveEmitter_ = std::make_unique<EmitterGroup>();
-
-	explosiveEmitter_->Initialize(camera_);
-
-	explosiveEmitter_->LoadEmitter("PlayerExplosive");
-
-	explosiveEmitter_->GetWorldTransform().SetParent(&core_->GetWorldTransform());
-
-	//破壊時エミッターの生成
-	destroyEmitter_ = std::make_unique<EmitterGroup>();
-
-	destroyEmitter_->Initialize(camera_);
-
-	destroyEmitter_->LoadEmitter("Destroy");
-
-	destroyEmitter_->GetWorldTransform().SetParent(&core_->GetWorldTransform());
-
-	//マズルフラッシュエミッターの生成
-	muzzleFlashEmitter_ = std::make_unique<EmitterGroup>();
-
-	muzzleFlashEmitter_->Initialize(camera_);
-
-	muzzleFlashEmitter_->LoadEmitter("MuzzleFlash");
-
-	muzzleFlashEmitter_->GetWorldTransform().SetParent(&core_->GetWorldTransform());
+	emitterList_[static_cast<size_t>(EmitterType::LEFTTRAIL)]->Emit();
 
 	//影オブジェクトの生成
 	shadow_ = std::make_unique<Shadow>();
@@ -196,26 +169,9 @@ void Player::Update() {
 	//プレイヤーの更新
 	core_->Update();
 
-	//右ウィングの更新
 	rightWing_->Update();
 
-	//左ウィングの更新
 	leftWing_->Update();
-
-	//右トレイルの更新
-	rightTrail_->Update();
-
-	//左トレイルの更新
-	leftTrail_->Update();
-
-	//死亡時爆発エミッターの更新
-	explosiveEmitter_->Update();
-
-	//破壊エミッターの更新
-	destroyEmitter_->Update();
-
-	//マズルフラッシュエミッターの更新
-	muzzleFlashEmitter_->Update();
 
 	//影の更新
 	shadow_->Update(core_->GetWorldTransform().translate_);
@@ -270,21 +226,6 @@ void Player::Draw() {
 		shadow_->Draw();
 	}
 
-	//右トレイルの描画
-	rightTrail_->Draw();
-
-	//左トレイルの描画
-	leftTrail_->Draw();
-
-	//死亡時爆発エミッターの描画
-	explosiveEmitter_->Draw();
-
-	//破壊エミッターの描画
-	destroyEmitter_->Draw();
-
-	//マズルフラッシュエミッターの描画
-	muzzleFlashEmitter_->Draw();
-
 	//移動可能であれば
 	if (isMoveActive_) {
 
@@ -320,7 +261,7 @@ void Player::UpdateLockOn(float lockOnRange) {
 void Player::JetAttack() {
 
 	//マズルフラッシュエミッターを発生
-	muzzleFlashEmitter_->Emit();
+	emitterList_[static_cast<size_t>(EmitterType::MUZZLEFLASH)]->Emit();
 
 	//オブジェクトからレティクルへの方向
 	Vector3 direction = lockOn_->GetMainReticlePos() - core_->GetWorldTransform().translate_;
@@ -337,7 +278,7 @@ void Player::JetAttack() {
 void Player::TankAttack() {
 
 	//マズルフラッシュエミッターを発生
-	muzzleFlashEmitter_->Emit();
+	emitterList_[static_cast<size_t>(EmitterType::MUZZLEFLASH)]->Emit();
 
 	//レティクルの位置を取得
 	std::vector<Vector3> reticlePositions = lockOn_->GetLockOnReticlePos();
@@ -439,7 +380,7 @@ void Player::IsCollision() {
 			isDead_ = true;
 
 			//死亡時爆発エミッターを発生
-			explosiveEmitter_->Emit();
+			emitterList_[static_cast<size_t>(EmitterType::EXPLOSIVE)]->Emit();
 		}
 	}
 
@@ -469,13 +410,13 @@ void Player::Dead() {
 			isDestroy_ = true;
 
 			//トレイル・爆発エミッター停止
-			leftTrail_->Stop();
+			emitterList_[static_cast<size_t>(EmitterType::LEFTTRAIL)]->Stop();
 
-			rightTrail_->Stop();
+			emitterList_[static_cast<size_t>(EmitterType::RIGHTTRAIL)]->Stop();
 
-			explosiveEmitter_->Stop();
+			emitterList_[static_cast<size_t>(EmitterType::EXPLOSIVE)]->Stop();
 
-			destroyEmitter_->Emit();
+			emitterList_[static_cast<size_t>(EmitterType::DESTROY)]->Emit();
 
 			//画面揺れ開始
 			Shake::GetInstance()->Start(1.0f, 0.5f);

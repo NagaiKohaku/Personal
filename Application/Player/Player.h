@@ -40,10 +40,20 @@ public:
 		JET,
 	};
 
+	enum class EmitterType {
+		RIGHTTRAIL,
+		LEFTTRAIL,
+		EXPLOSIVE,
+		DESTROY,
+		MUZZLEFLASH
+	};
+
 	///-------------------------------------------/// 
 	/// メンバ関数
 	///-------------------------------------------///
 public:
+
+	~Player();
 
 	/// <summary>
 	/// プレイヤーを初期化します。
@@ -126,20 +136,8 @@ private:
 	//左ウィングオブジェクト
 	std::unique_ptr<Object3D> leftWing_;
 
-	//右トレイルエミッター
-	std::unique_ptr<EmitterGroup> rightTrail_;
-
-	//左トレイルエミッター
-	std::unique_ptr<EmitterGroup> leftTrail_;
-
-	//死亡時爆発エミッター
-	std::unique_ptr<EmitterGroup> explosiveEmitter_;
-
-	//破壊時エミッター
-	std::unique_ptr<EmitterGroup> destroyEmitter_;
-
-	//マズルフラッシュエミッター
-	std::unique_ptr<EmitterGroup> muzzleFlashEmitter_;
+	//エミッターリスト
+	std::vector<EmitterGroup*> emitterList_;
 
 	//影オブジェクト
 	std::unique_ptr<Shadow> shadow_;
@@ -188,9 +186,9 @@ public:
 
 	WorldTransform GetRightWingWorldTransform() { return rightWing_->GetWorldTransform(); }
 
-	WorldTransform GetLeftTrailWorldTransform() { return leftTrail_->GetWorldTransform(); }
+	WorldTransform GetLeftTrailWorldTransform() { return emitterList_[static_cast<size_t>(EmitterType::LEFTTRAIL)]->GetWorldTransform(); }
 
-	WorldTransform GetRightTrailWorldTransform() { return rightTrail_->GetWorldTransform(); }
+	WorldTransform GetRightTrailWorldTransform() { return emitterList_[static_cast<size_t>(EmitterType::RIGHTTRAIL)]->GetWorldTransform(); }
 
 	/// <summary>
 	/// 移動量を取得
@@ -228,9 +226,9 @@ public:
 
 	void SetRightWingWorldTransform(WorldTransform transform) { rightWing_->GetWorldTransform() = transform; }
 
-	void SetLeftTrailWorldTransform(WorldTransform transform) { leftTrail_->GetWorldTransform() = transform; }
+	void SetLeftTrailWorldTransform(WorldTransform transform) { emitterList_[static_cast<size_t>(EmitterType::LEFTTRAIL)]->GetWorldTransform() = transform; }
 
-	void SetRightTrailWorldTransform(WorldTransform transform) { rightTrail_->GetWorldTransform() = transform; }
+	void SetRightTrailWorldTransform(WorldTransform transform) { emitterList_[static_cast<size_t>(EmitterType::RIGHTTRAIL)]->GetWorldTransform() = transform; }
 
 	/// <summary>
 	/// 移動アクティブフラグを設定

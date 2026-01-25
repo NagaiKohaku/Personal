@@ -166,6 +166,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Application\Enemy\State\EnemyEntryState.cpp" />
     <ClCompile Include="Application\Enemy\State\EnemyExitState.cpp" />
     <ClCompile Include="Application\Enemy\State\EnemyMoveState.cpp" />
+    <ClCompile Include="Application\EmitterManager.cpp" />
     <ClCompile Include="Engine\3d\Mesh\CubeMesh.cpp" />
     <ClCompile Include="Engine\3d\Collider\AABBCollider.cpp" />
     <ClCompile Include="Engine\3d\Collider\Collider.cpp" />
@@ -265,6 +266,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Application\Enemy\State\EnemyEntryState.h" />
     <ClInclude Include="Application\Enemy\State\EnemyExitState.h" />
     <ClInclude Include="Application\Enemy\State\EnemyMoveState.h" />
+    <ClInclude Include="Application\EmitterManager.h" />
     <ClInclude Include="Engine\3d\Mesh\CubeMesh.h" />
     <ClInclude Include="Engine\3d\Collider\AABBCollider.h" />
     <ClInclude Include="Engine\3d\Collider\Collider.h" />
