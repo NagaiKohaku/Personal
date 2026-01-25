@@ -15,6 +15,8 @@
 └── ├── Camera/
 └── └── ├── FollowCamera.cpp
 └── └── └── FollowCamera.h
+└── ├── EmitterManager.cpp
+└── ├── EmitterManager.h
 └── ├── Enemy/
 └── └── ├── Enemy.cpp
 └── └── ├── Enemy.h
@@ -1443,6 +1445,123 @@ private:
 
 	//有効化フラグ
 	bool isActive_;
+};
+
+============================================================
+File Path: Application/EmitterManager.cpp
+============================================================
+#include "EmitterManager.h"
+
+#include "fstream"
+#include "filesystem"
+
+EmitterManager* EmitterManager::GetInstance() {
+	static EmitterManager instance;
+	return &instance;
+}
+
+void EmitterManager::Initialize() {
+
+}
+
+void EmitterManager::Update() {
+
+	for (auto& emitter : emitters_) {
+
+		emitter->object->Update();
+	}
+}
+
+void EmitterManager::Draw() {
+
+	for (auto& emitter : emitters_) {
+
+		emitter->object->Draw();
+	}
+}
+
+EmitterGroup* EmitterManager::CreateEmitter(const std::string& emitterName, const std::string fileName, WorldTransform* parent) {
+
+	std::unique_ptr<EmitterObject> newObject;
+
+	newObject = std::make_unique<EmitterObject>();
+
+	newObject->name = emitterName;
+	newObject->object = std::make_unique<EmitterGroup>();
+	newObject->object->Initialize(camera_);
+	newObject->object->LoadEmitter(fileName);
+
+	if (parent != nullptr) {
+
+		newObject->object->GetWorldTransform().SetParent(parent);
+	}
+
+	emitters_.push_back(std::move(newObject));
+
+	EmitterGroup* lastEmitter = emitters_.back().get()->object.get();
+
+	return lastEmitter;
+}
+
+void EmitterManager::DeleteEmitter(EmitterGroup* emitterPtr) {
+
+	for (auto it = emitters_.begin(); it != emitters_.end(); it++) {
+
+		if (it->get()->object.get() == emitterPtr) {
+
+			it = emitters_.erase(it);
+
+			return;
+		}
+	}
+}
+
+============================================================
+File Path: Application/EmitterManager.h
+============================================================
+#pragma once
+
+#include <3d/Particle/EmitterGroup.h>
+#include <3d/Camera/Camera.h>
+#include <Math/WorldTransform.h>
+
+#include <memory>
+#include <vector>
+#include <string>
+
+class EmitterManager {
+
+public:
+
+	struct EmitterObject {
+		std::string name;
+		std::unique_ptr<EmitterGroup> object;
+	};
+
+public:
+
+	static EmitterManager* GetInstance();
+
+	void Initialize();
+
+	void Update();
+
+	void Draw();
+
+	EmitterGroup* CreateEmitter(const std::string& emitterName, const std::string fileName, WorldTransform* parent = nullptr);
+
+	void DeleteEmitter(EmitterGroup* emitterPtr);
+
+private:
+
+	Camera* camera_;
+
+	std::vector<std::unique_ptr<EmitterObject>> emitters_;
+
+public:
+
+	void SetCamera(Camera* cameraPtr) { camera_ = cameraPtr; }
+
 };
 
 ============================================================
@@ -5330,6 +5449,7 @@ File Path: Application/Player/Player.cpp
 #include "LevelEditor/LevelDataLoader.h"
 #include "ObjectManager.h"
 #include "Bullet/BulletManager.h"
+#include "EmitterManager.h"
 
 #include "Enemy/Enemy.h"
 
@@ -5340,6 +5460,13 @@ File Path: Application/Player/Player.cpp
 
 #include "algorithm"
 #include "numbers"
+
+Player::~Player() {
+
+	for (auto& emitter : emitterList_) {
+		EmitterManager::GetInstance()->DeleteEmitter(emitter);
+	}
+}
 
 ///=====================================================/// 
 /// プレイヤーを初期化
@@ -5379,54 +5506,19 @@ void Player::Initialize(Camera* cameraPtr, BulletManager* bulletPtr, bool isMove
 
 	leftWing_->GetWorldTransform().SetParent(&core_->GetWorldTransform());
 
-	//右トレイルエミッターの生成
-	rightTrail_ = std::make_unique<EmitterGroup>();
+	emitterList_.push_back(EmitterManager::GetInstance()->CreateEmitter("RightTrail", "Trail", &rightWing_->GetWorldTransform()));
 
-	rightTrail_->Initialize(camera_);
+	emitterList_.push_back(EmitterManager::GetInstance()->CreateEmitter("LeftTrail", "Trail", &leftWing_->GetWorldTransform()));
 
-	rightTrail_->LoadEmitter("Trail");
+	emitterList_.push_back(EmitterManager::GetInstance()->CreateEmitter("Ecplosive", "PlayerExplosive", &core_->GetWorldTransform()));
 
-	rightTrail_->GetWorldTransform().SetParent(&rightWing_->GetWorldTransform());
+	emitterList_.push_back(EmitterManager::GetInstance()->CreateEmitter("Destroy", "Destroy", &core_->GetWorldTransform()));
 
-	rightTrail_->Emit();
+	emitterList_.push_back(EmitterManager::GetInstance()->CreateEmitter("MuzzleFlash", "MuzzleFlash", &core_->GetWorldTransform()));
 
-	//左トレイルエミッターの生成
-	leftTrail_ = std::make_unique<EmitterGroup>();
+	emitterList_[static_cast<size_t>(EmitterType::RIGHTTRAIL)]->Emit();
 
-	leftTrail_->Initialize(camera_);
-
-	leftTrail_->LoadEmitter("Trail");
-
-	leftTrail_->GetWorldTransform().SetParent(&leftWing_->GetWorldTransform());
-
-	leftTrail_->Emit();
-
-	//死亡時エミッターの生成
-	explosiveEmitter_ = std::make_unique<EmitterGroup>();
-
-	explosiveEmitter_->Initialize(camera_);
-
-	explosiveEmitter_->LoadEmitter("PlayerExplosive");
-
-	explosiveEmitter_->GetWorldTransform().SetParent(&core_->GetWorldTransform());
-
-	//破壊時エミッターの生成
-	destroyEmitter_ = std::make_unique<EmitterGroup>();
-
-	destroyEmitter_->Initialize(camera_);
-
-	destroyEmitter_->LoadEmitter("Destroy");
-
-	destroyEmitter_->GetWorldTransform().SetParent(&core_->GetWorldTransform());
-
-	//マズルフラッシュエミッターの生成
-	muzzleFlashEmitter_ = std::make_unique<EmitterGroup>();
-
-	muzzleFlashEmitter_->Initialize(camera_);
-
-	muzzleFlashEmitter_->LoadEmitter("MuzzleFlash");
-
-	muzzleFlashEmitter_->GetWorldTransform().SetParent(&core_->GetWorldTransform());
+	emitterList_[static_cast<size_t>(EmitterType::LEFTTRAIL)]->Emit();
 
 	//影オブジェクトの生成
 	shadow_ = std::make_unique<Shadow>();
@@ -5519,26 +5611,9 @@ void Player::Update() {
 	//プレイヤーの更新
 	core_->Update();
 
-	//右ウィングの更新
 	rightWing_->Update();
 
-	//左ウィングの更新
 	leftWing_->Update();
-
-	//右トレイルの更新
-	rightTrail_->Update();
-
-	//左トレイルの更新
-	leftTrail_->Update();
-
-	//死亡時爆発エミッターの更新
-	explosiveEmitter_->Update();
-
-	//破壊エミッターの更新
-	destroyEmitter_->Update();
-
-	//マズルフラッシュエミッターの更新
-	muzzleFlashEmitter_->Update();
 
 	//影の更新
 	shadow_->Update(core_->GetWorldTransform().translate_);
@@ -5593,21 +5668,6 @@ void Player::Draw() {
 		shadow_->Draw();
 	}
 
-	//右トレイルの描画
-	rightTrail_->Draw();
-
-	//左トレイルの描画
-	leftTrail_->Draw();
-
-	//死亡時爆発エミッターの描画
-	explosiveEmitter_->Draw();
-
-	//破壊エミッターの描画
-	destroyEmitter_->Draw();
-
-	//マズルフラッシュエミッターの描画
-	muzzleFlashEmitter_->Draw();
-
 	//移動可能であれば
 	if (isMoveActive_) {
 
@@ -5643,7 +5703,7 @@ void Player::UpdateLockOn(float lockOnRange) {
 void Player::JetAttack() {
 
 	//マズルフラッシュエミッターを発生
-	muzzleFlashEmitter_->Emit();
+	emitterList_[static_cast<size_t>(EmitterType::MUZZLEFLASH)]->Emit();
 
 	//オブジェクトからレティクルへの方向
 	Vector3 direction = lockOn_->GetMainReticlePos() - core_->GetWorldTransform().translate_;
@@ -5660,7 +5720,7 @@ void Player::JetAttack() {
 void Player::TankAttack() {
 
 	//マズルフラッシュエミッターを発生
-	muzzleFlashEmitter_->Emit();
+	emitterList_[static_cast<size_t>(EmitterType::MUZZLEFLASH)]->Emit();
 
 	//レティクルの位置を取得
 	std::vector<Vector3> reticlePositions = lockOn_->GetLockOnReticlePos();
@@ -5762,7 +5822,7 @@ void Player::IsCollision() {
 			isDead_ = true;
 
 			//死亡時爆発エミッターを発生
-			explosiveEmitter_->Emit();
+			emitterList_[static_cast<size_t>(EmitterType::EXPLOSIVE)]->Emit();
 		}
 	}
 
@@ -5792,13 +5852,13 @@ void Player::Dead() {
 			isDestroy_ = true;
 
 			//トレイル・爆発エミッター停止
-			leftTrail_->Stop();
+			emitterList_[static_cast<size_t>(EmitterType::LEFTTRAIL)]->Stop();
 
-			rightTrail_->Stop();
+			emitterList_[static_cast<size_t>(EmitterType::RIGHTTRAIL)]->Stop();
 
-			explosiveEmitter_->Stop();
+			emitterList_[static_cast<size_t>(EmitterType::EXPLOSIVE)]->Stop();
 
-			destroyEmitter_->Emit();
+			emitterList_[static_cast<size_t>(EmitterType::DESTROY)]->Emit();
 
 			//画面揺れ開始
 			Shake::GetInstance()->Start(1.0f, 0.5f);
@@ -5851,10 +5911,20 @@ public:
 		JET,
 	};
 
+	enum class EmitterType {
+		RIGHTTRAIL,
+		LEFTTRAIL,
+		EXPLOSIVE,
+		DESTROY,
+		MUZZLEFLASH
+	};
+
 	///-------------------------------------------/// 
 	/// メンバ関数
 	///-------------------------------------------///
 public:
+
+	~Player();
 
 	/// <summary>
 	/// プレイヤーを初期化します。
@@ -5937,20 +6007,8 @@ private:
 	//左ウィングオブジェクト
 	std::unique_ptr<Object3D> leftWing_;
 
-	//右トレイルエミッター
-	std::unique_ptr<EmitterGroup> rightTrail_;
-
-	//左トレイルエミッター
-	std::unique_ptr<EmitterGroup> leftTrail_;
-
-	//死亡時爆発エミッター
-	std::unique_ptr<EmitterGroup> explosiveEmitter_;
-
-	//破壊時エミッター
-	std::unique_ptr<EmitterGroup> destroyEmitter_;
-
-	//マズルフラッシュエミッター
-	std::unique_ptr<EmitterGroup> muzzleFlashEmitter_;
+	//エミッターリスト
+	std::vector<EmitterGroup*> emitterList_;
 
 	//影オブジェクト
 	std::unique_ptr<Shadow> shadow_;
@@ -5999,9 +6057,9 @@ public:
 
 	WorldTransform GetRightWingWorldTransform() { return rightWing_->GetWorldTransform(); }
 
-	WorldTransform GetLeftTrailWorldTransform() { return leftTrail_->GetWorldTransform(); }
+	WorldTransform GetLeftTrailWorldTransform() { return emitterList_[static_cast<size_t>(EmitterType::LEFTTRAIL)]->GetWorldTransform(); }
 
-	WorldTransform GetRightTrailWorldTransform() { return rightTrail_->GetWorldTransform(); }
+	WorldTransform GetRightTrailWorldTransform() { return emitterList_[static_cast<size_t>(EmitterType::RIGHTTRAIL)]->GetWorldTransform(); }
 
 	/// <summary>
 	/// 移動量を取得
@@ -6039,9 +6097,9 @@ public:
 
 	void SetRightWingWorldTransform(WorldTransform transform) { rightWing_->GetWorldTransform() = transform; }
 
-	void SetLeftTrailWorldTransform(WorldTransform transform) { leftTrail_->GetWorldTransform() = transform; }
+	void SetLeftTrailWorldTransform(WorldTransform transform) { emitterList_[static_cast<size_t>(EmitterType::LEFTTRAIL)]->GetWorldTransform() = transform; }
 
-	void SetRightTrailWorldTransform(WorldTransform transform) { rightTrail_->GetWorldTransform() = transform; }
+	void SetRightTrailWorldTransform(WorldTransform transform) { emitterList_[static_cast<size_t>(EmitterType::RIGHTTRAIL)]->GetWorldTransform() = transform; }
 
 	/// <summary>
 	/// 移動アクティブフラグを設定
@@ -6788,6 +6846,7 @@ File Path: Application/Scene/GameScene.cpp
 #include "Scene/SceneManager.h"
 #include "ObjectManager.h"
 #include "UIManager.h"
+#include "EmitterManager.h"
 
 #include "2d/Sprite/SpriteManager.h"
 #include "3d/Model/ModelManager.h"
@@ -6824,6 +6883,8 @@ void GameScene::Initialize() {
 
 	//シェイクにカメラをセット
 	Shake::GetInstance()->SetCamera(camera_.get());
+
+	EmitterManager::GetInstance()->SetCamera(camera_.get());
 
 	/// === エネミーマネージャーの生成 === ///
 
@@ -7828,6 +7889,7 @@ File Path: Application/Scene/TitleScene.cpp
 
 #include <Base/OffScreen.h>
 #include <ObjectManager.h>
+#include <EmitterManager.h>
 
 #include <3d/Model/ModelManager.h>
 #include <2d/Sprite/SpriteManager.h>
@@ -7867,6 +7929,8 @@ void TitleScene::Initialize() {
 
 	Shake::GetInstance()->SetCamera(camera_.get());
 
+	EmitterManager::GetInstance()->SetCamera(camera_.get());
+
 	/// === 3Dオブジェクトの設定 === ///
 
 	//グラウンドマネージャーの生成
@@ -7884,14 +7948,6 @@ void TitleScene::Initialize() {
 	player_->SetPosition({ 0.0f,1.0f,0.0f });
 
 	/// === 2Dオブジェクトの設定 === ///
-
-	//UIManager::GetInstance()->CreateUI("Title", "Title", "RoadflightTitle");
-
-	//UIManager::GetInstance()->CreateUI("Title", "SpaceButton", "GameOverSpace");
-
-	//UIManager::GetInstance()->CreateUI("Title", "LeftArrow", "GameOverArrow");
-
-	//UIManager::GetInstance()->CreateUI("Title", "RIghtArrow", "GameOverArrow");
 
 	UIManager::GetInstance()->LoadUI("TitleScene");
 
@@ -28048,6 +28104,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Application\Enemy\State\EnemyEntryState.cpp" />
     <ClCompile Include="Application\Enemy\State\EnemyExitState.cpp" />
     <ClCompile Include="Application\Enemy\State\EnemyMoveState.cpp" />
+    <ClCompile Include="Application\EmitterManager.cpp" />
     <ClCompile Include="Engine\3d\Mesh\CubeMesh.cpp" />
     <ClCompile Include="Engine\3d\Collider\AABBCollider.cpp" />
     <ClCompile Include="Engine\3d\Collider\Collider.cpp" />
@@ -28147,6 +28204,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Application\Enemy\State\EnemyEntryState.h" />
     <ClInclude Include="Application\Enemy\State\EnemyExitState.h" />
     <ClInclude Include="Application\Enemy\State\EnemyMoveState.h" />
+    <ClInclude Include="Application\EmitterManager.h" />
     <ClInclude Include="Engine\3d\Mesh\CubeMesh.h" />
     <ClInclude Include="Engine\3d\Collider\AABBCollider.h" />
     <ClInclude Include="Engine\3d\Collider\Collider.h" />
@@ -28741,6 +28799,7 @@ File Path: Engine.vcxproj.filters
     <ClCompile Include="Application\Enemy\State\EnemyExitState.cpp" />
     <ClCompile Include="Application\Enemy\State\EnemyDeadState.cpp" />
     <ClCompile Include="Application\UIManager.cpp" />
+    <ClCompile Include="Application\EmitterManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application\Bullet\BulletBase.h">
@@ -29012,6 +29071,7 @@ File Path: Engine.vcxproj.filters
     <ClInclude Include="Application\Enemy\State\EnemyExitState.h" />
     <ClInclude Include="Application\Enemy\State\EnemyDeadState.h" />
     <ClInclude Include="Application\UIManager.h" />
+    <ClInclude Include="Application\EmitterManager.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resource\Shader\DebugObject.hlsli">
@@ -166017,6 +166077,7 @@ File Path: main.cpp
 #include "3d/Collider/ColliderManager.h"
 #include "ObjectManager.h"
 #include "UIManager.h"
+#include "EmitterManager.h"
 
 #include "Scene/SceneManager.h"
 #include "LevelEditor/LevelDataLoader.h"
@@ -166121,6 +166182,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	UIManager* uiManager = UIManager::GetInstance();
 	uiManager->Initialize();
 
+	//エミッターマネージャー
+	EmitterManager* emitterManager = EmitterManager::GetInstance();
+	emitterManager->Initialize();
+
 	//コライダーマネージャー
 	ColliderManager* colliderManager = ColliderManager::GetInstance();
 	colliderManager->Initialize();
@@ -166191,6 +166256,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//UIマネージャーの更新
 		uiManager->Update();
 
+		//エミッターマネージャーの更新
+		emitterManager->Update();
+
 		//コライダーマネージャーの更新
 		colliderManager->Update();
 
@@ -166223,6 +166291,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		//オブジェクトマネージャーの描画
 		objectManager->Draw();
+
+		//エミッターマネージャーの描画
+		emitterManager->Draw();
 
 		//uiマネージャーの描画
 		uiManager->Draw();
