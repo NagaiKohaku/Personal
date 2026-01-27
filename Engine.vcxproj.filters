@@ -304,6 +304,7 @@
     <ClCompile Include="Application\Scene\GameScene\Event\StartEvent.cpp" />
     <ClCompile Include="Application\Scene\GameScene\Event\GameOverEvent.cpp" />
     <ClCompile Include="Application\Scene\GameScene\Event\GameEvent.cpp" />
+    <ClCompile Include="Application\Scene\GameScene\Event\PauseEvent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application\Bullet\BulletBase.h">
@@ -581,6 +582,7 @@
     <ClInclude Include="Application\Scene\GameScene\Event\StartEvent.h" />
     <ClInclude Include="Application\Scene\GameScene\Event\GameOverEvent.h" />
     <ClInclude Include="Application\Scene\GameScene\Event\GameEvent.h" />
+    <ClInclude Include="Application\Scene\GameScene\Event\PauseEvent.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resource\Shader\DebugObject.hlsli">

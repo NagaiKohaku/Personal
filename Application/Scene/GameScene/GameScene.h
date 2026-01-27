@@ -78,6 +78,8 @@ private:
 
 	void ChangeGameEvent();
 
+	void ChangePauseEvent();
+
 	void ChangeGameOverEvent();
 
 	void ChangeClearEvent();

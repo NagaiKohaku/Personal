@@ -9,6 +9,7 @@
 
 #include "Scene/GameScene/Event/StartEvent.h"
 #include "Scene/GameScene/Event/GameEvent.h"
+#include "Scene/GameScene/Event/PauseEvent.h"
 #include "Scene/GameScene/Event/ClearEvent.h"
 #include "Scene/GameScene/Event/GameOverEvent.h"
 
@@ -169,6 +170,22 @@ void GameScene::Update() {
 	if (auto* startEvent = dynamic_cast<StartEvent*>(eventState_.get())) {
 
 		if (startEvent->IsFinished()) {
+
+			ChangeGameEvent();
+		}
+	}
+
+	if (auto* gameEvent = dynamic_cast<GameEvent*>(eventState_.get())) {
+
+		if (Input::GetInstance()->IsTriggerPushKey(DIK_ESCAPE)) {
+
+			ChangePauseEvent();
+		}
+	}
+
+	if (auto* pauseEvent = dynamic_cast<PauseEvent*>(eventState_.get())) {
+
+		if (pauseEvent->IsFinished()) {
 
 			ChangeGameEvent();
 		}
@@ -380,6 +397,19 @@ void GameScene::ChangeGameEvent() {
 	if (auto* gameEvent = dynamic_cast<GameEvent*>(eventState_.get())) {
 		gameEvent->SetFollowCamera(followCamera_.get());
 	}
+
+	eventState_->Start(player_, camera_.get());
+}
+
+void GameScene::ChangePauseEvent() {
+
+	if (dynamic_cast<PauseEvent*>(eventState_.get())) {
+		return;
+	}
+
+	eventState_->Exit();
+
+	eventState_ = std::make_unique<PauseEvent>();
 
 	eventState_->Start(player_, camera_.get());
 }

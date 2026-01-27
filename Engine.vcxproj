@@ -259,6 +259,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Application\UIManager.cpp" />
     <ClCompile Include="Application\Scene\SceneEvent.cpp" />
     <ClCompile Include="Application\Scene\GameScene\Event\StartEvent.cpp" />
+    <ClCompile Include="Application\Scene\GameScene\Event\PauseEvent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application\LevelEditor\LevelDataLoader.h" />
@@ -368,6 +369,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Application\Scene\GameScene\Event\GameOverEvent.h" />
     <ClInclude Include="Application\Scene\GameScene\Event\StartEvent.h" />
     <ClInclude Include="Application\Scene\GameScene\Event\GameEvent.h" />
+    <ClInclude Include="Application\Scene\GameScene\Event\PauseEvent.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Application\LevelEditor\Python\add_collider.py">

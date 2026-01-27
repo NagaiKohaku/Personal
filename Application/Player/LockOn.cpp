@@ -118,6 +118,10 @@ void LockOn::Update() {
 
 		for(auto& enemy : lockedEnemies_) {
 
+			if (enemy.enemy->GetIsDead()) {
+				continue;
+			}
+
 			//前回と同じ敵なら
 			if (lockOnReticle->preTargetEnemy == enemy.enemy) {
 
@@ -132,6 +136,10 @@ void LockOn::Update() {
 
 	//未割り当ての敵を割り当てる
 	for(auto& enemy : lockedEnemies_) {
+
+		if (enemy.enemy->GetIsDead()) {
+			continue;
+		}
 
 		if (!enemy.isAssigned) {
 

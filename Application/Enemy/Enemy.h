@@ -282,6 +282,8 @@ public:
 	/// <returns>フラグ</returns>
 	bool GetIsRemove() { return isRemove_; }
 
+	bool GetIsDead();
+
 	BulletManager* GetBulletManager();
 
 };

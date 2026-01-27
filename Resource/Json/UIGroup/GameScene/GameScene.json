@@ -221,6 +221,80 @@
             ]
         }
     },
+    "Pause": {
+        "Fade": {
+            "color": [
+                0.0,
+                0.0,
+                0.0,
+                0.9803921580314636
+            ],
+            "fileName": "white_128x128",
+            "position": [
+                640.0,
+                360.0
+            ],
+            "rotate": 0.0,
+            "size": [
+                1280.0,
+                720.0
+            ]
+        },
+        "GroupState": {
+            "groupIsActive": false,
+            "groupPosition": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "groupRotate": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "groupSize": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        "Help": {
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "fileName": "PauseHelp",
+            "position": [
+                620.0,
+                575.0
+            ],
+            "rotate": 0.0,
+            "size": [
+                700.0,
+                200.0
+            ]
+        },
+        "Text": {
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "fileName": "Pause",
+            "position": [
+                620.0,
+                150.0
+            ],
+            "rotate": 0.0,
+            "size": [
+                500.0,
+                175.0
+            ]
+        }
+    },
     "Reticle": {
         "AButton": {
             "color": [
@@ -279,9 +353,9 @@
         "GroupState": {
             "groupIsActive": true,
             "groupPosition": [
-                598.7600708007813,
-                517.0941772460938,
-                0.9951053261756897
+                510.4807434082031,
+                516.97705078125,
+                0.9951087236404419
             ],
             "groupRotate": [
                 0.0,
