@@ -21,6 +21,7 @@
 #include "Flash/Flash.h"
 
 #include "Math/Easing.h"
+#include "Math/MakeMatrixMath.h"
 
 #include "imgui.h"
 
@@ -88,9 +89,9 @@ void GameScene::Initialize() {
 
 	UIManager::GetInstance()->LoadUI("GameScene");
 
-	spaceKeyPos_ = UIManager::GetInstance()->GetUIObject("GameOver", "Space")->GetTranslate();
+	spaceKeyPos_ = UIManager::GetInstance()->Get2DObject("GameOver", "Space")->GetTranslate();
 
-	spaceKeySize_ = UIManager::GetInstance()->GetUIObject("GameOver", "Space")->GetSize();
+	spaceKeySize_ = UIManager::GetInstance()->Get2DObject("GameOver", "Space")->GetSize();
 
 	/// === エミッターの生成 === ///
 
@@ -154,11 +155,7 @@ void GameScene::Finalize() {
 
 	ObjectManager::GetInstance()->ClearAll();
 
-	UIManager::GetInstance()->DeleteUI("GameOver");
-
-	UIManager::GetInstance()->DeleteUI("Clear");
-
-	UIManager::GetInstance()->DeleteUI("Help");
+	UIManager::GetInstance()->DeleteAllUI();
 
 	//演出系の参照リセット
 	Fade::GetInstance()->SetCamera(nullptr);
@@ -234,23 +231,52 @@ void GameScene::Update() {
 
 	float lerpNum = EaseOut(0.0f, arrowLength_, arrowTimer_ / 1.0f);
 
-	UIManager::GetInstance()->GetUIObject("GameOver","LeftArrow")->SetTranslate({spaceKeyPos_.x - spaceKeySize_.x / 2.0f - 64.0f - lerpNum,spaceKeyPos_.y});
+	//3Dオブジェクトの座標をスクリーン座標に変換する
+	Vector3 playerScreenPos = Vector3ToScreenSpace(camera_.get(), player_->GetWorldPos());
 
-	UIManager::GetInstance()->GetUIObject("GameOver", "RightArrow")->SetTranslate({ spaceKeyPos_.x + spaceKeySize_.x / 2.0f + 64.0f + lerpNum,spaceKeyPos_.y });
+	UIManager::GetInstance()->Get2DObject("GameOver","LeftArrow")->SetTranslate({spaceKeyPos_.x - spaceKeySize_.x / 2.0f - 64.0f - lerpNum,spaceKeyPos_.y});
 
-	UIManager::GetInstance()->GetUIObject("Clear", "LeftArrow")->SetTranslate({ spaceKeyPos_.x - spaceKeySize_.x / 2.0f - 64.0f - lerpNum,spaceKeyPos_.y });
+	UIManager::GetInstance()->Get2DObject("GameOver", "RightArrow")->SetTranslate({ spaceKeyPos_.x + spaceKeySize_.x / 2.0f + 64.0f + lerpNum,spaceKeyPos_.y });
 
-	UIManager::GetInstance()->GetUIObject("Clear", "LeftArrow")->SetTranslate({ spaceKeyPos_.x + spaceKeySize_.x / 2.0f + 64.0f + lerpNum,spaceKeyPos_.y });
+	UIManager::GetInstance()->Get2DObject("Clear", "LeftArrow")->SetTranslate({ spaceKeyPos_.x - spaceKeySize_.x / 2.0f - 64.0f - lerpNum,spaceKeyPos_.y });
 
-	UIManager::GetInstance()->GetUIObject("Help", "SpaceKey")->GetSprite()->SetRatio(player_->GetAttackTimeRatio());
+	UIManager::GetInstance()->Get2DObject("Clear", "RightArrow")->SetTranslate({ spaceKeyPos_.x + spaceKeySize_.x / 2.0f + 64.0f + lerpNum,spaceKeyPos_.y });
 
-	if (Length(player_->GetInputDirection()) != 0.0f) {
+	UIManager::GetInstance()->GetUIGroup("Reticle")->transform.translate_ = playerScreenPos;
 
-		UIManager::GetInstance()->GetUIObject("Help", "MoveKey")->GetSprite()->SetRatio(1.0f);
+	if (Input::GetInstance()->isPushKey(DIK_W)) {
+
+		UIManager::GetInstance()->Get2DObject("Reticle", "WButton")->GetSprite()->SetRatio(1.0f);
 	} else {
 
-		UIManager::GetInstance()->GetUIObject("Help", "MoveKey")->GetSprite()->SetRatio(0.0f);
+		UIManager::GetInstance()->Get2DObject("Reticle", "WButton")->GetSprite()->SetRatio(0.0f);
 	}
+
+	if (Input::GetInstance()->isPushKey(DIK_A)) {
+
+		UIManager::GetInstance()->Get2DObject("Reticle", "AButton")->GetSprite()->SetRatio(1.0f);
+	} else {
+
+		UIManager::GetInstance()->Get2DObject("Reticle", "AButton")->GetSprite()->SetRatio(0.0f);
+	}
+
+	if (Input::GetInstance()->isPushKey(DIK_S)) {
+
+		UIManager::GetInstance()->Get2DObject("Reticle", "SButton")->GetSprite()->SetRatio(1.0f);
+	} else {
+
+		UIManager::GetInstance()->Get2DObject("Reticle", "SButton")->GetSprite()->SetRatio(0.0f);
+	}
+
+	if (Input::GetInstance()->isPushKey(DIK_D)) {
+
+		UIManager::GetInstance()->Get2DObject("Reticle", "DButton")->GetSprite()->SetRatio(1.0f);
+	} else {
+
+		UIManager::GetInstance()->Get2DObject("Reticle", "DButton")->GetSprite()->SetRatio(0.0f);
+	}
+
+	UIManager::GetInstance()->Get2DObject("Reticle", "SpaceButton")->GetSprite()->SetRatio(player_->GetAttackTimeRatio());
 
 	//右衝撃波エミッターの更新
 	shockWaveRightEmitter_->Update();
@@ -266,13 +292,13 @@ void GameScene::Update() {
 			isGameOver_ = true;
 
 			//スプライトを映す
-			UIManager::GetInstance()->GetUIObject("GameOver", "Text")->GetSprite()->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+			UIManager::GetInstance()->Get2DObject("GameOver", "Text")->GetSprite()->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
 
-			UIManager::GetInstance()->GetUIObject("GameOver", "Space")->GetSprite()->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+			UIManager::GetInstance()->Get2DObject("GameOver", "Space")->GetSprite()->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
 
-			UIManager::GetInstance()->GetUIObject("GameOver", "LeftArrow")->GetSprite()->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+			UIManager::GetInstance()->Get2DObject("GameOver", "LeftArrow")->GetSprite()->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
 
-			UIManager::GetInstance()->GetUIObject("GameOver", "RightArrow")->GetSprite()->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+			UIManager::GetInstance()->Get2DObject("GameOver", "RightArrow")->GetSprite()->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
 
 			//シェイクを始める
 			Shake::GetInstance()->Start(1.0f, 0.5f);
@@ -311,13 +337,13 @@ void GameScene::Update() {
 					player_->SetIsMoveActive(false);
 
 					//スプライトを映す
-					UIManager::GetInstance()->GetUIObject("Clear", "Text")->GetSprite()->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+					UIManager::GetInstance()->Get2DObject("Clear", "Text")->GetSprite()->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
 
-					UIManager::GetInstance()->GetUIObject("Clear", "Space")->GetSprite()->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+					UIManager::GetInstance()->Get2DObject("Clear", "Space")->GetSprite()->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
 
-					UIManager::GetInstance()->GetUIObject("Clear", "LeftArrow")->GetSprite()->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+					UIManager::GetInstance()->Get2DObject("Clear", "LeftArrow")->GetSprite()->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
 
-					UIManager::GetInstance()->GetUIObject("Clear", "RightArrow")->GetSprite()->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+					UIManager::GetInstance()->Get2DObject("Clear", "RightArrow")->GetSprite()->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
 
 					//シェイクを始める
 					Shake::GetInstance()->Start(1.0f, 1.0f);
@@ -341,13 +367,13 @@ void GameScene::Update() {
 			isClear_ = false;
 
 			//スプライトを再度隠す
-			UIManager::GetInstance()->GetUIObject("Clear", "Text")->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
+			UIManager::GetInstance()->Get2DObject("Clear", "Text")->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
 
-			UIManager::GetInstance()->GetUIObject("Clear", "Space")->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
+			UIManager::GetInstance()->Get2DObject("Clear", "Space")->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
 
-			UIManager::GetInstance()->GetUIObject("Clear", "LeftArrow")->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
+			UIManager::GetInstance()->Get2DObject("Clear", "LeftArrow")->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
 
-			UIManager::GetInstance()->GetUIObject("Clear", "RightArrow")->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
+			UIManager::GetInstance()->Get2DObject("Clear", "RightArrow")->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
 
 			//画面をフラッシュさせる
 			Flash::GetInstance()->Start(0.5f, Vector4(1.0f, 1.0f, 1.0f, 1.0f));
@@ -359,16 +385,21 @@ void GameScene::Update() {
 
 	if (isClear_ || isGameOver_) {
 
-		//スプライトを再度隠す
-		UIManager::GetInstance()->GetUIObject("Help", "Attack")->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
+		UIManager::GetInstance()->Get2DObject("Reticle", "WButton")->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
 
-		UIManager::GetInstance()->GetUIObject("Help", "Move")->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
+		UIManager::GetInstance()->Get2DObject("Reticle", "AButton")->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
 
-		UIManager::GetInstance()->GetUIObject("Help", "MoveKey")->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
+		UIManager::GetInstance()->Get2DObject("Reticle", "SButton")->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
 
-		UIManager::GetInstance()->GetUIObject("Help", "SpaceKey")->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
+		UIManager::GetInstance()->Get2DObject("Reticle", "DButton")->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
 
-		UIManager::GetInstance()->GetUIObject("Help", "Target")->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
+		UIManager::GetInstance()->Get2DObject("Reticle", "SpaceButton")->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
+
+		UIManager::GetInstance()->Get2DObject("Reticle", "MoveHelp")->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
+
+		UIManager::GetInstance()->Get2DObject("Reticle", "AttackHelp")->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
+
+		UIManager::GetInstance()->Get2DObject("Help", "Target")->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
 
 	}
 

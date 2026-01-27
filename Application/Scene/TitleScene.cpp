@@ -66,9 +66,9 @@ void TitleScene::Initialize() {
 
 	UIManager::GetInstance()->LoadUI("TitleScene");
 
-	spaceKeyPos_ = UIManager::GetInstance()->GetUIObject("Title", "SpaceButton")->GetTranslate();
+	spaceKeyPos_ = UIManager::GetInstance()->Get2DObject("Title", "SpaceButton")->GetTranslate();
 
-	spaceKeySize_ = UIManager::GetInstance()->GetUIObject("Title", "SpaceButton")->GetSize();
+	spaceKeySize_ = UIManager::GetInstance()->Get2DObject("Title", "SpaceButton")->GetSize();
 
 	/// === エミッターの生成 === ///
 
@@ -220,9 +220,9 @@ void TitleScene::Update() {
 
 	float lerpNum = EaseOut(0.0f, arrowLength_, arrowTimer_ / 1.0f, 2.0f);
 
-	UIManager::GetInstance()->GetUIObject("Title", "LeftArrow")->SetTranslate({ spaceKeyPos_.x - spaceKeySize_.x / 2.0f - 64.0f - lerpNum,spaceKeyPos_.y });
+	UIManager::GetInstance()->Get2DObject("Title", "LeftArrow")->SetTranslate({ spaceKeyPos_.x - spaceKeySize_.x / 2.0f - 64.0f - lerpNum,spaceKeyPos_.y });
 
-	UIManager::GetInstance()->GetUIObject("Title", "RightArrow")->SetTranslate({ spaceKeyPos_.x + spaceKeySize_.x / 2.0f + 64.0f + lerpNum,spaceKeyPos_.y });
+	UIManager::GetInstance()->Get2DObject("Title", "RightArrow")->SetTranslate({ spaceKeyPos_.x + spaceKeySize_.x / 2.0f + 64.0f + lerpNum,spaceKeyPos_.y });
 
 	//カメラの更新
 	camera_->Update();
@@ -345,13 +345,13 @@ void TitleScene::Start() {
 	//最初のアニメーションの時はスプライトを一緒にフェードアウトさせる
 	if (animNum_ == 1) {
 
-		UIManager::GetInstance()->GetUIObject("Title", "Title")->GetSprite()->SetColor({ 1.0f,1.0f,1.0f,Lerp(1.0f,0.0f,t) });
+		UIManager::GetInstance()->Get2DObject("Title", "Title")->GetSprite()->SetColor({ 1.0f,1.0f,1.0f,Lerp(1.0f,0.0f,t) });
 
-		UIManager::GetInstance()->GetUIObject("Title", "SpaceButton")->GetSprite()->SetColor({ 1.0f,1.0f,1.0f,Lerp(1.0f,0.0f,t) });
+		UIManager::GetInstance()->Get2DObject("Title", "SpaceButton")->GetSprite()->SetColor({ 1.0f,1.0f,1.0f,Lerp(1.0f,0.0f,t) });
 
-		UIManager::GetInstance()->GetUIObject("Title", "LeftArrow")->GetSprite()->SetColor({ 1.0f,1.0f,1.0f,Lerp(1.0f,0.0f,t) });
+		UIManager::GetInstance()->Get2DObject("Title", "LeftArrow")->GetSprite()->SetColor({ 1.0f,1.0f,1.0f,Lerp(1.0f,0.0f,t) });
 
-		UIManager::GetInstance()->GetUIObject("Title", "RightArrow")->GetSprite()->SetColor({ 1.0f,1.0f,1.0f,Lerp(1.0f,0.0f,t) });
+		UIManager::GetInstance()->Get2DObject("Title", "RightArrow")->GetSprite()->SetColor({ 1.0f,1.0f,1.0f,Lerp(1.0f,0.0f,t) });
 	}
 
 	//最後のアニメーションの時はカメラをプレイヤーに向ける

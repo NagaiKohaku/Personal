@@ -1,5 +1,22 @@
 {
     "Clear": {
+        "GroupState": {
+            "groupPosition": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "groupRotate": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "groupSize": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
         "LeftArrow": {
             "color": [
                 0.0,
@@ -74,6 +91,23 @@
         }
     },
     "GameOver": {
+        "GroupState": {
+            "groupPosition": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "groupRotate": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "groupSize": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
         "LeftArrow": {
             "color": [
                 0.0,
@@ -148,76 +182,21 @@
         }
     },
     "Help": {
-        "Attack": {
-            "color": [
-                1.0,
+        "GroupState": {
+            "groupPosition": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "groupRotate": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "groupSize": [
                 1.0,
                 1.0,
                 1.0
-            ],
-            "fileName": "AttackHelp",
-            "position": [
-                50.0,
-                660.0
-            ],
-            "rotate": 0.0,
-            "size": [
-                612.0,
-                64.0
-            ]
-        },
-        "Move": {
-            "color": [
-                1.0,
-                1.0,
-                1.0,
-                1.0
-            ],
-            "fileName": "MoveHelp",
-            "position": [
-                50.0,
-                600.0
-            ],
-            "rotate": 0.0,
-            "size": [
-                612.0,
-                64.0
-            ]
-        },
-        "MoveKey": {
-            "color": [
-                1.0,
-                1.0,
-                1.0,
-                1.0
-            ],
-            "fileName": "MoveButton",
-            "position": [
-                50.0,
-                600.0
-            ],
-            "rotate": 0.0,
-            "size": [
-                64.0,
-                64.0
-            ]
-        },
-        "SpaceKey": {
-            "color": [
-                1.0,
-                1.0,
-                1.0,
-                1.0
-            ],
-            "fileName": "SpaceButton",
-            "position": [
-                50.0,
-                660.0
-            ],
-            "rotate": 0.0,
-            "size": [
-                64.0,
-                64.0
             ]
         },
         "Target": {
@@ -236,6 +215,151 @@
             "size": [
                 1280.0,
                 720.0
+            ]
+        }
+    },
+    "Reticle": {
+        "AButton": {
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "fileName": "AButton",
+            "position": [
+                100.0,
+                0.0
+            ],
+            "rotate": 0.0,
+            "size": [
+                32.0,
+                32.0
+            ]
+        },
+        "AttackHelp": {
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "fileName": "AttackHelp",
+            "position": [
+                150.0,
+                50.0
+            ],
+            "rotate": 0.0,
+            "size": [
+                300.0,
+                32.0
+            ]
+        },
+        "DButton": {
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "fileName": "DButton",
+            "position": [
+                150.0,
+                0.0
+            ],
+            "rotate": 0.0,
+            "size": [
+                32.0,
+                32.0
+            ]
+        },
+        "GroupState": {
+            "groupPosition": [
+                653.749267578125,
+                517.10595703125,
+                0.9951050877571106
+            ],
+            "groupRotate": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "groupSize": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        "MoveHelp": {
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "fileName": "MoveHelp",
+            "position": [
+                150.0,
+                -12.5
+            ],
+            "rotate": 0.0,
+            "size": [
+                300.0,
+                32.0
+            ]
+        },
+        "SButton": {
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "fileName": "SButton",
+            "position": [
+                125.0,
+                0.0
+            ],
+            "rotate": 0.0,
+            "size": [
+                32.0,
+                32.0
+            ]
+        },
+        "SpaceButton": {
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "fileName": "SpaceButton",
+            "position": [
+                125.0,
+                50.0
+            ],
+            "rotate": 0.0,
+            "size": [
+                64.0,
+                64.0
+            ]
+        },
+        "WButton": {
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "fileName": "WButton",
+            "position": [
+                125.0,
+                -25.0
+            ],
+            "rotate": 0.0,
+            "size": [
+                32.0,
+                32.0
             ]
         }
     }

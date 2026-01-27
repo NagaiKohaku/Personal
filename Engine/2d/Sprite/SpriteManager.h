@@ -50,4 +50,10 @@ private:
 
 	//スプライトリスト
 	std::map<std::string, std::unique_ptr<Sprite>> sprites_;
+
+public:
+
+	std::map<std::string, Sprite*> GetSpriteList();
+
+	std::vector<std::string> GetSpriteNameList();
 };

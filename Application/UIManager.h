@@ -15,6 +15,11 @@ public:
 	struct UIObject {
 		std::string name;
 		std::unique_ptr<Object2D> object;
+		Vector2 uiPosition;
+		float uiRotate;
+		Vector2 uiSize;
+		Vector4 uiColor;
+		bool isEdit;
 	};
 
 	struct UIGroup {
@@ -41,19 +46,23 @@ public:
 
 	void DeleteUI(const std::string& groupName);
 
+	void DeleteAllUI();
+
 private:
 
 	void Edit();
 
-	void EditUIPosition(Object2D* uiObject, Vector2 uiMin, Vector2 uiMax, Vector2 mousePos);
+	void EditUIPosition(UIObject* uiObject, Vector2 uiMin, Vector2 uiMax, Vector2 mousePos);
 
-	void EditUISize(Object2D* uiObject, Vector2 uiMin, Vector2 uiMax, Vector2 mousePos);
+	void EditUISize(UIObject* uiObject, Vector2 uiMin, Vector2 uiMax, Vector2 mousePos);
 
 	bool CheckInZone(Vector2 uiMin, Vector2 uiMax, Vector2 mousePos);
 
-	void EnableEditMode(bool flag);
+	void EnableEditMode(UIObject* uiObject, bool flag);
 
 	void CreateUIGroup(const std::string& groupName);
+
+	void CreateNewUIGroup();
 
 	void SaveUIState(const std::string& fileName);
 
@@ -63,19 +72,29 @@ private:
 
 	std::vector<std::unique_ptr<UIGroup>> uiGroups_;
 
-	//座標編集中のUIオブジェクト
-	Object2D* activeRepositioningUI_ = nullptr;
+	std::vector<std::string> spriteNameList_;
 
-	Object2D* activeResizingUI_ = nullptr;
+	//座標編集中のUIオブジェクト
+	UIObject* activeRepositioningUI_ = nullptr;
+
+	UIObject* activeResizingUI_ = nullptr;
+
+	Vector2 initialPos_;
+
+	size_t stringBufSize_;
 
 	float resizeMargin_;
 
 	bool isEditMode_;
 
+	bool isSave_;
+
 public:
 
 	UIGroup* GetUIGroup(const std::string groupName);
 
-	Object2D* GetUIObject(const std::string groupName, const std::string uiName);
+	Object2D* Get2DObject(const std::string groupName, const std::string uiName);
+
+	UIObject* GetUIObject(const std::string groupName, const std::string uiName);
 
 };
