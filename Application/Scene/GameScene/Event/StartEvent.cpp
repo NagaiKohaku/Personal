@@ -1,0 +1,33 @@
+#include "StartEvent.h"
+
+#include <numbers>
+
+void StartEvent::Start(Player* player, Camera* camera) {
+
+	player_ = player;
+	camera_ = camera;
+
+	motionNum_ = 1;
+
+	canMove_ = true;
+
+	changeScene_ = false;
+
+	motionPoint_.push_back({ Vector3(0.0f,20.0f,-600.0f),Vector3(0.0f,-std::numbers::pi_v<float>,0.0f),0.0f,EaseType::LINEAR,1.0f });
+	motionPoint_.push_back({ Vector3(0.0f,20.0f,-600.0f),Vector3(0.0f,-std::numbers::pi_v<float>,0.0f),1.0f,EaseType::EASE_OUT,1.0f });
+	motionPoint_.push_back({ Vector3(0.0f,0.75f,0.0f),Vector3(0.2f,-std::numbers::pi_v<float>,0.0f),2.0f,EaseType::EASE_OUT,3.0f });
+	motionPoint_.push_back({ Vector3(0.0f,1.0f,0.0f),Vector3(0.2f,0.0f,0.0f),4.0f,EaseType::EASE_OUT,4.0f });
+
+	followCamera_->SetIsActive(false);
+
+	player_->SetIsMoveActive(false);
+
+}
+
+void StartEvent::Exit() {
+}
+
+void StartEvent::Update() {
+
+	UpdateEventMotion();
+}

@@ -18,6 +18,7 @@
 #include "Ground/Ground.h"
 #include "Ground/Building.h"
 #include "Ground/GroundManager.h"
+#include "Scene/SceneEvent.h"
 
 #include "memory"
 #include "vector"
@@ -71,15 +72,15 @@ public:
 	/// </summary>
 	void ImGui() override;
 
-	/// <summary>
-	/// ゲーム開始時のカメラ・プレイヤーアニメーションを更新します。
-	/// </summary>
-	void StartAnimation();
+private:
 
-	/// <summary>
-	/// ゲームクリア時のプレイヤー・エフェクトアニメーションを更新します。
-	/// </summary>
-	void ClearAnimation();
+	void ChangeStartEvent();
+
+	void ChangeGameEvent();
+
+	void ChangeGameOverEvent();
+
+	void ChangeClearEvent();
 
 	///-------------------------------------------/// 
 	/// メンバ変数
@@ -116,6 +117,9 @@ private:
 	//ライン描画の地面
 	std::unique_ptr<LineGround> lineGround_;
 
+	//シーンのイベント管理
+	std::unique_ptr<SceneEvent> eventState_;
+
 	//SkyBox
 	std::unique_ptr<SkyBox> skyBox_;
 
@@ -134,27 +138,4 @@ private:
 	//アニメーションタイマーの進行方向
 	float timerDirection_;
 
-	//アニメーションのタイマー
-	float timer_;
-
-	//キーフレームの番号
-	int animNum_;
-
-	//スタートアニメーションキーフレーム
-	std::vector<AnimPoint> startAnimPoints_;
-
-	//クリアアニメーションキーフレーム
-	std::vector<AnimPoint> clearAnimPoints_;
-
-	//スタート時の演出をするかのフラグ
-	bool isStart_;
-
-	//ゲームオーバーになったかのフラグ
-	bool isGameOver_;
-
-	//クリアになったかのフラグ
-	bool isClear_;
-
-	//クリアアニメーション中かのフラグ
-	bool isClearAnim_;
 };

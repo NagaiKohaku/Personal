@@ -242,7 +242,7 @@
     <ClCompile Include="Engine\Scene\SceneManager.cpp">
       <Filter>Engine\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Application\Scene\GameScene.cpp">
+    <ClCompile Include="Application\Scene\GameScene\GameScene.cpp">
       <Filter>Application\Scene</Filter>
     </ClCompile>
     <ClCompile Include="Application\Scene\ParticleEditorScene.cpp">
@@ -299,6 +299,11 @@
     <ClCompile Include="Application\Enemy\State\EnemyDeadState.cpp" />
     <ClCompile Include="Application\UIManager.cpp" />
     <ClCompile Include="Application\EmitterManager.cpp" />
+    <ClCompile Include="Application\Scene\GameScene\Event\ClearEvent.cpp" />
+    <ClCompile Include="Application\Scene\SceneEvent.cpp" />
+    <ClCompile Include="Application\Scene\GameScene\Event\StartEvent.cpp" />
+    <ClCompile Include="Application\Scene\GameScene\Event\GameOverEvent.cpp" />
+    <ClCompile Include="Application\Scene\GameScene\Event\GameEvent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application\Bullet\BulletBase.h">
@@ -508,7 +513,7 @@
     <ClInclude Include="Engine\Scene\SceneManager.h">
       <Filter>Engine\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="Application\Scene\GameScene.h">
+    <ClInclude Include="Application\Scene\GameScene\GameScene.h">
       <Filter>Application\Scene</Filter>
     </ClInclude>
     <ClInclude Include="Application\Scene\ParticleEditorScene.h">
@@ -571,6 +576,11 @@
     <ClInclude Include="Application\Enemy\State\EnemyDeadState.h" />
     <ClInclude Include="Application\UIManager.h" />
     <ClInclude Include="Application\EmitterManager.h" />
+    <ClInclude Include="Application\Scene\GameScene\Event\ClearEvent.h" />
+    <ClInclude Include="Application\Scene\SceneEvent.h" />
+    <ClInclude Include="Application\Scene\GameScene\Event\StartEvent.h" />
+    <ClInclude Include="Application\Scene\GameScene\Event\GameOverEvent.h" />
+    <ClInclude Include="Application\Scene\GameScene\Event\GameEvent.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resource\Shader\DebugObject.hlsli">

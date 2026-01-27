@@ -36,7 +36,6 @@ void UIManager::Update() {
 
 	Edit();
 
-
 	for (auto& uiGroup : uiGroups_) {
 
 		uiGroup->transform.UpdateMatrix();
@@ -52,6 +51,11 @@ void UIManager::Update() {
 void UIManager::Draw() {
 
 	for (auto& uiGroup : uiGroups_) {
+
+		if (!uiGroup->isActive) {
+			continue;
+		}
+
 		for (auto& ui : uiGroup->uiList) {
 			ui.object->Draw(LayerType::UI);
 		}
@@ -103,6 +107,11 @@ void UIManager::ImGui() {
 					uiGroup->name = inputUIGroupName.c_str();
 				}
 			}
+			ImGui::NextColumn();
+			ImGui::Separator();
+
+			ImGui::Text("グループの有効化");
+			ImGui::Checkbox("##GroupActive", &uiGroup->isActive);
 			ImGui::NextColumn();
 			ImGui::Separator();
 
@@ -431,6 +440,8 @@ void UIManager::CreateUIGroup(const std::string& groupName) {
 
 	newGroup->transform.Initialize();
 
+	newGroup->isActive = true;
+
 	uiGroups_.push_back(std::move(newGroup));
 }
 
@@ -490,9 +501,12 @@ void UIManager::LoadUI(const std::string& fileName) {
 					uiData["groupSize"][2].get<float>()
 				};
 
+				bool groupIsActive = uiData["groupIsActive"].get<bool>();
+
 				uiGroup->transform.translate_ = groupPosition;
 				uiGroup->transform.rotate_ = groupRotate;
 				uiGroup->transform.scale_ = groupSize;
+				uiGroup->isActive = groupIsActive;
 
 				continue;
 			}
@@ -549,11 +563,13 @@ void UIManager::SaveUIState(const std::string& fileName) {
 		Vector3 groupPosition = uiGroup->transform.translate_;
 		Vector3 groupRotate = uiGroup->transform.rotate_;
 		Vector3 groupSize = uiGroup->transform.scale_;
+		bool groupIsActive = uiGroup->isActive;
 
 		jsonData[groupName]["GroupState"] = {
 			{ "groupPosition", {groupPosition.x,groupPosition.y,groupPosition.z}},
 			{ "groupRotate", {groupRotate.x,groupRotate.y,groupRotate.z}},
 			{ "groupSize", {groupSize.x,groupSize.y,groupSize.z}},
+			{ "groupIsActive", groupIsActive}
 		};
 
 		for (auto& ui : uiGroup->uiList) {

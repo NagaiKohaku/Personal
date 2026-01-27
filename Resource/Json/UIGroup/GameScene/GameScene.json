@@ -1,6 +1,7 @@
 {
     "Clear": {
         "GroupState": {
+            "groupIsActive": false,
             "groupPosition": [
                 0.0,
                 0.0,
@@ -19,10 +20,10 @@
         },
         "LeftArrow": {
             "color": [
-                0.0,
-                0.0,
-                0.0,
-                0.0
+                1.0,
+                1.0,
+                1.0,
+                1.0
             ],
             "fileName": "GameClearArrow",
             "position": [
@@ -37,10 +38,10 @@
         },
         "RightArrow": {
             "color": [
-                0.0,
-                0.0,
-                0.0,
-                0.0
+                1.0,
+                1.0,
+                1.0,
+                0.9960784316062927
             ],
             "fileName": "GameClearArrow",
             "position": [
@@ -55,10 +56,10 @@
         },
         "Space": {
             "color": [
-                0.0,
-                0.0,
-                0.0,
-                0.0
+                1.0,
+                1.0,
+                1.0,
+                1.0
             ],
             "fileName": "GameClearSpace",
             "position": [
@@ -73,10 +74,10 @@
         },
         "Text": {
             "color": [
-                0.0,
-                0.0,
-                0.0,
-                0.0
+                1.0,
+                1.0,
+                1.0,
+                1.0
             ],
             "fileName": "RoadFlightGameClear",
             "position": [
@@ -92,6 +93,7 @@
     },
     "GameOver": {
         "GroupState": {
+            "groupIsActive": false,
             "groupPosition": [
                 0.0,
                 0.0,
@@ -110,10 +112,10 @@
         },
         "LeftArrow": {
             "color": [
-                0.0,
-                0.0,
-                0.0,
-                0.0
+                1.0,
+                1.0,
+                1.0,
+                1.0
             ],
             "fileName": "GameOverArrow",
             "position": [
@@ -128,10 +130,10 @@
         },
         "RightArrow": {
             "color": [
-                0.0,
-                0.0,
-                0.0,
-                0.0
+                1.0,
+                1.0,
+                1.0,
+                0.9921568632125854
             ],
             "fileName": "GameOverArrow",
             "position": [
@@ -146,10 +148,10 @@
         },
         "Space": {
             "color": [
-                0.0,
-                0.0,
-                0.0,
-                0.0
+                1.0,
+                1.0,
+                1.0,
+                1.0
             ],
             "fileName": "GameOverSpace",
             "position": [
@@ -164,10 +166,10 @@
         },
         "Text": {
             "color": [
-                0.0,
-                0.0,
-                0.0,
-                0.0
+                1.0,
+                1.0,
+                1.0,
+                1.0
             ],
             "fileName": "RoadFlightGameOver",
             "position": [
@@ -183,6 +185,7 @@
     },
     "Help": {
         "GroupState": {
+            "groupIsActive": true,
             "groupPosition": [
                 0.0,
                 0.0,
@@ -274,10 +277,11 @@
             ]
         },
         "GroupState": {
+            "groupIsActive": true,
             "groupPosition": [
-                653.749267578125,
-                517.10595703125,
-                0.9951050877571106
+                598.7600708007813,
+                517.0941772460938,
+                0.9951053261756897
             ],
             "groupRotate": [
                 0.0,

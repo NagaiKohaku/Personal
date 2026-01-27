@@ -2,8 +2,73 @@
 
 #define _USE_MATH_DEFINES
 
-#include "cmath"
+#include <cmath>
+#include <algorithm>
 
+namespace {
+
+	float EaseT(float t, EaseType type, float mag) {
+
+		t = std::clamp(t, 0.0f, 1.0f);
+
+		switch (type) {
+		case EaseType::LINEAR:
+			return t;
+
+		case EaseType::EASE_IN:
+			return powf(t, mag);
+
+		case EaseType::EASE_OUT:
+			return 1.0f - powf(1.0f - t, mag);
+
+		case EaseType::EASE_INOUT:
+			if (t < 0.5f) {
+				return 2.0f * t * t;
+			}
+			return 1.0f - std::pow(-2.0f * t + 2.0f, 2.0f) * 0.5f;
+		}
+
+		return t;
+	}
+
+} // unnamed namespace
+//
+//template float   Ease<float>(const float&, const float&, float, EaseType, float);
+//template Vector2 Ease<Vector2>(const Vector2&, const Vector2&, float, EaseType, float);
+//template Vector3 Ease<Vector3>(const Vector3&, const Vector3&, float, EaseType, float);
+//template Vector4 Ease<Vector4>(const Vector4&, const Vector4&, float, EaseType, float);
+
+template<>
+float Ease<float>(const float& from, const float& to, float t, EaseType type, float mag) {
+
+	float easedT = EaseT(t, type, mag);
+
+	return from + (to - from) * easedT;
+}
+
+template<>
+Vector2 Ease<Vector2>(const Vector2& from, const Vector2& to, float t, EaseType type, float mag) {
+
+	float easedT = EaseT(t, type, mag);
+
+	return from + (to - from) * easedT;
+}
+
+template<>
+Vector3 Ease<Vector3>(const Vector3& from,const Vector3& to,float t,EaseType type,float mag) {
+
+	float easedT = EaseT(t, type, mag);
+
+	return from + (to - from) * easedT;
+}
+
+template<>
+Vector4 Ease<Vector4>(const Vector4& from, const Vector4& to, float t, EaseType type, float mag) {
+
+	float easedT = EaseT(t, type, mag);
+
+	return from + (to - from) * easedT;
+}
 ///=====================================================///
 ///Lerp関数
 ///=====================================================///
@@ -130,7 +195,7 @@ Vector2 EaseOut(const Vector2& v1, const Vector2& v2, float t, float mag) {
 
 Vector3 EaseOut(const Vector3& v1, const Vector3& v2, float t, float mag) {
 
-	float easeT = 1.0f - powf(1.0f - t,mag);
+	float easeT = 1.0f - powf(1.0f - t, mag);
 
 	Vector3 result;
 
@@ -181,7 +246,7 @@ Vector3 EaseOutBack(const Vector3& v1, const Vector3& v2, float t, float mag) {
 ///=====================================================///
 Vector3 EaseInOut(const Vector3& v1, const Vector3& v2, float t, float mag) {
 
-	float easeT = t < 0.5f ? powf(2.0f,mag - 1.0f) * powf(t,mag) : 1.0f - powf(-2.0f, mag) / 2.0f;
+	float easeT = t < 0.5f ? powf(2.0f, mag - 1.0f) * powf(t, mag) : 1.0f - powf(-2.0f, mag) / 2.0f;
 
 	Vector3 result;
 

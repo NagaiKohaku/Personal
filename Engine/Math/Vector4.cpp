@@ -5,7 +5,7 @@
 ///=====================================================///
 
 // ベクトル同士の加法
-Vector4 Vector4::operator+(const Vector4& v) {
+Vector4 Vector4::operator+(const Vector4& v) const {
 	return { x + v.x, y + v.y, z + v.z, w + v.w };
 }
 
@@ -19,7 +19,7 @@ Vector4& Vector4::operator+=(const Vector4& v) {
 }
 
 // ベクトルと float の加法
-Vector4 Vector4::operator+(const float& v) {
+Vector4 Vector4::operator+(const float& v) const {
 	return { x + v, y + v, z + v, w + v };
 }
 
@@ -37,7 +37,7 @@ Vector4& Vector4::operator+=(const float& v) {
 ///=====================================================///
 
 // ベクトル同士の減法
-Vector4 Vector4::operator-(const Vector4& v) {
+Vector4 Vector4::operator-(const Vector4& v) const {
 	return { x - v.x, y - v.y, z - v.z, w - v.w };
 }
 
@@ -51,7 +51,7 @@ Vector4& Vector4::operator-=(const Vector4& v) {
 }
 
 // ベクトルと float の減法
-Vector4 Vector4::operator-(const float& v) {
+Vector4 Vector4::operator-(const float& v) const {
 	return { x - v, y - v, z - v, w - v };
 }
 
@@ -69,7 +69,7 @@ Vector4& Vector4::operator-=(const float& v) {
 ///=====================================================///
 
 // ベクトル同士の積（要素ごとの積）
-Vector4 Vector4::operator*(const Vector4& v) {
+Vector4 Vector4::operator*(const Vector4& v) const {
 	return { x * v.x, y * v.y, z * v.z, w * v.w };
 }
 
@@ -83,7 +83,7 @@ Vector4& Vector4::operator*=(const Vector4& v) {
 }
 
 // ベクトルと float の積
-Vector4 Vector4::operator*(const float& v) {
+Vector4 Vector4::operator*(const float& v) const {
 	return { x * v, y * v, z * v, w * v };
 }
 
@@ -101,7 +101,7 @@ Vector4& Vector4::operator*=(const float& v) {
 ///=====================================================///
 
 // ベクトル同士の除法（要素ごとの除法）
-Vector4 Vector4::operator/(const Vector4& v) {
+Vector4 Vector4::operator/(const Vector4& v) const {
 	return { x / v.x, y / v.y, z / v.z, w / v.w };
 }
 
@@ -115,7 +115,7 @@ Vector4& Vector4::operator/=(const Vector4& v) {
 }
 
 // ベクトルと float の除法
-Vector4 Vector4::operator/(const float& v) {
+Vector4 Vector4::operator/(const float& v) const {
 	return { x / v, y / v, z / v, w / v };
 }
 

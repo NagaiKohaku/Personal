@@ -8,27 +8,27 @@ struct Vector2 final {
 	float y;
 
 	/// ===加法=== ///
-	Vector2 operator+(const Vector2& v);
+	Vector2 operator+(const Vector2& v) const;
 	Vector2& operator+=(const Vector2& v);
-	Vector2 operator+(const float& v);
+	Vector2 operator+(const float& v) const;
 	Vector2& operator+=(const float& v);
 
 	/// ===減法=== ///
-	Vector2 operator-(const Vector2& v);
+	Vector2 operator-(const Vector2& v) const;
 	Vector2& operator-=(const Vector2& v);
-	Vector2 operator-(const float& v);
+	Vector2 operator-(const float& v) const;
 	Vector2& operator-=(const float& v);
 
 	/// ===積=== ///
-	Vector2 operator*(const Vector2& v);
+	Vector2 operator*(const Vector2& v) const;
 	Vector2& operator*=(const Vector2& v);
-	Vector2 operator*(const float& v);
+	Vector2 operator*(const float& v) const;
 	Vector2& operator*=(const float& v);
 
 	/// ===除法=== ///
-	Vector2 operator/(const Vector2& v);
+	Vector2 operator/(const Vector2& v) const;
 	Vector2& operator/=(const Vector2& v);
-	Vector2 operator/(const float& v);
+	Vector2 operator/(const float& v) const;
 	Vector2& operator/=(const float& v);
 };
 
