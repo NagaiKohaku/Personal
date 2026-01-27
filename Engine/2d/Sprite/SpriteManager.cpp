@@ -77,3 +77,27 @@ std::unique_ptr<Sprite> SpriteManager::FindSprite(const std::string& spriteName)
 	//登録されていなかったのでfalseを返す
 	return nullptr;
 }
+
+std::map<std::string, Sprite*> SpriteManager::GetSpriteList() {
+
+	std::map<std::string, Sprite*> list;
+
+	for (auto& [name, sprite] : sprites_) {
+
+		list.insert(std::make_pair(name, sprite.get()));
+	}
+
+	return list;
+}
+
+std::vector<std::string> SpriteManager::GetSpriteNameList() {
+
+	std::vector<std::string> list;
+
+	for (auto& [name, sprite] : sprites_) {
+
+		list.push_back(name);
+	}
+
+	return list;
+}

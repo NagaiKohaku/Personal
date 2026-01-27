@@ -34,6 +34,8 @@ void Object2D::Initialize() {
 	WVPData_->World = MakeIdentity4x4();
 	WVPData_->WorldInverseTranspose = MakeIdentity4x4();
 
+	transform_.Initialize();
+
 	/// === その他変数の初期化 === ///
 
 	//座標の設定
@@ -66,8 +68,14 @@ void Object2D::Update() {
 		{translate_.x,translate_.y,0.0f}
 	};
 
+	transform_.translate_ = { translate_.x,translate_.y,0.0f };
+	transform_.rotate_ = { 0.0f,0.0f,rotate_ };
+	transform_.scale_ = { size_.x,size_.y,1.0f };
+
+	transform_.UpdateMatrix();
+
 	//ワールド行列を生成
-	Matrix4x4 worldMatrix = MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
+	Matrix4x4 worldMatrix = transform_.GetWorldMatrix();
 
 	//ビュー行列を単位行列で生成
 	Matrix4x4 viewMatrix = MakeIdentity4x4();

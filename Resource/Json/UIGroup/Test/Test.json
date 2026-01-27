@@ -1,4 +1,41 @@
 {
+    "NewGroup": {
+        "GroupState": {
+            "groupPosition": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "groupRotate": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "groupSize": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        "NewUI": {
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "fileName": "RoadflightTitle",
+            "position": [
+                541.0,
+                362.0
+            ],
+            "rotate": 0.0,
+            "size": [
+                771.0,
+                132.0
+            ]
+        }
+    },
     "Title": {
         "GroupState": {
             "groupPosition": [

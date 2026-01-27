@@ -11,6 +11,7 @@
 #include "Math/Vector2.h"
 #include "Math/Vector3.h"
 #include "Math/Matrix4x4.h"
+#include "Math/WorldTransform.h"
 
 #include "string"
 #include "wrl.h"
@@ -73,6 +74,8 @@ private:
 	//2Dオブジェクト基底
 	Object2DCommon* object2DCommon_;
 
+	WorldTransform transform_;
+
 	//座標変換行列リソース
 	Microsoft::WRL::ComPtr<ID3D12Resource> WVPResource_ = nullptr;
 
@@ -95,6 +98,8 @@ private:
 	/// ゲッター・セッター
 	///-------------------------------------------///
 public:
+
+	WorldTransform& GetWorldTransform() { return transform_; }
 
 	/// <summary>
 	/// 座標を取得
