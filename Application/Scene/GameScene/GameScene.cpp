@@ -239,6 +239,8 @@ void GameScene::Update() {
 
 	float lerpNum = EaseOut(0.0f, arrowLength_, arrowTimer_ / 1.0f);
 
+	float alphaNum = EaseOut(0.0f, 1.0f, arrowTimer_ / 1.0f);
+
 	//3Dオブジェクトの座標をスクリーン座標に変換する
 	Vector3 playerScreenPos = Vector3ToScreenSpace(camera_.get(), player_->GetWorldPos());
 
@@ -251,6 +253,8 @@ void GameScene::Update() {
 	UIManager::GetInstance()->Get2DObject("Clear", "RightArrow")->SetTranslate({ spaceKeyPos_.x + spaceKeySize_.x / 2.0f + 64.0f + lerpNum,spaceKeyPos_.y });
 
 	UIManager::GetInstance()->GetUIGroup("Reticle")->transform.translate_ = playerScreenPos;
+
+	UIManager::GetInstance()->Get2DObject("Pause", "Text")->GetSprite()->SetColor(Vector4(1.0f, 1.0f, 1.0f, alphaNum));
 
 	if (Input::GetInstance()->isPushKey(DIK_W)) {
 
