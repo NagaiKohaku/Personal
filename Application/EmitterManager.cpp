@@ -16,7 +16,10 @@ void EmitterManager::Update() {
 
 	for (auto& emitter : emitters_) {
 
-		emitter->object->Update();
+		if (isUpdate_) {
+
+			emitter->object->Update();
+		}
 	}
 }
 

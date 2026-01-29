@@ -26,6 +26,7 @@ public:
 		std::string name;
 		std::vector<UIObject> uiList;
 		WorldTransform transform;
+		bool isActive;
 	};
 
 public:

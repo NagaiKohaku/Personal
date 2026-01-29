@@ -4,6 +4,25 @@
 #include "Vector3.h"
 #include "Vector4.h"
 
+enum class EaseType {
+	LINEAR,
+	EASE_OUT,
+	EASE_IN,
+	EASE_INOUT
+};
+
+template<typename T>
+T Ease(const T& from, const T& to, float t, EaseType type, float mag);
+
+// 明示的インスタンス宣言
+extern template float   Ease<float>(const float&, const float&, float, EaseType, float mag);
+
+extern template Vector2 Ease<Vector2>(const Vector2&, const Vector2&, float, EaseType, float mag);
+
+extern template Vector3 Ease<Vector3>(const Vector3&, const Vector3&, float, EaseType, float mag);
+
+extern template Vector4 Ease<Vector4>(const Vector4&, const Vector4&, float, EaseType, float mag);
+
 /// <summary>
 /// ラープ関数 : float
 /// </summary>

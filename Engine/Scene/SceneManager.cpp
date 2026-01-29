@@ -5,7 +5,7 @@
 
 #include "3d/Collider/ColliderManager.h"
 
-#include "Scene/GameScene.h"
+#include "Scene/GameScene/GameScene.h"
 #include "Scene/TitleScene.h"
 #include "Scene/ParticleEditorScene.h"
 

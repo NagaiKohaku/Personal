@@ -37,8 +37,12 @@ private:
 
 	std::vector<std::unique_ptr<EmitterObject>> emitters_;
 
+	bool isUpdate_ = true;
+
 public:
 
 	void SetCamera(Camera* cameraPtr) { camera_ = cameraPtr; }
+
+	void SetIsUpdate(bool flag) { isUpdate_ = flag; }
 
 };

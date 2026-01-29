@@ -440,6 +440,16 @@ Vector3 Enemy::GetPlayerPos() {
 	return player_->GetWorldPos();
 }
 
+bool Enemy::GetIsDead() {
+
+	if (auto* startEvent = dynamic_cast<EnemyDeadState*>(state_.get())) {
+
+		return true;
+	}
+
+	return false;
+}
+
 BulletManager* Enemy::GetBulletManager() {
 	return bulletManager_;
 }

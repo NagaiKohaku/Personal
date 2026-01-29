@@ -9,7 +9,7 @@
 ///=====================================================///
 
 // ベクトル同士の加法
-Vector2 Vector2::operator+(const Vector2& v) {
+Vector2 Vector2::operator+(const Vector2& v) const {
 	return { x + v.x, y + v.y };
 }
 
@@ -21,7 +21,7 @@ Vector2& Vector2::operator+=(const Vector2& v) {
 }
 
 // ベクトルと float の加法
-Vector2 Vector2::operator+(const float& v) {
+Vector2 Vector2::operator+(const float& v) const {
 	return { x + v, y + v };
 }
 
@@ -37,7 +37,7 @@ Vector2& Vector2::operator+=(const float& v) {
 ///=====================================================///
 
 // ベクトル同士の減法
-Vector2 Vector2::operator-(const Vector2& v) {
+Vector2 Vector2::operator-(const Vector2& v) const {
 	return { x - v.x, y - v.y };
 }
 
@@ -49,7 +49,7 @@ Vector2& Vector2::operator-=(const Vector2& v) {
 }
 
 // ベクトルと float の減法
-Vector2 Vector2::operator-(const float& v) {
+Vector2 Vector2::operator-(const float& v) const {
 	return { x - v, y - v };
 }
 
@@ -65,7 +65,7 @@ Vector2& Vector2::operator-=(const float& v) {
 ///=====================================================///
 
 // ベクトル同士の積（要素ごとの積）
-Vector2 Vector2::operator*(const Vector2& v) {
+Vector2 Vector2::operator*(const Vector2& v) const {
 	return { x * v.x, y * v.y };
 }
 
@@ -77,7 +77,7 @@ Vector2& Vector2::operator*=(const Vector2& v) {
 }
 
 // ベクトルと float の積
-Vector2 Vector2::operator*(const float& v) {
+Vector2 Vector2::operator*(const float& v) const {
 	return { x * v, y * v };
 }
 
@@ -93,7 +93,7 @@ Vector2& Vector2::operator*=(const float& v) {
 ///=====================================================///
 
 // ベクトル同士の除法（要素ごとの除法）
-Vector2 Vector2::operator/(const Vector2& v) {
+Vector2 Vector2::operator/(const Vector2& v) const {
 	return { x / v.x, y / v.y };
 }
 
@@ -105,7 +105,7 @@ Vector2& Vector2::operator/=(const Vector2& v) {
 }
 
 // ベクトルと float の除法
-Vector2 Vector2::operator/(const float& v) {
+Vector2 Vector2::operator/(const float& v) const {
 	return { x / v, y / v };
 }
 
