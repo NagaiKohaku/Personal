@@ -212,6 +212,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Application\Player\State\MovementState\JetMoveState.cpp" />
     <ClCompile Include="Application\Scene\GameScene\Event\GameOverEvent.cpp" />
     <ClCompile Include="Application\Scene\GameScene\Event\GameEvent.cpp" />
+    <ClCompile Include="Application\Scene\GameScene\GameSceneProgress.cpp" />
+    <ClCompile Include="Application\Scene\GameScene\Event\GameSceneEventBase.cpp" />
+    <ClCompile Include="Application\Scene\GameScene\Event\GameSceneEventFactory.cpp" />
     <ClCompile Include="main.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Development|x64'">MaxSpeed</Optimization>
       <WholeProgramOptimization Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</WholeProgramOptimization>
@@ -257,7 +260,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Application\Player\State\AttackState\TankAttackState.cpp" />
     <ClCompile Include="Application\Player\State\MovementState\TankMoveState.cpp" />
     <ClCompile Include="Application\UIManager.cpp" />
-    <ClCompile Include="Application\Scene\SceneEvent.cpp" />
     <ClCompile Include="Application\Scene\GameScene\Event\StartEvent.cpp" />
     <ClCompile Include="Application\Scene\GameScene\Event\PauseEvent.cpp" />
   </ItemGroup>
@@ -365,11 +367,13 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Application\Player\State\MovementState\JetMoveState.h" />
     <ClInclude Include="Application\Player\State\MovementState\TankMoveState.h" />
     <ClInclude Include="Application\UIManager.h" />
-    <ClInclude Include="Application\Scene\SceneEvent.h" />
     <ClInclude Include="Application\Scene\GameScene\Event\GameOverEvent.h" />
     <ClInclude Include="Application\Scene\GameScene\Event\StartEvent.h" />
     <ClInclude Include="Application\Scene\GameScene\Event\GameEvent.h" />
     <ClInclude Include="Application\Scene\GameScene\Event\PauseEvent.h" />
+    <ClInclude Include="Application\Scene\GameScene\GameSceneProgress.h" />
+    <ClInclude Include="Application\Scene\GameScene\Event\GameSceneEventBase.h" />
+    <ClInclude Include="Application\Scene\GameScene\Event\GameSceneEventFactory.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Application\LevelEditor\Python\add_collider.py">

@@ -6,9 +6,7 @@
 #include <Base/OffScreen.h>
 #include <Base/Input.h>
 
-void GameOverEvent::Start(Player* player, Camera* camera) {
-
-	changeScene_ = true;
+void GameOverEvent::Start(Player* player, Camera* camera, FollowCamera* followCamera) {
 
 	//スプライトを映す
 	UIManager::GetInstance()->GetUIGroup("GameOver")->isActive = true;
@@ -39,4 +37,9 @@ void GameOverEvent::Update() {
 			isFade_ = true;
 		}
 	}
+}
+
+GameSceneEventBase::EventType GameOverEvent::RequestNextEvent() const {
+
+	return EventType::NONE;
 }

@@ -1,13 +1,15 @@
 #include "GameEvent.h"
 
-void GameEvent::Start(Player* player, Camera* camera) {
+#include <Base/Input.h>
+#include <ObjectManager.h>
+
+void GameEvent::Start(Player* player, Camera* camera, FollowCamera* followCamera) {
 
 	player_ = player;
 	camera_ = camera;
+	followCamera_ = followCamera;
 
 	canMove_ = true;
-
-	changeScene_ = false;
 
 	followCamera_->SetIsActive(true);
 
@@ -18,4 +20,24 @@ void GameEvent::Exit() {
 }
 
 void GameEvent::Update() {
+}
+
+GameSceneEventBase::EventType GameEvent::RequestNextEvent() const {
+
+	if (Input::GetInstance()->IsTriggerPushKey(DIK_ESCAPE)) {
+
+		return EventType::PAUSE;
+	}
+
+	if (ObjectManager::GetInstance()->GetKillCount() >= 30) {
+
+		return EventType::CLEAR;
+	}
+
+	if (player_->GetIsDead()) {
+
+		return EventType::GAMEOVER;
+	}
+
+	return EventType::NONE;
 }

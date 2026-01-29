@@ -113,13 +113,9 @@ void GameScene::Initialize() {
 
 	shockWaveRightEmitter_->LoadEmitter("ShockWaveRight");
 
-	eventState_ = std::make_unique<StartEvent>();
+	sceneProgress_ = std::make_unique<GameSceneProgress>();
 
-	if (auto* startEvent = dynamic_cast<StartEvent*>(eventState_.get())) {
-		startEvent->SetFollowCamera(followCamera_.get());
-	}
-
-	eventState_->Start(player_, camera_.get());
+	sceneProgress_->Initialize(player_,camera_.get(),followCamera_.get());
 
 	/// === 他変数の設定 === ///
 
@@ -166,38 +162,15 @@ void GameScene::Update() {
 		Fade::GetInstance()->SetState(Fade::FadeState::NONE);
 	}
 
-
-	if (auto* startEvent = dynamic_cast<StartEvent*>(eventState_.get())) {
-
-		if (startEvent->IsFinished()) {
-
-			ChangeGameEvent();
-		}
-	}
-
-	if (auto* gameEvent = dynamic_cast<GameEvent*>(eventState_.get())) {
-
-		if (Input::GetInstance()->IsTriggerPushKey(DIK_ESCAPE)) {
-
-			ChangePauseEvent();
-		}
-	}
-
-	if (auto* pauseEvent = dynamic_cast<PauseEvent*>(eventState_.get())) {
-
-		if (pauseEvent->IsFinished()) {
-
-			ChangeGameEvent();
-		}
-	}
-
 	//追尾カメラの更新
 	followCamera_->Update();
 
 	//カメラをデバッグ状態で更新
 	camera_->Update();
 
-	if (eventState_->canMove()) {
+	sceneProgress_->Update();
+
+	if (sceneProgress_->canMove()) {
 
 		//プレイヤーの更新
 		player_->Update();
@@ -296,18 +269,6 @@ void GameScene::Update() {
 	//左衝撃波エミッターの更新
 	shockWaveLeftEmitter_->Update();
 
-	eventState_->Update();
-
-	if (player_->GetIsDead()) {
-
-		ChangeGameOverEvent();
-	}
-
-	if (ObjectManager::GetInstance()->GetKillCount() >= 30) {
-
-		ChangeClearEvent();
-	}
-
 	//フェードアウトが終わったら
 	if (Fade::GetInstance()->GetState() == Fade::FadeState::FADE_OUT_END) {
 
@@ -370,76 +331,4 @@ void GameScene::ImGui() {
 
 #endif // _USE_IMGUI
 
-}
-
-void GameScene::ChangeStartEvent() {
-
-	if (dynamic_cast<StartEvent*>(eventState_.get())) {
-		return;
-	}
-
-	eventState_ = std::make_unique<StartEvent>();
-
-	if (auto* startEvent = dynamic_cast<StartEvent*>(eventState_.get())) {
-		startEvent->SetFollowCamera(followCamera_.get());
-	}
-
-	eventState_->Start(player_, camera_.get());
-
-}
-
-void GameScene::ChangeGameEvent() {
-
-	if (dynamic_cast<GameEvent*>(eventState_.get())) {
-		return;
-	}
-
-	eventState_->Exit();
-
-	eventState_ = std::make_unique<GameEvent>();
-
-	if (auto* gameEvent = dynamic_cast<GameEvent*>(eventState_.get())) {
-		gameEvent->SetFollowCamera(followCamera_.get());
-	}
-
-	eventState_->Start(player_, camera_.get());
-}
-
-void GameScene::ChangePauseEvent() {
-
-	if (dynamic_cast<PauseEvent*>(eventState_.get())) {
-		return;
-	}
-
-	eventState_->Exit();
-
-	eventState_ = std::make_unique<PauseEvent>();
-
-	eventState_->Start(player_, camera_.get());
-}
-
-void GameScene::ChangeGameOverEvent() {
-
-	if (dynamic_cast<GameOverEvent*>(eventState_.get())) {
-		return;
-	}
-
-	eventState_->Exit();
-
-	eventState_ = std::make_unique<GameOverEvent>();
-
-	eventState_->Start(player_, camera_.get());
-}
-
-void GameScene::ChangeClearEvent() {
-
-	if (dynamic_cast<ClearEvent*>(eventState_.get())) {
-		return;
-	}
-
-	eventState_->Exit();
-
-	eventState_ = std::make_unique<ClearEvent>();
-
-	eventState_->Start(player_, camera_.get());
 }

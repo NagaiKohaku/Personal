@@ -1,8 +1,8 @@
-#include "SceneEvent.h"
+#include "GameSceneEventBase.h"
 
 #include <algorithm>
 
-void SceneEvent::UpdateEventMotion() {
+void GameSceneEventBase::UpdateEventMotion() {
 
 	if (motionPoint_.empty()) {
 		return;

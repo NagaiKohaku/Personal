@@ -2,45 +2,22 @@
 #include "Scene/BaseScene.h"
 
 #include "Base/Audio.h"
-#include "2d/Object/Object2D.h"
 #include "3d/Camera/Camera.h"
-#include "3d/Object/Object3D.h"
-#include "3d/Object/DebugLine.h"
-#include "3d/Object/SkyBox.h"
-#include "3d/Particle/ParticleEmitter.h"
 #include "3d/Particle/EmitterGroup.h"
 
 #include "Player/Player.h"
 #include "Enemy/EnemyManager.h"
 #include "Bullet/BulletManager.h"
 #include "Camera/FollowCamera.h"
-#include "Ground/LineGround.h"
-#include "Ground/Ground.h"
-#include "Ground/Building.h"
 #include "Ground/GroundManager.h"
-#include "Scene/SceneEvent.h"
+#include "Scene/GameScene/GameSceneProgress.h"
 
 #include "memory"
-#include "vector"
-#include "list"
 
 /// <summary>
 /// ゲームシーン
 /// </summary>
 class GameScene : public BaseScene {
-
-	///-------------------------------------------/// 
-	/// 構造体
-	///-------------------------------------------///
-public:
-
-	//アニメーションのキーフレーム
-	struct AnimPoint {
-		Vector3 playerPos;
-		Vector3 cameraRot;
-		float time;
-		float mag;
-	};
 
 	///-------------------------------------------/// 
 	/// メンバ関数
@@ -72,18 +49,6 @@ public:
 	/// </summary>
 	void ImGui() override;
 
-private:
-
-	void ChangeStartEvent();
-
-	void ChangeGameEvent();
-
-	void ChangePauseEvent();
-
-	void ChangeGameOverEvent();
-
-	void ChangeClearEvent();
-
 	///-------------------------------------------/// 
 	/// メンバ変数
 	///-------------------------------------------///
@@ -94,9 +59,6 @@ private:
 
 	//追従カメラ
 	std::unique_ptr<FollowCamera> followCamera_;
-
-	//ライン
-	std::vector<std::unique_ptr<DebugLine>> lines_;
 
 	//プレイヤー
 	Player* player_;
@@ -116,14 +78,8 @@ private:
 	//衝撃波エミッター(右)
 	std::unique_ptr<EmitterGroup> shockWaveRightEmitter_;
 
-	//ライン描画の地面
-	std::unique_ptr<LineGround> lineGround_;
-
 	//シーンのイベント管理
-	std::unique_ptr<SceneEvent> eventState_;
-
-	//SkyBox
-	std::unique_ptr<SkyBox> skyBox_;
+	std::unique_ptr<GameSceneProgress> sceneProgress_;
 
 	//スペースキースプライトの位置
 	Vector2 spaceKeyPos_;

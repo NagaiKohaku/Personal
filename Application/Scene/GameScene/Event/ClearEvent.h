@@ -1,16 +1,18 @@
 #pragma once
 
-#include <Scene/SceneEvent.h>
+#include <Scene/GameScene/Event/GameSceneEventBase.h>
 
-class ClearEvent : public SceneEvent {
+class ClearEvent : public GameSceneEventBase {
 
 public:
 
-	void Start(Player* player, Camera* camera) override;
+	void Start(Player* player, Camera* camera, FollowCamera* followCamera) override;
 
 	void Exit() override;
 
 	void Update() override;
+
+	EventType RequestNextEvent() const override;
 
 private:
 

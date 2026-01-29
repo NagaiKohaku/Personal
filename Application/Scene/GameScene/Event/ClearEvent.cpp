@@ -7,7 +7,7 @@
 #include <Base/OffScreen.h>
 #include <Base/Input.h>
 
-void ClearEvent::Start(Player* player, Camera* camera) {
+void ClearEvent::Start(Player* player, Camera* camera, FollowCamera* followCamera) {
 
 	player_ = player;
 	camera_ = camera;
@@ -15,8 +15,6 @@ void ClearEvent::Start(Player* player, Camera* camera) {
 	motionNum_ = 1;
 
 	canMove_ = false;
-
-	changeScene_ = true;
 
 	motionPoint_.push_back({ player_->GetWorldPos(),camera_->GetWorldTransform().rotate_,0.0f,EaseType::LINEAR,1.0f });
 	motionPoint_.push_back({ Vector3(0.0f,4.0f,0.0f),Vector3(0.0f,0.0f,0.0f),1.5f,EaseType::EASE_OUT,2.0f });
@@ -74,4 +72,9 @@ void ClearEvent::Update() {
 			isFade_ = true;
 		}
 	}
+}
+
+GameSceneEventBase::EventType ClearEvent::RequestNextEvent() const {
+
+	return EventType::NONE;
 }

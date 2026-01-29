@@ -2,13 +2,25 @@
 
 #include <Player/Player.h>
 #include <3d/Camera/Camera.h>
+#include <Camera/FollowCamera.h>
 
 #include <Math/Vector3.h>
 #include <Math/Easing.h>
 
 #include <vector>
 
-class SceneEvent {
+class GameSceneEventBase {
+
+public:
+
+	enum class EventType {
+		NONE,
+		START,
+		GAME,
+		PAUSE,
+		CLEAR,
+		GAMEOVER
+	};
 
 protected:
 
@@ -21,11 +33,13 @@ protected:
 	};
 
 public:
-	virtual ~SceneEvent() = default;
+	virtual ~GameSceneEventBase() = default;
 
-	virtual void Start(Player* player, Camera* camera) = 0;   // 開始時1回
+	virtual void Start(Player* player, Camera* camera, FollowCamera* followCamera) = 0;   // 開始時1回
 	virtual void Exit() = 0;    // 終了処理
 	virtual void Update() = 0;  // 毎フレーム
+
+	virtual EventType RequestNextEvent() const { return EventType::NONE; }
 
 protected:
 
@@ -37,6 +51,8 @@ protected:
 
 	Camera* camera_ = nullptr;
 
+	FollowCamera* followCamera_ = nullptr;
+
 	std::vector<EventMotionPoint> motionPoint_;
 
 	float motionTimer_ = 0.0f;
@@ -47,13 +63,10 @@ protected:
 
 	bool canMove_ = true;
 
-	bool changeScene_ = false;
-
 public:
 
 	bool IsFinished() const { return isFinished_; }
 
 	bool canMove() const { return canMove_; }
 
-	bool changeScene() const { return changeScene_; }
 };

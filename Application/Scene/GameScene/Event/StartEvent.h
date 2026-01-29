@@ -1,26 +1,19 @@
 #pragma once
 
-#include <Scene/SceneEvent.h>
+#include <Scene/GameScene/Event/GameSceneEventBase.h>
 
 #include <Camera/FollowCamera.h>
 
-class StartEvent : public SceneEvent {
+class StartEvent : public GameSceneEventBase {
 
 public:
 
-	void Start(Player* player, Camera* camera) override;
+	void Start(Player* player, Camera* camera, FollowCamera* followCamera) override;
 
 	void Exit() override;
 
 	void Update() override;
 
-private:
-
-	FollowCamera* followCamera_ = nullptr;
-
-public:
-
-	void SetFollowCamera(FollowCamera* followCamera) { followCamera_ = followCamera; }
+	EventType RequestNextEvent() const override;
 
 };
-
