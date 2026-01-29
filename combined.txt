@@ -77,8 +77,26 @@
 └── └──         ├── TankMoveState.cpp
 └── └──         └── TankMoveState.h
 └── ├── Scene/
-└── └── ├── GameScene.cpp
-└── └── ├── GameScene.h
+└── └── ├── GameScene/
+└── └── └── ├── Event/
+└── └── └── └── ├── ClearEvent.cpp
+└── └── └── └── ├── ClearEvent.h
+└── └── └── └── ├── GameEvent.cpp
+└── └── └── └── ├── GameEvent.h
+└── └── └── └── ├── GameOverEvent.cpp
+└── └── └── └── ├── GameOverEvent.h
+└── └── └── └── ├── GameSceneEventBase.cpp
+└── └── └── └── ├── GameSceneEventBase.h
+└── └── └── └── ├── GameSceneEventFactory.cpp
+└── └── └── └── ├── GameSceneEventFactory.h
+└── └── └── └── ├── PauseEvent.cpp
+└── └── └── └── ├── PauseEvent.h
+└── └── └── └── ├── StartEvent.cpp
+└── └── └── └── └── StartEvent.h
+└── └── └── ├── GameScene.cpp
+└── └── └── ├── GameScene.h
+└── └── └── ├── GameSceneProgress.cpp
+└── └── └── └── GameSceneProgress.h
 └── └── ├── ParticleEditorScene.cpp
 └── └── ├── ParticleEditorScene.h
 └── └── ├── TitleScene.cpp
@@ -356,6 +374,8 @@
 └── └── ├── MoveButton/
 └── └── ├── MoveHelp/
 └── └── ├── Particle/
+└── └── ├── Pause/
+└── └── ├── PauseHelp/
 └── └── ├── Reticle/
 └── └── ├── RoadFlightGameClear/
 └── └── ├── RoadFlightGameOver/
@@ -1473,7 +1493,10 @@ void EmitterManager::Update() {
 
 	for (auto& emitter : emitters_) {
 
-		emitter->object->Update();
+		if (isUpdate_) {
+
+			emitter->object->Update();
+		}
 	}
 }
 
@@ -1563,9 +1586,13 @@ private:
 
 	std::vector<std::unique_ptr<EmitterObject>> emitters_;
 
+	bool isUpdate_ = true;
+
 public:
 
 	void SetCamera(Camera* cameraPtr) { camera_ = cameraPtr; }
+
+	void SetIsUpdate(bool flag) { isUpdate_ = flag; }
 
 };
 
@@ -2014,6 +2041,16 @@ Vector3 Enemy::GetPlayerPos() {
 	return player_->GetWorldPos();
 }
 
+bool Enemy::GetIsDead() {
+
+	if (auto* startEvent = dynamic_cast<EnemyDeadState*>(state_.get())) {
+
+		return true;
+	}
+
+	return false;
+}
+
 BulletManager* Enemy::GetBulletManager() {
 	return bulletManager_;
 }
@@ -2304,6 +2341,8 @@ public:
 	/// </summary>
 	/// <returns>フラグ</returns>
 	bool GetIsRemove() { return isRemove_; }
+
+	bool GetIsDead();
 
 	BulletManager* GetBulletManager();
 
@@ -5179,6 +5218,10 @@ void LockOn::Update() {
 
 		for(auto& enemy : lockedEnemies_) {
 
+			if (enemy.enemy->GetIsDead()) {
+				continue;
+			}
+
 			//前回と同じ敵なら
 			if (lockOnReticle->preTargetEnemy == enemy.enemy) {
 
@@ -5193,6 +5236,10 @@ void LockOn::Update() {
 
 	//未割り当ての敵を割り当てる
 	for(auto& enemy : lockedEnemies_) {
+
+		if (enemy.enemy->GetIsDead()) {
+			continue;
+		}
 
 		if (!enemy.isAssigned) {
 
@@ -6842,7 +6889,593 @@ private:
 };
 
 ============================================================
-File Path: Application/Scene/GameScene.cpp
+File Path: Application/Scene/GameScene/Event/ClearEvent.cpp
+============================================================
+#include "ClearEvent.h"
+
+#include <UIManager.h>
+#include <Flash/Flash.h>
+#include <Shake/Shake.h>
+#include <Fade/Fade.h>
+#include <Base/OffScreen.h>
+#include <Base/Input.h>
+
+void ClearEvent::Start(Player* player, Camera* camera, FollowCamera* followCamera) {
+
+	player_ = player;
+	camera_ = camera;
+
+	motionNum_ = 1;
+
+	canMove_ = false;
+
+	motionPoint_.push_back({ player_->GetWorldPos(),camera_->GetWorldTransform().rotate_,0.0f,EaseType::LINEAR,1.0f });
+	motionPoint_.push_back({ Vector3(0.0f,4.0f,0.0f),Vector3(0.0f,0.0f,0.0f),1.5f,EaseType::EASE_OUT,2.0f });
+	motionPoint_.push_back({ Vector3(0.0f,40.0f,600.0f),Vector3(0.0f,0.0f,0.0f),2.5f,EaseType::EASE_OUT,2.0f });
+
+	player_->SetIsMoveActive(false);
+
+	//スプライトを映す
+	UIManager::GetInstance()->GetUIGroup("Clear")->isActive = true;
+
+	//テキスト系のUIを隠す
+	UIManager::GetInstance()->GetUIGroup("Reticle")->isActive = false;
+
+	UIManager::GetInstance()->GetUIGroup("Help")->isActive = false;
+
+	//シェイクを始める
+	Shake::GetInstance()->Start(1.0f, 1.0f);
+
+	//画面をフラッシュさせる
+	Flash::GetInstance()->Start(0.5f, Vector4(0.0f, 0.0f, 0.0f, 1.0f));
+
+	//色を反転させる
+	OffScreen::GetInstance()->SetColorReverseRatio(0.75f);
+}
+
+void ClearEvent::Exit() {
+}
+
+void ClearEvent::Update() {
+
+	if (Input::GetInstance()->IsTriggerPushKey(DIK_SPACE)) {
+
+		canMove_ = true;
+
+		//クリアUIを隠す
+		UIManager::GetInstance()->GetUIGroup("Clear")->isActive = false;
+
+		//画面をフラッシュさせる
+		Flash::GetInstance()->Start(0.5f, Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+
+		//色を反転させる
+		OffScreen::GetInstance()->SetColorReverseRatio(0.0f);
+	}
+
+	if (canMove_) {
+
+		UpdateEventMotion();
+	}
+
+	if (motionNum_ == static_cast<int>(motionPoint_.size()) - 1) {
+		if (!isFade_) {
+
+			Fade::GetInstance()->StartFadeOut();
+
+			isFade_ = true;
+		}
+	}
+}
+
+GameSceneEventBase::EventType ClearEvent::RequestNextEvent() const {
+
+	return EventType::NONE;
+}
+
+============================================================
+File Path: Application/Scene/GameScene/Event/ClearEvent.h
+============================================================
+#pragma once
+
+#include <Scene/GameScene/Event/GameSceneEventBase.h>
+
+class ClearEvent : public GameSceneEventBase {
+
+public:
+
+	void Start(Player* player, Camera* camera, FollowCamera* followCamera) override;
+
+	void Exit() override;
+
+	void Update() override;
+
+	EventType RequestNextEvent() const override;
+
+private:
+
+	bool isFade_ = false;
+};
+
+============================================================
+File Path: Application/Scene/GameScene/Event/GameEvent.cpp
+============================================================
+#include "GameEvent.h"
+
+#include <Base/Input.h>
+#include <ObjectManager.h>
+
+void GameEvent::Start(Player* player, Camera* camera, FollowCamera* followCamera) {
+
+	player_ = player;
+	camera_ = camera;
+	followCamera_ = followCamera;
+
+	canMove_ = true;
+
+	followCamera_->SetIsActive(true);
+
+	player_->SetIsMoveActive(true);
+}
+
+void GameEvent::Exit() {
+}
+
+void GameEvent::Update() {
+}
+
+GameSceneEventBase::EventType GameEvent::RequestNextEvent() const {
+
+	if (Input::GetInstance()->IsTriggerPushKey(DIK_ESCAPE)) {
+
+		return EventType::PAUSE;
+	}
+
+	if (ObjectManager::GetInstance()->GetKillCount() >= 30) {
+
+		return EventType::CLEAR;
+	}
+
+	if (player_->GetIsDead()) {
+
+		return EventType::GAMEOVER;
+	}
+
+	return EventType::NONE;
+}
+
+
+============================================================
+File Path: Application/Scene/GameScene/Event/GameEvent.h
+============================================================
+#pragma once
+
+#include <Scene/GameScene/Event/GameSceneEventBase.h>
+
+class GameEvent : public GameSceneEventBase {
+
+public:
+
+	void Start(Player* player, Camera* camera, FollowCamera* followCamera) override;
+
+	void Exit() override;
+
+	void Update() override;
+
+	EventType RequestNextEvent() const override;
+
+};
+
+============================================================
+File Path: Application/Scene/GameScene/Event/GameOverEvent.cpp
+============================================================
+#include "GameOverEvent.h"
+
+#include <UIManager.h>
+#include <Shake/Shake.h>
+#include <Fade/Fade.h>
+#include <Base/OffScreen.h>
+#include <Base/Input.h>
+
+void GameOverEvent::Start(Player* player, Camera* camera, FollowCamera* followCamera) {
+
+	//スプライトを映す
+	UIManager::GetInstance()->GetUIGroup("GameOver")->isActive = true;
+
+	//テキスト系のUIを隠す
+	UIManager::GetInstance()->GetUIGroup("Reticle")->isActive = false;
+
+	UIManager::GetInstance()->GetUIGroup("Help")->isActive = false;
+
+	//シェイクを始める
+	Shake::GetInstance()->Start(1.0f, 0.5f);
+
+	//色を反転させる
+	OffScreen::GetInstance()->SetColorReverseRatio(1.0f);
+}
+
+void GameOverEvent::Exit() {
+}
+
+void GameOverEvent::Update() {
+
+	if (Input::GetInstance()->IsTriggerPushKey(DIK_SPACE)) {
+
+		if (!isFade_) {
+
+			Fade::GetInstance()->StartFadeOut();
+
+			isFade_ = true;
+		}
+	}
+}
+
+GameSceneEventBase::EventType GameOverEvent::RequestNextEvent() const {
+
+	return EventType::NONE;
+}
+
+============================================================
+File Path: Application/Scene/GameScene/Event/GameOverEvent.h
+============================================================
+#pragma once
+
+#include <Scene/GameScene/Event/GameSceneEventBase.h>
+
+class GameOverEvent : public GameSceneEventBase {
+
+public:
+
+	void Start(Player* player, Camera* camera, FollowCamera* followCamera) override;
+
+	void Exit() override;
+
+	void Update() override;
+
+	EventType RequestNextEvent() const override;
+
+private:
+
+	bool isFade_ = false;
+};
+
+============================================================
+File Path: Application/Scene/GameScene/Event/GameSceneEventBase.cpp
+============================================================
+#include "GameSceneEventBase.h"
+
+#include <algorithm>
+
+void GameSceneEventBase::UpdateEventMotion() {
+
+	if (motionPoint_.empty()) {
+		return;
+	}
+
+	if (isFinished_) {
+		return;
+	}
+
+	//タイマーを進ませる
+	motionTimer_ += 1.0f / 60.0f;
+
+	EventMotionPoint from = motionPoint_[motionNum_ - 1];
+	EventMotionPoint to = motionPoint_[motionNum_];
+
+	//進捗を計算
+	float t = (motionTimer_ - from.duration) / (to.duration - from.duration);
+
+	t = std::clamp(t, 0.0f, 1.0f);
+
+	//キーフレーム間を補間
+	player_->SetPosition(Ease(from.playerPosition, to.playerPosition, t, to.easeType, to.easeMag));
+
+	camera_->GetWorldTransform().rotate_ = Ease(from.cameraRotation, to.cameraRotation, t, to.easeType, to.easeMag);
+
+	//キーを進ませる
+	if (t == 1.0f) {
+
+		motionNum_++;
+	}
+
+	//最後のキーが終わったら
+	if (motionNum_ == static_cast<int>(motionPoint_.size())) {
+
+		isFinished_ = true;
+	}
+}
+
+============================================================
+File Path: Application/Scene/GameScene/Event/GameSceneEventBase.h
+============================================================
+#pragma once
+
+#include <Player/Player.h>
+#include <3d/Camera/Camera.h>
+#include <Camera/FollowCamera.h>
+
+#include <Math/Vector3.h>
+#include <Math/Easing.h>
+
+#include <vector>
+
+class GameSceneEventBase {
+
+public:
+
+	enum class EventType {
+		NONE,
+		START,
+		GAME,
+		PAUSE,
+		CLEAR,
+		GAMEOVER
+	};
+
+protected:
+
+	struct EventMotionPoint {
+		Vector3 playerPosition;
+		Vector3 cameraRotation;
+		float duration;
+		EaseType easeType;
+		float easeMag;
+	};
+
+public:
+	virtual ~GameSceneEventBase() = default;
+
+	virtual void Start(Player* player, Camera* camera, FollowCamera* followCamera) = 0;   // 開始時1回
+	virtual void Exit() = 0;    // 終了処理
+	virtual void Update() = 0;  // 毎フレーム
+
+	virtual EventType RequestNextEvent() const { return EventType::NONE; }
+
+protected:
+
+	void UpdateEventMotion();
+
+protected:
+
+	Player* player_ = nullptr;
+
+	Camera* camera_ = nullptr;
+
+	FollowCamera* followCamera_ = nullptr;
+
+	std::vector<EventMotionPoint> motionPoint_;
+
+	float motionTimer_ = 0.0f;
+
+	int motionNum_ = 0;
+
+	bool isFinished_ = false;
+
+	bool canMove_ = true;
+
+public:
+
+	bool IsFinished() const { return isFinished_; }
+
+	bool canMove() const { return canMove_; }
+
+};
+
+============================================================
+File Path: Application/Scene/GameScene/Event/GameSceneEventFactory.cpp
+============================================================
+#include "GameSceneEventFactory.h"
+
+#include <Scene/GameScene/Event/StartEvent.h>
+#include <Scene/GameScene/Event/GameEvent.h>
+#include <Scene/GameScene/Event/PauseEvent.h>
+#include <Scene/GameScene/Event/ClearEvent.h>
+#include <Scene/GameScene/Event/GameOverEvent.h>
+
+std::unique_ptr<GameSceneEventBase> GameSceneEventFactory::Create(GameSceneEventBase::EventType type) {
+
+	switch (type) {
+	case GameSceneEventBase::EventType::START:
+
+		return std::make_unique<StartEvent>();
+	case GameSceneEventBase::EventType::GAME:
+
+		return std::make_unique<GameEvent>();
+	case GameSceneEventBase::EventType::PAUSE:
+
+		return std::make_unique<PauseEvent>();
+	case GameSceneEventBase::EventType::CLEAR:
+
+		return std::make_unique<ClearEvent>();
+	case GameSceneEventBase::EventType::GAMEOVER:
+
+		return std::make_unique<GameOverEvent>();
+	default:
+
+		return nullptr;
+	}
+}
+
+============================================================
+File Path: Application/Scene/GameScene/Event/GameSceneEventFactory.h
+============================================================
+#pragma once
+
+#include <Scene/GameScene/Event/GameSceneEventBase.h>
+#include <Player/Player.h>
+#include <3d/Camera/Camera.h>
+#include <Camera/FollowCamera.h>
+
+#include <memory>
+
+class GameSceneEventFactory {
+
+public:
+
+	static std::unique_ptr<GameSceneEventBase> Create(GameSceneEventBase::EventType type);
+
+};
+
+============================================================
+File Path: Application/Scene/GameScene/Event/PauseEvent.cpp
+============================================================
+#include "PauseEvent.h"
+
+#include <UIManager.h>
+#include <EmitterManager.h>
+#include <Fade/Fade.h>
+#include <Base/Input.h>
+
+void PauseEvent::Start(Player* player, Camera* camera, FollowCamera* followCamera) {
+
+	player_ = player;
+
+	canMove_ = false;
+
+	UIManager::GetInstance()->GetUIGroup("Reticle")->isActive = false;
+	UIManager::GetInstance()->GetUIGroup("Help")->isActive = false;
+	UIManager::GetInstance()->GetUIGroup("Pause")->isActive = true;
+
+	EmitterManager::GetInstance()->SetIsUpdate(false);
+
+	player_->SetIsMoveActive(false);
+}
+
+void PauseEvent::Exit() {
+
+	UIManager::GetInstance()->GetUIGroup("Reticle")->isActive = true;
+	UIManager::GetInstance()->GetUIGroup("Help")->isActive = true;
+	UIManager::GetInstance()->GetUIGroup("Pause")->isActive = false;
+
+	EmitterManager::GetInstance()->SetIsUpdate(true);
+
+	player_->SetIsMoveActive(true);
+}
+
+void PauseEvent::Update() {
+
+	if (delay_) {
+
+		if (Input::GetInstance()->IsTriggerPushKey(DIK_ESCAPE)) {
+
+			isFinished_ = true;
+		}
+
+		if (Input::GetInstance()->IsTriggerPushKey(DIK_SPACE)) {
+
+			Fade::GetInstance()->StartFadeOut();
+		}
+	}
+
+	delay_ = true;
+}
+
+GameSceneEventBase::EventType PauseEvent::RequestNextEvent() const {
+
+	if (isFinished_) {
+
+		return EventType::GAME;
+	}
+
+	return EventType::NONE;
+}
+
+
+============================================================
+File Path: Application/Scene/GameScene/Event/PauseEvent.h
+============================================================
+#pragma once
+
+#include <Scene/GameScene/Event/GameSceneEventBase.h>
+
+class PauseEvent : public GameSceneEventBase {
+
+public:
+
+	void Start(Player* player, Camera* camera, FollowCamera* followCamera) override;
+
+	void Exit() override;
+
+	void Update() override;
+
+	EventType RequestNextEvent() const override;
+
+private:
+
+	bool delay_ = false;
+
+};
+
+============================================================
+File Path: Application/Scene/GameScene/Event/StartEvent.cpp
+============================================================
+#include "StartEvent.h"
+
+#include <numbers>
+
+void StartEvent::Start(Player* player, Camera* camera, FollowCamera* followCamera) {
+
+	player_ = player;
+	camera_ = camera;
+	followCamera_ = followCamera;
+
+	motionNum_ = 1;
+
+	canMove_ = true;
+
+	motionPoint_.push_back({ Vector3(0.0f,20.0f,-600.0f),Vector3(0.0f,-std::numbers::pi_v<float>,0.0f),0.0f,EaseType::LINEAR,1.0f });
+	motionPoint_.push_back({ Vector3(0.0f,20.0f,-600.0f),Vector3(0.0f,-std::numbers::pi_v<float>,0.0f),1.0f,EaseType::EASE_OUT,1.0f });
+	motionPoint_.push_back({ Vector3(0.0f,0.75f,0.0f),Vector3(0.2f,-std::numbers::pi_v<float>,0.0f),2.0f,EaseType::EASE_OUT,3.0f });
+	motionPoint_.push_back({ Vector3(0.0f,1.0f,0.0f),Vector3(0.2f,0.0f,0.0f),4.0f,EaseType::EASE_OUT,4.0f });
+
+	followCamera_->SetIsActive(false);
+
+	player_->SetIsMoveActive(false);
+}
+
+void StartEvent::Exit() {
+}
+
+void StartEvent::Update() {
+
+	UpdateEventMotion();
+}
+
+GameSceneEventBase::EventType StartEvent::RequestNextEvent() const {
+
+	if (isFinished_) {
+
+		return EventType::GAME;
+	}
+
+	return EventType::NONE;
+}
+
+
+============================================================
+File Path: Application/Scene/GameScene/Event/StartEvent.h
+============================================================
+#pragma once
+
+#include <Scene/GameScene/Event/GameSceneEventBase.h>
+
+#include <Camera/FollowCamera.h>
+
+class StartEvent : public GameSceneEventBase {
+
+public:
+
+	void Start(Player* player, Camera* camera, FollowCamera* followCamera) override;
+
+	void Exit() override;
+
+	void Update() override;
+
+	EventType RequestNextEvent() const override;
+
+};
+
+============================================================
+File Path: Application/Scene/GameScene/GameScene.cpp
 ============================================================
 #include "GameScene.h"
 
@@ -6852,6 +7485,12 @@ File Path: Application/Scene/GameScene.cpp
 #include "ObjectManager.h"
 #include "UIManager.h"
 #include "EmitterManager.h"
+
+#include "Scene/GameScene/Event/StartEvent.h"
+#include "Scene/GameScene/Event/GameEvent.h"
+#include "Scene/GameScene/Event/PauseEvent.h"
+#include "Scene/GameScene/Event/ClearEvent.h"
+#include "Scene/GameScene/Event/GameOverEvent.h"
 
 #include "2d/Sprite/SpriteManager.h"
 #include "3d/Model/ModelManager.h"
@@ -6914,10 +7553,7 @@ void GameScene::Initialize() {
 
 	player_ = ObjectManager::GetInstance()->GetPlayer();
 
-	player_->Initialize(camera_.get(), bulletManager_.get(),false);
-
-	//最初は動けないようにする
-	player_->SetIsMoveActive(false);
+	player_->Initialize(camera_.get(), bulletManager_.get(), false);
 
 	//エネミーマネージャーの初期化
 	enemyManager_->Initialize(camera_.get(), bulletManager_.get(), player_);
@@ -6956,35 +7592,17 @@ void GameScene::Initialize() {
 
 	shockWaveRightEmitter_->LoadEmitter("ShockWaveRight");
 
+	sceneProgress_ = std::make_unique<GameSceneProgress>();
+
+	sceneProgress_->Initialize(player_,camera_.get(),followCamera_.get());
+
 	/// === 他変数の設定 === ///
-
-	timer_ = 0.0f;
-
-	animNum_ = 0;
-
-	isStart_ = true;
-
-	isGameOver_ = false;
-
-	isClear_ = false;
-
-	isClearAnim_ = false;
 
 	arrowLength_ = 20.0f;
 
 	arrowTimer_ = 0.0f;
 
 	timerDirection_ = 1.0f;
-
-	//キーフレームの設定
-	startAnimPoints_.push_back({ Vector3(0.0f,20.0f,-600.0f),Vector3(0.0f,-std::numbers::pi_v<float>,0.0f),0.0f,1.0f });
-	startAnimPoints_.push_back({ Vector3(0.0f,20.0f,-600.0f),Vector3(0.0f,-std::numbers::pi_v<float>,0.0f),1.0f,1.0f });
-	startAnimPoints_.push_back({ Vector3(0.0f,0.75f,0.0f),Vector3(0.2f,-std::numbers::pi_v<float>,0.0f),2.0f,3.0f });
-	startAnimPoints_.push_back({ Vector3(0.0f,1.0f,0.0f),Vector3(0.2f,0.0f,0.0f),4.0f,4.0f });
-
-	clearAnimPoints_.push_back({ Vector3(0.0f,0.0f,0.0f),Vector3(0.2f,0.0f,0.0f),0.0f,1.0f });
-	clearAnimPoints_.push_back({ Vector3(0.0f,4.0f,0.0f),Vector3(0.2f,0.0f,0.0f),1.5f,2.0f });
-	clearAnimPoints_.push_back({ Vector3(0.0f,40.0f,600.0f),Vector3(0.2f,0.0f,0.0f),2.5f,2.0f });
 
 	Fade::GetInstance()->SetCamera(camera_.get());
 
@@ -7023,19 +7641,15 @@ void GameScene::Update() {
 		Fade::GetInstance()->SetState(Fade::FadeState::NONE);
 	}
 
-	//スタート時のアニメーションの更新
-	StartAnimation();
-
-	//クリア時のアニメーションの更新
-	ClearAnimation();
-
 	//追尾カメラの更新
 	followCamera_->Update();
 
 	//カメラをデバッグ状態で更新
 	camera_->Update();
 
-	if (!isClear_) {
+	sceneProgress_->Update();
+
+	if (sceneProgress_->canMove()) {
 
 		//プレイヤーの更新
 		player_->Update();
@@ -7077,10 +7691,12 @@ void GameScene::Update() {
 
 	float lerpNum = EaseOut(0.0f, arrowLength_, arrowTimer_ / 1.0f);
 
+	float alphaNum = EaseOut(0.0f, 1.0f, arrowTimer_ / 1.0f);
+
 	//3Dオブジェクトの座標をスクリーン座標に変換する
 	Vector3 playerScreenPos = Vector3ToScreenSpace(camera_.get(), player_->GetWorldPos());
 
-	UIManager::GetInstance()->Get2DObject("GameOver","LeftArrow")->SetTranslate({spaceKeyPos_.x - spaceKeySize_.x / 2.0f - 64.0f - lerpNum,spaceKeyPos_.y});
+	UIManager::GetInstance()->Get2DObject("GameOver", "LeftArrow")->SetTranslate({ spaceKeyPos_.x - spaceKeySize_.x / 2.0f - 64.0f - lerpNum,spaceKeyPos_.y });
 
 	UIManager::GetInstance()->Get2DObject("GameOver", "RightArrow")->SetTranslate({ spaceKeyPos_.x + spaceKeySize_.x / 2.0f + 64.0f + lerpNum,spaceKeyPos_.y });
 
@@ -7089,6 +7705,8 @@ void GameScene::Update() {
 	UIManager::GetInstance()->Get2DObject("Clear", "RightArrow")->SetTranslate({ spaceKeyPos_.x + spaceKeySize_.x / 2.0f + 64.0f + lerpNum,spaceKeyPos_.y });
 
 	UIManager::GetInstance()->GetUIGroup("Reticle")->transform.translate_ = playerScreenPos;
+
+	UIManager::GetInstance()->Get2DObject("Pause", "Text")->GetSprite()->SetColor(Vector4(1.0f, 1.0f, 1.0f, alphaNum));
 
 	if (Input::GetInstance()->isPushKey(DIK_W)) {
 
@@ -7129,125 +7747,6 @@ void GameScene::Update() {
 
 	//左衝撃波エミッターの更新
 	shockWaveLeftEmitter_->Update();
-
-	//プレイヤーが倒されたとき
-	if (!isGameOver_) {
-		if (player_->GetIsDead()) {
-
-			//ゲームオーバー演出を始める
-			isGameOver_ = true;
-
-			//スプライトを映す
-			UIManager::GetInstance()->Get2DObject("GameOver", "Text")->GetSprite()->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
-
-			UIManager::GetInstance()->Get2DObject("GameOver", "Space")->GetSprite()->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
-
-			UIManager::GetInstance()->Get2DObject("GameOver", "LeftArrow")->GetSprite()->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
-
-			UIManager::GetInstance()->Get2DObject("GameOver", "RightArrow")->GetSprite()->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
-
-			//シェイクを始める
-			Shake::GetInstance()->Start(1.0f, 0.5f);
-
-			//色を反転させる
-			OffScreen::GetInstance()->SetColorReverseRatio(1.0f);
-		}
-	} else {
-
-		//ゲームオーバー時スペースキーが押されたら
-		if (Input::GetInstance()->IsTriggerPushKey(DIK_SPACE)) {
-
-			//フェードアウトを始める
-			Fade::GetInstance()->StartFadeOut();
-		}
-	}
-
-	if (ObjectManager::GetInstance()->GetKillCount() >= 30) {
-
-		if (Fade::GetInstance()->GetState() != Fade::FadeState::FADE_OUT && Fade::GetInstance()->GetState() != Fade::FadeState::FADE_OUT_END) {
-
-			if (!isClearAnim_) {
-
-				if (!isClear_) {
-
-					isClear_ = true;
-
-					animNum_ = 1;
-
-					timer_ = 0.0f;
-
-					clearAnimPoints_[0].playerPos = player_->GetWorldPos();
-
-					enemyManager_->StartClearUpdate();
-
-					player_->SetIsMoveActive(false);
-
-					//スプライトを映す
-					UIManager::GetInstance()->Get2DObject("Clear", "Text")->GetSprite()->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
-
-					UIManager::GetInstance()->Get2DObject("Clear", "Space")->GetSprite()->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
-
-					UIManager::GetInstance()->Get2DObject("Clear", "LeftArrow")->GetSprite()->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
-
-					UIManager::GetInstance()->Get2DObject("Clear", "RightArrow")->GetSprite()->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
-
-					//シェイクを始める
-					Shake::GetInstance()->Start(1.0f, 1.0f);
-
-					//画面をフラッシュさせる
-					Flash::GetInstance()->Start(0.5f, Vector4(0.0f, 0.0f, 0.0f, 1.0f));
-
-					//色を反転させる
-					OffScreen::GetInstance()->SetColorReverseRatio(0.75f);
-				}
-			}
-		}
-	}
-
-	if (isClear_) {
-
-		if (Input::GetInstance()->IsTriggerPushKey(DIK_SPACE)) {
-
-			isClearAnim_ = true;
-
-			isClear_ = false;
-
-			//スプライトを再度隠す
-			UIManager::GetInstance()->Get2DObject("Clear", "Text")->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
-
-			UIManager::GetInstance()->Get2DObject("Clear", "Space")->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
-
-			UIManager::GetInstance()->Get2DObject("Clear", "LeftArrow")->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
-
-			UIManager::GetInstance()->Get2DObject("Clear", "RightArrow")->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
-
-			//画面をフラッシュさせる
-			Flash::GetInstance()->Start(0.5f, Vector4(1.0f, 1.0f, 1.0f, 1.0f));
-
-			//色を反転させる
-			OffScreen::GetInstance()->SetColorReverseRatio(0.0f);
-		}
-	}
-
-	if (isClear_ || isGameOver_) {
-
-		UIManager::GetInstance()->Get2DObject("Reticle", "WButton")->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
-
-		UIManager::GetInstance()->Get2DObject("Reticle", "AButton")->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
-
-		UIManager::GetInstance()->Get2DObject("Reticle", "SButton")->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
-
-		UIManager::GetInstance()->Get2DObject("Reticle", "DButton")->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
-
-		UIManager::GetInstance()->Get2DObject("Reticle", "SpaceButton")->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
-
-		UIManager::GetInstance()->Get2DObject("Reticle", "MoveHelp")->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
-
-		UIManager::GetInstance()->Get2DObject("Reticle", "AttackHelp")->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
-
-		UIManager::GetInstance()->Get2DObject("Help", "Target")->GetSprite()->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
-
-	}
 
 	//フェードアウトが終わったら
 	if (Fade::GetInstance()->GetState() == Fade::FadeState::FADE_OUT_END) {
@@ -7313,163 +7812,30 @@ void GameScene::ImGui() {
 
 }
 
-///=====================================================/// 
-/// スタート時のアニメーション
-///=====================================================///
-void GameScene::StartAnimation() {
-
-	//スタート時以外はスキップ
-	if (!isStart_) {
-		return;
-	}
-
-	//タイマーを進ませる
-	timer_ += 1.0f / 60.0f;
-
-	if (animNum_ == 0) {
-
-		//最初のキーは初期位置設定用
-		player_->SetPosition(startAnimPoints_[animNum_].playerPos);
-
-		camera_->GetWorldTransform().rotate_ = startAnimPoints_[animNum_].cameraRot;
-
-		//キーを進ませる
-		animNum_++;
-	} else {
-
-		//進捗を計算
-		float t = (timer_ - startAnimPoints_[animNum_ - 1].time) / (startAnimPoints_[animNum_].time - startAnimPoints_[animNum_ - 1].time);
-
-		//1以上になったらそろえる
-		if (t >= 1.0f) {
-
-			t = 1.0f;
-		}
-
-		//キーフレーム間を補間
-		player_->SetPosition(EaseOut(startAnimPoints_[animNum_ - 1].playerPos, startAnimPoints_[animNum_].playerPos, t, startAnimPoints_[animNum_].mag));
-
-		camera_->GetWorldTransform().rotate_ = EaseOut(startAnimPoints_[animNum_ - 1].cameraRot, startAnimPoints_[animNum_].cameraRot, t, startAnimPoints_[animNum_].mag);
-
-		//キーを進ませる
-		if (t == 1.0f) {
-
-			animNum_++;
-		}
-
-		//最後のキーが終わったら
-		if (animNum_ == static_cast<int>(startAnimPoints_.size())) {
-
-			//スタート時の演出を終わる
-			isStart_ = false;
-
-			//追従カメラを有効化
-			followCamera_->SetIsActive(true);
-
-			//プレイヤーが動けるようにする
-			player_->SetIsMoveActive(true);
-		}
-	}
-
-}
-
-void GameScene::ClearAnimation() {
-
-	//クリア時以外はスキップ
-	if (!isClearAnim_) {
-		return;
-	}
-
-	//タイマーを進ませる
-	timer_ += 1.0f / 60.0f;
-
-	//進捗を計算
-	float t = (timer_ - clearAnimPoints_[animNum_ - 1].time) / (clearAnimPoints_[animNum_].time - clearAnimPoints_[animNum_ - 1].time);
-
-	//1以上になったらそろえる
-	if (t >= 1.0f) {
-
-		t = 1.0f;
-	}
-
-	//キーフレーム間を補間
-	player_->SetPosition(EaseOut(clearAnimPoints_[animNum_ - 1].playerPos, clearAnimPoints_[animNum_].playerPos, t, clearAnimPoints_[animNum_].mag));
-
-	shockWaveLeftEmitter_->GetWorldTransform().translate_ = player_->GetWorldPos() + Vector3(-1.75f, 0.0f, 0.0f);
-
-	shockWaveRightEmitter_->GetWorldTransform().translate_ = player_->GetWorldPos() + Vector3(1.75f, 0.0f, 0.0f);
-
-	//キーを進ませる
-	if (t == 1.0f) {
-
-		animNum_++;
-
-		if (animNum_ == static_cast<int>(clearAnimPoints_.size()) - 1) {
-
-			shockWaveLeftEmitter_->GetWorldTransform().translate_ = player_->GetWorldPos() + Vector3(-1.75f, 0.0f, 0.0f);
-			shockWaveLeftEmitter_->Emit();
-
-			shockWaveRightEmitter_->GetWorldTransform().translate_ = player_->GetWorldPos() + Vector3(1.75f, 0.0f, 0.0f);
-			shockWaveRightEmitter_->Emit();
-
-			//フェードアウトを始める
-			Fade::GetInstance()->StartFadeOut();
-		}
-	}
-
-	//最後のキーが終わったら
-	if (animNum_ == static_cast<int>(clearAnimPoints_.size())) {
-
-		isClearAnim_ = false;
-	}
-
-}
 
 ============================================================
-File Path: Application/Scene/GameScene.h
+File Path: Application/Scene/GameScene/GameScene.h
 ============================================================
 #pragma once
 #include "Scene/BaseScene.h"
 
 #include "Base/Audio.h"
-#include "2d/Object/Object2D.h"
 #include "3d/Camera/Camera.h"
-#include "3d/Object/Object3D.h"
-#include "3d/Object/DebugLine.h"
-#include "3d/Object/SkyBox.h"
-#include "3d/Particle/ParticleEmitter.h"
 #include "3d/Particle/EmitterGroup.h"
 
 #include "Player/Player.h"
 #include "Enemy/EnemyManager.h"
 #include "Bullet/BulletManager.h"
 #include "Camera/FollowCamera.h"
-#include "Ground/LineGround.h"
-#include "Ground/Ground.h"
-#include "Ground/Building.h"
 #include "Ground/GroundManager.h"
+#include "Scene/GameScene/GameSceneProgress.h"
 
 #include "memory"
-#include "vector"
-#include "list"
 
 /// <summary>
 /// ゲームシーン
 /// </summary>
 class GameScene : public BaseScene {
-
-	///-------------------------------------------/// 
-	/// 構造体
-	///-------------------------------------------///
-public:
-
-	//アニメーションのキーフレーム
-	struct AnimPoint {
-		Vector3 playerPos;
-		Vector3 cameraRot;
-		float time;
-		float mag;
-	};
 
 	///-------------------------------------------/// 
 	/// メンバ関数
@@ -7501,16 +7867,6 @@ public:
 	/// </summary>
 	void ImGui() override;
 
-	/// <summary>
-	/// ゲーム開始時のカメラ・プレイヤーアニメーションを更新します。
-	/// </summary>
-	void StartAnimation();
-
-	/// <summary>
-	/// ゲームクリア時のプレイヤー・エフェクトアニメーションを更新します。
-	/// </summary>
-	void ClearAnimation();
-
 	///-------------------------------------------/// 
 	/// メンバ変数
 	///-------------------------------------------///
@@ -7521,9 +7877,6 @@ private:
 
 	//追従カメラ
 	std::unique_ptr<FollowCamera> followCamera_;
-
-	//ライン
-	std::vector<std::unique_ptr<DebugLine>> lines_;
 
 	//プレイヤー
 	Player* player_;
@@ -7543,11 +7896,8 @@ private:
 	//衝撃波エミッター(右)
 	std::unique_ptr<EmitterGroup> shockWaveRightEmitter_;
 
-	//ライン描画の地面
-	std::unique_ptr<LineGround> lineGround_;
-
-	//SkyBox
-	std::unique_ptr<SkyBox> skyBox_;
+	//シーンのイベント管理
+	std::unique_ptr<GameSceneProgress> sceneProgress_;
 
 	//スペースキースプライトの位置
 	Vector2 spaceKeyPos_;
@@ -7564,29 +7914,87 @@ private:
 	//アニメーションタイマーの進行方向
 	float timerDirection_;
 
-	//アニメーションのタイマー
-	float timer_;
+};
 
-	//キーフレームの番号
-	int animNum_;
+============================================================
+File Path: Application/Scene/GameScene/GameSceneProgress.cpp
+============================================================
+#include "GameSceneProgress.h"
 
-	//スタートアニメーションキーフレーム
-	std::vector<AnimPoint> startAnimPoints_;
+#include <Scene/GameScene/Event/GameSceneEventFactory.h>
 
-	//クリアアニメーションキーフレーム
-	std::vector<AnimPoint> clearAnimPoints_;
+void GameSceneProgress::Initialize(Player* player, Camera* camera, FollowCamera* followCamera) {
 
-	//スタート時の演出をするかのフラグ
-	bool isStart_;
+	player_ = player;
 
-	//ゲームオーバーになったかのフラグ
-	bool isGameOver_;
+	camera_ = camera;
 
-	//クリアになったかのフラグ
-	bool isClear_;
+	followCamera_ = followCamera;
 
-	//クリアアニメーション中かのフラグ
-	bool isClearAnim_;
+	event_ = GameSceneEventFactory::Create(GameSceneEventBase::EventType::START);
+
+	event_->Start(player_, camera_, followCamera_);
+
+}
+
+void GameSceneProgress::Update() {
+
+	event_->Update();
+
+	GameSceneEventBase::EventType nextType = event_->RequestNextEvent();
+
+	if (nextType != GameSceneEventBase::EventType::NONE) {
+		ChangeEvent(nextType);
+	}
+}
+
+void GameSceneProgress::ChangeEvent(GameSceneEventBase::EventType type) {
+
+	event_->Exit();
+
+	event_ = GameSceneEventFactory::Create(type);
+
+	event_->Start(player_, camera_, followCamera_);
+}
+
+============================================================
+File Path: Application/Scene/GameScene/GameSceneProgress.h
+============================================================
+#pragma once
+
+#include <3d/Camera/Camera.h>
+#include <Camera/FollowCamera.h>
+#include <Player/Player.h>
+
+#include <Scene/GameScene/Event/GameSceneEventBase.h>
+
+#include <memory>
+
+class GameSceneProgress {
+
+public:
+
+	void Initialize(Player* player, Camera* camera, FollowCamera* followCamera);
+
+	void Update();
+
+private:
+
+	void ChangeEvent(GameSceneEventBase::EventType type);
+
+private:
+
+	std::unique_ptr<GameSceneEventBase> event_;
+
+	Player* player_;
+
+	Camera* camera_;
+
+	FollowCamera* followCamera_;
+
+public:
+
+	bool canMove() { return event_->canMove(); }
 };
 
 ============================================================
@@ -8760,7 +9168,6 @@ void UIManager::Update() {
 
 	Edit();
 
-
 	for (auto& uiGroup : uiGroups_) {
 
 		uiGroup->transform.UpdateMatrix();
@@ -8776,6 +9183,11 @@ void UIManager::Update() {
 void UIManager::Draw() {
 
 	for (auto& uiGroup : uiGroups_) {
+
+		if (!uiGroup->isActive) {
+			continue;
+		}
+
 		for (auto& ui : uiGroup->uiList) {
 			ui.object->Draw(LayerType::UI);
 		}
@@ -8827,6 +9239,11 @@ void UIManager::ImGui() {
 					uiGroup->name = inputUIGroupName.c_str();
 				}
 			}
+			ImGui::NextColumn();
+			ImGui::Separator();
+
+			ImGui::Text("グループの有効化");
+			ImGui::Checkbox("##GroupActive", &uiGroup->isActive);
 			ImGui::NextColumn();
 			ImGui::Separator();
 
@@ -9155,6 +9572,8 @@ void UIManager::CreateUIGroup(const std::string& groupName) {
 
 	newGroup->transform.Initialize();
 
+	newGroup->isActive = true;
+
 	uiGroups_.push_back(std::move(newGroup));
 }
 
@@ -9214,9 +9633,12 @@ void UIManager::LoadUI(const std::string& fileName) {
 					uiData["groupSize"][2].get<float>()
 				};
 
+				bool groupIsActive = uiData["groupIsActive"].get<bool>();
+
 				uiGroup->transform.translate_ = groupPosition;
 				uiGroup->transform.rotate_ = groupRotate;
 				uiGroup->transform.scale_ = groupSize;
+				uiGroup->isActive = groupIsActive;
 
 				continue;
 			}
@@ -9273,11 +9695,13 @@ void UIManager::SaveUIState(const std::string& fileName) {
 		Vector3 groupPosition = uiGroup->transform.translate_;
 		Vector3 groupRotate = uiGroup->transform.rotate_;
 		Vector3 groupSize = uiGroup->transform.scale_;
+		bool groupIsActive = uiGroup->isActive;
 
 		jsonData[groupName]["GroupState"] = {
 			{ "groupPosition", {groupPosition.x,groupPosition.y,groupPosition.z}},
 			{ "groupRotate", {groupRotate.x,groupRotate.y,groupRotate.z}},
 			{ "groupSize", {groupSize.x,groupSize.y,groupSize.z}},
+			{ "groupIsActive", groupIsActive}
 		};
 
 		for (auto& ui : uiGroup->uiList) {
@@ -9390,6 +9814,7 @@ public:
 		std::string name;
 		std::vector<UIObject> uiList;
 		WorldTransform transform;
+		bool isActive;
 	};
 
 public:
@@ -25676,8 +26101,73 @@ File Path: Engine/Math/Easing.cpp
 
 #define _USE_MATH_DEFINES
 
-#include "cmath"
+#include <cmath>
+#include <algorithm>
 
+namespace {
+
+	float EaseT(float t, EaseType type, float mag) {
+
+		t = std::clamp(t, 0.0f, 1.0f);
+
+		switch (type) {
+		case EaseType::LINEAR:
+			return t;
+
+		case EaseType::EASE_IN:
+			return powf(t, mag);
+
+		case EaseType::EASE_OUT:
+			return 1.0f - powf(1.0f - t, mag);
+
+		case EaseType::EASE_INOUT:
+			if (t < 0.5f) {
+				return 2.0f * t * t;
+			}
+			return 1.0f - std::pow(-2.0f * t + 2.0f, 2.0f) * 0.5f;
+		}
+
+		return t;
+	}
+
+} // unnamed namespace
+//
+//template float   Ease<float>(const float&, const float&, float, EaseType, float);
+//template Vector2 Ease<Vector2>(const Vector2&, const Vector2&, float, EaseType, float);
+//template Vector3 Ease<Vector3>(const Vector3&, const Vector3&, float, EaseType, float);
+//template Vector4 Ease<Vector4>(const Vector4&, const Vector4&, float, EaseType, float);
+
+template<>
+float Ease<float>(const float& from, const float& to, float t, EaseType type, float mag) {
+
+	float easedT = EaseT(t, type, mag);
+
+	return from + (to - from) * easedT;
+}
+
+template<>
+Vector2 Ease<Vector2>(const Vector2& from, const Vector2& to, float t, EaseType type, float mag) {
+
+	float easedT = EaseT(t, type, mag);
+
+	return from + (to - from) * easedT;
+}
+
+template<>
+Vector3 Ease<Vector3>(const Vector3& from,const Vector3& to,float t,EaseType type,float mag) {
+
+	float easedT = EaseT(t, type, mag);
+
+	return from + (to - from) * easedT;
+}
+
+template<>
+Vector4 Ease<Vector4>(const Vector4& from, const Vector4& to, float t, EaseType type, float mag) {
+
+	float easedT = EaseT(t, type, mag);
+
+	return from + (to - from) * easedT;
+}
 ///=====================================================///
 ///Lerp関数
 ///=====================================================///
@@ -25804,7 +26294,7 @@ Vector2 EaseOut(const Vector2& v1, const Vector2& v2, float t, float mag) {
 
 Vector3 EaseOut(const Vector3& v1, const Vector3& v2, float t, float mag) {
 
-	float easeT = 1.0f - powf(1.0f - t,mag);
+	float easeT = 1.0f - powf(1.0f - t, mag);
 
 	Vector3 result;
 
@@ -25855,7 +26345,7 @@ Vector3 EaseOutBack(const Vector3& v1, const Vector3& v2, float t, float mag) {
 ///=====================================================///
 Vector3 EaseInOut(const Vector3& v1, const Vector3& v2, float t, float mag) {
 
-	float easeT = t < 0.5f ? powf(2.0f,mag - 1.0f) * powf(t,mag) : 1.0f - powf(-2.0f, mag) / 2.0f;
+	float easeT = t < 0.5f ? powf(2.0f, mag - 1.0f) * powf(t, mag) : 1.0f - powf(-2.0f, mag) / 2.0f;
 
 	Vector3 result;
 
@@ -25884,6 +26374,25 @@ File Path: Engine/Math/Easing.h
 #include "Vector2.h"
 #include "Vector3.h"
 #include "Vector4.h"
+
+enum class EaseType {
+	LINEAR,
+	EASE_OUT,
+	EASE_IN,
+	EASE_INOUT
+};
+
+template<typename T>
+T Ease(const T& from, const T& to, float t, EaseType type, float mag);
+
+// 明示的インスタンス宣言
+extern template float   Ease<float>(const float&, const float&, float, EaseType, float mag);
+
+extern template Vector2 Ease<Vector2>(const Vector2&, const Vector2&, float, EaseType, float mag);
+
+extern template Vector3 Ease<Vector3>(const Vector3&, const Vector3&, float, EaseType, float mag);
+
+extern template Vector4 Ease<Vector4>(const Vector4&, const Vector4&, float, EaseType, float mag);
 
 /// <summary>
 /// ラープ関数 : float
@@ -26855,7 +27364,7 @@ File Path: Engine/Math/Vector2.cpp
 ///=====================================================///
 
 // ベクトル同士の加法
-Vector2 Vector2::operator+(const Vector2& v) {
+Vector2 Vector2::operator+(const Vector2& v) const {
 	return { x + v.x, y + v.y };
 }
 
@@ -26867,7 +27376,7 @@ Vector2& Vector2::operator+=(const Vector2& v) {
 }
 
 // ベクトルと float の加法
-Vector2 Vector2::operator+(const float& v) {
+Vector2 Vector2::operator+(const float& v) const {
 	return { x + v, y + v };
 }
 
@@ -26883,7 +27392,7 @@ Vector2& Vector2::operator+=(const float& v) {
 ///=====================================================///
 
 // ベクトル同士の減法
-Vector2 Vector2::operator-(const Vector2& v) {
+Vector2 Vector2::operator-(const Vector2& v) const {
 	return { x - v.x, y - v.y };
 }
 
@@ -26895,7 +27404,7 @@ Vector2& Vector2::operator-=(const Vector2& v) {
 }
 
 // ベクトルと float の減法
-Vector2 Vector2::operator-(const float& v) {
+Vector2 Vector2::operator-(const float& v) const {
 	return { x - v, y - v };
 }
 
@@ -26911,7 +27420,7 @@ Vector2& Vector2::operator-=(const float& v) {
 ///=====================================================///
 
 // ベクトル同士の積（要素ごとの積）
-Vector2 Vector2::operator*(const Vector2& v) {
+Vector2 Vector2::operator*(const Vector2& v) const {
 	return { x * v.x, y * v.y };
 }
 
@@ -26923,7 +27432,7 @@ Vector2& Vector2::operator*=(const Vector2& v) {
 }
 
 // ベクトルと float の積
-Vector2 Vector2::operator*(const float& v) {
+Vector2 Vector2::operator*(const float& v) const {
 	return { x * v, y * v };
 }
 
@@ -26939,7 +27448,7 @@ Vector2& Vector2::operator*=(const float& v) {
 ///=====================================================///
 
 // ベクトル同士の除法（要素ごとの除法）
-Vector2 Vector2::operator/(const Vector2& v) {
+Vector2 Vector2::operator/(const Vector2& v) const {
 	return { x / v.x, y / v.y };
 }
 
@@ -26951,7 +27460,7 @@ Vector2& Vector2::operator/=(const Vector2& v) {
 }
 
 // ベクトルと float の除法
-Vector2 Vector2::operator/(const float& v) {
+Vector2 Vector2::operator/(const float& v) const {
 	return { x / v, y / v };
 }
 
@@ -27016,27 +27525,27 @@ struct Vector2 final {
 	float y;
 
 	/// ===加法=== ///
-	Vector2 operator+(const Vector2& v);
+	Vector2 operator+(const Vector2& v) const;
 	Vector2& operator+=(const Vector2& v);
-	Vector2 operator+(const float& v);
+	Vector2 operator+(const float& v) const;
 	Vector2& operator+=(const float& v);
 
 	/// ===減法=== ///
-	Vector2 operator-(const Vector2& v);
+	Vector2 operator-(const Vector2& v) const;
 	Vector2& operator-=(const Vector2& v);
-	Vector2 operator-(const float& v);
+	Vector2 operator-(const float& v) const;
 	Vector2& operator-=(const float& v);
 
 	/// ===積=== ///
-	Vector2 operator*(const Vector2& v);
+	Vector2 operator*(const Vector2& v) const;
 	Vector2& operator*=(const Vector2& v);
-	Vector2 operator*(const float& v);
+	Vector2 operator*(const float& v) const;
 	Vector2& operator*=(const float& v);
 
 	/// ===除法=== ///
-	Vector2 operator/(const Vector2& v);
+	Vector2 operator/(const Vector2& v) const;
 	Vector2& operator/=(const Vector2& v);
-	Vector2 operator/(const float& v);
+	Vector2 operator/(const float& v) const;
 	Vector2& operator/=(const float& v);
 };
 
@@ -27289,7 +27798,7 @@ File Path: Engine/Math/Vector4.cpp
 ///=====================================================///
 
 // ベクトル同士の加法
-Vector4 Vector4::operator+(const Vector4& v) {
+Vector4 Vector4::operator+(const Vector4& v) const {
 	return { x + v.x, y + v.y, z + v.z, w + v.w };
 }
 
@@ -27303,7 +27812,7 @@ Vector4& Vector4::operator+=(const Vector4& v) {
 }
 
 // ベクトルと float の加法
-Vector4 Vector4::operator+(const float& v) {
+Vector4 Vector4::operator+(const float& v) const {
 	return { x + v, y + v, z + v, w + v };
 }
 
@@ -27321,7 +27830,7 @@ Vector4& Vector4::operator+=(const float& v) {
 ///=====================================================///
 
 // ベクトル同士の減法
-Vector4 Vector4::operator-(const Vector4& v) {
+Vector4 Vector4::operator-(const Vector4& v) const {
 	return { x - v.x, y - v.y, z - v.z, w - v.w };
 }
 
@@ -27335,7 +27844,7 @@ Vector4& Vector4::operator-=(const Vector4& v) {
 }
 
 // ベクトルと float の減法
-Vector4 Vector4::operator-(const float& v) {
+Vector4 Vector4::operator-(const float& v) const {
 	return { x - v, y - v, z - v, w - v };
 }
 
@@ -27353,7 +27862,7 @@ Vector4& Vector4::operator-=(const float& v) {
 ///=====================================================///
 
 // ベクトル同士の積（要素ごとの積）
-Vector4 Vector4::operator*(const Vector4& v) {
+Vector4 Vector4::operator*(const Vector4& v) const {
 	return { x * v.x, y * v.y, z * v.z, w * v.w };
 }
 
@@ -27367,7 +27876,7 @@ Vector4& Vector4::operator*=(const Vector4& v) {
 }
 
 // ベクトルと float の積
-Vector4 Vector4::operator*(const float& v) {
+Vector4 Vector4::operator*(const float& v) const {
 	return { x * v, y * v, z * v, w * v };
 }
 
@@ -27385,7 +27894,7 @@ Vector4& Vector4::operator*=(const float& v) {
 ///=====================================================///
 
 // ベクトル同士の除法（要素ごとの除法）
-Vector4 Vector4::operator/(const Vector4& v) {
+Vector4 Vector4::operator/(const Vector4& v) const {
 	return { x / v.x, y / v.y, z / v.z, w / v.w };
 }
 
@@ -27399,7 +27908,7 @@ Vector4& Vector4::operator/=(const Vector4& v) {
 }
 
 // ベクトルと float の除法
-Vector4 Vector4::operator/(const float& v) {
+Vector4 Vector4::operator/(const float& v) const {
 	return { x / v, y / v, z / v, w / v };
 }
 
@@ -27427,27 +27936,27 @@ struct Vector4 final {
 	float w;
 
 	/// ===加法=== ///
-	Vector4 operator+(const Vector4& v);
+	Vector4 operator+(const Vector4& v) const;
 	Vector4& operator+=(const Vector4& v);
-	Vector4 operator+(const float& v);
+	Vector4 operator+(const float& v) const;
 	Vector4& operator+=(const float& v);
 
 	/// ===減法=== ///
-	Vector4 operator-(const Vector4& v);
+	Vector4 operator-(const Vector4& v) const;
 	Vector4& operator-=(const Vector4& v);
-	Vector4 operator-(const float& v);
+	Vector4 operator-(const float& v) const;
 	Vector4& operator-=(const float& v);
 
 	/// ===積=== ///
-	Vector4 operator*(const Vector4& v);
+	Vector4 operator*(const Vector4& v) const;
 	Vector4& operator*=(const Vector4& v);
-	Vector4 operator*(const float& v);
+	Vector4 operator*(const float& v) const;
 	Vector4& operator*=(const float& v);
 
 	/// ===除法=== ///
-	Vector4 operator/(const Vector4& v);
+	Vector4 operator/(const Vector4& v) const;
 	Vector4& operator/=(const Vector4& v);
-	Vector4 operator/(const float& v);
+	Vector4 operator/(const float& v) const;
 	Vector4& operator/=(const float& v);
 };
 
@@ -28021,7 +28530,7 @@ File Path: Engine/Scene/SceneManager.cpp
 
 #include "3d/Collider/ColliderManager.h"
 
-#include "Scene/GameScene.h"
+#include "Scene/GameScene/GameScene.h"
 #include "Scene/TitleScene.h"
 #include "Scene/ParticleEditorScene.h"
 
@@ -28392,6 +28901,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Application\Enemy\State\EnemyExitState.cpp" />
     <ClCompile Include="Application\Enemy\State\EnemyMoveState.cpp" />
     <ClCompile Include="Application\EmitterManager.cpp" />
+    <ClCompile Include="Application\Scene\GameScene\Event\ClearEvent.cpp" />
     <ClCompile Include="Engine\3d\Mesh\CubeMesh.cpp" />
     <ClCompile Include="Engine\3d\Collider\AABBCollider.cpp" />
     <ClCompile Include="Engine\3d\Collider\Collider.cpp" />
@@ -28434,6 +28944,11 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Application\Flash\Flash.cpp" />
     <ClCompile Include="Application\Player\State\AttackState\JetAttackState.cpp" />
     <ClCompile Include="Application\Player\State\MovementState\JetMoveState.cpp" />
+    <ClCompile Include="Application\Scene\GameScene\Event\GameOverEvent.cpp" />
+    <ClCompile Include="Application\Scene\GameScene\Event\GameEvent.cpp" />
+    <ClCompile Include="Application\Scene\GameScene\GameSceneProgress.cpp" />
+    <ClCompile Include="Application\Scene\GameScene\Event\GameSceneEventBase.cpp" />
+    <ClCompile Include="Application\Scene\GameScene\Event\GameSceneEventFactory.cpp" />
     <ClCompile Include="main.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Development|x64'">MaxSpeed</Optimization>
       <WholeProgramOptimization Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</WholeProgramOptimization>
@@ -28462,7 +28977,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Application\Scene\ParticleEditorScene.cpp" />
     <ClCompile Include="Application\Player\Player.cpp" />
     <ClCompile Include="Engine\Scene\BaseScene.cpp" />
-    <ClCompile Include="Application\Scene\GameScene.cpp" />
+    <ClCompile Include="Application\Scene\GameScene\GameScene.cpp" />
     <ClCompile Include="Engine\Scene\SceneManager.cpp" />
     <ClCompile Include="Engine\2d\Sprite\SpriteManager.cpp" />
     <ClCompile Include="Engine\Math\WorldTransform.cpp" />
@@ -28479,6 +28994,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Application\Player\State\AttackState\TankAttackState.cpp" />
     <ClCompile Include="Application\Player\State\MovementState\TankMoveState.cpp" />
     <ClCompile Include="Application\UIManager.cpp" />
+    <ClCompile Include="Application\Scene\GameScene\Event\StartEvent.cpp" />
+    <ClCompile Include="Application\Scene\GameScene\Event\PauseEvent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application\LevelEditor\LevelDataLoader.h" />
@@ -28492,6 +29009,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Application\Enemy\State\EnemyExitState.h" />
     <ClInclude Include="Application\Enemy\State\EnemyMoveState.h" />
     <ClInclude Include="Application\EmitterManager.h" />
+    <ClInclude Include="Application\Scene\GameScene\Event\ClearEvent.h" />
     <ClInclude Include="Engine\3d\Mesh\CubeMesh.h" />
     <ClInclude Include="Engine\3d\Collider\AABBCollider.h" />
     <ClInclude Include="Engine\3d\Collider\Collider.h" />
@@ -28556,7 +29074,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Application\Scene\ParticleEditorScene.h" />
     <ClInclude Include="Application\Player\Player.h" />
     <ClInclude Include="Engine\Scene\BaseScene.h" />
-    <ClInclude Include="Application\Scene\GameScene.h" />
+    <ClInclude Include="Application\Scene\GameScene\GameScene.h" />
     <ClInclude Include="Engine\Scene\SceneManager.h" />
     <ClInclude Include="Engine\2d\Sprite\SpriteManager.h" />
     <ClInclude Include="Engine\Math\WorldTransform.h" />
@@ -28583,6 +29101,13 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Application\Player\State\MovementState\JetMoveState.h" />
     <ClInclude Include="Application\Player\State\MovementState\TankMoveState.h" />
     <ClInclude Include="Application\UIManager.h" />
+    <ClInclude Include="Application\Scene\GameScene\Event\GameOverEvent.h" />
+    <ClInclude Include="Application\Scene\GameScene\Event\StartEvent.h" />
+    <ClInclude Include="Application\Scene\GameScene\Event\GameEvent.h" />
+    <ClInclude Include="Application\Scene\GameScene\Event\PauseEvent.h" />
+    <ClInclude Include="Application\Scene\GameScene\GameSceneProgress.h" />
+    <ClInclude Include="Application\Scene\GameScene\Event\GameSceneEventBase.h" />
+    <ClInclude Include="Application\Scene\GameScene\Event\GameSceneEventFactory.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Application\LevelEditor\Python\add_collider.py">
@@ -29030,7 +29555,7 @@ File Path: Engine.vcxproj.filters
     <ClCompile Include="Engine\Scene\SceneManager.cpp">
       <Filter>Engine\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Application\Scene\GameScene.cpp">
+    <ClCompile Include="Application\Scene\GameScene\GameScene.cpp">
       <Filter>Application\Scene</Filter>
     </ClCompile>
     <ClCompile Include="Application\Scene\ParticleEditorScene.cpp">
@@ -29087,6 +29612,14 @@ File Path: Engine.vcxproj.filters
     <ClCompile Include="Application\Enemy\State\EnemyDeadState.cpp" />
     <ClCompile Include="Application\UIManager.cpp" />
     <ClCompile Include="Application\EmitterManager.cpp" />
+    <ClCompile Include="Application\Scene\GameScene\Event\ClearEvent.cpp" />
+    <ClCompile Include="Application\Scene\GameScene\Event\StartEvent.cpp" />
+    <ClCompile Include="Application\Scene\GameScene\Event\GameOverEvent.cpp" />
+    <ClCompile Include="Application\Scene\GameScene\Event\GameEvent.cpp" />
+    <ClCompile Include="Application\Scene\GameScene\Event\PauseEvent.cpp" />
+    <ClCompile Include="Application\Scene\GameScene\GameSceneProgress.cpp" />
+    <ClCompile Include="Application\Scene\GameScene\Event\GameSceneEventBase.cpp" />
+    <ClCompile Include="Application\Scene\GameScene\Event\GameSceneEventFactory.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application\Bullet\BulletBase.h">
@@ -29296,7 +29829,7 @@ File Path: Engine.vcxproj.filters
     <ClInclude Include="Engine\Scene\SceneManager.h">
       <Filter>Engine\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="Application\Scene\GameScene.h">
+    <ClInclude Include="Application\Scene\GameScene\GameScene.h">
       <Filter>Application\Scene</Filter>
     </ClInclude>
     <ClInclude Include="Application\Scene\ParticleEditorScene.h">
@@ -29359,6 +29892,14 @@ File Path: Engine.vcxproj.filters
     <ClInclude Include="Application\Enemy\State\EnemyDeadState.h" />
     <ClInclude Include="Application\UIManager.h" />
     <ClInclude Include="Application\EmitterManager.h" />
+    <ClInclude Include="Application\Scene\GameScene\Event\ClearEvent.h" />
+    <ClInclude Include="Application\Scene\GameScene\Event\StartEvent.h" />
+    <ClInclude Include="Application\Scene\GameScene\Event\GameOverEvent.h" />
+    <ClInclude Include="Application\Scene\GameScene\Event\GameEvent.h" />
+    <ClInclude Include="Application\Scene\GameScene\Event\PauseEvent.h" />
+    <ClInclude Include="Application\Scene\GameScene\GameSceneProgress.h" />
+    <ClInclude Include="Application\Scene\GameScene\Event\GameSceneEventBase.h" />
+    <ClInclude Include="Application\Scene\GameScene\Event\GameSceneEventFactory.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resource\Shader\DebugObject.hlsli">
