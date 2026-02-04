@@ -21619,14 +21619,6 @@ void Audio::SoundUnLoad(std::string soundName) {
 	if (!sounds_.contains(soundName)) {
 		return;
 	}
-
-	// 音源データのメモリを解放
-	delete[] sounds_[soundName].data.pBuffer;
-
-	// 解放後、構造体の内容を初期化
-	sounds_[soundName].data.pBuffer = nullptr;
-	sounds_[soundName].data.bufferSize = 0;
-	sounds_[soundName].data.wfex = {};
 }
 
 ///=====================================================/// 
@@ -21759,10 +21751,13 @@ Audio::SoundData Audio::LoadWavFile(std::string fileName) {
 	}
 
 	//音声データのサイズ分のバッファ
-	char* pBuffer = new char[data.size];
+	std::vector<BYTE> buffer;
+
+	//バッファの確保
+	buffer.resize(data.size);
 
 	//音声情報の読み込み
-	file.read(pBuffer, data.size);
+	file.read(reinterpret_cast<char*>(buffer.data()), data.size);
 
 	//Waveファイルを閉じる
 	file.close();
@@ -21773,7 +21768,7 @@ Audio::SoundData Audio::LoadWavFile(std::string fileName) {
 	soundData.wfex = format.fmt;
 
 	//バッファアドレスの設定
-	soundData.pBuffer = reinterpret_cast<BYTE*>(pBuffer);
+	soundData.buffer = buffer;
 
 	//バッファサイズの設定
 	soundData.bufferSize = data.size;
@@ -21795,7 +21790,7 @@ Audio::SoundInstance Audio::CreateSoundInstance(SoundData soundData, bool isLoop
 
 	//音声バッファの設定
 	XAUDIO2_BUFFER buf{};
-	buf.pAudioData = soundData.pBuffer;
+	buf.pAudioData = soundData.buffer.data();
 	buf.AudioBytes = soundData.bufferSize;
 	buf.Flags = XAUDIO2_END_OF_STREAM;
 
@@ -21859,9 +21854,9 @@ private:
 
 	//音声データ
 	struct SoundData {
-		WAVEFORMATEX wfex;       //波形フォーマット
-		BYTE* pBuffer;           //バッファの先頭アドレス
-		unsigned int bufferSize; //バッファサイズ
+		WAVEFORMATEX wfex;         //波形フォーマット
+		std::vector<BYTE> buffer; //バッファ
+		unsigned int bufferSize;   //バッファサイズ
 	};
 
 	//音声インスタンス
