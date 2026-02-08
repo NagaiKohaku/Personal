@@ -4,7 +4,7 @@
 
 #include "3d/Mesh/SphereMesh.h"
 
-#include "Math/Sphere.h"
+#include <Math/Shape/Sphere.h>
 
 /// <summary>
 /// 球状のコライダーを管理するクラスです。

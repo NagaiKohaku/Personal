@@ -3,7 +3,7 @@
 #include "Base/DirectXCommon.h"
 #include "2d/Sprite/TextureManager.h"
 
-#include "Math/MakeMatrixMath.h"
+#include <Math/Utility/MakeMatrixMath.h>
 
 #include "fstream"
 #include "sstream"

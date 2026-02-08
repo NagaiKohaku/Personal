@@ -53,19 +53,19 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Application\Bullet\BulletBase.cpp">
+    <ClCompile Include="Application\Object\Bullet\Core\BulletBase.cpp">
       <Filter>Application\Bullet</Filter>
     </ClCompile>
-    <ClCompile Include="Application\Bullet\BulletManager.cpp">
+    <ClCompile Include="Application\Object\Bullet\Core\BulletManager.cpp">
       <Filter>Application\Bullet</Filter>
     </ClCompile>
-    <ClCompile Include="Application\Bullet\JetBullet.cpp">
+    <ClCompile Include="Application\Object\Bullet\Player\JetBullet.cpp">
       <Filter>Application\Bullet</Filter>
     </ClCompile>
-    <ClCompile Include="Application\Bullet\TankBullet.cpp">
+    <ClCompile Include="Application\Object\Bullet\Player\TankBullet.cpp">
       <Filter>Application\Bullet</Filter>
     </ClCompile>
-    <ClCompile Include="Application\Camera\FollowCamera.cpp">
+    <ClCompile Include="Application\Object\Camera\FollowCamera.cpp">
       <Filter>Application\Camera</Filter>
     </ClCompile>
     <ClCompile Include="Engine\3d\Collider\AABBCollider.cpp">
@@ -80,16 +80,16 @@
     <ClCompile Include="Engine\3d\Collider\SphereCollider.cpp">
       <Filter>Application\Collider</Filter>
     </ClCompile>
-    <ClCompile Include="Application\Enemy\Enemy.cpp">
+    <ClCompile Include="Application\Object\Enemy\Enemy.cpp">
       <Filter>Application\Enemy</Filter>
     </ClCompile>
-    <ClCompile Include="Application\Enemy\EnemyManager.cpp">
+    <ClCompile Include="Application\Object\Enemy\EnemyManager.cpp">
       <Filter>Application\Enemy</Filter>
     </ClCompile>
-    <ClCompile Include="Application\Player\Reticle.cpp">
+    <ClCompile Include="Application\Object\Player\Reticle.cpp">
       <Filter>Application\Player</Filter>
     </ClCompile>
-    <ClCompile Include="Application\Player\Player.cpp">
+    <ClCompile Include="Application\Object\Player\Player.cpp">
       <Filter>Application\Player</Filter>
     </ClCompile>
     <ClCompile Include="Engine\2d\Object\Object2D.cpp">
@@ -200,31 +200,31 @@
     <ClCompile Include="Engine\Base\WinApp.cpp">
       <Filter>Engine\Base</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Math\Clamp.cpp">
+    <ClCompile Include="Engine\Math\Utility\Clamp.cpp">
       <Filter>Engine\Math</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Math\Easing.cpp">
+    <ClCompile Include="Engine\Math\Utility\Easing.cpp">
       <Filter>Engine\Math</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Math\MakeMatrixMath.cpp">
+    <ClCompile Include="Engine\Math\Utility\MakeMatrixMath.cpp">
       <Filter>Engine\Math</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Math\Matrix4x4.cpp">
+    <ClCompile Include="Engine\Math\Matrix\Matrix4x4.cpp">
       <Filter>Engine\Math</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Math\Random.cpp">
+    <ClCompile Include="Engine\Math\Utility\Random.cpp">
       <Filter>Engine\Math</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Math\Vector2.cpp">
+    <ClCompile Include="Engine\Math\Vector\Vector2.cpp">
       <Filter>Engine\Math</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Math\Vector3.cpp">
+    <ClCompile Include="Engine\Math\Vector\Vector3.cpp">
       <Filter>Engine\Math</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Math\Vector4.cpp">
+    <ClCompile Include="Engine\Math\Vector\Vector4.cpp">
       <Filter>Engine\Math</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Math\WorldTransform.cpp">
+    <ClCompile Include="Engine\Math\Transform\WorldTransform.cpp">
       <Filter>Engine\Math</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Other\Log.cpp">
@@ -260,45 +260,45 @@
     <ClCompile Include="Engine\3d\Mesh\CubeMesh.cpp">
       <Filter>Engine\3d\Mesh</Filter>
     </ClCompile>
-    <ClCompile Include="Application\Ground\LineGround.cpp">
+    <ClCompile Include="Application\Object\Ground\LineGround.cpp">
       <Filter>Application\Ground</Filter>
     </ClCompile>
-    <ClCompile Include="Application\Ground\GroundManager.cpp">
+    <ClCompile Include="Application\Object\Ground\GroundManager.cpp">
       <Filter>Application\Ground</Filter>
     </ClCompile>
-    <ClCompile Include="Application\Ground\Ground.cpp">
+    <ClCompile Include="Application\Object\Ground\Ground.cpp">
       <Filter>Application\Ground</Filter>
     </ClCompile>
-    <ClCompile Include="Application\Ground\Building.cpp">
+    <ClCompile Include="Application\Object\Ground\Building.cpp">
       <Filter>Application\Ground</Filter>
     </ClCompile>
-    <ClCompile Include="Application\Bullet\EnemyBullet.cpp">
+    <ClCompile Include="Application\Object\Bullet\Enemy\EnemyBullet.cpp">
       <Filter>Application\Bullet</Filter>
     </ClCompile>
-    <ClCompile Include="Application\Shadow\Shadow.cpp">
+    <ClCompile Include="Application\Object\Shadow\Shadow.cpp">
       <Filter>Application</Filter>
     </ClCompile>
     <ClCompile Include="Application\Scene\TitleScene.cpp">
       <Filter>Application\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Application\Fade\Fade.cpp">
+    <ClCompile Include="Application\Effect\Fade\Fade.cpp">
       <Filter>Application\Fade</Filter>
     </ClCompile>
-    <ClCompile Include="Application\Shake\Shake.cpp" />
-    <ClCompile Include="Application\ObjectManager.cpp" />
-    <ClCompile Include="Application\Player\LockOn.cpp" />
-    <ClCompile Include="Application\Flash\Flash.cpp" />
-    <ClCompile Include="Application\Player\State\AttackState\JetAttackState.cpp" />
-    <ClCompile Include="Application\Player\State\AttackState\TankAttackState.cpp" />
-    <ClCompile Include="Application\Player\State\MovementState\JetMoveState.cpp" />
-    <ClCompile Include="Application\Player\State\MovementState\TankMoveState.cpp" />
-    <ClCompile Include="Application\Enemy\State\EnemyEntryState.cpp" />
-    <ClCompile Include="Application\Enemy\State\EnemyMoveState.cpp" />
-    <ClCompile Include="Application\Enemy\State\EnemyAttackState.cpp" />
-    <ClCompile Include="Application\Enemy\State\EnemyExitState.cpp" />
-    <ClCompile Include="Application\Enemy\State\EnemyDeadState.cpp" />
-    <ClCompile Include="Application\UIManager.cpp" />
-    <ClCompile Include="Application\EmitterManager.cpp" />
+    <ClCompile Include="Application\Effect\Shake\Shake.cpp" />
+    <ClCompile Include="Application\Object\Manager\ObjectManager.cpp" />
+    <ClCompile Include="Application\Object\Player\LockOn.cpp" />
+    <ClCompile Include="Application\Effect\Flash\Flash.cpp" />
+    <ClCompile Include="Application\Object\Player\State\AttackState\JetAttackState.cpp" />
+    <ClCompile Include="Application\Object\Player\State\AttackState\TankAttackState.cpp" />
+    <ClCompile Include="Application\Object\Player\State\MovementState\JetMoveState.cpp" />
+    <ClCompile Include="Application\Object\Player\State\MovementState\TankMoveState.cpp" />
+    <ClCompile Include="Application\Object\Enemy\State\EnemyEntryState.cpp" />
+    <ClCompile Include="Application\Object\Enemy\State\EnemyMoveState.cpp" />
+    <ClCompile Include="Application\Object\Enemy\State\EnemyAttackState.cpp" />
+    <ClCompile Include="Application\Object\Enemy\State\EnemyExitState.cpp" />
+    <ClCompile Include="Application\Object\Enemy\State\EnemyDeadState.cpp" />
+    <ClCompile Include="Application\Effect\Manager\UIManager.cpp" />
+    <ClCompile Include="Application\Effect\Manager\EmitterManager.cpp" />
     <ClCompile Include="Application\Scene\GameScene\Event\ClearEvent.cpp" />
     <ClCompile Include="Application\Scene\GameScene\Event\StartEvent.cpp" />
     <ClCompile Include="Application\Scene\GameScene\Event\GameOverEvent.cpp" />
@@ -309,19 +309,19 @@
     <ClCompile Include="Application\Scene\GameScene\Event\GameSceneEventFactory.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Application\Bullet\BulletBase.h">
+    <ClInclude Include="Application\Object\Bullet\Core\BulletBase.h">
       <Filter>Application\Bullet</Filter>
     </ClInclude>
-    <ClInclude Include="Application\Bullet\BulletManager.h">
+    <ClInclude Include="Application\Object\Bullet\Core\BulletManager.h">
       <Filter>Application\Bullet</Filter>
     </ClInclude>
-    <ClInclude Include="Application\Bullet\JetBullet.h">
+    <ClInclude Include="Application\Object\Bullet\Player\JetBullet.h">
       <Filter>Application\Bullet</Filter>
     </ClInclude>
-    <ClInclude Include="Application\Bullet\TankBullet.h">
+    <ClInclude Include="Application\Object\Bullet\Player\TankBullet.h">
       <Filter>Application\Bullet</Filter>
     </ClInclude>
-    <ClInclude Include="Application\Camera\FollowCamera.h">
+    <ClInclude Include="Application\Object\Camera\FollowCamera.h">
       <Filter>Application\Camera</Filter>
     </ClInclude>
     <ClInclude Include="Engine\3d\Collider\AABBCollider.h">
@@ -336,16 +336,16 @@
     <ClInclude Include="Engine\3d\Collider\SphereCollider.h">
       <Filter>Application\Collider</Filter>
     </ClInclude>
-    <ClInclude Include="Application\Enemy\Enemy.h">
+    <ClInclude Include="Application\Object\Enemy\Enemy.h">
       <Filter>Application\Enemy</Filter>
     </ClInclude>
-    <ClInclude Include="Application\Enemy\EnemyManager.h">
+    <ClInclude Include="Application\Object\Enemy\EnemyManager.h">
       <Filter>Application\Enemy</Filter>
     </ClInclude>
-    <ClInclude Include="Application\Player\Reticle.h">
+    <ClInclude Include="Application\Object\Player\Reticle.h">
       <Filter>Application\Player</Filter>
     </ClInclude>
-    <ClInclude Include="Application\Player\Player.h">
+    <ClInclude Include="Application\Object\Player\Player.h">
       <Filter>Application\Player</Filter>
     </ClInclude>
     <ClInclude Include="Engine\2d\Object\Object2D.h">
@@ -459,37 +459,37 @@
     <ClInclude Include="Engine\Base\WinApp.h">
       <Filter>Engine\Base</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Math\AABB.h">
+    <ClInclude Include="Engine\Math\Shape\AABB.h">
       <Filter>Engine\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Math\Clamp.h">
+    <ClInclude Include="Engine\Math\Utility\Clamp.h">
       <Filter>Engine\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Math\Easing.h">
+    <ClInclude Include="Engine\Math\Utility\Easing.h">
       <Filter>Engine\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Math\MakeMatrixMath.h">
+    <ClInclude Include="Engine\Math\Utility\MakeMatrixMath.h">
       <Filter>Engine\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Math\Matrix4x4.h">
+    <ClInclude Include="Engine\Math\Matrix\Matrix4x4.h">
       <Filter>Engine\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Math\Random.h">
+    <ClInclude Include="Engine\Math\Utility\Random.h">
       <Filter>Engine\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Math\Sphere.h">
+    <ClInclude Include="Engine\Math\Shape\Sphere.h">
       <Filter>Engine\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Math\Vector2.h">
+    <ClInclude Include="Engine\Math\Vector\Vector2.h">
       <Filter>Engine\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Math\Vector3.h">
+    <ClInclude Include="Engine\Math\Vector\Vector3.h">
       <Filter>Engine\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Math\Vector4.h">
+    <ClInclude Include="Engine\Math\Vector\Vector4.h">
       <Filter>Engine\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Math\WorldTransform.h">
+    <ClInclude Include="Engine\Math\Transform\WorldTransform.h">
       <Filter>Engine\Math</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Other\Log.h">
@@ -500,15 +500,6 @@
     </ClInclude>
     <ClInclude Include="Engine\3d\Object\SkyBox.h">
       <Filter>Engine\3d\Object</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Math\KeyFrameVector3.h">
-      <Filter>Engine\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Math\KeyFrameQuaternion.h">
-      <Filter>Engine\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Math\Quaternion.h">
-      <Filter>Engine\Math</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Scene\BaseScene.h">
       <Filter>Engine\Scene</Filter>
@@ -537,48 +528,45 @@
     <ClInclude Include="Application\LevelEditor\ObjectData.h">
       <Filter>Application\LevelEditor</Filter>
     </ClInclude>
-    <ClInclude Include="Application\Ground\LineGround.h">
+    <ClInclude Include="Application\Object\Ground\LineGround.h">
       <Filter>Application\Ground</Filter>
     </ClInclude>
-    <ClInclude Include="Application\Ground\GroundManager.h">
+    <ClInclude Include="Application\Object\Ground\GroundManager.h">
       <Filter>Application\Ground</Filter>
     </ClInclude>
-    <ClInclude Include="Application\Ground\Ground.h">
+    <ClInclude Include="Application\Object\Ground\Ground.h">
       <Filter>Application\Ground</Filter>
     </ClInclude>
-    <ClInclude Include="Application\Ground\Building.h">
+    <ClInclude Include="Application\Object\Ground\Building.h">
       <Filter>Application\Ground</Filter>
     </ClInclude>
-    <ClInclude Include="Application\Bullet\EnemyBullet.h">
-      <Filter>Application\Bullet</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\Shadow\Shadow.h">
+    <ClInclude Include="Application\Object\Shadow\Shadow.h">
       <Filter>Application</Filter>
     </ClInclude>
     <ClInclude Include="Application\Scene\TitleScene.h">
       <Filter>Application\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="Application\Fade\Fade.h">
+    <ClInclude Include="Application\Effect\Fade\Fade.h">
       <Filter>Application\Fade</Filter>
     </ClInclude>
-    <ClInclude Include="Application\Shake\Shake.h" />
-    <ClInclude Include="Application\ObjectManager.h" />
-    <ClInclude Include="Application\Player\LockOn.h" />
-    <ClInclude Include="Application\Flash\Flash.h" />
-    <ClInclude Include="Application\Player\State\AttackState\AttackState.h" />
-    <ClInclude Include="Application\Player\State\AttackState\JetAttackState.h" />
-    <ClInclude Include="Application\Player\State\AttackState\TankAttackState.h" />
-    <ClInclude Include="Application\Player\State\MovementState\MovementState.h" />
-    <ClInclude Include="Application\Player\State\MovementState\JetMoveState.h" />
-    <ClInclude Include="Application\Player\State\MovementState\TankMoveState.h" />
-    <ClInclude Include="Application\Enemy\State\EnemyState.h" />
-    <ClInclude Include="Application\Enemy\State\EnemyEntryState.h" />
-    <ClInclude Include="Application\Enemy\State\EnemyMoveState.h" />
-    <ClInclude Include="Application\Enemy\State\EnemyAttackState.h" />
-    <ClInclude Include="Application\Enemy\State\EnemyExitState.h" />
-    <ClInclude Include="Application\Enemy\State\EnemyDeadState.h" />
-    <ClInclude Include="Application\UIManager.h" />
-    <ClInclude Include="Application\EmitterManager.h" />
+    <ClInclude Include="Application\Effect\Shake\Shake.h" />
+    <ClInclude Include="Application\Object\Manager\ObjectManager.h" />
+    <ClInclude Include="Application\Object\Player\LockOn.h" />
+    <ClInclude Include="Application\Effect\Flash\Flash.h" />
+    <ClInclude Include="Application\Object\Player\State\AttackState\AttackState.h" />
+    <ClInclude Include="Application\Object\Player\State\AttackState\JetAttackState.h" />
+    <ClInclude Include="Application\Object\Player\State\AttackState\TankAttackState.h" />
+    <ClInclude Include="Application\Object\Player\State\MovementState\MovementState.h" />
+    <ClInclude Include="Application\Object\Player\State\MovementState\JetMoveState.h" />
+    <ClInclude Include="Application\Object\Player\State\MovementState\TankMoveState.h" />
+    <ClInclude Include="Application\Object\Enemy\State\EnemyState.h" />
+    <ClInclude Include="Application\Object\Enemy\State\EnemyEntryState.h" />
+    <ClInclude Include="Application\Object\Enemy\State\EnemyMoveState.h" />
+    <ClInclude Include="Application\Object\Enemy\State\EnemyAttackState.h" />
+    <ClInclude Include="Application\Object\Enemy\State\EnemyExitState.h" />
+    <ClInclude Include="Application\Object\Enemy\State\EnemyDeadState.h" />
+    <ClInclude Include="Application\Effect\Manager\UIManager.h" />
+    <ClInclude Include="Application\Effect\Manager\EmitterManager.h" />
     <ClInclude Include="Application\Scene\GameScene\Event\ClearEvent.h" />
     <ClInclude Include="Application\Scene\GameScene\Event\StartEvent.h" />
     <ClInclude Include="Application\Scene\GameScene\Event\GameOverEvent.h" />
@@ -587,6 +575,7 @@
     <ClInclude Include="Application\Scene\GameScene\GameSceneProgress.h" />
     <ClInclude Include="Application\Scene\GameScene\Event\GameSceneEventBase.h" />
     <ClInclude Include="Application\Scene\GameScene\Event\GameSceneEventFactory.h" />
+    <ClInclude Include="Application\Object\Bullet\Enemy\EnemyBullet.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resource\Shader\DebugObject.hlsli">

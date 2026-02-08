@@ -7,7 +7,7 @@
 #include "3d/Model/ModelManager.h"
 #include "3d/Camera/Camera.h"
 
-#include "Math/MakeMatrixMath.h"
+#include <Math/Utility/MakeMatrixMath.h>
 
 ///=====================================================///
 /// 3Dデバッグオブジェクトを初期化

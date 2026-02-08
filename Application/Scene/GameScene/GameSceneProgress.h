@@ -1,8 +1,8 @@
 #pragma once
 
 #include <3d/Camera/Camera.h>
-#include <Camera/FollowCamera.h>
-#include <Player/Player.h>
+#include <Object/Camera/FollowCamera.h>
+#include <Object/Player/Player.h>
 
 #include <Scene/GameScene/Event/GameSceneEventBase.h>
 

@@ -6,8 +6,8 @@
 #include "3d/Object/Object3D.h"
 #include "2d/Object/Object2D.h"
 #include "3d/Particle/EmitterGroup.h"
-#include "Player/Player.h"
-#include "Ground/GroundManager.h"
+#include <Object/Player/Player.h>
+#include <Object/Ground/GroundManager.h>
 
 #include "memory"
 #include "vector"

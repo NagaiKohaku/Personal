@@ -6,7 +6,7 @@
 
 #include "2d/Sprite/SpriteManager.h"
 
-#include "Math/MakeMatrixMath.h"
+#include <Math/Utility/MakeMatrixMath.h>
 
 #include "imgui.h"
 #include "cassert"

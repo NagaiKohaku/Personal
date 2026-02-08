@@ -1,9 +1,9 @@
 #pragma once
 
 #include <Scene/GameScene/Event/GameSceneEventBase.h>
-#include <Player/Player.h>
+#include <Object/Player/Player.h>
 #include <3d/Camera/Camera.h>
-#include <Camera/FollowCamera.h>
+#include <Object/Camera/FollowCamera.h>
 
 #include <memory>
 

@@ -2,7 +2,7 @@
 
 #include "Collider.h"
 
-#include "Math/AABB.h"
+#include <Math/Shape/AABB.h>
 
 /// <summary>
 /// AABBコライダー

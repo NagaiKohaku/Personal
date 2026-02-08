@@ -2,7 +2,7 @@
 
 #include <Scene/GameScene/Event/GameSceneEventBase.h>
 
-#include <Camera/FollowCamera.h>
+#include <Object/Camera/FollowCamera.h>
 
 class StartEvent : public GameSceneEventBase {
 

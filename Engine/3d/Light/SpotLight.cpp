@@ -4,7 +4,7 @@
 
 #include "algorithm"
 
-#include "Math/Clamp.h"
+#include <Math/Utility/Clamp.h>
 
 ///=====================================================/// 
 /// スポットライトを初期化

@@ -8,10 +8,10 @@
 #include "2d/Object/Object2DCommon.h"
 #include "2d/Sprite/Sprite.h"
 
-#include "Math/Vector2.h"
-#include "Math/Vector3.h"
-#include "Math/Matrix4x4.h"
-#include "Math/WorldTransform.h"
+#include <Math/Vector/Vector2.h>
+#include <Math/Vector/Vector3.h>
+#include <Math/Matrix/Matrix4x4.h>
+#include <Math/Transform/WorldTransform.h>
 
 #include "string"
 #include "wrl.h"

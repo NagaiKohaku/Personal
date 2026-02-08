@@ -1,7 +1,7 @@
 #include "GameEvent.h"
 
 #include <Base/Input.h>
-#include <ObjectManager.h>
+#include <Object/Manager/ObjectManager.h>
 
 void GameEvent::Start(Player* player, Camera* camera, FollowCamera* followCamera) {
 

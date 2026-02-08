@@ -4,10 +4,10 @@
 
 #include "Base/DirectXCommon.h"
 
-#include "Math/Vector2.h"
-#include "Math/Vector3.h"
-#include "Math/Vector4.h"
-#include "Math/Matrix4x4.h"
+#include <Math/Vector/Vector2.h>
+#include <Math/Vector/Vector3.h>
+#include <Math/Vector/Vector4.h>
+#include <Math/Matrix/Matrix4x4.h>
 
 #include "string"
 #include "wrl.h"

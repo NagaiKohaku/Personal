@@ -1,11 +1,12 @@
 #pragma once
 
-#include <Player/Player.h>
 #include <3d/Camera/Camera.h>
-#include <Camera/FollowCamera.h>
 
-#include <Math/Vector3.h>
-#include <Math/Easing.h>
+#include <Object/Player/Player.h>
+#include <Object/Camera/FollowCamera.h>
+
+#include <Math/Vector/Vector3.h>
+#include <Math/Utility/Easing.h>
 
 #include <vector>
 

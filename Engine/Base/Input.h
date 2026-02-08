@@ -6,8 +6,8 @@
 #pragma comment(lib,"dinput8.lib")
 #pragma comment(lib,"dxguid.lib")
 
-#include "Math/Vector2.h"
-#include "Math/Vector3.h"
+#include <Math/Vector/Vector2.h>
+#include <Math/Vector/Vector3.h>
 
 #include "cstdint"
 

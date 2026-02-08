@@ -3,19 +3,19 @@
 #include <Scene/SceneManager.h>
 
 #include <Base/OffScreen.h>
-#include <ObjectManager.h>
-#include <EmitterManager.h>
+#include <Object/Manager/ObjectManager.h>
+#include <Effect/Manager/EmitterManager.h>
 
 #include <3d/Model/ModelManager.h>
 #include <2d/Sprite/SpriteManager.h>
-#include <Fade/Fade.h>
-#include <Shake/Shake.h>
+#include <Effect/Fade/Fade.h>
+#include <Effect/Shake/Shake.h>
 
-#include <UIManager.h>
+#include <Effect/Manager/UIManager.h>
 
 #include <Base/Input.h>
 
-#include <Math/Easing.h>
+#include <Math/Utility/Easing.h>
 
 #include <imgui.h>
 

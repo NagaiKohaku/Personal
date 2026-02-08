@@ -5,10 +5,10 @@
 
 #include "LevelEditor/ObjectData.h"
 
-#include "Math/Vector3.h"
-#include "Math/Vector4.h"
-#include "Math/Matrix4x4.h"
-#include "Math/WorldTransform.h"
+#include <Math/Vector/Vector3.h>
+#include <Math/Vector/Vector4.h>
+#include <Math/Matrix/Matrix4x4.h>
+#include <Math/Transform/WorldTransform.h>
 
 #include "DirectXTex.h"
 #include "d3d12.h"

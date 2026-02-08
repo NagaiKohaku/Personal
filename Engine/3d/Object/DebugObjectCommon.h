@@ -5,7 +5,7 @@
 #include "wrl.h"
 #include "vector"
 
-#include "Math/Vector3.h"
+#include <Math/Vector/Vector3.h>
 
 /// === 前方宣言 === ///
 
