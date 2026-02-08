@@ -29860,33 +29860,6 @@ File Path: Engine.vcxproj.filters
     <ClCompile Include="Engine\Base\WinApp.cpp">
       <Filter>Engine\Base</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Math\Utility\Clamp.cpp">
-      <Filter>Engine\Math</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Math\Utility\Easing.cpp">
-      <Filter>Engine\Math</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Math\Utility\MakeMatrixMath.cpp">
-      <Filter>Engine\Math</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Math\Matrix\Matrix4x4.cpp">
-      <Filter>Engine\Math</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Math\Utility\Random.cpp">
-      <Filter>Engine\Math</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Math\Vector\Vector2.cpp">
-      <Filter>Engine\Math</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Math\Vector\Vector3.cpp">
-      <Filter>Engine\Math</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Math\Vector\Vector4.cpp">
-      <Filter>Engine\Math</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Math\Transform\WorldTransform.cpp">
-      <Filter>Engine\Math</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\Other\Log.cpp">
       <Filter>Engine\Other</Filter>
     </ClCompile>
@@ -30024,6 +29997,33 @@ File Path: Engine.vcxproj.filters
     </ClCompile>
     <ClCompile Include="Application\Scene\GameScene\Event\StartEvent.cpp">
       <Filter>Application\Scene\GameScene\Event</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Math\Matrix\Matrix4x4.cpp">
+      <Filter>Engine\Math\Matrix</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Math\Vector\Vector4.cpp">
+      <Filter>Engine\Math\Vector</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Math\Vector\Vector2.cpp">
+      <Filter>Engine\Math\Vector</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Math\Vector\Vector3.cpp">
+      <Filter>Engine\Math\Vector</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Math\Utility\Clamp.cpp">
+      <Filter>Engine\Math\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Math\Utility\Easing.cpp">
+      <Filter>Engine\Math\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Math\Utility\MakeMatrixMath.cpp">
+      <Filter>Engine\Math\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Math\Utility\Random.cpp">
+      <Filter>Engine\Math\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Math\Transform\WorldTransform.cpp">
+      <Filter>Engine\Math\Transform</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -30164,39 +30164,6 @@ File Path: Engine.vcxproj.filters
     </ClInclude>
     <ClInclude Include="Engine\Base\WinApp.h">
       <Filter>Engine\Base</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Math\Shape\AABB.h">
-      <Filter>Engine\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Math\Utility\Clamp.h">
-      <Filter>Engine\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Math\Utility\Easing.h">
-      <Filter>Engine\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Math\Utility\MakeMatrixMath.h">
-      <Filter>Engine\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Math\Matrix\Matrix4x4.h">
-      <Filter>Engine\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Math\Utility\Random.h">
-      <Filter>Engine\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Math\Shape\Sphere.h">
-      <Filter>Engine\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Math\Vector\Vector2.h">
-      <Filter>Engine\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Math\Vector\Vector3.h">
-      <Filter>Engine\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Math\Vector\Vector4.h">
-      <Filter>Engine\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Math\Transform\WorldTransform.h">
-      <Filter>Engine\Math</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Other\Log.h">
       <Filter>Engine\Other</Filter>
@@ -30347,6 +30314,39 @@ File Path: Engine.vcxproj.filters
     </ClInclude>
     <ClInclude Include="Application\Scene\GameScene\Event\StartEvent.h">
       <Filter>Application\Scene\GameScene\Event</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Math\Matrix\Matrix4x4.h">
+      <Filter>Engine\Math\Matrix</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Math\Vector\Vector2.h">
+      <Filter>Engine\Math\Vector</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Math\Vector\Vector3.h">
+      <Filter>Engine\Math\Vector</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Math\Vector\Vector4.h">
+      <Filter>Engine\Math\Vector</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Math\Utility\Clamp.h">
+      <Filter>Engine\Math\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Math\Utility\Easing.h">
+      <Filter>Engine\Math\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Math\Utility\MakeMatrixMath.h">
+      <Filter>Engine\Math\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Math\Utility\Random.h">
+      <Filter>Engine\Math\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Math\Transform\WorldTransform.h">
+      <Filter>Engine\Math\Transform</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Math\Shape\Sphere.h">
+      <Filter>Engine\Math\Shape</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Math\Shape\AABB.h">
+      <Filter>Engine\Math\Shape</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -30546,6 +30546,21 @@ File Path: Engine.vcxproj.filters
     </Filter>
     <Filter Include="Engine\3d\Collider">
       <UniqueIdentifier>{73b0e180-31e9-47b6-b4a2-3756d510669e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Math\Matrix">
+      <UniqueIdentifier>{4d34d790-5ce4-436a-8c0c-c287c04ef5fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Math\Shape">
+      <UniqueIdentifier>{4a50e410-a9ff-465c-abea-4934e38be436}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Math\Transform">
+      <UniqueIdentifier>{9efa0710-6107-4450-9f7c-d163316559c6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Math\Utility">
+      <UniqueIdentifier>{b8909e22-9d89-48bb-9ae9-bea4465bdbcd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Math\Vector">
+      <UniqueIdentifier>{f9a80f60-fb57-49e1-b27f-ddc66cd68d89}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
