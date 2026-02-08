@@ -4,38 +4,41 @@
 
 #include "numbers"
 
-/// <summary>
-/// 円柱メッシュ（Cylinder Mesh）を管理するクラスです。
-/// </summary>
-class CylinderMesh : public MeshBase {
-
-	///-------------------------------------------/// 
-	/// メンバ関数
-	///-------------------------------------------///
-public:
+namespace MyEngine {
 
 	/// <summary>
-	/// CylinderMeshの初期化を行います。
+	/// 円柱メッシュ（Cylinder Mesh）を管理するクラスです。
 	/// </summary>
-	void Initialize() override;
+	class CylinderMesh : public MeshBase {
 
-	///-------------------------------------------/// 
-	/// メンバ変数
-	///-------------------------------------------///
-private:
+		///-------------------------------------------/// 
+		/// メンバ関数
+		///-------------------------------------------///
+	public:
 
-	//面の分割数
-	const uint32_t kCylinderDivide = 32;
+		/// <summary>
+		/// CylinderMeshの初期化を行います。
+		/// </summary>
+		void Initialize() override;
 
-	//上面の半径
-	const float kTopRadius = 1.0f;
+		///-------------------------------------------/// 
+		/// メンバ変数
+		///-------------------------------------------///
+	private:
 
-	//底面の半径
-	const float kBottomRadius = 1.0f;
+		//面の分割数
+		const uint32_t kCylinderDivide = 32;
 
-	//高さ
-	const float kHeight = 3.0f;
+		//上面の半径
+		const float kTopRadius = 1.0f;
 
-	//1分割あたりの円周の半径
-	const float radianPerDivide = 2.0f * std::numbers::pi_v<float> / static_cast<float>(kCylinderDivide);
-};
+		//底面の半径
+		const float kBottomRadius = 1.0f;
+
+		//高さ
+		const float kHeight = 3.0f;
+
+		//1分割あたりの円周の半径
+		const float radianPerDivide = 2.0f * std::numbers::pi_v<float> / static_cast<float>(kCylinderDivide);
+	};
+}

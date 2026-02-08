@@ -1,97 +1,100 @@
 #include "Random.h"
 
-int RandomInt(int min, int max) {
-	std::random_device seedGenerator;
-	std::mt19937 randomEngine(seedGenerator());
-	std::uniform_int_distribution<> dist(min, max);
-	return dist(randomEngine);
-}
+namespace MyEngine {
 
-float RandomFloat(float min, float max) {
-	std::random_device seedGenerator;
-	std::mt19937 randomEngine(seedGenerator());
-	std::uniform_real_distribution<float> dist(min, max);
-	return dist(randomEngine);
-}
+	int RandomInt(int min, int max) {
+		std::random_device seedGenerator;
+		std::mt19937 randomEngine(seedGenerator());
+		std::uniform_int_distribution<> dist(min, max);
+		return dist(randomEngine);
+	}
 
-Vector2 RandomVector2(Vector2 min, Vector2 max) {
+	float RandomFloat(float min, float max) {
+		std::random_device seedGenerator;
+		std::mt19937 randomEngine(seedGenerator());
+		std::uniform_real_distribution<float> dist(min, max);
+		return dist(randomEngine);
+	}
 
-	std::random_device seedGenerator;
-	std::mt19937 randomEngine(seedGenerator());
+	Vector2 RandomVector2(Vector2 min, Vector2 max) {
 
-	std::uniform_real_distribution<float> distX(min.x, max.x);
-	std::uniform_real_distribution<float> distY(min.y, max.y);
+		std::random_device seedGenerator;
+		std::mt19937 randomEngine(seedGenerator());
 
-	return Vector2(distX(randomEngine), distY(randomEngine));
-}
+		std::uniform_real_distribution<float> distX(min.x, max.x);
+		std::uniform_real_distribution<float> distY(min.y, max.y);
 
-Vector3 RandomVector3(Vector3 min, Vector3 max) {
+		return Vector2(distX(randomEngine), distY(randomEngine));
+	}
 
-	std::random_device seedGenerator;
-	std::mt19937 randomEngine(seedGenerator());
+	Vector3 RandomVector3(Vector3 min, Vector3 max) {
 
-	std::uniform_real_distribution<float> distX(min.x, max.x);
-	std::uniform_real_distribution<float> distY(min.y, max.y);
-	std::uniform_real_distribution<float> distZ(min.z, max.z);
+		std::random_device seedGenerator;
+		std::mt19937 randomEngine(seedGenerator());
 
-	return Vector3(distX(randomEngine), distY(randomEngine), distZ(randomEngine));
-}
+		std::uniform_real_distribution<float> distX(min.x, max.x);
+		std::uniform_real_distribution<float> distY(min.y, max.y);
+		std::uniform_real_distribution<float> distZ(min.z, max.z);
 
-Vector4 RandomVector4(Vector4 min, Vector4 max) {
+		return Vector3(distX(randomEngine), distY(randomEngine), distZ(randomEngine));
+	}
 
-	std::random_device seedGenerator;
-	std::mt19937 randomEngine(seedGenerator());
+	Vector4 RandomVector4(Vector4 min, Vector4 max) {
 
-	std::uniform_real_distribution<float> distX(min.x, max.x);
-	std::uniform_real_distribution<float> distY(min.y, max.y);
-	std::uniform_real_distribution<float> distZ(min.z, max.z);
-	std::uniform_real_distribution<float> distW(min.w, max.w);
+		std::random_device seedGenerator;
+		std::mt19937 randomEngine(seedGenerator());
 
-	return Vector4(distX(randomEngine), distY(randomEngine), distZ(randomEngine), distW(randomEngine));
-}
+		std::uniform_real_distribution<float> distX(min.x, max.x);
+		std::uniform_real_distribution<float> distY(min.y, max.y);
+		std::uniform_real_distribution<float> distZ(min.z, max.z);
+		std::uniform_real_distribution<float> distW(min.w, max.w);
 
-float RandomRangeFloat(float num, float range) {
+		return Vector4(distX(randomEngine), distY(randomEngine), distZ(randomEngine), distW(randomEngine));
+	}
 
-	std::random_device seedGenerator;
-	std::mt19937 randomEngine(seedGenerator());
+	float RandomRangeFloat(float num, float range) {
 
-	std::uniform_real_distribution<float> dist(num - range, num + range);
+		std::random_device seedGenerator;
+		std::mt19937 randomEngine(seedGenerator());
 
-	return dist(randomEngine);
-}
+		std::uniform_real_distribution<float> dist(num - range, num + range);
 
-Vector2 RandomRangeVector2(Vector2 num, Vector2 range) {
+		return dist(randomEngine);
+	}
 
-	std::random_device seedGenerator;
-	std::mt19937 randomEngine(seedGenerator());
+	Vector2 RandomRangeVector2(Vector2 num, Vector2 range) {
 
-	std::uniform_real_distribution<float> distX(num.x - range.x, num.x + range.x);
-	std::uniform_real_distribution<float> distY(num.y - range.y, num.y + range.y);
+		std::random_device seedGenerator;
+		std::mt19937 randomEngine(seedGenerator());
 
-	return Vector2(distX(randomEngine), distY(randomEngine));
-}
+		std::uniform_real_distribution<float> distX(num.x - range.x, num.x + range.x);
+		std::uniform_real_distribution<float> distY(num.y - range.y, num.y + range.y);
 
-Vector3 RandomRangeVector3(Vector3 num, Vector3 range) {
+		return Vector2(distX(randomEngine), distY(randomEngine));
+	}
 
-	std::random_device seedGenerator;
-	std::mt19937 randomEngine(seedGenerator());
+	Vector3 RandomRangeVector3(Vector3 num, Vector3 range) {
 
-	std::uniform_real_distribution<float> distX(num.x - range.x, num.x + range.x);
-	std::uniform_real_distribution<float> distY(num.y - range.y, num.y + range.y);
-	std::uniform_real_distribution<float> distZ(num.z - range.z, num.z + range.z);
+		std::random_device seedGenerator;
+		std::mt19937 randomEngine(seedGenerator());
 
-	return Vector3(distX(randomEngine), distY(randomEngine), distZ(randomEngine));
-}
+		std::uniform_real_distribution<float> distX(num.x - range.x, num.x + range.x);
+		std::uniform_real_distribution<float> distY(num.y - range.y, num.y + range.y);
+		std::uniform_real_distribution<float> distZ(num.z - range.z, num.z + range.z);
 
-Vector4 RandomRangeVector4(Vector4 num, Vector4 range) {
+		return Vector3(distX(randomEngine), distY(randomEngine), distZ(randomEngine));
+	}
 
-	std::random_device seedGenerator;
-	std::mt19937 randomEngine(seedGenerator());
+	Vector4 RandomRangeVector4(Vector4 num, Vector4 range) {
 
-	std::uniform_real_distribution<float> distX(num.x - range.x, num.x + range.x);
-	std::uniform_real_distribution<float> distY(num.y - range.y, num.y + range.y);
-	std::uniform_real_distribution<float> distZ(num.z - range.z, num.z + range.z);
-	std::uniform_real_distribution<float> distW(num.w - range.w, num.w + range.w);
+		std::random_device seedGenerator;
+		std::mt19937 randomEngine(seedGenerator());
 
-	return Vector4(distX(randomEngine), distY(randomEngine), distZ(randomEngine), distW(randomEngine));
+		std::uniform_real_distribution<float> distX(num.x - range.x, num.x + range.x);
+		std::uniform_real_distribution<float> distY(num.y - range.y, num.y + range.y);
+		std::uniform_real_distribution<float> distZ(num.z - range.z, num.z + range.z);
+		std::uniform_real_distribution<float> distW(num.w - range.w, num.w + range.w);
+
+		return Vector4(distX(randomEngine), distY(randomEngine), distZ(randomEngine), distW(randomEngine));
+	}
 }

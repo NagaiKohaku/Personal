@@ -21,7 +21,7 @@ private:
 
 	float moveStrength_;
 
-	Vector3 deadMoveVelocity_;
+	MyEngine::Vector3 deadMoveVelocity_;
 
 	bool isDestroy_;
 };

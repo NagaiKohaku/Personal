@@ -4,134 +4,137 @@
 
 #include "cassert"
 
-///=====================================================/// 
-/// DSVManagerのシングルトンインスタンスを取得
-///=====================================================///
-DSVManager* DSVManager::GetInstance() {
-	static DSVManager instance;
-	return &instance;
-}
+namespace MyEngine {
 
-///=====================================================/// 
-/// DSV用のデスクリプタヒープを初期化
-///=====================================================///
-void DSVManager::Initialize() {
-
-	//DirectX基底のインスタンスを取得
-	directXCommon = DirectXCommon::GetInstance();
-
-	//DSVデスクリプタヒープの初期化
-	dsvDescriptorHeap_ = directXCommon->CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_DSV, kMaxDSVCount_, false);
-
-	//DSVデスクリプタヒープのサイズを取得
-	dsvDescriptorSize_ = directXCommon->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
-}
-
-///=====================================================/// 
-/// 描画前処理
-///=====================================================///
-void DSVManager::PreDraw() {
-}
-
-///=====================================================/// 
-/// DSVの番号を割り当て
-///=====================================================///
-uint32_t DSVManager::Allocate() {
-
-	//DSV番号が最大数を越えていないかの確認
-	assert(kMaxDSVCount_ > useIndex_);
-
-	//現在のDSV番号を返す
-	int index = useIndex_;
-
-	//1つずらした番号を確保する
-	useIndex_++;
-
-	return index;
-}
-
-///=====================================================///  
-/// DSVを割り当て可能かどうかを確認
-///=====================================================///
-bool DSVManager::AllocateCheck() {
-
-	//DSV番号が最大数を越えていないかの確認
-	if (kMaxDSVCount_ > useIndex_) {
-		return true;
+	///=====================================================/// 
+	/// DSVManagerのシングルトンインスタンスを取得
+	///=====================================================///
+	DSVManager* DSVManager::GetInstance() {
+		static DSVManager instance;
+		return &instance;
 	}
 
-	return false;
-}
+	///=====================================================/// 
+	/// DSV用のデスクリプタヒープを初期化
+	///=====================================================///
+	void DSVManager::Initialize() {
 
-///=====================================================/// 
-/// 指定されたリソースに対してDSVを生成
-///=====================================================///
-void DSVManager::CreateDepthStencilView(uint32_t dsvIndex, ID3D12Resource* pResource) {
+		//DirectX基底のインスタンスを取得
+		directXCommon = DirectXCommon::GetInstance();
 
-	//DSVの情報
-	D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc{};
+		//DSVデスクリプタヒープの初期化
+		dsvDescriptorHeap_ = directXCommon->CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_DSV, kMaxDSVCount_, false);
 
-	//DSVの設定
-	dsvDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;        //Format。基本的にはResourceに合わせる
-	dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D; //2DTexture
+		//DSVデスクリプタヒープのサイズを取得
+		dsvDescriptorSize_ = directXCommon->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
+	}
 
-	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = GetCPUDescriptorHandle(dsvIndex);
+	///=====================================================/// 
+	/// 描画前処理
+	///=====================================================///
+	void DSVManager::PreDraw() {
+	}
 
-	//DSVHeapの先頭にDSVを作る
-	directXCommon->GetDevice()->CreateDepthStencilView(
-		pResource,
-		&dsvDesc,
-		dsvHandle
-	);
+	///=====================================================/// 
+	/// DSVの番号を割り当て
+	///=====================================================///
+	uint32_t DSVManager::Allocate() {
 
-}
+		//DSV番号が最大数を越えていないかの確認
+		assert(kMaxDSVCount_ > useIndex_);
 
-///================================================================/// 
-/// 指定されたリソースに対して32ビット浮動小数点形式の深度ステンシルビューを生成
-///================================================================///
-void DSVManager::CreateDepthTexture(uint32_t dsvIndex, ID3D12Resource* pResource) {
+		//現在のDSV番号を返す
+		int index = useIndex_;
 
-	//DSVの情報
-	D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc{};
+		//1つずらした番号を確保する
+		useIndex_++;
 
-	//DSVの設定
-	dsvDesc.Format = DXGI_FORMAT_D32_FLOAT;     //Format。基本的にはResourceに合わせる
-	dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D; //2DTexture
+		return index;
+	}
 
-	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = GetCPUDescriptorHandle(dsvIndex);
+	///=====================================================///  
+	/// DSVを割り当て可能かどうかを確認
+	///=====================================================///
+	bool DSVManager::AllocateCheck() {
 
-	//DSVHeapの先頭にDSVを作る
-	directXCommon->GetDevice()->CreateDepthStencilView(
-		pResource,
-		&dsvDesc,
-		dsvHandle
-	);
-}
+		//DSV番号が最大数を越えていないかの確認
+		if (kMaxDSVCount_ > useIndex_) {
+			return true;
+		}
 
-///=====================================================/// 
-/// CPUデスクリプターを取得
-///=====================================================///
-D3D12_CPU_DESCRIPTOR_HANDLE DSVManager::GetCPUDescriptorHandle(uint32_t index) {
+		return false;
+	}
 
-	//デスクリプタの最初のメモリを取得
-	D3D12_CPU_DESCRIPTOR_HANDLE handleCPU = dsvDescriptorHeap_->GetCPUDescriptorHandleForHeapStart();
+	///=====================================================/// 
+	/// 指定されたリソースに対してDSVを生成
+	///=====================================================///
+	void DSVManager::CreateDepthStencilView(uint32_t dsvIndex, ID3D12Resource* pResource) {
 
-	//メモリを番号分進ませる
-	handleCPU.ptr += (dsvDescriptorSize_ * index);
+		//DSVの情報
+		D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc{};
 
-	return handleCPU;
-}
+		//DSVの設定
+		dsvDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;        //Format。基本的にはResourceに合わせる
+		dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D; //2DTexture
 
-///=====================================================/// 
-/// GPUデスクリプターを取得
-///=====================================================///
-D3D12_GPU_DESCRIPTOR_HANDLE DSVManager::GetGPUDescriptorHandle(uint32_t index) {
+		D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = GetCPUDescriptorHandle(dsvIndex);
 
-	//デスクリプタの最初のメモリを取得
-	D3D12_GPU_DESCRIPTOR_HANDLE handleGPU = dsvDescriptorHeap_->GetGPUDescriptorHandleForHeapStart();
+		//DSVHeapの先頭にDSVを作る
+		directXCommon->GetDevice()->CreateDepthStencilView(
+			pResource,
+			&dsvDesc,
+			dsvHandle
+		);
 
-	//メモリを番号分進ませる
-	handleGPU.ptr += (dsvDescriptorSize_ * index);
+	}
 
-	return handleGPU;
+	///================================================================/// 
+	/// 指定されたリソースに対して32ビット浮動小数点形式の深度ステンシルビューを生成
+	///================================================================///
+	void DSVManager::CreateDepthTexture(uint32_t dsvIndex, ID3D12Resource* pResource) {
+
+		//DSVの情報
+		D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc{};
+
+		//DSVの設定
+		dsvDesc.Format = DXGI_FORMAT_D32_FLOAT;     //Format。基本的にはResourceに合わせる
+		dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D; //2DTexture
+
+		D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = GetCPUDescriptorHandle(dsvIndex);
+
+		//DSVHeapの先頭にDSVを作る
+		directXCommon->GetDevice()->CreateDepthStencilView(
+			pResource,
+			&dsvDesc,
+			dsvHandle
+		);
+	}
+
+	///=====================================================/// 
+	/// CPUデスクリプターを取得
+	///=====================================================///
+	D3D12_CPU_DESCRIPTOR_HANDLE DSVManager::GetCPUDescriptorHandle(uint32_t index) {
+
+		//デスクリプタの最初のメモリを取得
+		D3D12_CPU_DESCRIPTOR_HANDLE handleCPU = dsvDescriptorHeap_->GetCPUDescriptorHandleForHeapStart();
+
+		//メモリを番号分進ませる
+		handleCPU.ptr += (dsvDescriptorSize_ * index);
+
+		return handleCPU;
+	}
+
+	///=====================================================/// 
+	/// GPUデスクリプターを取得
+	///=====================================================///
+	D3D12_GPU_DESCRIPTOR_HANDLE DSVManager::GetGPUDescriptorHandle(uint32_t index) {
+
+		//デスクリプタの最初のメモリを取得
+		D3D12_GPU_DESCRIPTOR_HANDLE handleGPU = dsvDescriptorHeap_->GetGPUDescriptorHandleForHeapStart();
+
+		//メモリを番号分進ませる
+		handleGPU.ptr += (dsvDescriptorSize_ * index);
+
+		return handleGPU;
+	}
 }

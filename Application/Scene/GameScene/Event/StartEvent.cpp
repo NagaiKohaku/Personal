@@ -2,6 +2,8 @@
 
 #include <numbers>
 
+using namespace MyEngine;
+
 void StartEvent::Start(Player* player, Camera* camera, FollowCamera* followCamera) {
 
 	player_ = player;

@@ -11,6 +11,8 @@
 
 #include <numbers>
 
+using namespace MyEngine;
+
 void EnemyAttackState::Enter() {
 
 	maxTime_ = 2.0f;

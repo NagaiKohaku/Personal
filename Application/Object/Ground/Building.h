@@ -22,7 +22,7 @@ public:
 	/// </summary>
 	/// <param name="pos">建物の配置位置を指定します。</param>
 	/// <param name="scale">建物のスケール（大きさ）を指定します。</param>
-	void Initialize(Vector3 pos, Vector3 scale);
+	void Initialize(MyEngine::Vector3 pos, MyEngine::Vector3 scale);
 
 	/// <summary>
 	/// 建物オブジェクトの更新処理を行います。
@@ -45,7 +45,7 @@ public:
 private:
 
 	//建物オブジェクト
-	std::unique_ptr<Object3D> object_;
+	std::unique_ptr<MyEngine::Object3D> object_;
 
 	//移動速度
 	float speed_;
@@ -59,7 +59,7 @@ public:
 	/// ワールドトランスフォームを取得
 	/// </summary>
 	/// <returns>ワールドトランスフォーム</returns>
-	WorldTransform GetWorldTransform(){
+	MyEngine::WorldTransform GetWorldTransform(){
 		return object_->GetWorldTransform();
 	}
 
@@ -67,7 +67,7 @@ public:
 	/// 座標を設定
 	/// </summary>
 	/// <param name="pos">座標</param>
-	void SetPosition(Vector3 pos) {
+	void SetPosition(MyEngine::Vector3 pos) {
 		object_->GetWorldTransform().translate_ = pos;
 	}
 

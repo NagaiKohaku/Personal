@@ -5,6 +5,8 @@
 #include <Effect/Fade/Fade.h>
 #include <Base/Input.h>
 
+using namespace MyEngine;
+
 void PauseEvent::Start(Player* player, Camera* camera, FollowCamera* followCamera) {
 
 	player_ = player;

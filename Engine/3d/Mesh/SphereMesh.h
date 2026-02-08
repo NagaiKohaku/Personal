@@ -2,35 +2,38 @@
 
 #include "3d/Mesh/MeshBase.h"
 
-/// <summary>
-/// 球面体メッシュ（Sphere Mesh）を管理するクラスです。
-/// </summary>
-class SphereMesh : public MeshBase {
-
-	///-------------------------------------------/// 
-	/// メンバ関数
-	///-------------------------------------------///
-public:
+namespace MyEngine {
 
 	/// <summary>
-	/// SphereMeshの初期化を行います。
+	/// 球面体メッシュ（Sphere Mesh）を管理するクラスです。
 	/// </summary>
-	void Initialize() override;
+	class SphereMesh : public MeshBase {
 
-	///-------------------------------------------/// 
-	/// メンバ変数
-	///-------------------------------------------///
-private:
+		///-------------------------------------------/// 
+		/// メンバ関数
+		///-------------------------------------------///
+	public:
 
-	//緯度の分割数
-	const uint32_t kLatitudeCount = 16;
+		/// <summary>
+		/// SphereMeshの初期化を行います。
+		/// </summary>
+		void Initialize() override;
 
-	//経度の分割数
-	const uint32_t kLongitudeCount = 16;
+		///-------------------------------------------/// 
+		/// メンバ変数
+		///-------------------------------------------///
+	private:
 
-	//中心点
-	Vector3 center_ = { 0.0f, 0.0f, 0.0f };
+		//緯度の分割数
+		const uint32_t kLatitudeCount = 16;
 
-	//半径
-	float radius_ = 1.0f;
-};
+		//経度の分割数
+		const uint32_t kLongitudeCount = 16;
+
+		//中心点
+		Vector3 center_ = { 0.0f, 0.0f, 0.0f };
+
+		//半径
+		float radius_ = 1.0f;
+	};
+}

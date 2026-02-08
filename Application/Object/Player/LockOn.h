@@ -8,7 +8,7 @@
 
 class Player;
 class Enemy;
-class Camera;
+class MyEngine::Camera;
 
 /// <summary>
 /// ロックオンシステムを管理するクラスです。
@@ -44,7 +44,7 @@ public:
 	/// </summary>
 	/// <param name="cameraPtr">使用するカメラへのポインタ</param>
 	/// <param name="playerPtr">対象となるプレイヤーへのポインタ</param>
-	void Initialize(Camera* cameraPtr, Player* playerPtr);
+	void Initialize(MyEngine::Camera* cameraPtr, Player* playerPtr);
 
 	/// <summary>
 	/// ロックオンシステムを更新します。
@@ -77,16 +77,16 @@ private:
 	std::list<LockedEnemy> lockedEnemies_;
 
 	//カメラ
-	Camera* camera_;
+	MyEngine::Camera* camera_;
 
 	//プレイヤー
 	Player* player_;
 
 	//オフセット
-	Vector3 offset_;
+	MyEngine::Vector3 offset_;
 
 	//移動範囲
-	Vector3 moveRange_;
+	MyEngine::Vector3 moveRange_;
 
 	//移動強度
 	float moveStrength_;
@@ -103,13 +103,13 @@ public:
 	/// メインレティクルの座標を取得します。
 	/// </summary>
 	/// <returns>メインレティクルの座標</returns>
-	Vector3 GetMainReticlePos() const { return mainReticle_->GetWorldPos(); }
+	MyEngine::Vector3 GetMainReticlePos() const { return mainReticle_->GetWorldPos(); }
 
 	/// <summary>
 	/// アクティブなロックオンレティクルの座標を取得します。
 	/// </summary>
 	/// <return>アクティブなロックオンレティクルの座標リスト</return>
-	std::vector<Vector3> GetLockOnReticlePos();
+	std::vector<MyEngine::Vector3> GetLockOnReticlePos();
 
 	/// <summary>
 	/// メインレティクルとエネミーの距離を取得します。

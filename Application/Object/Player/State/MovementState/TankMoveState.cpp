@@ -7,6 +7,8 @@
 #include <algorithm>
 #include <numbers>
 
+using namespace MyEngine;
+
 void TankMoveState::Enter() {
 
 	initialPos_ = { 0.0f,2.0f,0.0f };

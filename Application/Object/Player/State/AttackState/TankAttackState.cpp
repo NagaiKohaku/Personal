@@ -4,6 +4,8 @@
 #include <Base/Input.h>
 #include <Math/Utility/MakeMatrixMath.h>
 
+using namespace MyEngine;
+
 void TankAttackState::Enter() {
 
 	//攻撃間隔を設定

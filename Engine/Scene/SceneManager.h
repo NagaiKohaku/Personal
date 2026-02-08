@@ -1,10 +1,8 @@
 #pragma once
 
-#include "memory"
+#include <Scene/BaseScene.h>
 
-/// === 前方宣言 === ///
- 
-class BaseScene;
+#include "memory"
 
 /// <summary>
 /// シーンの状態を管理するクラスです。
@@ -64,7 +62,7 @@ public:
 	/// <summary>
 	/// 指定された種類に応じたシーンオブジェクトを生成して返します。
 	/// </summary>
-	std::unique_ptr<BaseScene> CreateScene(SceneType sceneType);
+	std::unique_ptr<MyEngine::BaseScene> CreateScene(SceneType sceneType);
 
 	///-------------------------------------------/// 
 	///メンバ変数
@@ -72,5 +70,5 @@ public:
 private:
 
 	//現在のシーン
-	std::unique_ptr<BaseScene> currentScene_;
+	std::unique_ptr<MyEngine::BaseScene> currentScene_;
 };

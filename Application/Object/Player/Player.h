@@ -56,7 +56,7 @@ public:
 	/// <summary>
 	/// プレイヤーを初期化します。
 	/// </summary>
-	void Initialize(Camera* cameraPtr, BulletManager* bulletPtr, bool isMoveActive);
+	void Initialize(MyEngine::Camera* cameraPtr, BulletManager* bulletPtr, bool isMoveActive);
 
 	/// <summary>
 	/// プレイヤーの状態を更新します。
@@ -114,7 +114,7 @@ private:
 private:
 
 	//カメラ
-	Camera* camera_;
+	MyEngine::Camera* camera_;
 
 	//バレットマネージャー
 	BulletManager* bulletManager_ = nullptr;
@@ -126,22 +126,22 @@ private:
 	std::vector<ObjectData> objectData_;
 
 	//コアオブジェクト
-	std::unique_ptr<Object3D> core_ = nullptr;
+	std::unique_ptr<MyEngine::Object3D> core_ = nullptr;
 
 	//右ウィングオブジェクト
-	std::unique_ptr<Object3D> rightWing_;
+	std::unique_ptr<MyEngine::Object3D> rightWing_;
 
 	//左ウィングオブジェクト
-	std::unique_ptr<Object3D> leftWing_;
+	std::unique_ptr<MyEngine::Object3D> leftWing_;
 
 	//エミッターリスト
-	std::vector<EmitterGroup*> emitterList_;
+	std::vector<MyEngine::EmitterGroup*> emitterList_;
 
 	//影オブジェクト
 	std::unique_ptr<Shadow> shadow_;
 
 	//コライダー
-	std::unique_ptr<SphereCollider> collider_ = nullptr;
+	std::unique_ptr<MyEngine::SphereCollider> collider_ = nullptr;
 
 	//レティクル
 	std::unique_ptr<LockOn> lockOn_ = nullptr;
@@ -156,7 +156,7 @@ private:
 	MoveState moveState_;
 
 	//移動量
-	Vector3 inputDirection_;
+	MyEngine::Vector3 inputDirection_;
 
 	//移動アクティブフラグ
 	bool isMoveActive_;
@@ -176,23 +176,23 @@ public:
 	/// ワールド座標を取得
 	/// </summary>
 	/// <returns>ワールド座標</returns>
-	Vector3 GetWorldPos() { return core_->GetWorldTransform().GetWorldTranslate(); }
+	MyEngine::Vector3 GetWorldPos() { return core_->GetWorldTransform().GetWorldTranslate(); }
 
-	WorldTransform GetCoreWorldTransform() { return core_->GetWorldTransform(); }
+	MyEngine::WorldTransform GetCoreWorldTransform() { return core_->GetWorldTransform(); }
 
-	WorldTransform GetLeftWingWorldTransform() { return leftWing_->GetWorldTransform(); }
+	MyEngine::WorldTransform GetLeftWingWorldTransform() { return leftWing_->GetWorldTransform(); }
 
-	WorldTransform GetRightWingWorldTransform() { return rightWing_->GetWorldTransform(); }
+	MyEngine::WorldTransform GetRightWingWorldTransform() { return rightWing_->GetWorldTransform(); }
 
-	WorldTransform GetLeftTrailWorldTransform() { return emitterList_[static_cast<size_t>(EmitterType::LEFTTRAIL)]->GetWorldTransform(); }
+	MyEngine::WorldTransform GetLeftTrailWorldTransform() { return emitterList_[static_cast<size_t>(EmitterType::LEFTTRAIL)]->GetWorldTransform(); }
 
-	WorldTransform GetRightTrailWorldTransform() { return emitterList_[static_cast<size_t>(EmitterType::RIGHTTRAIL)]->GetWorldTransform(); }
+	MyEngine::WorldTransform GetRightTrailWorldTransform() { return emitterList_[static_cast<size_t>(EmitterType::RIGHTTRAIL)]->GetWorldTransform(); }
 
 	/// <summary>
 	/// 移動量を取得
 	/// </summary>
 	/// <returns>移動量</returns>
-	Vector3 GetInputDirection() { return inputDirection_; }
+	MyEngine::Vector3 GetInputDirection() { return inputDirection_; }
 
 	/// <summary>
 	/// 移動状態を取得
@@ -216,17 +216,17 @@ public:
 	/// 座標を設定
 	/// </summary>
 	/// <param name="pos">座標</param>
-	void SetPosition(Vector3 pos) { core_->GetWorldTransform().translate_ = pos; }
+	void SetPosition(MyEngine::Vector3 pos) { core_->GetWorldTransform().translate_ = pos; }
 
-	void SetCoreWorldTransform(WorldTransform transform) { core_->GetWorldTransform() = transform; }
+	void SetCoreWorldTransform(MyEngine::WorldTransform transform) { core_->GetWorldTransform() = transform; }
 
-	void SetLeftWingWorldTransform(WorldTransform transform) { leftWing_->GetWorldTransform() = transform; }
+	void SetLeftWingWorldTransform(MyEngine::WorldTransform transform) { leftWing_->GetWorldTransform() = transform; }
 
-	void SetRightWingWorldTransform(WorldTransform transform) { rightWing_->GetWorldTransform() = transform; }
+	void SetRightWingWorldTransform(MyEngine::WorldTransform transform) { rightWing_->GetWorldTransform() = transform; }
 
-	void SetLeftTrailWorldTransform(WorldTransform transform) { emitterList_[static_cast<size_t>(EmitterType::LEFTTRAIL)]->GetWorldTransform() = transform; }
+	void SetLeftTrailWorldTransform(MyEngine::WorldTransform transform) { emitterList_[static_cast<size_t>(EmitterType::LEFTTRAIL)]->GetWorldTransform() = transform; }
 
-	void SetRightTrailWorldTransform(WorldTransform transform) { emitterList_[static_cast<size_t>(EmitterType::RIGHTTRAIL)]->GetWorldTransform() = transform; }
+	void SetRightTrailWorldTransform(MyEngine::WorldTransform transform) { emitterList_[static_cast<size_t>(EmitterType::RIGHTTRAIL)]->GetWorldTransform() = transform; }
 
 	/// <summary>
 	/// 移動アクティブフラグを設定

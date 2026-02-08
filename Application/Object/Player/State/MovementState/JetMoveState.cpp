@@ -6,6 +6,8 @@
 
 #include <algorithm>
 
+using namespace MyEngine;
+
 void JetMoveState::Enter() {
 
 	initialPos_ = { 0.0f,2.0f,0.0f };

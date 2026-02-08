@@ -18,7 +18,7 @@ public:
 	/// </summary>
 	/// <param name="camera">カメラを指定します。</param>
 	/// <param name="player">追従先となるプレイヤーを指定します。</param>
-	void Initialize(Camera* camera, Player* player);
+	void Initialize(MyEngine::Camera* camera, Player* player);
 
 	/// <summary>
 	/// プレイヤーにカメラを追従させるために毎フレーム更新します。
@@ -42,13 +42,13 @@ public:
 private:
 
 	//カメラ
-	Camera* camera_;
+	MyEngine::Camera* camera_;
 
 	//プレイヤー
 	Player* player_;
 
 	//オフセット
-	Vector3 offset_;
+	MyEngine::Vector3 offset_;
 
 	//追尾範囲
 	float followRange_;

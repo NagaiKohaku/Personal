@@ -9,77 +9,80 @@
 #include "3d/Mesh/CubeMesh.h"
 #include "3d/Mesh/ModelMesh.h"
 
-///=============================================================/// 
-/// 指定されたメッシュタイプに応じてMeshBase派生クラスのインスタンスを生成
-///=============================================================///
-std::unique_ptr<MeshBase> CreateMesh(MeshType type) {
+namespace MyEngine {
 
-	switch (type) {
+	///=============================================================/// 
+	/// 指定されたメッシュタイプに応じてMeshBase派生クラスのインスタンスを生成
+	///=============================================================///
+	std::unique_ptr<MeshBase> CreateMesh(MeshType type) {
 
-	case MeshType::PLANE:
+		switch (type) {
 
-		return std::make_unique<PlaneMesh>();
+		case MeshType::PLANE:
 
-	case MeshType::RING:
+			return std::make_unique<PlaneMesh>();
 
-		return std::make_unique<RingMesh>();
+		case MeshType::RING:
 
-	case MeshType::CYLINDER:
+			return std::make_unique<RingMesh>();
 
-		return std::make_unique<CylinderMesh>();
+		case MeshType::CYLINDER:
 
-	case MeshType::SPHERE:
+			return std::make_unique<CylinderMesh>();
 
-		return std::make_unique<SphereMesh>();
+		case MeshType::SPHERE:
 
-	case MeshType::CUBE:
+			return std::make_unique<SphereMesh>();
 
-		return std::make_unique<CubeMesh>();
+		case MeshType::CUBE:
 
-	case MeshType::MODEL:
+			return std::make_unique<CubeMesh>();
 
-		return std::make_unique<ModelMesh>();
+		case MeshType::MODEL:
 
-	default:
+			return std::make_unique<ModelMesh>();
 
-		return std::make_unique<PlaneMesh>();
-	}
-}
+		default:
 
-///=====================================================/// 
-/// Model に紐づくメッシュの種類を取得
-///=====================================================///
-MeshType GetMeshType(Model* model) {
-
-	if (dynamic_cast<ModelMesh*>(model->GetMesh())) {
-
-		return MeshType::MODEL;
+			return std::make_unique<PlaneMesh>();
+		}
 	}
 
-	if (dynamic_cast<PlaneMesh*>(model->GetMesh())) {
+	///=====================================================/// 
+	/// Model に紐づくメッシュの種類を取得
+	///=====================================================///
+	MeshType GetMeshType(Model* model) {
 
-		return MeshType::PLANE;
+		if (dynamic_cast<ModelMesh*>(model->GetMesh())) {
+
+			return MeshType::MODEL;
+		}
+
+		if (dynamic_cast<PlaneMesh*>(model->GetMesh())) {
+
+			return MeshType::PLANE;
+		}
+
+		if (dynamic_cast<RingMesh*>(model->GetMesh())) {
+
+			return MeshType::RING;
+		}
+
+		if (dynamic_cast<CylinderMesh*>(model->GetMesh())) {
+
+			return MeshType::CYLINDER;
+		}
+
+		if (dynamic_cast<CubeMesh*>(model->GetMesh())) {
+
+			return MeshType::CUBE;
+		}
+
+		if (dynamic_cast<SphereMesh*>(model->GetMesh())) {
+
+			return MeshType::SPHERE;
+		}
+
+		return MeshType::END;
 	}
-
-	if (dynamic_cast<RingMesh*>(model->GetMesh())) {
-
-		return MeshType::RING;
-	}
-
-	if (dynamic_cast<CylinderMesh*>(model->GetMesh())) {
-
-		return MeshType::CYLINDER;
-	}
-
-	if (dynamic_cast<CubeMesh*>(model->GetMesh())) {
-
-		return MeshType::CUBE;
-	}
-
-	if (dynamic_cast<SphereMesh*>(model->GetMesh())) {
-
-		return MeshType::SPHERE;
-	}
-
-	return MeshType::END;
 }

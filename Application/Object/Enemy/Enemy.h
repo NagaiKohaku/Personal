@@ -40,7 +40,7 @@ public:
 	/// <param name="bulletPtr">弾管理クラスのポインタを指定します。</param>
 	/// <param name="playerPtr">プレイヤーオブジェクトのポインタを指定します。</param>
 	/// <param name="objectData">敵オブジェクト生成に必要なデータを指定します。</param>
-	void Initialize(Camera* cameraPtr, BulletManager* bulletPtr, Player* playerPtr, ObjectData objectData);
+	void Initialize(MyEngine::Camera* cameraPtr, BulletManager* bulletPtr, Player* playerPtr, ObjectData objectData);
 
 	/// <summary>
 	/// 敵オブジェクトの状態を毎フレーム更新します。
@@ -114,7 +114,7 @@ private:
 private:
 
 	//カメラ
-	Camera* camera_;
+	MyEngine::Camera* camera_;
 
 	//バレットマネージャー
 	BulletManager* bulletManager_;
@@ -123,45 +123,45 @@ private:
 	Player* player_;
 
 	//オブジェクト
-	std::unique_ptr<Object3D> object_ = nullptr;
+	std::unique_ptr<MyEngine::Object3D> object_ = nullptr;
 
 	std::unique_ptr<EnemyState> state_;
 
 	//コライダー
-	std::unique_ptr<SphereCollider> collider_ = nullptr;
+	std::unique_ptr<MyEngine::SphereCollider> collider_ = nullptr;
 
 	//死亡時エミッター
-	std::unique_ptr<EmitterGroup> explosiveEmitter_;
+	std::unique_ptr<MyEngine::EmitterGroup> explosiveEmitter_;
 
 	//クリア時爆発エミッター
-	std::unique_ptr<EmitterGroup> clearExplosiveEmitter_;
+	std::unique_ptr<MyEngine::EmitterGroup> clearExplosiveEmitter_;
 
 	//破壊時エミッター
-	std::unique_ptr<EmitterGroup> destroyEmitter_;
+	std::unique_ptr<MyEngine::EmitterGroup> destroyEmitter_;
 
 	//ダメージ時エミッター
-	std::unique_ptr<EmitterGroup> damageEmitter_;
+	std::unique_ptr<MyEngine::EmitterGroup> damageEmitter_;
 
 	//影オブジェクト
 	std::unique_ptr<Shadow> shadow_;
 
 	//前フレームの座標
-	Vector3 prePos_;
+	MyEngine::Vector3 prePos_;
 
 	//エントリー状態の座標
-	Vector3 entryPos_;
+	MyEngine::Vector3 entryPos_;
 
 	//スタンバイ状態の座標
-	Vector3 standbyPos_;
+	MyEngine::Vector3 standbyPos_;
 
 	//離脱開始座標
-	Vector3 exitStartPos_;
+	MyEngine::Vector3 exitStartPos_;
 
 	//離脱座標
-	Vector3 exitPos_;
+	MyEngine::Vector3 exitPos_;
 
 	//死亡時移動量
-	Vector3 deadMoveVelocity_;
+	MyEngine::Vector3 deadMoveVelocity_;
 
 	//体力
 	int hp_;
@@ -216,53 +216,53 @@ public:
 	/// 座標のセッター
 	/// </summary>
 	/// <param name="pos">座標</param>
-	void SetPosition(Vector3 pos) { object_->GetWorldTransform().translate_ = pos; }
+	void SetPosition(MyEngine::Vector3 pos) { object_->GetWorldTransform().translate_ = pos; }
 
-	WorldTransform GetWorldTransform() { return object_->GetWorldTransform(); }
+	MyEngine::WorldTransform GetWorldTransform() { return object_->GetWorldTransform(); }
 
-	void SetWorldTransform(WorldTransform transform) { object_->GetWorldTransform() = transform; }
+	void SetWorldTransform(MyEngine::WorldTransform transform) { object_->GetWorldTransform() = transform; }
 
 	/// <summary>
 	/// ワールド座標を取得
 	/// </summary>
 	/// <returns>ワールド座標</returns>
-	Vector3 GetWorldPos() { return object_->GetWorldTransform().GetWorldTranslate(); }
+	MyEngine::Vector3 GetWorldPos() { return object_->GetWorldTransform().GetWorldTranslate(); }
 
-	Vector3 GetPrePos() { return prePos_; }
+	MyEngine::Vector3 GetPrePos() { return prePos_; }
 
-	Vector3 GetPlayerPos();
+	MyEngine::Vector3 GetPlayerPos();
 
 	/// <summary>
 	/// エントリーの位置を設定します。
 	/// </summary>
 	/// <param name="pos">座標</param>
-	void SetEntryPos(Vector3 pos) { entryPos_ = pos; }
+	void SetEntryPos(MyEngine::Vector3 pos) { entryPos_ = pos; }
 
-	Vector3 GetEntryPos() { return entryPos_; }
+	MyEngine::Vector3 GetEntryPos() { return entryPos_; }
 
 	/// <summary>
 	/// スタンバイ状態の座標のセッター
 	/// </summary>
 	/// <param name="pos">座標</param>
-	void SetStandbyPos(Vector3 pos) { standbyPos_ = pos; }
+	void SetStandbyPos(MyEngine::Vector3 pos) { standbyPos_ = pos; }
 
-	Vector3 GetStandbyPos() { return standbyPos_; }
+	MyEngine::Vector3 GetStandbyPos() { return standbyPos_; }
 
 	/// <summary>
 	/// 離脱開始座標の設定
 	/// </summary>
 	/// <param name="pos">座標</param>
-	void SetExitStartPos(Vector3 pos) { exitStartPos_ = pos; }
+	void SetExitStartPos(MyEngine::Vector3 pos) { exitStartPos_ = pos; }
 
-	Vector3 GetExitStartPos() { return exitStartPos_; }
+	MyEngine::Vector3 GetExitStartPos() { return exitStartPos_; }
 
 	/// <summary>
 	/// 離脱状態の座標の設定
 	/// </summary>
 	/// <param name="pos">座標</param>
-	void SetExitPos(Vector3 pos) { exitPos_ = pos; }
+	void SetExitPos(MyEngine::Vector3 pos) { exitPos_ = pos; }
 
-	Vector3 GetExitPos() { return exitPos_; }
+	MyEngine::Vector3 GetExitPos() { return exitPos_; }
 
 	/// <summary>
 	/// 削除中フラグのセッター

@@ -13,131 +13,134 @@
 
 #include "wrl.h"
 
-/// === 前方宣言 === ///
-class WinApp;
+namespace MyEngine {
 
-/// <summary>
-/// キーボード、マウスなどの入力デバイスを統括して管理するクラスです。
-/// </summary>
-class Input {
-
-	///-------------------------------------------/// 
-	/// メンバ関数
-	///-------------------------------------------///
-public:
+	/// === 前方宣言 === ///
+	class WinApp;
 
 	/// <summary>
-	/// Inputのシングルトンインスタンスを取得します。
+	/// キーボード、マウスなどの入力デバイスを統括して管理するクラスです。
 	/// </summary>
-	static Input* GetInstance();
+	class Input {
 
-	/// <summary>
-	/// DirectInputを使用してキーボードとマウスの入力デバイスを初期化します。
-	/// </summary>
-	void Initialize();
+		///-------------------------------------------/// 
+		/// メンバ関数
+		///-------------------------------------------///
+	public:
 
-	/// <summary>
-	/// 毎フレーム、キーボードとマウスの入力状態を更新します。
-	/// </summary>
-	void Update();
+		/// <summary>
+		/// Inputのシングルトンインスタンスを取得します。
+		/// </summary>
+		static Input* GetInstance();
 
-	/// <summary>
-	/// キーが押されているか判定
-	/// </summary>
-	/// <param name="keyNum">キー番号</param>
-	/// <returns>判定フラグ</returns>
-	bool isPushKey(uint8_t keyNum);
+		/// <summary>
+		/// DirectInputを使用してキーボードとマウスの入力デバイスを初期化します。
+		/// </summary>
+		void Initialize();
 
-	/// <summary>
-	/// キーが離されているか判定
-	/// </summary>
-	/// <param name="keyNum">キー番号</param>
-	/// <returns>判定フラグ</returns>
-	bool isReleaseKey(uint8_t keyNum);
+		/// <summary>
+		/// 毎フレーム、キーボードとマウスの入力状態を更新します。
+		/// </summary>
+		void Update();
 
-	/// <summary>
-	/// キーが押された瞬間か判定
-	/// </summary>
-	/// <param name="keyNum">キー番号</param>
-	/// <returns>判定フラグ</returns>
-	bool IsTriggerPushKey(uint8_t keyNum);
-	
-	/// <summary>
-	/// キーが離された瞬間か判定
-	/// </summary>
-	/// <param name="keyNum">キー番号</param>
-	/// <returns>判定フラグ</returns>
-	bool IsTriggerReleaseKey(uint8_t keyNum);
+		/// <summary>
+		/// キーが押されているか判定
+		/// </summary>
+		/// <param name="keyNum">キー番号</param>
+		/// <returns>判定フラグ</returns>
+		bool isPushKey(uint8_t keyNum);
 
-	/// <summary>
-	/// マウスボタンを押しているか判定
-	/// </summary>
-	/// <param name="mouseButton">マウスボタン番号</param>
-	/// <returns>判定フラグ</returns>
-	bool IsPushMouseButton(int mouseButton);
+		/// <summary>
+		/// キーが離されているか判定
+		/// </summary>
+		/// <param name="keyNum">キー番号</param>
+		/// <returns>判定フラグ</returns>
+		bool isReleaseKey(uint8_t keyNum);
 
-	/// <summary>
-	/// マウスボタンを離しているか判定
-	/// </summary>
-	/// <param name="mouseButton">マウスボタン番号</param>
-	/// <returns>判定フラグ</returns>
-	bool IsReleaseMouseButton(int mouseButton);
+		/// <summary>
+		/// キーが押された瞬間か判定
+		/// </summary>
+		/// <param name="keyNum">キー番号</param>
+		/// <returns>判定フラグ</returns>
+		bool IsTriggerPushKey(uint8_t keyNum);
 
-	/// <summary>
-	/// マウスボタンを押した瞬間か判定
-	/// </summary>
-	/// <param name="mouseButton">マウスボタン番号</param>
-	/// <returns>判定フラグ</returns>
-	bool IsTriggerPushMouseButton(int mouseButton);
+		/// <summary>
+		/// キーが離された瞬間か判定
+		/// </summary>
+		/// <param name="keyNum">キー番号</param>
+		/// <returns>判定フラグ</returns>
+		bool IsTriggerReleaseKey(uint8_t keyNum);
 
-	/// <summary>
-	/// マウスボタンを離した瞬間か判定
-	/// </summary>
-	/// <param name="mouseButton">マウスボタン番号</param>
-	/// <returns>判定フラグ</returns>
-	bool IsTriggerReleaseMouseButton(int mouseButton);
+		/// <summary>
+		/// マウスボタンを押しているか判定
+		/// </summary>
+		/// <param name="mouseButton">マウスボタン番号</param>
+		/// <returns>判定フラグ</returns>
+		bool IsPushMouseButton(int mouseButton);
 
-	/// <summary>
-	/// マウス座標を取得
-	/// </summary>
-	/// <returns>マウス座標</returns>
-	Vector2 GetMousePos();
+		/// <summary>
+		/// マウスボタンを離しているか判定
+		/// </summary>
+		/// <param name="mouseButton">マウスボタン番号</param>
+		/// <returns>判定フラグ</returns>
+		bool IsReleaseMouseButton(int mouseButton);
 
-	/// <summary>
-	/// マウスの移動量を取得
-	/// </summary>
-	/// <returns>マウスの移動量</returns>
-	Vector3 GetMouseVelocity();
+		/// <summary>
+		/// マウスボタンを押した瞬間か判定
+		/// </summary>
+		/// <param name="mouseButton">マウスボタン番号</param>
+		/// <returns>判定フラグ</returns>
+		bool IsTriggerPushMouseButton(int mouseButton);
 
-	///-------------------------------------------/// 
-	/// メンバ変数
-	///-------------------------------------------///
-private:
+		/// <summary>
+		/// マウスボタンを離した瞬間か判定
+		/// </summary>
+		/// <param name="mouseButton">マウスボタン番号</param>
+		/// <returns>判定フラグ</returns>
+		bool IsTriggerReleaseMouseButton(int mouseButton);
 
-	//ウィンドウ管理
-	WinApp* winApp_ = nullptr;
+		/// <summary>
+		/// マウス座標を取得
+		/// </summary>
+		/// <returns>マウス座標</returns>
+		Vector2 GetMousePos();
 
-	//DirectInput
-	Microsoft::WRL::ComPtr<IDirectInput8> directInput_ = nullptr;
+		/// <summary>
+		/// マウスの移動量を取得
+		/// </summary>
+		/// <returns>マウスの移動量</returns>
+		Vector3 GetMouseVelocity();
 
-	//キーボード入力
-	Microsoft::WRL::ComPtr<IDirectInputDevice8> keyboard_;
+		///-------------------------------------------/// 
+		/// メンバ変数
+		///-------------------------------------------///
+	private:
 
-	//マウス入力
-	Microsoft::WRL::ComPtr<IDirectInputDevice8> mouse_;
+		//ウィンドウ管理
+		WinApp* winApp_ = nullptr;
 
-	//ゲームパッド入力
-	Microsoft::WRL::ComPtr<IDirectInputDevice8> gamePad_;
+		//DirectInput
+		Microsoft::WRL::ComPtr<IDirectInput8> directInput_ = nullptr;
 
-	//今フレームのキー入力
-	BYTE key_[256] = {};
+		//キーボード入力
+		Microsoft::WRL::ComPtr<IDirectInputDevice8> keyboard_;
 
-	//前フレームのキー入力
-	BYTE preKey_[256] = {};
+		//マウス入力
+		Microsoft::WRL::ComPtr<IDirectInputDevice8> mouse_;
 
-	//今フレームのマウス入力
-	DIMOUSESTATE mouseState_;
+		//ゲームパッド入力
+		Microsoft::WRL::ComPtr<IDirectInputDevice8> gamePad_;
 
-	//前フレームのマウス入力
-	DIMOUSESTATE preMouseState_;
-};
+		//今フレームのキー入力
+		BYTE key_[256] = {};
+
+		//前フレームのキー入力
+		BYTE preKey_[256] = {};
+
+		//今フレームのマウス入力
+		DIMOUSESTATE mouseState_;
+
+		//前フレームのマウス入力
+		DIMOUSESTATE preMouseState_;
+	};
+}

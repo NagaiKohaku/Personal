@@ -4,93 +4,96 @@
 #include "cstdint"
 #include "wrl.h"
 
-/// === 前方宣言 === ///
-class DirectXCommon;
+namespace MyEngine {
 
-/// <summary>
-/// 描画用レンダーターゲットビュー(RTV)の管理を行うクラスです。
-/// </summary>
-class RTVManager {
-
-	///-------------------------------------------/// 
-	/// 静的メンバ変数
-	///-------------------------------------------///
-public:
-
-	//最大RTV数
-	static const uint32_t kMaxRTVCount_ = 3;
-
-	///-------------------------------------------/// 
-	/// メンバ関数
-	///-------------------------------------------///
-public:
+	/// === 前方宣言 === ///
+	class DirectXCommon;
 
 	/// <summary>
-	/// RTVManagerのシングルトンインスタンスを取得します。
+	/// 描画用レンダーターゲットビュー(RTV)の管理を行うクラスです。
 	/// </summary>
-	static RTVManager* GetInstance();
+	class RTVManager {
 
-	/// <summary>
-	/// RTV用のデスクリプタヒープを初期化します。
-	/// </summary>
-	void Initialize();
+		///-------------------------------------------/// 
+		/// 静的メンバ変数
+		///-------------------------------------------///
+	public:
 
-	/// <summary>
-	/// 描画前処理
-	/// </summary>
-	void PreDraw();
+		//最大RTV数
+		static const uint32_t kMaxRTVCount_ = 3;
 
-	/// <summary>
-	/// RTVの番号を割り当てます。
-	/// </summary>
-	/// <returns>割り当てられたRTV番号</returns>
-	uint32_t Allocate();
+		///-------------------------------------------/// 
+		/// メンバ関数
+		///-------------------------------------------///
+	public:
 
-	/// <summary>
-	/// RTVを割り当て可能かどうかを確認します。
-	/// </summary>
-	/// <returns>true: 割り当て可能 / false: 割り当て不可</returns>
-	bool AllocateCheck();
+		/// <summary>
+		/// RTVManagerのシングルトンインスタンスを取得します。
+		/// </summary>
+		static RTVManager* GetInstance();
 
-	/// <summary>
-	/// 指定したリソースにRTVを作成します。
-	/// </summary>
-	void CreateRenderTargetView(uint32_t rtvIndex, ID3D12Resource* pResource);
+		/// <summary>
+		/// RTV用のデスクリプタヒープを初期化します。
+		/// </summary>
+		void Initialize();
 
-	///-------------------------------------------/// 
-	/// メンバ変数
-	///-------------------------------------------///
-private:
+		/// <summary>
+		/// 描画前処理
+		/// </summary>
+		void PreDraw();
 
-	//DirectX基底
-	DirectXCommon* directXCommon = nullptr;
+		/// <summary>
+		/// RTVの番号を割り当てます。
+		/// </summary>
+		/// <returns>割り当てられたRTV番号</returns>
+		uint32_t Allocate();
 
-	//現在のSRV番号
-	uint32_t useIndex_ = 0;
+		/// <summary>
+		/// RTVを割り当て可能かどうかを確認します。
+		/// </summary>
+		/// <returns>true: 割り当て可能 / false: 割り当て不可</returns>
+		bool AllocateCheck();
 
-	//RTV用のデスクリプタサイズ
-	uint32_t rtvDescriptorSize_;
+		/// <summary>
+		/// 指定したリソースにRTVを作成します。
+		/// </summary>
+		void CreateRenderTargetView(uint32_t rtvIndex, ID3D12Resource* pResource);
 
-	//RTVデスクリプタヒープ
-	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> rtvDescriptorHeap_;
+		///-------------------------------------------/// 
+		/// メンバ変数
+		///-------------------------------------------///
+	private:
 
-	///-------------------------------------------/// 
-	/// ゲッター・セッター
-	///-------------------------------------------///
-public:
+		//DirectX基底
+		DirectXCommon* directXCommon = nullptr;
 
-	/// <summary>
-	/// CPUデスクリプターを取得
-	/// </summary>
-	/// <param name="index">デスクリプタの番号</param>
-	/// <returns>CPUデスクリプタ</returns>
-	D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(uint32_t index);
+		//現在のSRV番号
+		uint32_t useIndex_ = 0;
 
-	/// <summary>
-	/// GPUデスクリプターを取得
-	/// </summary>
-	/// <param name="index">デスクリプタ番号</param>
-	/// <returns>GPUデスクリプタ</returns>
-	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(uint32_t index);
+		//RTV用のデスクリプタサイズ
+		uint32_t rtvDescriptorSize_;
 
-};
+		//RTVデスクリプタヒープ
+		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> rtvDescriptorHeap_;
+
+		///-------------------------------------------/// 
+		/// ゲッター・セッター
+		///-------------------------------------------///
+	public:
+
+		/// <summary>
+		/// CPUデスクリプターを取得
+		/// </summary>
+		/// <param name="index">デスクリプタの番号</param>
+		/// <returns>CPUデスクリプタ</returns>
+		D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(uint32_t index);
+
+		/// <summary>
+		/// GPUデスクリプターを取得
+		/// </summary>
+		/// <param name="index">デスクリプタ番号</param>
+		/// <returns>GPUデスクリプタ</returns>
+		D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(uint32_t index);
+
+	};
+}

@@ -5,66 +5,69 @@
 
 #include "numbers"
 
-///=====================================================/// 
-/// SphereCollider を初期化
-///=====================================================///
-void SphereCollider::Initialize(WorldTransform* parent) {
+namespace MyEngine {
 
-	//コライダーの初期化
-	Collider::Initialize(parent);
+	///=====================================================/// 
+	/// SphereCollider を初期化
+	///=====================================================///
+	void SphereCollider::Initialize(WorldTransform* parent) {
 
-	//球の初期化
-	sphere_.center = { 0.0f, 0.0f, 0.0f };
-	sphere_.radius = 1.0f; // 半径1の球
+		//コライダーの初期化
+		Collider::Initialize(parent);
 
-	//球の中心座標に設定
-	worldTransform_.translate_ = sphere_.center;
+		//球の初期化
+		sphere_.center = { 0.0f, 0.0f, 0.0f };
+		sphere_.radius = 1.0f; // 半径1の球
 
-	//球の大きさで設定
-	worldTransform_.scale_ = { sphere_.radius, sphere_.radius, sphere_.radius };
+		//球の中心座標に設定
+		worldTransform_.translate_ = sphere_.center;
 
-	//球体モデルを作成
-	ModelManager::GetInstance()->CreateMeshModel("SphereMesh", MeshType::SPHERE, "Resource/Texture/white_128x128.png");
+		//球の大きさで設定
+		worldTransform_.scale_ = { sphere_.radius, sphere_.radius, sphere_.radius };
 
-	//デバッグオブジェクトに球体モデルを設定
-	debugObject_->SetModel("SphereMesh");
+		//球体モデルを作成
+		ModelManager::GetInstance()->CreateMeshModel("SphereMesh", MeshType::SPHERE, "Resource/Texture/white_128x128.png");
 
-	//親オブジェクトのワールドトランスフォームとペアレント設定
-	debugObject_->GetWorldTransform().SetParent(&worldTransform_);
+		//デバッグオブジェクトに球体モデルを設定
+		debugObject_->SetModel("SphereMesh");
 
-	//コライダーマネージャーに登録
-	ColliderManager::GetInstance()->AddCollider(this);
-}
+		//親オブジェクトのワールドトランスフォームとペアレント設定
+		debugObject_->GetWorldTransform().SetParent(&worldTransform_);
 
-///=====================================================/// 
-/// SphereCollider を毎フレーム更新
-///=====================================================///
-void SphereCollider::Update() {
+		//コライダーマネージャーに登録
+		ColliderManager::GetInstance()->AddCollider(this);
+	}
 
-	//中心座標の更新
-	worldTransform_.translate_ = sphere_.center;
+	///=====================================================/// 
+	/// SphereCollider を毎フレーム更新
+	///=====================================================///
+	void SphereCollider::Update() {
 
-	//半径の更新
-	worldTransform_.scale_ = { sphere_.radius, sphere_.radius, sphere_.radius };
+		//中心座標の更新
+		worldTransform_.translate_ = sphere_.center;
 
-	//コライダーの更新
-	Collider::Update();
-}
+		//半径の更新
+		worldTransform_.scale_ = { sphere_.radius, sphere_.radius, sphere_.radius };
 
-///=====================================================/// 
-/// SphereCollider を描画
-///=====================================================///
-void SphereCollider::Draw() {
+		//コライダーの更新
+		Collider::Update();
+	}
 
-	//コライダーの描画
-	Collider::Draw();
-}
+	///=====================================================/// 
+	/// SphereCollider を描画
+	///=====================================================///
+	void SphereCollider::Draw() {
 
-///=====================================================/// 
-/// SphereCollider をコライダーマネージャーから削除
-///=====================================================///
-void SphereCollider::Remove() {
+		//コライダーの描画
+		Collider::Draw();
+	}
 
-	//コライダーマネージャーから削除
-	ColliderManager::GetInstance()->RemoveCollider(this);
+	///=====================================================/// 
+	/// SphereCollider をコライダーマネージャーから削除
+	///=====================================================///
+	void SphereCollider::Remove() {
+
+		//コライダーマネージャーから削除
+		ColliderManager::GetInstance()->RemoveCollider(this);
+	}
 }

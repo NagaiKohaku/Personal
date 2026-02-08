@@ -14,7 +14,7 @@ public:
 
 	struct EmitterObject {
 		std::string name;
-		std::unique_ptr<EmitterGroup> object;
+		std::unique_ptr<MyEngine::EmitterGroup> object;
 	};
 
 public:
@@ -27,13 +27,13 @@ public:
 
 	void Draw();
 
-	EmitterGroup* CreateEmitter(const std::string& emitterName, const std::string fileName, WorldTransform* parent = nullptr);
+	MyEngine::EmitterGroup* CreateEmitter(const std::string& emitterName, const std::string fileName, MyEngine::WorldTransform* parent = nullptr);
 
-	void DeleteEmitter(EmitterGroup* emitterPtr);
+	void DeleteEmitter(MyEngine::EmitterGroup* emitterPtr);
 
 private:
 
-	Camera* camera_;
+	MyEngine::Camera* camera_;
 
 	std::vector<std::unique_ptr<EmitterObject>> emitters_;
 
@@ -41,7 +41,7 @@ private:
 
 public:
 
-	void SetCamera(Camera* cameraPtr) { camera_ = cameraPtr; }
+	void SetCamera(MyEngine::Camera* cameraPtr) { camera_ = cameraPtr; }
 
 	void SetIsUpdate(bool flag) { isUpdate_ = flag; }
 

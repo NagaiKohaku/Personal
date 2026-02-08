@@ -1,24 +1,27 @@
 #include "MeshBase.h"
 
-///=====================================================/// 
-/// GPUにメッシュのデータを送信
-///=====================================================///
-void MeshBase::SendDataForGPU() {
+namespace MyEngine {
 
-	//頂点データをGPUに転送
-	directXCommon_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView_);
+	///=====================================================/// 
+	/// GPUにメッシュのデータを送信
+	///=====================================================///
+	void MeshBase::SendDataForGPU() {
 
-	//インデックスデータをGPUに転送
-	directXCommon_->GetCommandList()->IASetIndexBuffer(&indexBufferView_);
-}
+		//頂点データをGPUに転送
+		directXCommon_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView_);
 
-///=====================================================/// 
-/// 外部から頂点データとインデックスデータをコピーしてメッシュを更新
-///=====================================================///
-void MeshBase::CopyMeshData(std::vector<uint32_t> indices, std::vector<VertexData> vertices) {
-	//vertexData_に頂点データをコピー
-	std::memcpy(vertexData_, vertices.data(), sizeof(VertexData) * vertices.size());
+		//インデックスデータをGPUに転送
+		directXCommon_->GetCommandList()->IASetIndexBuffer(&indexBufferView_);
+	}
 
-	//indexData_にインデックスデータをコピー
-	std::memcpy(indexData_, indices.data(), sizeof(uint32_t) * indices.size());
+	///=====================================================/// 
+	/// 外部から頂点データとインデックスデータをコピーしてメッシュを更新
+	///=====================================================///
+	void MeshBase::CopyMeshData(std::vector<uint32_t> indices, std::vector<VertexData> vertices) {
+		//vertexData_に頂点データをコピー
+		std::memcpy(vertexData_, vertices.data(), sizeof(VertexData) * vertices.size());
+
+		//indexData_にインデックスデータをコピー
+		std::memcpy(indexData_, indices.data(), sizeof(uint32_t) * indices.size());
+	}
 }

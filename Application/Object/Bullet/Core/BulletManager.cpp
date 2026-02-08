@@ -4,6 +4,8 @@
 #include <Object/Bullet/Player/TankBullet.h>
 #include <Object/Bullet/Enemy/EnemyBullet.h>
 
+using namespace MyEngine;
+
 ///=====================================================/// 
 /// 初期化
 ///=====================================================///

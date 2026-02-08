@@ -1,129 +1,132 @@
 #include <Math/Vector/Vector4.h>
 
-///=====================================================/// 
-/// 加法
-///=====================================================///
+namespace MyEngine {
 
-// ベクトル同士の加法
-Vector4 Vector4::operator+(const Vector4& v) const {
-	return { x + v.x, y + v.y, z + v.z, w + v.w };
-}
+	///=====================================================/// 
+	/// 加法
+	///=====================================================///
 
-// ベクトル同士の加法（+=）
-Vector4& Vector4::operator+=(const Vector4& v) {
-	x += v.x;
-	y += v.y;
-	z += v.z;
-	w += v.w;
-	return *this;
-}
+	// ベクトル同士の加法
+	Vector4 Vector4::operator+(const Vector4& v) const {
+		return { x + v.x, y + v.y, z + v.z, w + v.w };
+	}
 
-// ベクトルと float の加法
-Vector4 Vector4::operator+(const float& v) const {
-	return { x + v, y + v, z + v, w + v };
-}
+	// ベクトル同士の加法（+=）
+	Vector4& Vector4::operator+=(const Vector4& v) {
+		x += v.x;
+		y += v.y;
+		z += v.z;
+		w += v.w;
+		return *this;
+	}
 
-// ベクトルと float の加法（+=）
-Vector4& Vector4::operator+=(const float& v) {
-	x += v;
-	y += v;
-	z += v;
-	w += v;
-	return *this;
-}
+	// ベクトルと float の加法
+	Vector4 Vector4::operator+(const float& v) const {
+		return { x + v, y + v, z + v, w + v };
+	}
 
-///=====================================================/// 
-/// 減法
-///=====================================================///
+	// ベクトルと float の加法（+=）
+	Vector4& Vector4::operator+=(const float& v) {
+		x += v;
+		y += v;
+		z += v;
+		w += v;
+		return *this;
+	}
 
-// ベクトル同士の減法
-Vector4 Vector4::operator-(const Vector4& v) const {
-	return { x - v.x, y - v.y, z - v.z, w - v.w };
-}
+	///=====================================================/// 
+	/// 減法
+	///=====================================================///
 
-// ベクトル同士の減法（-=）
-Vector4& Vector4::operator-=(const Vector4& v) {
-	x -= v.x;
-	y -= v.y;
-	z -= v.z;
-	w -= v.w;
-	return *this;
-}
+	// ベクトル同士の減法
+	Vector4 Vector4::operator-(const Vector4& v) const {
+		return { x - v.x, y - v.y, z - v.z, w - v.w };
+	}
 
-// ベクトルと float の減法
-Vector4 Vector4::operator-(const float& v) const {
-	return { x - v, y - v, z - v, w - v };
-}
+	// ベクトル同士の減法（-=）
+	Vector4& Vector4::operator-=(const Vector4& v) {
+		x -= v.x;
+		y -= v.y;
+		z -= v.z;
+		w -= v.w;
+		return *this;
+	}
 
-// ベクトルと float の減法（-=）
-Vector4& Vector4::operator-=(const float& v) {
-	x -= v;
-	y -= v;
-	z -= v;
-	w -= v;
-	return *this;
-}
+	// ベクトルと float の減法
+	Vector4 Vector4::operator-(const float& v) const {
+		return { x - v, y - v, z - v, w - v };
+	}
 
-///=====================================================/// 
-/// 積法
-///=====================================================///
+	// ベクトルと float の減法（-=）
+	Vector4& Vector4::operator-=(const float& v) {
+		x -= v;
+		y -= v;
+		z -= v;
+		w -= v;
+		return *this;
+	}
 
-// ベクトル同士の積（要素ごとの積）
-Vector4 Vector4::operator*(const Vector4& v) const {
-	return { x * v.x, y * v.y, z * v.z, w * v.w };
-}
+	///=====================================================/// 
+	/// 積法
+	///=====================================================///
 
-// ベクトル同士の積（*=）
-Vector4& Vector4::operator*=(const Vector4& v) {
-	x *= v.x;
-	y *= v.y;
-	z *= v.z;
-	w *= v.w;
-	return *this;
-}
+	// ベクトル同士の積（要素ごとの積）
+	Vector4 Vector4::operator*(const Vector4& v) const {
+		return { x * v.x, y * v.y, z * v.z, w * v.w };
+	}
 
-// ベクトルと float の積
-Vector4 Vector4::operator*(const float& v) const {
-	return { x * v, y * v, z * v, w * v };
-}
+	// ベクトル同士の積（*=）
+	Vector4& Vector4::operator*=(const Vector4& v) {
+		x *= v.x;
+		y *= v.y;
+		z *= v.z;
+		w *= v.w;
+		return *this;
+	}
 
-// ベクトルと float の積（*=）
-Vector4& Vector4::operator*=(const float& v) {
-	x *= v;
-	y *= v;
-	z *= v;
-	w *= v;
-	return *this;
-}
+	// ベクトルと float の積
+	Vector4 Vector4::operator*(const float& v) const {
+		return { x * v, y * v, z * v, w * v };
+	}
 
-///=====================================================/// 
-/// 除法
-///=====================================================///
+	// ベクトルと float の積（*=）
+	Vector4& Vector4::operator*=(const float& v) {
+		x *= v;
+		y *= v;
+		z *= v;
+		w *= v;
+		return *this;
+	}
 
-// ベクトル同士の除法（要素ごとの除法）
-Vector4 Vector4::operator/(const Vector4& v) const {
-	return { x / v.x, y / v.y, z / v.z, w / v.w };
-}
+	///=====================================================/// 
+	/// 除法
+	///=====================================================///
 
-// ベクトル同士の除法（/=）
-Vector4& Vector4::operator/=(const Vector4& v) {
-	x /= v.x;
-	y /= v.y;
-	z /= v.z;
-	w /= v.w;
-	return *this;
-}
+	// ベクトル同士の除法（要素ごとの除法）
+	Vector4 Vector4::operator/(const Vector4& v) const {
+		return { x / v.x, y / v.y, z / v.z, w / v.w };
+	}
 
-// ベクトルと float の除法
-Vector4 Vector4::operator/(const float& v) const {
-	return { x / v, y / v, z / v, w / v };
-}
+	// ベクトル同士の除法（/=）
+	Vector4& Vector4::operator/=(const Vector4& v) {
+		x /= v.x;
+		y /= v.y;
+		z /= v.z;
+		w /= v.w;
+		return *this;
+	}
 
-// ベクトルと float の除法（/=）
-Vector4& Vector4::operator/=(const float& v) {
-	x /= v;
-	y /= v;
-	z /= v;
-	w /= v;
-	return *this;
+	// ベクトルと float の除法
+	Vector4 Vector4::operator/(const float& v) const {
+		return { x / v, y / v, z / v, w / v };
+	}
+
+	// ベクトルと float の除法（/=）
+	Vector4& Vector4::operator/=(const float& v) {
+		x /= v;
+		y /= v;
+		z /= v;
+		w /= v;
+		return *this;
+	}
 }

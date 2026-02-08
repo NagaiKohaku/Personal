@@ -3,6 +3,8 @@
 #include "fstream"
 #include "filesystem"
 
+using namespace MyEngine;
+
 EmitterManager* EmitterManager::GetInstance() {
 	static EmitterManager instance;
 	return &instance;

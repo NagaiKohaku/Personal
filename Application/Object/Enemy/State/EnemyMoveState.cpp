@@ -8,6 +8,8 @@
 
 #include <numbers>
 
+using namespace MyEngine;
+
 void EnemyMoveState::Enter() {
 
 	timer_ = 0.0f;

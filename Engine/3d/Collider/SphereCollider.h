@@ -6,65 +6,68 @@
 
 #include <Math/Shape/Sphere.h>
 
-/// <summary>
-/// 球状のコライダーを管理するクラスです。
-/// </summary>
-class SphereCollider : public Collider{
-
-	///-------------------------------------------/// 
-	/// メンバ関数
-	///-------------------------------------------///
-public:
+namespace MyEngine {
 
 	/// <summary>
-	/// SphereCollider を初期化します。
+	/// 球状のコライダーを管理するクラスです。
 	/// </summary>
-	/// <param name="parent">コライダーの親ワールドトランスフォーム</param>
-	void Initialize(WorldTransform* parent) override;
+	class SphereCollider : public Collider {
 
-	/// <summary>
-	/// SphereCollider を毎フレーム更新します。
-	/// </summary>
-	void Update() override;
+		///-------------------------------------------/// 
+		/// メンバ関数
+		///-------------------------------------------///
+	public:
 
-	/// <summary>
-	/// SphereCollider を描画します。
-	/// </summary>
-	void Draw() override;
+		/// <summary>
+		/// SphereCollider を初期化します。
+		/// </summary>
+		/// <param name="parent">コライダーの親ワールドトランスフォーム</param>
+		void Initialize(WorldTransform* parent) override;
 
-	/// <summary>
-	/// SphereCollider をコライダーマネージャーから削除します。
-	/// </summary>
-	void Remove();
+		/// <summary>
+		/// SphereCollider を毎フレーム更新します。
+		/// </summary>
+		void Update() override;
 
-	///-------------------------------------------/// 
-	/// メンバ変数
-	///-------------------------------------------///
-private:
+		/// <summary>
+		/// SphereCollider を描画します。
+		/// </summary>
+		void Draw() override;
 
-	//Sphere情報
-	Sphere sphere_;
+		/// <summary>
+		/// SphereCollider をコライダーマネージャーから削除します。
+		/// </summary>
+		void Remove();
 
-	///-------------------------------------------/// 
-	/// ゲッター・セッター
-	///-------------------------------------------///
-public:
+		///-------------------------------------------/// 
+		/// メンバ変数
+		///-------------------------------------------///
+	private:
 
-	/// <summary>
-	/// Sphereを取得
-	/// </summary>
-	/// <returns>Sphere</returns>
-	Sphere GetSphere() const { return sphere_; }
+		//Sphere情報
+		Sphere sphere_;
 
-	/// <summary>
-	/// Sphereの中心の設定
-	/// </summary>
-	/// <param name="center">座標</param>
-	void SetCenter(Vector3 center) { sphere_.center = center; }
+		///-------------------------------------------/// 
+		/// ゲッター・セッター
+		///-------------------------------------------///
+	public:
 
-	/// <summary>
-	/// Sphereの大きさの設定
-	/// </summary>
-	/// <param name="radius">半径</param>
-	void SetRadius(float radius) { sphere_.radius = radius; }
-};
+		/// <summary>
+		/// Sphereを取得
+		/// </summary>
+		/// <returns>Sphere</returns>
+		Sphere GetSphere() const { return sphere_; }
+
+		/// <summary>
+		/// Sphereの中心の設定
+		/// </summary>
+		/// <param name="center">座標</param>
+		void SetCenter(Vector3 center) { sphere_.center = center; }
+
+		/// <summary>
+		/// Sphereの大きさの設定
+		/// </summary>
+		/// <param name="radius">半径</param>
+		void SetRadius(float radius) { sphere_.radius = radius; }
+	};
+}

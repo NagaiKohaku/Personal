@@ -4,6 +4,8 @@
 #include <Object/Enemy/Enemy.h>
 #include <Object/Enemy/EnemyManager.h>
 
+using namespace MyEngine;
+
 ObjectManager* ObjectManager::GetInstance() {
 	static ObjectManager instance;
 	return &instance;

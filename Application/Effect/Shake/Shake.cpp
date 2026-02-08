@@ -5,6 +5,8 @@
 #include <Math/Utility/MakeMatrixMath.h>
 #include <Math/Matrix/Matrix4x4.h>
 
+using namespace MyEngine;
+
 ///=====================================================/// 
 /// Shakeのシングルトンインスタンスを取得
 ///=====================================================///

@@ -14,11 +14,11 @@ public:
 
 private:
 
-	Vector3 initialPos_;
+	MyEngine::Vector3 initialPos_;
 
-	Vector3 moveRange_;
+	MyEngine::Vector3 moveRange_;
 
-	Vector3 rotRange_;
+	MyEngine::Vector3 rotRange_;
 
 	float moveSpeed_;
 

@@ -1,35 +1,38 @@
 #pragma once
 
-///=====================================================/// 
-/// 4次元ベクトル
-///=====================================================///
-struct Vector4 final {
-	float x;
-	float y;
-	float z;
-	float w;
+namespace MyEngine {
 
-	/// ===加法=== ///
-	Vector4 operator+(const Vector4& v) const;
-	Vector4& operator+=(const Vector4& v);
-	Vector4 operator+(const float& v) const;
-	Vector4& operator+=(const float& v);
+	///=====================================================/// 
+	/// 4次元ベクトル
+	///=====================================================///
+	struct Vector4 final {
+		float x;
+		float y;
+		float z;
+		float w;
 
-	/// ===減法=== ///
-	Vector4 operator-(const Vector4& v) const;
-	Vector4& operator-=(const Vector4& v);
-	Vector4 operator-(const float& v) const;
-	Vector4& operator-=(const float& v);
+		/// ===加法=== ///
+		Vector4 operator+(const Vector4& v) const;
+		Vector4& operator+=(const Vector4& v);
+		Vector4 operator+(const float& v) const;
+		Vector4& operator+=(const float& v);
 
-	/// ===積=== ///
-	Vector4 operator*(const Vector4& v) const;
-	Vector4& operator*=(const Vector4& v);
-	Vector4 operator*(const float& v) const;
-	Vector4& operator*=(const float& v);
+		/// ===減法=== ///
+		Vector4 operator-(const Vector4& v) const;
+		Vector4& operator-=(const Vector4& v);
+		Vector4 operator-(const float& v) const;
+		Vector4& operator-=(const float& v);
 
-	/// ===除法=== ///
-	Vector4 operator/(const Vector4& v) const;
-	Vector4& operator/=(const Vector4& v);
-	Vector4 operator/(const float& v) const;
-	Vector4& operator/=(const float& v);
-};
+		/// ===積=== ///
+		Vector4 operator*(const Vector4& v) const;
+		Vector4& operator*=(const Vector4& v);
+		Vector4 operator*(const float& v) const;
+		Vector4& operator*=(const float& v);
+
+		/// ===除法=== ///
+		Vector4 operator/(const Vector4& v) const;
+		Vector4& operator/=(const Vector4& v);
+		Vector4 operator/(const float& v) const;
+		Vector4& operator/=(const float& v);
+	};
+}

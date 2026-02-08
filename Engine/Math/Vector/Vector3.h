@@ -1,47 +1,50 @@
 #pragma once
 
-///=====================================================/// 
-/// 3次元ベクトル
-///=====================================================///
-struct Vector3 final {
-	float x;
-	float y;
-	float z;
+namespace MyEngine {
 
-	/// ===加法=== ///
-	Vector3 operator+(const Vector3& v) const;
-	Vector3& operator+=(const Vector3& v);
-	Vector3 operator+(float v) const;
-	Vector3& operator+=(const float& v);
+	///=====================================================/// 
+	/// 3次元ベクトル
+	///=====================================================///
+	struct Vector3 final {
+		float x;
+		float y;
+		float z;
 
-	/// ===減法=== ///
-	Vector3 operator-(const Vector3& v) const;
-	Vector3& operator-=(const Vector3& v);
-	Vector3 operator-(float v) const;
-	Vector3& operator-=(const float& v);
+		/// ===加法=== ///
+		Vector3 operator+(const Vector3& v) const;
+		Vector3& operator+=(const Vector3& v);
+		Vector3 operator+(float v) const;
+		Vector3& operator+=(const float& v);
 
-	/// ===積=== ///
-	Vector3 operator*(const Vector3& v) const;
-	Vector3& operator*=(const Vector3& v);
-	Vector3 operator*(float v) const;
-	Vector3& operator*=(const float& v);
+		/// ===減法=== ///
+		Vector3 operator-(const Vector3& v) const;
+		Vector3& operator-=(const Vector3& v);
+		Vector3 operator-(float v) const;
+		Vector3& operator-=(const float& v);
 
-	/// ===除法=== ///
-	Vector3 operator/(const Vector3& v) const;
-	Vector3& operator/=(const Vector3& v);
-	Vector3 operator/(float v) const;
-	Vector3& operator/=(const float& v);
-};
+		/// ===積=== ///
+		Vector3 operator*(const Vector3& v) const;
+		Vector3& operator*=(const Vector3& v);
+		Vector3 operator*(float v) const;
+		Vector3& operator*=(const float& v);
 
-/// ===内積の計算=== ///
-float Dot(const Vector3& v);
-float Dot(const Vector3& v1, const Vector3& v2);
+		/// ===除法=== ///
+		Vector3 operator/(const Vector3& v) const;
+		Vector3& operator/=(const Vector3& v);
+		Vector3 operator/(float v) const;
+		Vector3& operator/=(const float& v);
+	};
 
-/// ===長さの計算=== ///
-float Length(const Vector3& v);
-float Length(const Vector3& v1, const Vector3& v2);
+	/// ===内積の計算=== ///
+	float Dot(const Vector3& v);
+	float Dot(const Vector3& v1, const Vector3& v2);
 
-/// ===正規化=== ///
-Vector3 Normalize(const Vector3& v);
+	/// ===長さの計算=== ///
+	float Length(const Vector3& v);
+	float Length(const Vector3& v1, const Vector3& v2);
 
-Vector3 Cross(const Vector3& v1, const Vector3& v2);
+	/// ===正規化=== ///
+	Vector3 Normalize(const Vector3& v);
+
+	Vector3 Cross(const Vector3& v1, const Vector3& v2);
+}

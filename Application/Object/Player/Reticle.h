@@ -7,7 +7,7 @@
 
 /// === 前方宣言 === ///
 
-class Camera;
+class MyEngine::Camera;
 
 /// <summary>
 /// レティクルを管理するクラスです。
@@ -23,7 +23,7 @@ public:
 	/// レティクルを初期化します。
 	/// </summary>
 	/// <param name="cameraPtr">描画やスクリーン座標変換に使用するカメラのポインタです。</param>
-	void Initialize(Camera* cameraPtr);
+	void Initialize(MyEngine::Camera* cameraPtr);
 
 	/// <summary>
 	/// レティクルの更新処理を行います。
@@ -46,13 +46,13 @@ public:
 private:
 
 	//カメラ
-	Camera* camera_;
+	MyEngine::Camera* camera_;
 
 	//2Dレティクル
-	std::unique_ptr<Object2D> object2D_;
+	std::unique_ptr<MyEngine::Object2D> object2D_;
 
 	//3Dレティクル
-	std::unique_ptr<Object3D> object3D_;
+	std::unique_ptr<MyEngine::Object3D> object3D_;
 
 	//2Dレティクルの描画フラグ
 	bool isDraw2D_;
@@ -75,11 +75,11 @@ public:
 	/// ワールド座標を取得
 	/// </summary>
 	/// <returns>座標</returns>
-	Vector3 GetWorldPos() const { return object3D_->GetWorldTransform().GetWorldTranslate(); }
+	MyEngine::Vector3 GetWorldPos() const { return object3D_->GetWorldTransform().GetWorldTranslate(); }
 
 	/// <summary>
 	/// ターゲット座標の設定
 	/// </summary>
 	/// <param name="targetPos">座標</param>
-	void SetTargetPos(Vector3 targetPos) { object3D_->GetWorldTransform().translate_ = targetPos; }
+	void SetTargetPos(MyEngine::Vector3 targetPos) { object3D_->GetWorldTransform().translate_ = targetPos; }
 };

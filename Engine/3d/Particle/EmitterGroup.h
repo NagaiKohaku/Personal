@@ -6,116 +6,119 @@
 
 #include "list"
 
-/// <summary>
-/// 複数のパーティクルエミッターをまとめて管理し、更新・描画を行うクラスです。
-/// </summary>
-class EmitterGroup {
-
-	///-------------------------------------------/// 
-	/// メンバ関数
-	///-------------------------------------------///
-public:
+namespace MyEngine {
 
 	/// <summary>
-	/// パーティクルエミッターグループの初期化を行います。
+	/// 複数のパーティクルエミッターをまとめて管理し、更新・描画を行うクラスです。
 	/// </summary>
-	void Initialize(Camera* ptr);
+	class EmitterGroup {
 
-	/// <summary>
-	/// パーティクルエミッターグループの更新処理を行います。
-	/// </summary>
-	void Update();
+		///-------------------------------------------/// 
+		/// メンバ関数
+		///-------------------------------------------///
+	public:
 
-	/// <summary>
-	/// パーティクルエミッターグループの描画処理を行います。
-	/// </summary>
-	void Draw();
+		/// <summary>
+		/// パーティクルエミッターグループの初期化を行います。
+		/// </summary>
+		void Initialize(Camera* ptr);
 
-	/// <summary>
-	/// ImGuiの表示
-	/// </summary>
-	void ImGui();
+		/// <summary>
+		/// パーティクルエミッターグループの更新処理を行います。
+		/// </summary>
+		void Update();
 
-	/// <summary>
-	/// 指定されたJSONファイルからパーティクルエミッター情報を読み込み、グループに登録します。
-	/// </summary>
-	void LoadEmitter(std::string fileName);
+		/// <summary>
+		/// パーティクルエミッターグループの描画処理を行います。
+		/// </summary>
+		void Draw();
 
-	/// <summary>
-	/// 現在のパーティクルエミッターグループの情報をJSONファイルに保存します。
-	/// </summary>
-	void SaveEmitter();
+		/// <summary>
+		/// ImGuiの表示
+		/// </summary>
+		void ImGui();
 
-	/// <summary>
-	/// デフォルトのパーティクルエミッターをグループに追加します。
-	/// </summary>
-	void AddEmitter();
+		/// <summary>
+		/// 指定されたJSONファイルからパーティクルエミッター情報を読み込み、グループに登録します。
+		/// </summary>
+		void LoadEmitter(std::string fileName);
 
-	/// <summary>
-	/// グループ内のすべてのパーティクルエミッターからパーティクルを発生させます。
-	/// </summary>
-	void Emit();
+		/// <summary>
+		/// 現在のパーティクルエミッターグループの情報をJSONファイルに保存します。
+		/// </summary>
+		void SaveEmitter();
 
-	/// <summary>
-	/// グループ内のすべてのパーティクルエミッターの発生を停止します。
-	/// </summary>
-	void Stop();
+		/// <summary>
+		/// デフォルトのパーティクルエミッターをグループに追加します。
+		/// </summary>
+		void AddEmitter();
 
-	///-------------------------------------------/// 
-	/// ゲッター・セッター
-	///-------------------------------------------///
-public:
+		/// <summary>
+		/// グループ内のすべてのパーティクルエミッターからパーティクルを発生させます。
+		/// </summary>
+		void Emit();
 
-	/// <summary>
-	/// エミッターリストを取得
-	/// </summary>
-	/// <returns>エミッターリスト</returns>
-	std::list<ParticleEmitter*> GetEmitterList();
+		/// <summary>
+		/// グループ内のすべてのパーティクルエミッターの発生を停止します。
+		/// </summary>
+		void Stop();
 
-	/// <summary>
-	/// グループ名を取得
-	/// </summary>
-	/// <returns>グループ名</returns>
-	std::string GetName() { return name_; }
+		///-------------------------------------------/// 
+		/// ゲッター・セッター
+		///-------------------------------------------///
+	public:
 
-	/// <summary>
-	/// トランスフォームを取得
-	/// </summary>
-	/// <returns>トランスフォーム</returns>
-	WorldTransform& GetWorldTransform() { return transform_; }
+		/// <summary>
+		/// エミッターリストを取得
+		/// </summary>
+		/// <returns>エミッターリスト</returns>
+		std::list<ParticleEmitter*> GetEmitterList();
 
-	/// <summary>
-	/// テクスチャリストの設定
-	/// </summary>
-	/// <param name="list">テクスチャリスト</param>
-	void SetTextureList(std::vector<std::string> list) { textureList_ = list; }
+		/// <summary>
+		/// グループ名を取得
+		/// </summary>
+		/// <returns>グループ名</returns>
+		std::string GetName() { return name_; }
 
-	/// <summary>
-	/// トランスフォームの設定
-	/// </summary>
-	/// <param name="worldTransform">トランスフォーム</param>
-	void SetWorldTransform(WorldTransform worldTransform) { transform_ = worldTransform; }
+		/// <summary>
+		/// トランスフォームを取得
+		/// </summary>
+		/// <returns>トランスフォーム</returns>
+		WorldTransform& GetWorldTransform() { return transform_; }
 
-	///-------------------------------------------/// 
-	/// メンバ変数
-	///-------------------------------------------///
-private:
+		/// <summary>
+		/// テクスチャリストの設定
+		/// </summary>
+		/// <param name="list">テクスチャリスト</param>
+		void SetTextureList(std::vector<std::string> list) { textureList_ = list; }
 
-	//カメラ
-	Camera* camera_;
+		/// <summary>
+		/// トランスフォームの設定
+		/// </summary>
+		/// <param name="worldTransform">トランスフォーム</param>
+		void SetWorldTransform(WorldTransform worldTransform) { transform_ = worldTransform; }
 
-	//エミッターのリスト
-	std::list<std::unique_ptr<ParticleEmitter>> particleEmitters_;
+		///-------------------------------------------/// 
+		/// メンバ変数
+		///-------------------------------------------///
+	private:
 
-	//テクスチャリスト
-	std::vector<std::string> textureList_;
+		//カメラ
+		Camera* camera_;
 
-	//ワールドトランスフォーム
-	WorldTransform transform_;
+		//エミッターのリスト
+		std::list<std::unique_ptr<ParticleEmitter>> particleEmitters_;
 
-	//グループ名
-	std::string name_;
+		//テクスチャリスト
+		std::vector<std::string> textureList_;
 
-	//ディレクトリパス
-	std::string directoryPath_;
-};
+		//ワールドトランスフォーム
+		WorldTransform transform_;
+
+		//グループ名
+		std::string name_;
+
+		//ディレクトリパス
+		std::string directoryPath_;
+	};
+}

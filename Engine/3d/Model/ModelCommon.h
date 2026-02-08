@@ -2,43 +2,46 @@
 
 #include "Base/DirectXCommon.h"
 
-/// <summary>
-/// モデル共通処理を管理するシングルトンクラスです。
-/// </summary>
-class ModelCommon {
-
-	///-------------------------------------------/// 
-	/// メンバ関数
-	///-------------------------------------------///
-public:
+namespace MyEngine {
 
 	/// <summary>
-	/// ModelCommonのシングルトンインスタンスを取得します。
+	/// モデル共通処理を管理するシングルトンクラスです。
 	/// </summary>
-	static ModelCommon* GetInstance();
+	class ModelCommon {
 
-	/// <summary>
-	/// ModelCommonの初期化を行います。
-	/// </summary>
-	void Initialize();
+		///-------------------------------------------/// 
+		/// メンバ関数
+		///-------------------------------------------///
+	public:
 
-	///-------------------------------------------/// 
-	/// メンバ変数
-	///-------------------------------------------///
-private:
+		/// <summary>
+		/// ModelCommonのシングルトンインスタンスを取得します。
+		/// </summary>
+		static ModelCommon* GetInstance();
 
-	//DirectX基底
-	DirectXCommon* dxCommon_;
+		/// <summary>
+		/// ModelCommonの初期化を行います。
+		/// </summary>
+		void Initialize();
 
-	///-------------------------------------------/// 
-	/// ゲッター・セッター
-	///-------------------------------------------///
-public:
+		///-------------------------------------------/// 
+		/// メンバ変数
+		///-------------------------------------------///
+	private:
 
-	/// <summary>
-	/// DirectX基底の取得
-	/// </summary>
-	/// <returns>DirectX基底</returns>
-	DirectXCommon* GetDxCommon() const { return dxCommon_; }
+		//DirectX基底
+		DirectXCommon* dxCommon_;
 
-};
+		///-------------------------------------------/// 
+		/// ゲッター・セッター
+		///-------------------------------------------///
+	public:
+
+		/// <summary>
+		/// DirectX基底の取得
+		/// </summary>
+		/// <returns>DirectX基底</returns>
+		DirectXCommon* GetDxCommon() const { return dxCommon_; }
+
+	};
+}

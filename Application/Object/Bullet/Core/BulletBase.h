@@ -24,7 +24,7 @@ public:
 	/// </summary>
 	/// <param name="pos">初期座標</param>
 	/// <param name="direction">発射方向</param>
-	virtual void Initialize(Vector3 pos, Vector3 direction) = 0;
+	virtual void Initialize(MyEngine::Vector3 pos, MyEngine::Vector3 direction) = 0;
 
 	/// <summary>
 	/// 更新
@@ -47,7 +47,7 @@ public:
 protected:
 
 	//オブジェクト
-	std::unique_ptr<Object3D> object_ = nullptr;
+	std::unique_ptr<MyEngine::Object3D> object_ = nullptr;
 
 	//大きさ
 	float size_ = 1.0f;
@@ -56,7 +56,7 @@ protected:
 	float speed_ = 0.0f;
 
 	//移動量
-	Vector3 velocity_ = { 0.0f,0.0f,0.0f };
+	MyEngine::Vector3 velocity_ = { 0.0f,0.0f,0.0f };
 
 	//弾の寿命
 	float lifeTimer_ = 0.0f;

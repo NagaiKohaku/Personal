@@ -26,17 +26,17 @@ public:
 protected:
 
 	struct EventMotionPoint {
-		Vector3 playerPosition;
-		Vector3 cameraRotation;
+		MyEngine::Vector3 playerPosition;
+		MyEngine::Vector3 cameraRotation;
 		float duration;
-		EaseType easeType;
+		MyEngine::EaseType easeType;
 		float easeMag;
 	};
 
 public:
 	virtual ~GameSceneEventBase() = default;
 
-	virtual void Start(Player* player, Camera* camera, FollowCamera* followCamera) = 0;   // 開始時1回
+	virtual void Start(Player* player, MyEngine::Camera* camera, FollowCamera* followCamera) = 0;   // 開始時1回
 	virtual void Exit() = 0;    // 終了処理
 	virtual void Update() = 0;  // 毎フレーム
 
@@ -50,7 +50,7 @@ protected:
 
 	Player* player_ = nullptr;
 
-	Camera* camera_ = nullptr;
+	MyEngine::Camera* camera_ = nullptr;
 
 	FollowCamera* followCamera_ = nullptr;
 

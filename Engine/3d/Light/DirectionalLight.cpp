@@ -2,67 +2,70 @@
 
 #include "imgui.h"
 
-///=====================================================/// 
-/// ディレクショナルライトを初期化
-///=====================================================///
-void DirectionalLight::Initialize() {
+namespace MyEngine {
 
-	//DirectX基底を取得
-	dxCommon_ = DirectXCommon::GetInstance();
+	///=====================================================/// 
+	/// ディレクショナルライトを初期化
+	///=====================================================///
+	void DirectionalLight::Initialize() {
 
-	//リソースを作成
-	lightResource_ = dxCommon_->CreateBufferResource(sizeof(LightData));
+		//DirectX基底を取得
+		dxCommon_ = DirectXCommon::GetInstance();
 
-	//光源データのアドレスを記録
-	lightResource_->Map(0, nullptr, reinterpret_cast<void**>(&lightData_));
+		//リソースを作成
+		lightResource_ = dxCommon_->CreateBufferResource(sizeof(LightData));
 
-	/// === 光源データの設定 === ///
+		//光源データのアドレスを記録
+		lightResource_->Map(0, nullptr, reinterpret_cast<void**>(&lightData_));
 
-	//色の設定
-	lightData_->color = { 1.0f,1.0f,1.0f,1.0f };
+		/// === 光源データの設定 === ///
 
-	//向きの設定
-	lightData_->direction = { -0.5f,-0.5f,-0.5f };
+		//色の設定
+		lightData_->color = { 1.0f,1.0f,1.0f,1.0f };
 
-	//照度の設定
-	lightData_->intensity = 1.0f;
-}
+		//向きの設定
+		lightData_->direction = { -0.5f,-0.5f,-0.5f };
 
-///=====================================================/// 
-/// ディレクショナルライトの更新
-///=====================================================///
-void DirectionalLight::Update() {
+		//照度の設定
+		lightData_->intensity = 1.0f;
+	}
 
-	//向きを正規化する
-	lightData_->direction = Normalize(lightData_->direction);
-}
+	///=====================================================/// 
+	/// ディレクショナルライトの更新
+	///=====================================================///
+	void DirectionalLight::Update() {
 
-///=====================================================/// 
-/// GPUにディレクショナルライトのデータを送信
-///=====================================================///
-void DirectionalLight::SendDataForGPU() {
+		//向きを正規化する
+		lightData_->direction = Normalize(lightData_->direction);
+	}
 
-	//光源データをGPUに送信
-	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(4, lightResource_.Get()->GetGPUVirtualAddress());
-}
+	///=====================================================/// 
+	/// GPUにディレクショナルライトのデータを送信
+	///=====================================================///
+	void DirectionalLight::SendDataForGPU() {
 
-///=====================================================/// 
-/// ImGuiの表示
-///=====================================================///
-void DirectionalLight::DisplayImGui() {
-//
-//#ifdef _USE_IMGUI
-//
-//	ImGui::Begin("DirectionalLight");
-//
-//	ImGui::ColorEdit4("Color", &lightData_->color.x);
-//
-//	ImGui::DragFloat3("Direction", &lightData_->direction.x, 0.01f);
-//
-//	ImGui::DragFloat("Intensity", &lightData_->intensity, 0.01f);
-//
-//	ImGui::End();
-//
-//#endif // _USE_IMGUI
+		//光源データをGPUに送信
+		dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(4, lightResource_.Get()->GetGPUVirtualAddress());
+	}
 
+	///=====================================================/// 
+	/// ImGuiの表示
+	///=====================================================///
+	void DirectionalLight::DisplayImGui() {
+		//
+		//#ifdef _USE_IMGUI
+		//
+		//	ImGui::Begin("DirectionalLight");
+		//
+		//	ImGui::ColorEdit4("Color", &lightData_->color.x);
+		//
+		//	ImGui::DragFloat3("Direction", &lightData_->direction.x, 0.01f);
+		//
+		//	ImGui::DragFloat("Intensity", &lightData_->intensity, 0.01f);
+		//
+		//	ImGui::End();
+		//
+		//#endif // _USE_IMGUI
+
+	}
 }

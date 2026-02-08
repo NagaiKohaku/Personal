@@ -34,12 +34,12 @@ public:
 	/// </summary>
 	/// <param name="maxTime">フラッシュが表示される最大時間（秒単位）です。</param>
 	/// <param name="color">フラッシュの色をRGBAで指定します。</param>
-	void Start(float maxTime, Vector4 color);
+	void Start(float maxTime, MyEngine::Vector4 color);
 
 private:
 
 	//フラッシュ用オブジェクト
-	std::unique_ptr<Object2D> flashObject_;
+	std::unique_ptr<MyEngine::Object2D> flashObject_;
 
 	//アルファ値
 	float alpha_;
@@ -54,5 +54,5 @@ private:
 	float maxTime_;
 
 	//フラッシュ色
-	Vector4 color_;
+	MyEngine::Vector4 color_;
 };

@@ -2,18 +2,21 @@
 
 #include "3d/Mesh/MeshBase.h"
 
-/// <summary>
-/// モデルメッシュ（Model Mesh）を管理するクラスです。
-/// </summary>
-class ModelMesh : public MeshBase {
-
-	///-------------------------------------------/// 
-	/// メンバ関数
-	///-------------------------------------------///
-public:
+namespace MyEngine {
 
 	/// <summary>
-	/// ModelMeshの初期化を行います。
+	/// モデルメッシュ（Model Mesh）を管理するクラスです。
 	/// </summary>
-	void Initialize() override;
-};
+	class ModelMesh : public MeshBase {
+
+		///-------------------------------------------/// 
+		/// メンバ関数
+		///-------------------------------------------///
+	public:
+
+		/// <summary>
+		/// ModelMeshの初期化を行います。
+		/// </summary>
+		void Initialize() override;
+	};
+}

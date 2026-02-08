@@ -10,6 +10,8 @@
 #include <filesystem>
 #include <fstream>
 
+using namespace MyEngine;
+
 UIManager* UIManager::GetInstance() {
 	static UIManager instance;
 	return &instance;

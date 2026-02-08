@@ -6,6 +6,8 @@
 
 #include <Math/Utility/MakeMatrixMath.h>
 
+using namespace MyEngine;
+
 void Ground::Initialize() {
 
 	// オブジェクトの生成

@@ -16,7 +16,7 @@ enum class ObjectType {
 struct ObjectData {
 	std::string filename;
 	ObjectType type;
-	Vector3 position;
-	Vector3 rotation;
-	Vector3 scale;
+	MyEngine::Vector3 position;
+	MyEngine::Vector3 rotation;
+	MyEngine::Vector3 scale;
 };

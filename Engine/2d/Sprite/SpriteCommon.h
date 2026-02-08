@@ -6,42 +6,45 @@
 
 #include "wrl.h"
 
-/// <summary>
-/// スプライト描画共通処理を管理するシングルトンクラス。
-/// </summary>
-class SpriteCommon {
-
-	///-------------------------------------------/// 
-	/// メンバ関数
-	///-------------------------------------------///
-public:
+namespace MyEngine {
 
 	/// <summary>
-	/// SpriteCommonのシングルトンインスタンスを取得します。
+	/// スプライト描画共通処理を管理するシングルトンクラス。
 	/// </summary>
-	static SpriteCommon* GetInstance();
+	class SpriteCommon {
 
-	/// <summary>
-	/// SpriteCommonを初期化します。
-	/// </summary>
-	void Initialize();
+		///-------------------------------------------/// 
+		/// メンバ関数
+		///-------------------------------------------///
+	public:
 
-	///-------------------------------------------/// 
-	/// メンバ変数
-	///-------------------------------------------///
-private:
+		/// <summary>
+		/// SpriteCommonのシングルトンインスタンスを取得します。
+		/// </summary>
+		static SpriteCommon* GetInstance();
 
-	//DirectX基底
-	DirectXCommon* dxCommon_;
+		/// <summary>
+		/// SpriteCommonを初期化します。
+		/// </summary>
+		void Initialize();
 
-	///-------------------------------------------/// 
-	/// セッター・ゲッター
-	///-------------------------------------------///
-public:
+		///-------------------------------------------/// 
+		/// メンバ変数
+		///-------------------------------------------///
+	private:
 
-	/// <summary>
-	/// DirectX基底を取得
-	/// </summary>
-	/// <returns>DirectX基底</returns>
-	DirectXCommon* GetDxCommon() const { return dxCommon_; }
-};
+		//DirectX基底
+		DirectXCommon* dxCommon_;
+
+		///-------------------------------------------/// 
+		/// セッター・ゲッター
+		///-------------------------------------------///
+	public:
+
+		/// <summary>
+		/// DirectX基底を取得
+		/// </summary>
+		/// <returns>DirectX基底</returns>
+		DirectXCommon* GetDxCommon() const { return dxCommon_; }
+	};
+}

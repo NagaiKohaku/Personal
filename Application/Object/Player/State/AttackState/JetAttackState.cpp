@@ -4,6 +4,8 @@
 
 #include <Base/Input.h>
 
+using namespace MyEngine;
+
 void JetAttackState::Enter() {
 
 	//攻撃間隔を設定

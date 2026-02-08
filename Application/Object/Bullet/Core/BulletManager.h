@@ -51,7 +51,7 @@ public:
 	/// <summary>
 	/// 新しい弾を生成して管理リストに追加します。
 	/// </summary>
-	void AddBullet(Vector3 pos, Vector3 direction, BulletType type);
+	void AddBullet(MyEngine::Vector3 pos, MyEngine::Vector3 direction, BulletType type);
 
 	///-------------------------------------------/// 
 	/// クラス内処理関数
