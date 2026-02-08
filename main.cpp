@@ -107,7 +107,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	input->Initialize();
 
 	//音声
-	Audio* audio = Audio::GetInstance();
+	MyEngine::Audio* audio = MyEngine::Audio::GetInstance();
 	audio->Initialize();
 
 	//レンダラー

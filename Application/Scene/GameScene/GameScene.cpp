@@ -150,7 +150,7 @@ void GameScene::Finalize() {
 	Shake::GetInstance()->SetCamera(nullptr);
 
 	//音声データの解放
-	Audio::GetInstance()->Finalize();
+	MyEngine::Audio::GetInstance()->Finalize();
 }
 
 ///=====================================================/// 

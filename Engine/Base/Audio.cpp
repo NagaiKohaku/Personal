@@ -6,15 +6,15 @@
 ///=====================================================/// 
 /// Audioのシングルトンインスタンスを取得
 ///=====================================================///
-Audio* Audio::GetInstance() {
-	static Audio instance;
+MyEngine::Audio* MyEngine::Audio::GetInstance() {
+	static MyEngine::Audio instance;
 	return &instance;
 }
 
 ///=====================================================/// 
 /// XAudio2の初期化
 ///=====================================================///
-void Audio::Initialize() {
+void MyEngine::Audio::Initialize() {
 
 	HRESULT result;
 
@@ -25,7 +25,7 @@ void Audio::Initialize() {
 ///=====================================================/// 
 /// 登録されている全オーディオの状態を更新
 ///=====================================================///
-void Audio::Update() {
+void MyEngine::Audio::Update() {
 
 	//登録されている全要素を参照
 	for (auto& [name, object] : sounds_) {
@@ -46,7 +46,7 @@ void Audio::Update() {
 ///=====================================================/// 
 /// オーディオシステムの終了処理
 ///=====================================================///
-void Audio::Finalize() {
+void MyEngine::Audio::Finalize() {
 
 	//登録されている全サウンドを参照
 	for (auto& [name, object] : sounds_) {
@@ -78,7 +78,7 @@ void Audio::Finalize() {
 ///=====================================================/// 
 /// 指定した名前でサウンドを読み込み、管理リストに登録
 ///=====================================================///
-void Audio::SoundLoad(std::string soundName, std::string fileName) {
+void MyEngine::Audio::SoundLoad(std::string soundName, std::string fileName) {
 
 	//既に登録されているかを確認
 	if (sounds_.contains(soundName)) {
@@ -105,7 +105,7 @@ void Audio::SoundLoad(std::string soundName, std::string fileName) {
 ///=====================================================/// 
 /// 指定したサウンドを再生
 ///=====================================================///
-void Audio::StartSound(std::string soundName, bool isLoop) {
+void MyEngine::Audio::StartSound(std::string soundName, bool isLoop) {
 
 	//登録されていないサウンドの場合は早期リターン
 	if (!sounds_.contains(soundName)) {
@@ -131,7 +131,7 @@ void Audio::StartSound(std::string soundName, bool isLoop) {
 ///=====================================================/// 
 /// 指定したサウンドを停止
 ///=====================================================///
-void Audio::StopSound(std::string soundName) {
+void MyEngine::Audio::StopSound(std::string soundName) {
 
 	//登録されていないサウンドの場合は早期リターン
 	if (!sounds_.contains(soundName)) {
@@ -154,7 +154,7 @@ void Audio::StopSound(std::string soundName) {
 ///=====================================================/// 
 /// 指定したサウンドをアンロード（メモリ解放）
 ///=====================================================///
-void Audio::SoundUnLoad(std::string soundName) {
+void MyEngine::Audio::SoundUnLoad(std::string soundName) {
 
 	// 登録されていない場合は早期リターン
 	if (!sounds_.contains(soundName)) {
@@ -165,7 +165,7 @@ void Audio::SoundUnLoad(std::string soundName) {
 ///=====================================================/// 
 /// 指定したサウンドインスタンスが再生中かどうかを確認
 ///=====================================================///
-bool Audio::isPlayed(SoundInstance soundInstance) {
+bool MyEngine::Audio::isPlayed(SoundInstance soundInstance) {
 
 	XAUDIO2_VOICE_STATE state;
 
@@ -181,7 +181,7 @@ bool Audio::isPlayed(SoundInstance soundInstance) {
 ///=====================================================/// 
 /// 指定したWAVファイルの読み込み
 ///=====================================================///
-Audio::SoundData Audio::LoadWavFile(std::string fileName) {
+MyEngine::Audio::SoundData MyEngine::Audio::LoadWavFile(std::string fileName) {
 
 	/// === ローカル変数 === ///
 
@@ -320,7 +320,7 @@ Audio::SoundData Audio::LoadWavFile(std::string fileName) {
 ///=====================================================/// 
 /// 指定された音声データから再生用のSoundInstanceを生成
 ///=====================================================///
-Audio::SoundInstance Audio::CreateSoundInstance(SoundData soundData, bool isLoop) {
+MyEngine::Audio::SoundInstance MyEngine::Audio::CreateSoundInstance(SoundData soundData, bool isLoop) {
 
 	HRESULT result;
 
