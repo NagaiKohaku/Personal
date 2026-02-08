@@ -4,261 +4,264 @@
 
 #include "cassert"
 
-///=====================================================/// 
-/// Inputのシングルトンインスタンスを取得
-///=====================================================///
-Input* Input::GetInstance() {
-	static Input instance;
-	return &instance;
-}
+namespace MyEngine {
 
-///=====================================================/// 
-/// DirectInputを使用してキーボードとマウスの入力デバイスを初期化
-///=====================================================///
-void Input::Initialize() {
-
-	HRESULT result;
-
-	//ウィンドウ管理のインスタンスを取得
-	winApp_ = WinApp::GetInstance();
-
-	//DirectInputオブジェクトの生成
-	result = DirectInput8Create(
-		winApp_->GetHInstance(),
-		DIRECTINPUT_VERSION,
-		IID_IDirectInput8,
-		(void**)&directInput_,
-		nullptr
-	);
-
-	assert(SUCCEEDED(result));
-
-	//キーボードデバイスの生成
-	result = directInput_->CreateDevice(
-		GUID_SysKeyboard,
-		&keyboard_,
-		NULL
-	);
-
-	assert(SUCCEEDED(result));
-
-	//入力データ形式のセット
-	result = keyboard_->SetDataFormat(&c_dfDIKeyboard);
-
-	assert(SUCCEEDED(result));
-
-	//排他制御レベルのセット
-	result = keyboard_->SetCooperativeLevel(
-		winApp_->GetHwnd(),
-		DISCL_FOREGROUND | DISCL_NONEXCLUSIVE | DISCL_NOWINKEY
-	);
-
-	assert(SUCCEEDED(result));
-
-	//マウスデバイスの生成
-	result = directInput_->CreateDevice(
-		GUID_SysMouse,
-		&mouse_,
-		NULL
-	);
-
-	assert(SUCCEEDED(result));
-
-	//入力データ形式のセット
-	result = mouse_->SetDataFormat(&c_dfDIMouse);
-
-	assert(SUCCEEDED(result));
-
-	//排他制御レベルのセット
-	result = mouse_->SetCooperativeLevel(
-		winApp_->GetHwnd(),
-		DISCL_NONEXCLUSIVE | DISCL_FOREGROUND
-	);
-
-	assert(SUCCEEDED(result));
-
-}
-
-///=====================================================/// 
-/// 毎フレーム、キーボードとマウスの入力状態を更新
-///=====================================================///
-void Input::Update() {
-
-	//前フレームのキーボード情報をコピー
-	for (int i = 0; i < 256; i++) {
-
-		preKey_[i] = key_[i];
+	///=====================================================/// 
+	/// Inputのシングルトンインスタンスを取得
+	///=====================================================///
+	Input* Input::GetInstance() {
+		static Input instance;
+		return &instance;
 	}
 
-	//前フレームのマウス情報をコピー
-	preMouseState_ = mouseState_;
+	///=====================================================/// 
+	/// DirectInputを使用してキーボードとマウスの入力デバイスを初期化
+	///=====================================================///
+	void Input::Initialize() {
 
-	//キーボード情報の取得開始
-	keyboard_->Acquire();
+		HRESULT result;
 
-	//全キーの入力情報を取得する
-	keyboard_->GetDeviceState(sizeof(key_), key_);
+		//ウィンドウ管理のインスタンスを取得
+		winApp_ = WinApp::GetInstance();
 
-	//マウス情報の取得開始
-	mouse_->Acquire();
+		//DirectInputオブジェクトの生成
+		result = DirectInput8Create(
+			winApp_->GetHInstance(),
+			DIRECTINPUT_VERSION,
+			IID_IDirectInput8,
+			(void**)&directInput_,
+			nullptr
+		);
 
-	//ポーリング開始
-	mouse_->Poll();
+		assert(SUCCEEDED(result));
 
-	//マウスの入力情報を取得する
-	mouse_->GetDeviceState(sizeof(mouseState_), &mouseState_);
-}
+		//キーボードデバイスの生成
+		result = directInput_->CreateDevice(
+			GUID_SysKeyboard,
+			&keyboard_,
+			NULL
+		);
 
-///=====================================================/// 
-/// キーが押されているかの判定
-///=====================================================///
-bool Input::isPushKey(uint8_t keyNum) {
+		assert(SUCCEEDED(result));
 
-	//押されている場合trueを返す
-	if (key_[keyNum]) {
+		//入力データ形式のセット
+		result = keyboard_->SetDataFormat(&c_dfDIKeyboard);
 
-		return true;
+		assert(SUCCEEDED(result));
+
+		//排他制御レベルのセット
+		result = keyboard_->SetCooperativeLevel(
+			winApp_->GetHwnd(),
+			DISCL_FOREGROUND | DISCL_NONEXCLUSIVE | DISCL_NOWINKEY
+		);
+
+		assert(SUCCEEDED(result));
+
+		//マウスデバイスの生成
+		result = directInput_->CreateDevice(
+			GUID_SysMouse,
+			&mouse_,
+			NULL
+		);
+
+		assert(SUCCEEDED(result));
+
+		//入力データ形式のセット
+		result = mouse_->SetDataFormat(&c_dfDIMouse);
+
+		assert(SUCCEEDED(result));
+
+		//排他制御レベルのセット
+		result = mouse_->SetCooperativeLevel(
+			winApp_->GetHwnd(),
+			DISCL_NONEXCLUSIVE | DISCL_FOREGROUND
+		);
+
+		assert(SUCCEEDED(result));
+
 	}
 
-	return false;
-}
+	///=====================================================/// 
+	/// 毎フレーム、キーボードとマウスの入力状態を更新
+	///=====================================================///
+	void Input::Update() {
 
-///=====================================================/// 
-/// キーが離されているかの判定
-///=====================================================///
-bool Input::isReleaseKey(uint8_t keyNum) {
+		//前フレームのキーボード情報をコピー
+		for (int i = 0; i < 256; i++) {
 
-	//押されていない場合trueを返す
-	if (!key_[keyNum]) {
+			preKey_[i] = key_[i];
+		}
 
-		return true;
+		//前フレームのマウス情報をコピー
+		preMouseState_ = mouseState_;
+
+		//キーボード情報の取得開始
+		keyboard_->Acquire();
+
+		//全キーの入力情報を取得する
+		keyboard_->GetDeviceState(sizeof(key_), key_);
+
+		//マウス情報の取得開始
+		mouse_->Acquire();
+
+		//ポーリング開始
+		mouse_->Poll();
+
+		//マウスの入力情報を取得する
+		mouse_->GetDeviceState(sizeof(mouseState_), &mouseState_);
 	}
 
-	return false;
-}
+	///=====================================================/// 
+	/// キーが押されているかの判定
+	///=====================================================///
+	bool Input::isPushKey(uint8_t keyNum) {
 
-///=====================================================/// 
-/// キーが押された瞬間かの判定
-///=====================================================///
-bool Input::IsTriggerPushKey(uint8_t keyNum) {
-
-	//押された瞬間の場合trueを返す
-	if (key_[keyNum] && !preKey_[keyNum]) {
-
-		return true;
-	}
-
-	return false;
-}
-
-///=====================================================/// 
-/// キーが離された瞬間かの判定
-///=====================================================///
-bool Input::IsTriggerReleaseKey(uint8_t keyNum) {
-
-	//離された瞬間の場合trueを返す
-	if (!key_[keyNum] && preKey_[keyNum]) {
-
-		return true;
-	}
-
-	return false;
-}
-
-///=====================================================/// 
-/// マウスボタンが押されているかの判定
-///=====================================================///
-bool Input::IsPushMouseButton(int mouseButton) {
-
-	//マウスボタンの範囲内だったら
-	if (mouseButton >= 0 && mouseButton <= 3) {
-
-		//指定のマウスボタンが押されていたら
-		if (mouseState_.rgbButtons[mouseButton]) {
+		//押されている場合trueを返す
+		if (key_[keyNum]) {
 
 			return true;
 		}
+
+		return false;
 	}
 
-	return false;
-}
+	///=====================================================/// 
+	/// キーが離されているかの判定
+	///=====================================================///
+	bool Input::isReleaseKey(uint8_t keyNum) {
 
-///=====================================================/// 
-/// マウスボタンが離されているかの判定
-///=====================================================///
-bool Input::IsReleaseMouseButton(int mouseButton) {
-
-	//マウスボタンの範囲内だったら
-	if (mouseButton >= 0 && mouseButton <= 3) {
-
-		//指定のマウスボタンが押されていたら
-		if (!mouseState_.rgbButtons[mouseButton]) {
+		//押されていない場合trueを返す
+		if (!key_[keyNum]) {
 
 			return true;
 		}
+
+		return false;
 	}
 
-	return false;
-}
+	///=====================================================/// 
+	/// キーが押された瞬間かの判定
+	///=====================================================///
+	bool Input::IsTriggerPushKey(uint8_t keyNum) {
 
-///=====================================================/// 
-/// マウスボタンが押された瞬間かの判定
-///=====================================================///
-bool Input::IsTriggerPushMouseButton(int mouseButton) {
-
-	//マウスボタンの範囲内だったら
-	if (mouseButton >= 0 && mouseButton <= 3) {
-
-		//指定のマウスボタンが押されていたら
-		if (mouseState_.rgbButtons[mouseButton] && !preMouseState_.rgbButtons[mouseButton]) {
+		//押された瞬間の場合trueを返す
+		if (key_[keyNum] && !preKey_[keyNum]) {
 
 			return true;
 		}
+
+		return false;
 	}
 
-	return false;
-}
+	///=====================================================/// 
+	/// キーが離された瞬間かの判定
+	///=====================================================///
+	bool Input::IsTriggerReleaseKey(uint8_t keyNum) {
 
-///=====================================================/// 
-/// マウスボタンが離された瞬間かの判定
-///=====================================================///
-bool Input::IsTriggerReleaseMouseButton(int mouseButton) {
-
-	//マウスボタンの範囲内だったら
-	if (mouseButton >= 0 && mouseButton <= 3) {
-
-		//指定のマウスボタンが押されていたら
-		if (!mouseState_.rgbButtons[mouseButton] && preMouseState_.rgbButtons[mouseButton]) {
+		//離された瞬間の場合trueを返す
+		if (!key_[keyNum] && preKey_[keyNum]) {
 
 			return true;
 		}
+
+		return false;
 	}
 
-	return false;
-}
+	///=====================================================/// 
+	/// マウスボタンが押されているかの判定
+	///=====================================================///
+	bool Input::IsPushMouseButton(int mouseButton) {
 
-///=====================================================/// 
-/// マウス座標を取得
-///=====================================================///
-Vector2 Input::GetMousePos() {
+		//マウスボタンの範囲内だったら
+		if (mouseButton >= 0 && mouseButton <= 3) {
 
-	//マウス座標
-	POINT point;
+			//指定のマウスボタンが押されていたら
+			if (mouseState_.rgbButtons[mouseButton]) {
 
-	//マウス座標を取得する
-	GetCursorPos(&point);
+				return true;
+			}
+		}
 
-	//ウィンドウサイズに合わせる
-	ScreenToClient(winApp_->GetHwnd(), &point);
+		return false;
+	}
 
-	return Vector2(static_cast<float>(point.x), static_cast<float>(point.y));
-}
+	///=====================================================/// 
+	/// マウスボタンが離されているかの判定
+	///=====================================================///
+	bool Input::IsReleaseMouseButton(int mouseButton) {
 
-///=====================================================/// 
-/// マウスの移動量を取得
-///=====================================================///
-Vector3 Input::GetMouseVelocity() {
+		//マウスボタンの範囲内だったら
+		if (mouseButton >= 0 && mouseButton <= 3) {
 
-	//マウスの移動量を返す
-	return Vector3(static_cast<float>(mouseState_.lX), static_cast<float>(mouseState_.lY), static_cast<float>(mouseState_.lZ));
+			//指定のマウスボタンが押されていたら
+			if (!mouseState_.rgbButtons[mouseButton]) {
+
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	///=====================================================/// 
+	/// マウスボタンが押された瞬間かの判定
+	///=====================================================///
+	bool Input::IsTriggerPushMouseButton(int mouseButton) {
+
+		//マウスボタンの範囲内だったら
+		if (mouseButton >= 0 && mouseButton <= 3) {
+
+			//指定のマウスボタンが押されていたら
+			if (mouseState_.rgbButtons[mouseButton] && !preMouseState_.rgbButtons[mouseButton]) {
+
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	///=====================================================/// 
+	/// マウスボタンが離された瞬間かの判定
+	///=====================================================///
+	bool Input::IsTriggerReleaseMouseButton(int mouseButton) {
+
+		//マウスボタンの範囲内だったら
+		if (mouseButton >= 0 && mouseButton <= 3) {
+
+			//指定のマウスボタンが押されていたら
+			if (!mouseState_.rgbButtons[mouseButton] && preMouseState_.rgbButtons[mouseButton]) {
+
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	///=====================================================/// 
+	/// マウス座標を取得
+	///=====================================================///
+	Vector2 Input::GetMousePos() {
+
+		//マウス座標
+		POINT point;
+
+		//マウス座標を取得する
+		GetCursorPos(&point);
+
+		//ウィンドウサイズに合わせる
+		ScreenToClient(winApp_->GetHwnd(), &point);
+
+		return Vector2(static_cast<float>(point.x), static_cast<float>(point.y));
+	}
+
+	///=====================================================/// 
+	/// マウスの移動量を取得
+	///=====================================================///
+	Vector3 Input::GetMouseVelocity() {
+
+		//マウスの移動量を返す
+		return Vector3(static_cast<float>(mouseState_.lX), static_cast<float>(mouseState_.lY), static_cast<float>(mouseState_.lZ));
+	}
 }

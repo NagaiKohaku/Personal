@@ -8,332 +8,335 @@
 
 #include "imgui.h"
 
-///=====================================================/// 
-/// パーティクルエミッターグループの初期化
-///=====================================================///
-void EmitterGroup::Initialize(Camera* ptr) {
+namespace MyEngine {
 
-	//カメラのポインタを設定
-	camera_ = ptr;
+	///=====================================================/// 
+	/// パーティクルエミッターグループの初期化
+	///=====================================================///
+	void EmitterGroup::Initialize(Camera* ptr) {
 
-	//ディレクトリパスを設定
-	directoryPath_ = "Resource/Json/Particle/Group/";
+		//カメラのポインタを設定
+		camera_ = ptr;
 
-	//エミッターの初期化
-	particleEmitters_.clear();
+		//ディレクトリパスを設定
+		directoryPath_ = "Resource/Json/Particle/Group/";
 
-	//トランスフォームの初期化
-	transform_.Initialize();
-}
+		//エミッターの初期化
+		particleEmitters_.clear();
 
-///=====================================================/// 
-/// パーティクルエミッターグループの更新処理
-///=====================================================///
-void EmitterGroup::Update() {
-
-	//トランスフォームの更新
-	transform_.UpdateMatrix();
-
-	//すべてのパーティクルグループの処理をする
-	for (auto& emitter : particleEmitters_) {
-
-		//トランスフォームの設定
-		emitter->SetWorldTransform(transform_);
-
-		//エミッターの更新
-		emitter->Update();
+		//トランスフォームの初期化
+		transform_.Initialize();
 	}
-}
 
-///=====================================================/// 
-/// パーティクルエミッターグループの描画
-///=====================================================///
-void EmitterGroup::Draw() {
+	///=====================================================/// 
+	/// パーティクルエミッターグループの更新処理
+	///=====================================================///
+	void EmitterGroup::Update() {
 
-	//すべてのパーティクルグループの処理をする
-	for (auto& emitter : particleEmitters_) {
+		//トランスフォームの更新
+		transform_.UpdateMatrix();
 
-		//エミッターの描画
-		emitter->Draw(LayerType::PARTICLE);
+		//すべてのパーティクルグループの処理をする
+		for (auto& emitter : particleEmitters_) {
+
+			//トランスフォームの設定
+			emitter->SetWorldTransform(transform_);
+
+			//エミッターの更新
+			emitter->Update();
+		}
 	}
-}
 
-///=====================================================/// 
-/// ImGuiの表示
-///=====================================================///
-void EmitterGroup::ImGui() {
+	///=====================================================/// 
+	/// パーティクルエミッターグループの描画
+	///=====================================================///
+	void EmitterGroup::Draw() {
+
+		//すべてのパーティクルグループの処理をする
+		for (auto& emitter : particleEmitters_) {
+
+			//エミッターの描画
+			emitter->Draw(LayerType::PARTICLE);
+		}
+	}
+
+	///=====================================================/// 
+	/// ImGuiの表示
+	///=====================================================///
+	void EmitterGroup::ImGui() {
 
 #ifdef _USE_IMGUI
 
-	std::string currentName = name_;
+		std::string currentName = name_;
 
-	if (ImGui::BeginMenuBar()) {
+		if (ImGui::BeginMenuBar()) {
 
-		if (ImGui::BeginMenu("メニュー", "MENU")) {
+			if (ImGui::BeginMenu("メニュー", "MENU")) {
 
-			if (ImGui::BeginMenu(name_.c_str(), name_.c_str())) {
+				if (ImGui::BeginMenu(name_.c_str(), name_.c_str())) {
 
-				if (ImGui::MenuItem("グループの保存")) {
+					if (ImGui::MenuItem("グループの保存")) {
 
-					SaveEmitter();
-				}
+						SaveEmitter();
+					}
 
-				if (ImGui::MenuItem("エミッターの追加")) {
+					if (ImGui::MenuItem("エミッターの追加")) {
 
-					AddEmitter();
+						AddEmitter();
+					}
+
+					ImGui::EndMenu();
 				}
 
 				ImGui::EndMenu();
 			}
 
-			ImGui::EndMenu();
+			ImGui::EndMenuBar();
 		}
 
-		ImGui::EndMenuBar();
-	}
+		if (ImGui::BeginTabBar("EmitterGroup")) {
 
-	if (ImGui::BeginTabBar("EmitterGroup")) {
+			if (Input::GetInstance()->IsTriggerPushKey(DIK_SPACE)) {
 
-		if (Input::GetInstance()->IsTriggerPushKey(DIK_SPACE)) {
-
-			Emit();
-		}
-
-		if (ImGui::BeginTabItem(name_.c_str())) {
-
-			ImGui::Text("名前");
-			if (ImGui::InputText("##Name", currentName.data(), 256)) {
-				if (Input::GetInstance()->IsTriggerPushKey(DIK_RETURN)) {
-					name_ = currentName.c_str();
-				}
+				Emit();
 			}
 
-			if (ImGui::BeginTabBar(name_.c_str())) {
+			if (ImGui::BeginTabItem(name_.c_str())) {
 
-				for (auto& emitter : particleEmitters_) {
-
-					emitter->ImGui();
+				ImGui::Text("名前");
+				if (ImGui::InputText("##Name", currentName.data(), 256)) {
+					if (Input::GetInstance()->IsTriggerPushKey(DIK_RETURN)) {
+						name_ = currentName.c_str();
+					}
 				}
 
-				if (ImGui::Button("グループ生成")) {
+				if (ImGui::BeginTabBar(name_.c_str())) {
 
-					Emit();
+					for (auto& emitter : particleEmitters_) {
+
+						emitter->ImGui();
+					}
+
+					if (ImGui::Button("グループ生成")) {
+
+						Emit();
+					}
+					ImGui::EndTabBar();
 				}
-				ImGui::EndTabBar();
+
+				ImGui::EndTabItem();
 			}
 
-			ImGui::EndTabItem();
+			ImGui::EndTabBar();
 		}
-
-		ImGui::EndTabBar();
-	}
 
 #endif // _USE_IMGUI
 
-}
-
-///=================================================================/// 
-/// 指定されたJSONファイルからパーティクルエミッター情報を読み込み、グループに登録
-///=================================================================///
-void EmitterGroup::LoadEmitter(std::string fileName) {
-
-	nlohmann::json jsonData;
-
-	std::string directoryPath = directoryPath_ + fileName + "/";
-
-	std::string filePath = directoryPath + fileName + ".json";
-
-	/// === エミッター情報の読み込み === ///
-
-	std::ifstream file(filePath);
-
-	if (!file.is_open()) {
-		std::string message = "Failed open data file for read.";
-		MessageBoxA(nullptr, message.c_str(), "EmitterGroup", 0);
-		assert(0);
-		return;
 	}
 
-	file >> jsonData;
+	///=================================================================/// 
+	/// 指定されたJSONファイルからパーティクルエミッター情報を読み込み、グループに登録
+	///=================================================================///
+	void EmitterGroup::LoadEmitter(std::string fileName) {
 
-	file.close();
+		nlohmann::json jsonData;
 
-	/// === エミッター情報の取得 === ///
+		std::string directoryPath = directoryPath_ + fileName + "/";
 
-	for (auto& data : jsonData) {
+		std::string filePath = directoryPath + fileName + ".json";
 
-		if (data.contains("name")) {
+		/// === エミッター情報の読み込み === ///
 
-			//グループ名の設定
-			name_ = data["name"];
+		std::ifstream file(filePath);
 
-		} else if (data.contains("emitter")) {
+		if (!file.is_open()) {
+			std::string message = "Failed open data file for read.";
+			MessageBoxA(nullptr, message.c_str(), "EmitterGroup", 0);
+			assert(0);
+			return;
+		}
 
-			//エミッター名の取得
-			std::string fileName = data["emitter"];
+		file >> jsonData;
 
-			//登録するエミッター
-			std::unique_ptr<ParticleEmitter> newEmitter;
+		file.close();
 
-			//エミッターの生成
-			newEmitter = std::make_unique<ParticleEmitter>();
+		/// === エミッター情報の取得 === ///
 
-			//テクスチャリストの設定
-			newEmitter->SetTextureList(textureList_);
+		for (auto& data : jsonData) {
 
-			//エミッターの初期化
-			newEmitter->Initialize(name_, fileName, camera_);
+			if (data.contains("name")) {
 
-			//リストに登録
-			particleEmitters_.push_back(std::move(newEmitter));
+				//グループ名の設定
+				name_ = data["name"];
+
+			} else if (data.contains("emitter")) {
+
+				//エミッター名の取得
+				std::string fileName = data["emitter"];
+
+				//登録するエミッター
+				std::unique_ptr<ParticleEmitter> newEmitter;
+
+				//エミッターの生成
+				newEmitter = std::make_unique<ParticleEmitter>();
+
+				//テクスチャリストの設定
+				newEmitter->SetTextureList(textureList_);
+
+				//エミッターの初期化
+				newEmitter->Initialize(name_, fileName, camera_);
+
+				//リストに登録
+				particleEmitters_.push_back(std::move(newEmitter));
+			}
 		}
 	}
-}
 
-///=====================================================/// 
-/// 現在のパーティクルエミッターグループの情報をJSONファイルに保存
-///=====================================================///
-void EmitterGroup::SaveEmitter() {
+	///=====================================================/// 
+	/// 現在のパーティクルエミッターグループの情報をJSONファイルに保存
+	///=====================================================///
+	void EmitterGroup::SaveEmitter() {
 
-	nlohmann::json jsonData = nlohmann::json::array();
+		nlohmann::json jsonData = nlohmann::json::array();
 
-	std::string directoryPath = directoryPath_ + name_ + "/";
+		std::string directoryPath = directoryPath_ + name_ + "/";
 
-	std::string filePath = directoryPath + name_ + ".json";
+		std::string filePath = directoryPath + name_ + ".json";
 
-	nlohmann::json nameData;
+		nlohmann::json nameData;
 
-	//グループ名の保存
-	nameData["name"] = name_;
+		//グループ名の保存
+		nameData["name"] = name_;
 
-	jsonData.push_back(nameData);
+		jsonData.push_back(nameData);
 
-	//リストに登録しているエミッターを走査
-	for (auto& emitter : particleEmitters_) {
+		//リストに登録しているエミッターを走査
+		for (auto& emitter : particleEmitters_) {
 
-		nlohmann::json entry;
+			nlohmann::json entry;
 
-		//エミッター名を保存
-		entry["emitter"] = emitter->GetName();
+			//エミッター名を保存
+			entry["emitter"] = emitter->GetName();
 
-		jsonData.push_back(entry);
-	}
+			jsonData.push_back(entry);
+		}
 
 
-	std::filesystem::path dir(directoryPath);
+		std::filesystem::path dir(directoryPath);
 
-	//ディレクトリが存在しない場合は作成
-	if (!std::filesystem::exists(directoryPath)) {
+		//ディレクトリが存在しない場合は作成
+		if (!std::filesystem::exists(directoryPath)) {
 
-		//ディレクトリを作成
-		std::filesystem::create_directory(directoryPath);
-	}
+			//ディレクトリを作成
+			std::filesystem::create_directory(directoryPath);
+		}
 
-	std::ofstream file;
+		std::ofstream file;
 
-	file.open(filePath);
+		file.open(filePath);
 
-	//ファイルが開けなかった場合はエラーメッセージを表示
-	if (file.fail()) {
+		//ファイルが開けなかった場合はエラーメッセージを表示
+		if (file.fail()) {
 
-		//エラーメッセージ
-		std::string message = "Failed open data file for write.";
+			//エラーメッセージ
+			std::string message = "Failed open data file for write.";
 
-		//メッセージボックスを表示
-		MessageBoxA(nullptr, message.c_str(), "ParticleEmitter", 0);
+			//メッセージボックスを表示
+			MessageBoxA(nullptr, message.c_str(), "ParticleEmitter", 0);
 
-		//処理を中断
-		assert(0);
-
-		return;
-	}
-
-	//データをファイルに書き込む
-	file << jsonData.dump(4);
-
-	//ファイルを閉じる
-	file.close();
-
-	//すべてのエミッターのパラメータをファイル出力
-	for (auto& emitter : particleEmitters_) {
-
-		//エミッターのデータをエクスポート
-		emitter->ExportEmitterData(name_);
-	}
-}
-
-///=====================================================/// 
-/// デフォルトのパーティクルエミッターをグループに追加
-///=====================================================///
-void EmitterGroup::AddEmitter() {
-
-	//すでにデフォルトのエミッターが存在する場合は追加しない
-	for (auto& emitter : particleEmitters_) {
-
-		//"default"というエミッターがある場合は追加しない
-		if (emitter->GetName() == "default") {
+			//処理を中断
+			assert(0);
 
 			return;
 		}
+
+		//データをファイルに書き込む
+		file << jsonData.dump(4);
+
+		//ファイルを閉じる
+		file.close();
+
+		//すべてのエミッターのパラメータをファイル出力
+		for (auto& emitter : particleEmitters_) {
+
+			//エミッターのデータをエクスポート
+			emitter->ExportEmitterData(name_);
+		}
 	}
 
-	//登録するためのエミッター
-	std::unique_ptr<ParticleEmitter> newEmitter;
+	///=====================================================/// 
+	/// デフォルトのパーティクルエミッターをグループに追加
+	///=====================================================///
+	void EmitterGroup::AddEmitter() {
 
-	//エミッターの生成
-	newEmitter = std::make_unique<ParticleEmitter>();
+		//すでにデフォルトのエミッターが存在する場合は追加しない
+		for (auto& emitter : particleEmitters_) {
 
-	//テクスチャリストの設定
-	newEmitter->SetTextureList(textureList_);
+			//"default"というエミッターがある場合は追加しない
+			if (emitter->GetName() == "default") {
 
-	//エミッターの初期化
-	newEmitter->Initialize("defaultGroup", "default", camera_);
+				return;
+			}
+		}
 
-	//リストに登録
-	particleEmitters_.push_back(std::move(newEmitter));
-}
+		//登録するためのエミッター
+		std::unique_ptr<ParticleEmitter> newEmitter;
 
-///=====================================================/// 
-/// グループ内のすべてのパーティクルエミッターからパーティクルを発生
-///=====================================================///
-void EmitterGroup::Emit() {
+		//エミッターの生成
+		newEmitter = std::make_unique<ParticleEmitter>();
 
-	//すべてのエミッターに対してパーティクルを発生させる
-	for (auto& emitter : particleEmitters_) {
+		//テクスチャリストの設定
+		newEmitter->SetTextureList(textureList_);
 
-		//パーティクルを発生させる
-		emitter->Emit();
-	}
-}
+		//エミッターの初期化
+		newEmitter->Initialize("defaultGroup", "default", camera_);
 
-///=====================================================/// 
-/// グループ内のすべてのパーティクルエミッターの発生を停止
-///=====================================================///
-void EmitterGroup::Stop() {
-	
-	//すべてのエミッターに対して設定する
-	for (auto& emitter : particleEmitters_) {
-
-		//発生を停止する
-		emitter->SetIsEmit(false);
-	}
-}
-
-///=====================================================/// 
-/// エミッターリストを取得
-///=====================================================///
-std::list<ParticleEmitter*> EmitterGroup::GetEmitterList() {
-
-	//返すためのリスト
-	std::list<ParticleEmitter*> list;
-
-	//すべてのエミッターをリストに追加
-	for (auto& emitter : particleEmitters_) {
-
-		//エミッターのポインタをリストに追加
-		list.push_back(emitter.get());
+		//リストに登録
+		particleEmitters_.push_back(std::move(newEmitter));
 	}
 
-	//リストを返す
-	return list;
+	///=====================================================/// 
+	/// グループ内のすべてのパーティクルエミッターからパーティクルを発生
+	///=====================================================///
+	void EmitterGroup::Emit() {
+
+		//すべてのエミッターに対してパーティクルを発生させる
+		for (auto& emitter : particleEmitters_) {
+
+			//パーティクルを発生させる
+			emitter->Emit();
+		}
+	}
+
+	///=====================================================/// 
+	/// グループ内のすべてのパーティクルエミッターの発生を停止
+	///=====================================================///
+	void EmitterGroup::Stop() {
+
+		//すべてのエミッターに対して設定する
+		for (auto& emitter : particleEmitters_) {
+
+			//発生を停止する
+			emitter->SetIsEmit(false);
+		}
+	}
+
+	///=====================================================/// 
+	/// エミッターリストを取得
+	///=====================================================///
+	std::list<ParticleEmitter*> EmitterGroup::GetEmitterList() {
+
+		//返すためのリスト
+		std::list<ParticleEmitter*> list;
+
+		//すべてのエミッターをリストに追加
+		for (auto& emitter : particleEmitters_) {
+
+			//エミッターのポインタをリストに追加
+			list.push_back(emitter.get());
+		}
+
+		//リストを返す
+		return list;
+	}
 }

@@ -4,195 +4,198 @@
 
 #include "cassert"
 
-///=====================================================/// 
-/// SrvManagerのシングルトンインスタンスを取得
-///=====================================================///
-SrvManager* SrvManager::GetInstance() {
-	static SrvManager instance;
-	return &instance;
-}
+namespace MyEngine {
 
-///=====================================================/// 
-/// SRV用のデスクリプタヒープを初期化
-///=====================================================///
-void SrvManager::Initialize() {
-
-	//DirextX基底のインスタンスを取得
-	directXCommon = DirectXCommon::GetInstance();
-
-	//srvデスクリプタヒープの初期化
-	srvDescriptorHeap_ = directXCommon->CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, kMaxSRVCount_, true);
-
-	//srvデスクリプタヒープのサイズを取得
-	srvDescriptorSize_ = directXCommon->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-}
-
-///=====================================================/// 
-/// 描画前にSRV用のデスクリプタヒープをコマンドリストに設定
-///=====================================================///
-void SrvManager::PreDraw() {
-
-	//描画前のDescriptorHeapの設定
-	ID3D12DescriptorHeap* descriptorHeaps[] = { srvDescriptorHeap_.Get() };
-
-	//コマンドリストにsrvデスクリプタヒープを設定する
-	directXCommon->GetCommandList()->SetDescriptorHeaps(1, descriptorHeaps);
-}
-
-///=====================================================/// 
-/// SRV番号を割り当て
-///=====================================================///
-uint32_t SrvManager::Allocate() {
-
-	//NOTE:InstancingDataを使用するオブジェクトが増えると解放されるまでに最大数に達するかも
-
-	//SRV番号が最大数を越えていないかの確認
-	assert(kMaxSRVCount_ > currentIndex_);
-
-	//解放済みメモリがあれば
-	if (!freeIndices_.empty()) {
-
-		//メモリ番号を再利用
-		uint32_t index = freeIndices_.front();
-
-		freeIndices_.pop();
-
-		return index;
+	///=====================================================/// 
+	/// SrvManagerのシングルトンインスタンスを取得
+	///=====================================================///
+	SrvManager* SrvManager::GetInstance() {
+		static SrvManager instance;
+		return &instance;
 	}
 
-	//新しくメモリ確保
-	return currentIndex_++;
-}
+	///=====================================================/// 
+	/// SRV用のデスクリプタヒープを初期化
+	///=====================================================///
+	void SrvManager::Initialize() {
 
-///=====================================================/// 
-/// SRVを割り当て可能かどうかを確認
-///=====================================================///
-bool SrvManager::AllocateCheck() {
+		//DirextX基底のインスタンスを取得
+		directXCommon = DirectXCommon::GetInstance();
 
-	//SRV番号が最大数を越えていないかの確認
-	if (kMaxSRVCount_ > currentIndex_) {
-		return true;
+		//srvデスクリプタヒープの初期化
+		srvDescriptorHeap_ = directXCommon->CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, kMaxSRVCount_, true);
+
+		//srvデスクリプタヒープのサイズを取得
+		srvDescriptorSize_ = directXCommon->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 	}
 
-	return false;
-}
+	///=====================================================/// 
+	/// 描画前にSRV用のデスクリプタヒープをコマンドリストに設定
+	///=====================================================///
+	void SrvManager::PreDraw() {
 
-///=====================================================/// 
-/// 解放されたメモリ番号を記録
-///=====================================================///
-void SrvManager::RecordFreeIndex(uint32_t index) {
+		//描画前のDescriptorHeapの設定
+		ID3D12DescriptorHeap* descriptorHeaps[] = { srvDescriptorHeap_.Get() };
 
-	//解放されたメモリ番号を記録
-	freeIndices_.push(index);
-}
+		//コマンドリストにsrvデスクリプタヒープを設定する
+		directXCommon->GetCommandList()->SetDescriptorHeaps(1, descriptorHeaps);
+	}
 
-///=====================================================/// 
-/// 2Dテクスチャ用のシェーダーリソースビュー(SRV)を生成
-///=====================================================///
-void SrvManager::CreateSRVForTexture2D(uint32_t srvIndex, ID3D12Resource* pResource, DXGI_FORMAT Format, UINT MipLevels) {
+	///=====================================================/// 
+	/// SRV番号を割り当て
+	///=====================================================///
+	uint32_t SrvManager::Allocate() {
 
-	//SRVの情報
-	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
+		//NOTE:InstancingDataを使用するオブジェクトが増えると解放されるまでに最大数に達するかも
 
-	//SRVの設定
-	srvDesc.Format = Format;
-	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
-	srvDesc.Texture2D.MipLevels = UINT(MipLevels);
+		//SRV番号が最大数を越えていないかの確認
+		assert(kMaxSRVCount_ > currentIndex_);
 
-	//SRVの生成
-	directXCommon->GetDevice()->CreateShaderResourceView(pResource, &srvDesc, GetCPUDescriptorHandle(srvIndex));
-}
+		//解放済みメモリがあれば
+		if (!freeIndices_.empty()) {
 
-///=====================================================/// 
-/// 構造化バッファ用のシェーダーリソースビュー(SRV)を生成
-///=====================================================///
-void SrvManager::CreateSRVForStructuredBuffer(uint32_t srvIndex, ID3D12Resource* pResource, UINT numElements, UINT structureByteStride) {
+			//メモリ番号を再利用
+			uint32_t index = freeIndices_.front();
 
-	//SRVの情報
-	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
+			freeIndices_.pop();
 
-	//SRVの設定
-	srvDesc.Format = DXGI_FORMAT_UNKNOWN;
-	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
-	srvDesc.Buffer.FirstElement = 0;
-	srvDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
-	srvDesc.Buffer.NumElements = numElements;
-	srvDesc.Buffer.StructureByteStride = structureByteStride;
+			return index;
+		}
 
-	//SRVの生成
-	directXCommon->GetDevice()->CreateShaderResourceView(pResource, &srvDesc, GetCPUDescriptorHandle(srvIndex));
-}
+		//新しくメモリ確保
+		return currentIndex_++;
+	}
 
-///=====================================================/// 
-/// レンダーターゲット用のシェーダーリソースビュー(SRV)を生成
-///=====================================================///
-void SrvManager::CreateRenderTargetSRV(uint32_t srvIndex, ID3D12Resource* pResource) {
+	///=====================================================/// 
+	/// SRVを割り当て可能かどうかを確認
+	///=====================================================///
+	bool SrvManager::AllocateCheck() {
 
-	//SRVの情報
-	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
+		//SRV番号が最大数を越えていないかの確認
+		if (kMaxSRVCount_ > currentIndex_) {
+			return true;
+		}
 
-	//SRVの設定
-	srvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
-	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
-	srvDesc.Texture2D.MipLevels = 1;
+		return false;
+	}
 
-	//SRVの生成
-	directXCommon->GetDevice()->CreateShaderResourceView(pResource, &srvDesc, GetCPUDescriptorHandle(srvIndex));
-}
+	///=====================================================/// 
+	/// 解放されたメモリ番号を記録
+	///=====================================================///
+	void SrvManager::RecordFreeIndex(uint32_t index) {
 
-///=====================================================/// 
-/// 深度テクスチャ用のシェーダーリソースビュー(SRV)を生成
-///=====================================================///
-void SrvManager::CreateDepthTextureSRV(uint32_t srvIndex, ID3D12Resource* pResource) {
+		//解放されたメモリ番号を記録
+		freeIndices_.push(index);
+	}
 
-	//SRVの情報
-	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
+	///=====================================================/// 
+	/// 2Dテクスチャ用のシェーダーリソースビュー(SRV)を生成
+	///=====================================================///
+	void SrvManager::CreateSRVForTexture2D(uint32_t srvIndex, ID3D12Resource* pResource, DXGI_FORMAT Format, UINT MipLevels) {
 
-	//SRVの設定
-	srvDesc.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
-	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
-	srvDesc.Texture2D.MipLevels = 1;
+		//SRVの情報
+		D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
 
-	//SRVの生成
-	directXCommon->GetDevice()->CreateShaderResourceView(pResource, &srvDesc, GetCPUDescriptorHandle(srvIndex));
-}
+		//SRVの設定
+		srvDesc.Format = Format;
+		srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+		srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+		srvDesc.Texture2D.MipLevels = UINT(MipLevels);
 
-///=====================================================/// 
-/// CPUデスクリプターを取得
-///=====================================================///
-D3D12_CPU_DESCRIPTOR_HANDLE SrvManager::GetCPUDescriptorHandle(uint32_t index) {
+		//SRVの生成
+		directXCommon->GetDevice()->CreateShaderResourceView(pResource, &srvDesc, GetCPUDescriptorHandle(srvIndex));
+	}
 
-	//デスクリプタの最初のメモリを取得
-	D3D12_CPU_DESCRIPTOR_HANDLE handleCPU = srvDescriptorHeap_->GetCPUDescriptorHandleForHeapStart();
+	///=====================================================/// 
+	/// 構造化バッファ用のシェーダーリソースビュー(SRV)を生成
+	///=====================================================///
+	void SrvManager::CreateSRVForStructuredBuffer(uint32_t srvIndex, ID3D12Resource* pResource, UINT numElements, UINT structureByteStride) {
 
-	//メモリを番号分進ませる
-	handleCPU.ptr += (srvDescriptorSize_ * index);
+		//SRVの情報
+		D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
 
-	return handleCPU;
-}
+		//SRVの設定
+		srvDesc.Format = DXGI_FORMAT_UNKNOWN;
+		srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+		srvDesc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
+		srvDesc.Buffer.FirstElement = 0;
+		srvDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
+		srvDesc.Buffer.NumElements = numElements;
+		srvDesc.Buffer.StructureByteStride = structureByteStride;
 
-///=====================================================/// 
-/// GPUデスクリプターを取得
-///=====================================================///
-D3D12_GPU_DESCRIPTOR_HANDLE SrvManager::GetGPUDescriptorHandle(uint32_t index) {
+		//SRVの生成
+		directXCommon->GetDevice()->CreateShaderResourceView(pResource, &srvDesc, GetCPUDescriptorHandle(srvIndex));
+	}
 
-	//デスクリプタの最初のメモリを取得
-	D3D12_GPU_DESCRIPTOR_HANDLE handleGPU = srvDescriptorHeap_->GetGPUDescriptorHandleForHeapStart();
+	///=====================================================/// 
+	/// レンダーターゲット用のシェーダーリソースビュー(SRV)を生成
+	///=====================================================///
+	void SrvManager::CreateRenderTargetSRV(uint32_t srvIndex, ID3D12Resource* pResource) {
 
-	//メモリを番号分進ませる
-	handleGPU.ptr += (srvDescriptorSize_ * index);
+		//SRVの情報
+		D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
 
-	return handleGPU;
-}
+		//SRVの設定
+		srvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+		srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+		srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+		srvDesc.Texture2D.MipLevels = 1;
 
-///=====================================================/// 
-/// デスクリプタテーブルの設定
-///=====================================================///
-void SrvManager::SetGraphicsRootDescriptorTable(UINT RootParameterIndex, uint32_t srvIndex) {
+		//SRVの生成
+		directXCommon->GetDevice()->CreateShaderResourceView(pResource, &srvDesc, GetCPUDescriptorHandle(srvIndex));
+	}
 
-	directXCommon->GetCommandList()->SetGraphicsRootDescriptorTable(RootParameterIndex, GetGPUDescriptorHandle(srvIndex));
+	///=====================================================/// 
+	/// 深度テクスチャ用のシェーダーリソースビュー(SRV)を生成
+	///=====================================================///
+	void SrvManager::CreateDepthTextureSRV(uint32_t srvIndex, ID3D12Resource* pResource) {
+
+		//SRVの情報
+		D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
+
+		//SRVの設定
+		srvDesc.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
+		srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+		srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+		srvDesc.Texture2D.MipLevels = 1;
+
+		//SRVの生成
+		directXCommon->GetDevice()->CreateShaderResourceView(pResource, &srvDesc, GetCPUDescriptorHandle(srvIndex));
+	}
+
+	///=====================================================/// 
+	/// CPUデスクリプターを取得
+	///=====================================================///
+	D3D12_CPU_DESCRIPTOR_HANDLE SrvManager::GetCPUDescriptorHandle(uint32_t index) {
+
+		//デスクリプタの最初のメモリを取得
+		D3D12_CPU_DESCRIPTOR_HANDLE handleCPU = srvDescriptorHeap_->GetCPUDescriptorHandleForHeapStart();
+
+		//メモリを番号分進ませる
+		handleCPU.ptr += (srvDescriptorSize_ * index);
+
+		return handleCPU;
+	}
+
+	///=====================================================/// 
+	/// GPUデスクリプターを取得
+	///=====================================================///
+	D3D12_GPU_DESCRIPTOR_HANDLE SrvManager::GetGPUDescriptorHandle(uint32_t index) {
+
+		//デスクリプタの最初のメモリを取得
+		D3D12_GPU_DESCRIPTOR_HANDLE handleGPU = srvDescriptorHeap_->GetGPUDescriptorHandleForHeapStart();
+
+		//メモリを番号分進ませる
+		handleGPU.ptr += (srvDescriptorSize_ * index);
+
+		return handleGPU;
+	}
+
+	///=====================================================/// 
+	/// デスクリプタテーブルの設定
+	///=====================================================///
+	void SrvManager::SetGraphicsRootDescriptorTable(UINT RootParameterIndex, uint32_t srvIndex) {
+
+		directXCommon->GetCommandList()->SetGraphicsRootDescriptorTable(RootParameterIndex, GetGPUDescriptorHandle(srvIndex));
+	}
 }

@@ -6,69 +6,72 @@
 #include "map"
 #include "vector"
 
-/// <summary>
-/// 描画処理を統括し、登録された描画コマンドをレイヤー順に実行するクラスです。
-/// </summary>
-class Renderer {
-
-	///-------------------------------------------/// 
-	/// メンバ関数
-	///-------------------------------------------///
-public:
+namespace MyEngine {
 
 	/// <summary>
-	/// Rendererのシングルトンインスタンスを取得します。
+	/// 描画処理を統括し、登録された描画コマンドをレイヤー順に実行するクラスです。
 	/// </summary>
-	static Renderer* GetInstance();
+	class Renderer {
 
-	/// <summary>
-	/// レンダラーを初期化します。
-	/// </summary>
-	void Initialize();
+		///-------------------------------------------/// 
+		/// メンバ関数
+		///-------------------------------------------///
+	public:
 
-	/// <summary>
-	/// 登録された描画コマンドをレイヤー順に実行し、スワップチェーンに描画します。
-	/// </summary>
-	void SwapChainDraw();
+		/// <summary>
+		/// Rendererのシングルトンインスタンスを取得します。
+		/// </summary>
+		static Renderer* GetInstance();
 
-	/// <summary>
-	/// 登録されたオフスクリーン描画コマンドをレイヤー順に実行します。
-	/// </summary>
-	void OffScreenDraw();
+		/// <summary>
+		/// レンダラーを初期化します。
+		/// </summary>
+		void Initialize();
 
-	/// <summary>
-	/// 描画コマンドを指定したレイヤーと描画先に追加します。
-	/// </summary>
-	void AddDraw(LayerType layer, bool isOffScreen,std::function<void()> func);
+		/// <summary>
+		/// 登録された描画コマンドをレイヤー順に実行し、スワップチェーンに描画します。
+		/// </summary>
+		void SwapChainDraw();
 
-	///-------------------------------------------/// 
-	/// クラス内関数
-	///-------------------------------------------///
-private:
+		/// <summary>
+		/// 登録されたオフスクリーン描画コマンドをレイヤー順に実行します。
+		/// </summary>
+		void OffScreenDraw();
 
-	/// <summary>
-	/// 通常描画キューに登録されている全ての描画コマンドをクリアします。
-	/// </summary>
-	void ClearQueue();
+		/// <summary>
+		/// 描画コマンドを指定したレイヤーと描画先に追加します。
+		/// </summary>
+		void AddDraw(LayerType layer, bool isOffScreen, std::function<void()> func);
 
-	/// <summary>
-	/// オフスクリーン描画キューに登録されている全ての描画コマンドをクリアします。
-	/// </summary>
-	void ClearOffScreenQueue();
+		///-------------------------------------------/// 
+		/// クラス内関数
+		///-------------------------------------------///
+	private:
 
-	/// <summary>
-	/// 現在のビルドがデバッグモードかどうかを判定します。
-	/// </summary>
-	bool isDebug();
+		/// <summary>
+		/// 通常描画キューに登録されている全ての描画コマンドをクリアします。
+		/// </summary>
+		void ClearQueue();
 
-	///-------------------------------------------/// 
-	/// メンバ変数
-	///-------------------------------------------///
-private:
+		/// <summary>
+		/// オフスクリーン描画キューに登録されている全ての描画コマンドをクリアします。
+		/// </summary>
+		void ClearOffScreenQueue();
 
-	//描画コマンドキュー
-	std::map<LayerType, std::vector<std::function<void()>>> drawQueue_;
+		/// <summary>
+		/// 現在のビルドがデバッグモードかどうかを判定します。
+		/// </summary>
+		bool isDebug();
 
-	//OffScreen用の描画コマンドキュー
-	std::map<LayerType, std::vector<std::function<void()>>> offScreenDrawQueue_;
-};
+		///-------------------------------------------/// 
+		/// メンバ変数
+		///-------------------------------------------///
+	private:
+
+		//描画コマンドキュー
+		std::map<LayerType, std::vector<std::function<void()>>> drawQueue_;
+
+		//OffScreen用の描画コマンドキュー
+		std::map<LayerType, std::vector<std::function<void()>>> offScreenDrawQueue_;
+	};
+}

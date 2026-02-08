@@ -29,6 +29,7 @@
 #include <Effect/Shake/Shake.h>
 #include <Effect/Flash/Flash.h>
 
+using namespace MyEngine;
 
 //Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {

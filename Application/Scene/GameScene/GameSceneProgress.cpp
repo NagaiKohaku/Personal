@@ -2,6 +2,8 @@
 
 #include <Scene/GameScene/Event/GameSceneEventFactory.h>
 
+using namespace MyEngine;
+
 void GameSceneProgress::Initialize(Player* player, Camera* camera, FollowCamera* followCamera) {
 
 	player_ = player;

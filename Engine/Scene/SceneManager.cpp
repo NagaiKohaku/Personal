@@ -78,19 +78,19 @@ void SceneManager::ImGui() {
 void SceneManager::ChangeScene(SceneType sceneType) {
 
 	//コライダーをすべて破棄
-	ColliderManager::GetInstance()->ClearColliders();
+	MyEngine::ColliderManager::GetInstance()->ClearColliders();
 
 	//シーンがすでにある場合は終了処理を実行
 	if (currentScene_) {
 
-		BaseScene* preScene = currentScene_.get();
+		MyEngine::BaseScene* preScene = currentScene_.get();
 
 		preScene->Finalize();
 	}
 
 	// 新しいシーンを生成
 	currentScene_ = CreateScene(sceneType);
-	
+
 	// シーンの初期化
 	Initialize();
 }
@@ -98,7 +98,7 @@ void SceneManager::ChangeScene(SceneType sceneType) {
 ///=====================================================/// 
 /// 指定された種類に応じたシーンオブジェクトを生成して返す
 ///=====================================================///
-std::unique_ptr<BaseScene> SceneManager::CreateScene(SceneType sceneType) {
+std::unique_ptr<MyEngine::BaseScene> SceneManager::CreateScene(SceneType sceneType) {
 
 	/// ===シーンの判断=== ///
 

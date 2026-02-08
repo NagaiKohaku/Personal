@@ -4,56 +4,59 @@
 #include "memory"
 #include "map"
 
-/// <summary>
-/// スプライトの管理を行うクラス。
-/// </summary>
-class SpriteManager {
-
-	///-------------------------------------------/// 
-	/// メンバ関数
-	///-------------------------------------------///
-public:
+namespace MyEngine {
 
 	/// <summary>
-	/// SpriteManagerのシングルトンインスタンスを取得します。
+	/// スプライトの管理を行うクラス。
 	/// </summary>
-	static SpriteManager* GetInstance();
+	class SpriteManager {
 
-	/// <summary>
-	/// SpriteManagerを初期化します。
-	/// </summary>
-	void Initialize();
+		///-------------------------------------------/// 
+		/// メンバ関数
+		///-------------------------------------------///
+	public:
 
-	/// <summary>
-	/// 指定した名前のスプライトを検索し、未登録であれば読み込みます。
-	/// </summary>
-	/// <param name="spriteName"> スプライト名 </param>
-	/// <param name="spriteFileName"> スプライトファイル名 </param>
-	void LoadSprite(const std::string& spriteName);
+		/// <summary>
+		/// SpriteManagerのシングルトンインスタンスを取得します。
+		/// </summary>
+		static SpriteManager* GetInstance();
 
-	/// <summary>
-	/// 指定した名前のスプライトを検索して新しいインスタンスを生成します。
-	/// </summary>
-	/// <param name="spriteName">検索するスプライトの名前</param>
-	/// <returns>
-	/// 新しいスプライトインスタンス (登録されていなかったらnullptr)
-	/// </returns>
-	std::unique_ptr<Sprite> FindSprite(const std::string& spriteName);
+		/// <summary>
+		/// SpriteManagerを初期化します。
+		/// </summary>
+		void Initialize();
 
-	///-------------------------------------------/// 
-	/// メンバ変数
-	///-------------------------------------------///
-private:
+		/// <summary>
+		/// 指定した名前のスプライトを検索し、未登録であれば読み込みます。
+		/// </summary>
+		/// <param name="spriteName"> スプライト名 </param>
+		/// <param name="spriteFileName"> スプライトファイル名 </param>
+		void LoadSprite(const std::string& spriteName);
 
-	//スプライト基底
-	SpriteCommon* spriteCommon_;
+		/// <summary>
+		/// 指定した名前のスプライトを検索して新しいインスタンスを生成します。
+		/// </summary>
+		/// <param name="spriteName">検索するスプライトの名前</param>
+		/// <returns>
+		/// 新しいスプライトインスタンス (登録されていなかったらnullptr)
+		/// </returns>
+		std::unique_ptr<Sprite> FindSprite(const std::string& spriteName);
 
-	//スプライトリスト
-	std::map<std::string, std::unique_ptr<Sprite>> sprites_;
+		///-------------------------------------------/// 
+		/// メンバ変数
+		///-------------------------------------------///
+	private:
 
-public:
+		//スプライト基底
+		SpriteCommon* spriteCommon_;
 
-	std::map<std::string, Sprite*> GetSpriteList();
+		//スプライトリスト
+		std::map<std::string, std::unique_ptr<Sprite>> sprites_;
 
-	std::vector<std::string> GetSpriteNameList();
-};
+	public:
+
+		std::map<std::string, Sprite*> GetSpriteList();
+
+		std::vector<std::string> GetSpriteNameList();
+	};
+}

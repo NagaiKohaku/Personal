@@ -5,95 +5,98 @@
 #include "list"
 #include "memory"
 
-///=====================================================/// 
-/// コライダーマネージャークラス
-///=====================================================///
-class ColliderManager {
+namespace MyEngine {
 
-	///-------------------------------------------/// 
-	/// メンバ関数
-	///-------------------------------------------///
-public:
+	///=====================================================/// 
+	/// コライダーマネージャークラス
+	///=====================================================///
+	class ColliderManager {
 
-	/// <summary>
-	/// ColliderManagerのシングルトンインスタンスを取得します。
-	/// </summary>
-	static ColliderManager* GetInstance();
+		///-------------------------------------------/// 
+		/// メンバ関数
+		///-------------------------------------------///
+	public:
 
-	/// <summary>
-	/// ColliderManager を初期化します。
-	/// </summary>
-	void Initialize();
+		/// <summary>
+		/// ColliderManagerのシングルトンインスタンスを取得します。
+		/// </summary>
+		static ColliderManager* GetInstance();
 
-	/// <summary>
-	/// ColliderManager を更新します。
-	/// </summary>
-	void Update();
+		/// <summary>
+		/// ColliderManager を初期化します。
+		/// </summary>
+		void Initialize();
 
-	/// <summary>
-	/// コライダーを登録します。
-	/// </summary>
-	/// <param name="collider"> 登録するコライダー </param>
-	void AddCollider(Collider* collider);
+		/// <summary>
+		/// ColliderManager を更新します。
+		/// </summary>
+		void Update();
 
-	/// <summary>
-	/// 指定されたコライダーを登録リストから削除します。
-	/// </summary>
-	/// <param name="collider"> 削除するコライダー </param>
-	void RemoveCollider(Collider* collider);
+		/// <summary>
+		/// コライダーを登録します。
+		/// </summary>
+		/// <param name="collider"> 登録するコライダー </param>
+		void AddCollider(Collider* collider);
 
-	/// <summary>
-	/// 管理しているすべてのコライダーをクリアします。
-	/// </summary>
-	void ClearColliders() { colliders_.clear(); }
+		/// <summary>
+		/// 指定されたコライダーを登録リストから削除します。
+		/// </summary>
+		/// <param name="collider"> 削除するコライダー </param>
+		void RemoveCollider(Collider* collider);
 
-	///-------------------------------------------/// 
-	/// クラス内処理関数
-	///-------------------------------------------///
-private:
+		/// <summary>
+		/// 管理しているすべてのコライダーをクリアします。
+		/// </summary>
+		void ClearColliders() { colliders_.clear(); }
 
-	/// <summary>
-	/// 登録されている全てのコライダー同士の衝突判定を行います。
-	/// </summary>
-	void CheckAllCollision();
+		///-------------------------------------------/// 
+		/// クラス内処理関数
+		///-------------------------------------------///
+	private:
 
-	/// <summary>
-	/// 2つのコライダー同士の衝突判定を行います。
-	/// </summary>
-	/// <param name="first">1つ目のコライダー</param>
-	/// <param name="second">2つ目のコライダー</param>
-	/// <returns>衝突している場合は true、していない場合は false</returns>
-	bool CheckPair(Collider* first, Collider* second);
+		/// <summary>
+		/// 登録されている全てのコライダー同士の衝突判定を行います。
+		/// </summary>
+		void CheckAllCollision();
 
-	/// <summary>
-	/// 2つのAABBCollider同士の衝突判定を行います。
-	/// </summary>
-	/// <param name="first">1つ目のコライダー</param>
-	/// <param name="second">2つ目のコライダー</param>
-	/// <returns>衝突している場合は true、していない場合は false</returns>
-	bool IsCollisionAABBWithAABB(Collider* first, Collider* second);
+		/// <summary>
+		/// 2つのコライダー同士の衝突判定を行います。
+		/// </summary>
+		/// <param name="first">1つ目のコライダー</param>
+		/// <param name="second">2つ目のコライダー</param>
+		/// <returns>衝突している場合は true、していない場合は false</returns>
+		bool CheckPair(Collider* first, Collider* second);
 
-	/// <summary>
-	/// 2つのSphereCollider同士の衝突判定を行います。
-	/// </summary>
-	/// <param name="first">1つ目のコライダー</param>
-	/// <param name="second">2つ目のコライダー</param>
-	/// <returns>衝突している場合は true、していない場合は false</returns>
-	bool IsCollisionSphereWithSphere(Collider* first, Collider* second);
+		/// <summary>
+		/// 2つのAABBCollider同士の衝突判定を行います。
+		/// </summary>
+		/// <param name="first">1つ目のコライダー</param>
+		/// <param name="second">2つ目のコライダー</param>
+		/// <returns>衝突している場合は true、していない場合は false</returns>
+		bool IsCollisionAABBWithAABB(Collider* first, Collider* second);
 
-	/// <summary>
-	/// AABBCollider と SphereCollider の衝突判定を行います。
-	/// </summary>
-	/// <param name="aabb">AABB コライダー</param>
-	/// <param name="sphere">Sphere コライダー</param>
-	/// <returns>衝突している場合は true、していない場合は false</returns>
-	bool IsCollisionAABBWithSphere(Collider* first, Collider* second);
+		/// <summary>
+		/// 2つのSphereCollider同士の衝突判定を行います。
+		/// </summary>
+		/// <param name="first">1つ目のコライダー</param>
+		/// <param name="second">2つ目のコライダー</param>
+		/// <returns>衝突している場合は true、していない場合は false</returns>
+		bool IsCollisionSphereWithSphere(Collider* first, Collider* second);
 
-	///-------------------------------------------/// 
-	/// メンバ変数
-	///-------------------------------------------///
-private:
+		/// <summary>
+		/// AABBCollider と SphereCollider の衝突判定を行います。
+		/// </summary>
+		/// <param name="aabb">AABB コライダー</param>
+		/// <param name="sphere">Sphere コライダー</param>
+		/// <returns>衝突している場合は true、していない場合は false</returns>
+		bool IsCollisionAABBWithSphere(Collider* first, Collider* second);
 
-	//コライダーリスト
-	std::list<Collider*> colliders_;
-};
+		///-------------------------------------------/// 
+		/// メンバ変数
+		///-------------------------------------------///
+	private:
+
+		//コライダーリスト
+		std::list<Collider*> colliders_;
+	};
+}

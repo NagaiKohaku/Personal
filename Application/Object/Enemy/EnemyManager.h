@@ -31,7 +31,7 @@ public:
 	/// <param name="cameraPtr">追従や位置参照に使用するカメラのポインタ。</param>
 	/// <param name="bulletPtr">敵が発射する弾を管理するバレットマネージャのポインタ。</param>
 	/// <param name="playerPtr">敵が追跡・攻撃対象とするプレイヤーのポインタ。</param>
-	void Initialize(Camera* cameraPtr, BulletManager* bulletPtr, Player* playerPtr);
+	void Initialize(MyEngine::Camera* cameraPtr, BulletManager* bulletPtr, Player* playerPtr);
 
 	/// <summary>
 	/// 敵の生成処理および各敵オブジェクトの更新処理を行います。
@@ -69,7 +69,7 @@ private:
 	/// <param name="entryPos">敵がステージ外から侵入してくるエントリー座標</param>
 	/// <param name="standbyPos">侵入後に移動し停止する待機座標</param>
 	/// <param name="objectData">敵の見た目やパラメータを含むオブジェクトデータ</param>
-	void Spawn(Vector3 entryPos, Vector3 standbyPos, ObjectData objectData);
+	void Spawn(MyEngine::Vector3 entryPos, MyEngine::Vector3 standbyPos, ObjectData objectData);
 
 	/// <summary>
 	/// 管理している敵オブジェクトの削除処理を行います。
@@ -82,7 +82,7 @@ private:
 private:
 
 	//カメラ
-	Camera* camera_;
+	MyEngine::Camera* camera_;
 
 	//バレットマネージャー
 	BulletManager* bulletManager_;
@@ -115,10 +115,10 @@ private:
 	float spawnDistance_;
 
 	//スポーン座標オフセット
-	Vector3 spawnOffset_;
+	MyEngine::Vector3 spawnOffset_;
 
 	//スポーン範囲
-	Vector3 spawnRange_;
+	MyEngine::Vector3 spawnRange_;
 
 	//スポーンフラグ
 	bool isSpawn_;

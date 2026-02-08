@@ -1,16 +1,19 @@
 #include "BaseScene.h"
 
-void BaseScene::Initialize() {
-}
+namespace MyEngine {
 
-void BaseScene::Finalize() {
-}
+	void BaseScene::Initialize() {
+	}
 
-void BaseScene::Update() {
-}
+	void BaseScene::Finalize() {
+	}
 
-void BaseScene::Draw() {
-}
+	void BaseScene::Update() {
+	}
 
-void BaseScene::ImGui() {
+	void BaseScene::Draw() {
+	}
+
+	void BaseScene::ImGui() {
+	}
 }

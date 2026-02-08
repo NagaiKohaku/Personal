@@ -56,16 +56,16 @@
       <Filter>Application\Object\Camera</Filter>
     </ClCompile>
     <ClCompile Include="Engine\3d\Collider\AABBCollider.cpp">
-      <Filter>Application\Collider</Filter>
+      <Filter>Engine\3d\Collider</Filter>
     </ClCompile>
     <ClCompile Include="Engine\3d\Collider\Collider.cpp">
-      <Filter>Application\Collider</Filter>
+      <Filter>Engine\3d\Collider</Filter>
     </ClCompile>
     <ClCompile Include="Engine\3d\Collider\ColliderManager.cpp">
-      <Filter>Application\Collider</Filter>
+      <Filter>Engine\3d\Collider</Filter>
     </ClCompile>
     <ClCompile Include="Engine\3d\Collider\SphereCollider.cpp">
-      <Filter>Application\Collider</Filter>
+      <Filter>Engine\3d\Collider</Filter>
     </ClCompile>
     <ClCompile Include="Application\Object\Enemy\Enemy.cpp">
       <Filter>Application\Object\Enemy</Filter>
@@ -358,16 +358,16 @@
       <Filter>Application\Object\Camera</Filter>
     </ClInclude>
     <ClInclude Include="Engine\3d\Collider\AABBCollider.h">
-      <Filter>Application\Collider</Filter>
+      <Filter>Engine\3d\Collider</Filter>
     </ClInclude>
     <ClInclude Include="Engine\3d\Collider\Collider.h">
-      <Filter>Application\Collider</Filter>
+      <Filter>Engine\3d\Collider</Filter>
     </ClInclude>
     <ClInclude Include="Engine\3d\Collider\ColliderManager.h">
-      <Filter>Application\Collider</Filter>
+      <Filter>Engine\3d\Collider</Filter>
     </ClInclude>
     <ClInclude Include="Engine\3d\Collider\SphereCollider.h">
-      <Filter>Application\Collider</Filter>
+      <Filter>Engine\3d\Collider</Filter>
     </ClInclude>
     <ClInclude Include="Application\Object\Enemy\Enemy.h">
       <Filter>Application\Object\Enemy</Filter>
@@ -748,9 +748,6 @@
     <Filter Include="Resource">
       <UniqueIdentifier>{bf9e9f7c-1bbe-4006-bdcb-74629ab76848}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Application\Collider">
-      <UniqueIdentifier>{73b0e180-31e9-47b6-b4a2-3756d510669e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Engine\2d">
       <UniqueIdentifier>{26237036-1f59-46ff-bddc-e8e800eeed90}</UniqueIdentifier>
     </Filter>
@@ -873,6 +870,9 @@
     </Filter>
     <Filter Include="Application\Scene\GameScene\Event">
       <UniqueIdentifier>{388189a3-da38-4e0d-af38-c4b40488ff9c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\3d\Collider">
+      <UniqueIdentifier>{73b0e180-31e9-47b6-b4a2-3756d510669e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

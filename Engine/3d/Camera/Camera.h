@@ -4,173 +4,176 @@
 #include <Math/Matrix/Matrix4x4.h>
 #include <Math/Transform/WorldTransform.h>
 
-/// <summary>
-/// 3Dシーンの視点制御を行うカメラクラスです。
-/// </summary>
-class Camera {
-
-	///-------------------------------------------/// 
-	/// メンバ関数
-	///-------------------------------------------///
-public:
+namespace MyEngine {
 
 	/// <summary>
-	/// カメラの各種パラメータを初期化します。
+	/// 3Dシーンの視点制御を行うカメラクラスです。
 	/// </summary>
-	void Initialize();
+	class Camera {
 
-	/// <summary>
-	/// カメラの状態を更新します。
-	/// </summary>
-	void Update();
+		///-------------------------------------------/// 
+		/// メンバ関数
+		///-------------------------------------------///
+	public:
 
-	/// <summary>
-	/// ImGuiの表示
-	/// </summary>
-	void DisplayImGui();
+		/// <summary>
+		/// カメラの各種パラメータを初期化します。
+		/// </summary>
+		void Initialize();
 
-	/// <summary>
-	/// 追従対象のリセット
-	/// </summary>
-	void ResetTrackingObject() { trackingObject_ = nullptr; }
+		/// <summary>
+		/// カメラの状態を更新します。
+		/// </summary>
+		void Update();
 
-	///-------------------------------------------/// 
-	/// メンバ変数
-	///-------------------------------------------///
-private:
+		/// <summary>
+		/// ImGuiの表示
+		/// </summary>
+		void DisplayImGui();
 
-	//追従対象
-	Object3D* trackingObject_;
+		/// <summary>
+		/// 追従対象のリセット
+		/// </summary>
+		void ResetTrackingObject() { trackingObject_ = nullptr; }
 
-	//座標
-	WorldTransform transform_;
+		///-------------------------------------------/// 
+		/// メンバ変数
+		///-------------------------------------------///
+	private:
 
-	//デバッグカメラの座標
-	WorldTransform debugTransform_;
+		//追従対象
+		Object3D* trackingObject_;
 
-	//ビュー行列
-	Matrix4x4 viewMatrix_;
+		//座標
+		WorldTransform transform_;
 
-	//プロジェクション行列
-	Matrix4x4 projectionMatrix_;
+		//デバッグカメラの座標
+		WorldTransform debugTransform_;
 
-	//ビュープロジェクション行列
-	Matrix4x4 viewProjectionMatrix_;
+		//ビュー行列
+		Matrix4x4 viewMatrix_;
 
-	//視野角
-	float fovY_;
+		//プロジェクション行列
+		Matrix4x4 projectionMatrix_;
 
-	//アスペクト比
-	float aspectRatio_;
+		//ビュープロジェクション行列
+		Matrix4x4 viewProjectionMatrix_;
 
-	//NearClip
-	float nearClip_;
+		//視野角
+		float fovY_;
 
-	//FarClip
-	float farClip_;
+		//アスペクト比
+		float aspectRatio_;
 
-	//Z軸のオフセット
-	float offsetZ_;
+		//NearClip
+		float nearClip_;
 
-	//デバッグカメラのZ軸のオフセット
-	float debugCameraOffsetZ_;
+		//FarClip
+		float farClip_;
 
-	//デバッグカメラフラグ
-	bool isDebugCamera_;
+		//Z軸のオフセット
+		float offsetZ_;
 
-	///-------------------------------------------/// 
-	/// セッター・ゲッター
-	///-------------------------------------------///
-public:
+		//デバッグカメラのZ軸のオフセット
+		float debugCameraOffsetZ_;
 
-	/// <summary>
-	/// ワールドトランスフォームを取得
-	/// </summary>
-	/// <returns>ワールドトランスフォーム</returns>
-	WorldTransform& GetWorldTransform() { return isDebugCamera_ ? debugTransform_ : transform_; }
+		//デバッグカメラフラグ
+		bool isDebugCamera_;
 
-	/// <summary>
-	/// ビュー行列を取得
-	/// </summary>
-	/// <returns>ビュー行列</returns>
-	const Matrix4x4& GetViewMatrix() const { return viewMatrix_; }
+		///-------------------------------------------/// 
+		/// セッター・ゲッター
+		///-------------------------------------------///
+	public:
 
-	/// <summary>
-	/// プロジェクション行列を取得
-	/// </summary>
-	/// <returns>プロジェクション行列</returns>
-	const Matrix4x4& GetProjectionMatrix() const { return projectionMatrix_; }
+		/// <summary>
+		/// ワールドトランスフォームを取得
+		/// </summary>
+		/// <returns>ワールドトランスフォーム</returns>
+		WorldTransform& GetWorldTransform() { return isDebugCamera_ ? debugTransform_ : transform_; }
 
-	/// <summary>
-	/// ビュープロジェクション行列を取得
-	/// </summary>
-	/// <returns>ビュープロジェクション行列</returns>
-	const Matrix4x4& GetViewProjectionMatrix() const { return viewProjectionMatrix_; }
+		/// <summary>
+		/// ビュー行列を取得
+		/// </summary>
+		/// <returns>ビュー行列</returns>
+		const Matrix4x4& GetViewMatrix() const { return viewMatrix_; }
 
-	/// <summary>
-	/// デバッグカメラフラグを取得
-	/// </summary>
-	/// <returns>フラグ</returns>
-	bool IsDebugCamera() const { return isDebugCamera_; }
+		/// <summary>
+		/// プロジェクション行列を取得
+		/// </summary>
+		/// <returns>プロジェクション行列</returns>
+		const Matrix4x4& GetProjectionMatrix() const { return projectionMatrix_; }
 
-	void SetViewMatrix(Matrix4x4 matrix) { viewMatrix_ = matrix; }
+		/// <summary>
+		/// ビュープロジェクション行列を取得
+		/// </summary>
+		/// <returns>ビュープロジェクション行列</returns>
+		const Matrix4x4& GetViewProjectionMatrix() const { return viewProjectionMatrix_; }
 
-	void SetProjectionMatrix(Matrix4x4 matrix) { projectionMatrix_ = matrix; }
+		/// <summary>
+		/// デバッグカメラフラグを取得
+		/// </summary>
+		/// <returns>フラグ</returns>
+		bool IsDebugCamera() const { return isDebugCamera_; }
 
-	void SetViewProjectionMatrix(Matrix4x4 matrix) { viewProjectionMatrix_ = matrix; }
+		void SetViewMatrix(Matrix4x4 matrix) { viewMatrix_ = matrix; }
 
-	/// <summary>
-	/// fovYの設定
-	/// </summary>
-	/// <param name="fovY">fovY</param>
-	void SetFovY(const float fovY) { fovY_ = fovY; }
+		void SetProjectionMatrix(Matrix4x4 matrix) { projectionMatrix_ = matrix; }
 
-	/// <summary>
-	/// アスペクト比の設定
-	/// </summary>
-	/// <param name="aspectRatio">アスペクト比</param>
-	void SetAspectRatio(const float aspectRatio) { aspectRatio_ = aspectRatio; }
+		void SetViewProjectionMatrix(Matrix4x4 matrix) { viewProjectionMatrix_ = matrix; }
 
-	/// <summary>
-	/// NearClipの設定
-	/// </summary>
-	/// <param name="nearClip">NearClip</param>
-	void SetNearClip(const float nearClip) { nearClip_ = nearClip; }
+		/// <summary>
+		/// fovYの設定
+		/// </summary>
+		/// <param name="fovY">fovY</param>
+		void SetFovY(const float fovY) { fovY_ = fovY; }
 
-	/// <summary>
-	/// FarClipの設定
-	/// </summary>
-	/// <param name="farClip">FarClip</param>
-	void SetFarClip(const float farClip) { farClip_ = farClip; }
+		/// <summary>
+		/// アスペクト比の設定
+		/// </summary>
+		/// <param name="aspectRatio">アスペクト比</param>
+		void SetAspectRatio(const float aspectRatio) { aspectRatio_ = aspectRatio; }
 
-	/// <summary>
-	/// デバッグカメラフラグの設定
-	/// </summary>
-	/// <param name="flag">フラグ</param>
-	void SetDebugCameraFlag(const bool flag) { isDebugCamera_ = flag; }
+		/// <summary>
+		/// NearClipの設定
+		/// </summary>
+		/// <param name="nearClip">NearClip</param>
+		void SetNearClip(const float nearClip) { nearClip_ = nearClip; }
 
-	/// <summary>
-	/// 座標の設定
-	/// </summary>
-	/// <param name="pos">座標</param>
-	void SetTransform(const Vector3 pos) { isDebugCamera_ ? debugTransform_.translate_ = pos : transform_.translate_ = pos; }
+		/// <summary>
+		/// FarClipの設定
+		/// </summary>
+		/// <param name="farClip">FarClip</param>
+		void SetFarClip(const float farClip) { farClip_ = farClip; }
 
-	/// <summary>
-	/// 角度の設定
-	/// </summary>
-	/// <param name="rot">角度</param>
-	void SetRotate(const Vector3 rot) { isDebugCamera_ ? debugTransform_.rotate_ = rot : transform_.rotate_ = rot; }
+		/// <summary>
+		/// デバッグカメラフラグの設定
+		/// </summary>
+		/// <param name="flag">フラグ</param>
+		void SetDebugCameraFlag(const bool flag) { isDebugCamera_ = flag; }
 
-	/// <summary>
-	/// オフセットの設定
-	/// </summary>
-	/// <param name="offset">オフセット</param>
-	void SetOffsetZ(const float offset) { isDebugCamera_ ? debugCameraOffsetZ_ = offset : offsetZ_ = offset; }
+		/// <summary>
+		/// 座標の設定
+		/// </summary>
+		/// <param name="pos">座標</param>
+		void SetTransform(const Vector3 pos) { isDebugCamera_ ? debugTransform_.translate_ = pos : transform_.translate_ = pos; }
 
-	/// <summary>
-	/// 追従対象の設定
-	/// </summary>
-	/// <param name="object">3Dオブジェクト</param>
-	void SetTrackingObject(Object3D* object) { trackingObject_ = object; }
+		/// <summary>
+		/// 角度の設定
+		/// </summary>
+		/// <param name="rot">角度</param>
+		void SetRotate(const Vector3 rot) { isDebugCamera_ ? debugTransform_.rotate_ = rot : transform_.rotate_ = rot; }
 
-};
+		/// <summary>
+		/// オフセットの設定
+		/// </summary>
+		/// <param name="offset">オフセット</param>
+		void SetOffsetZ(const float offset) { isDebugCamera_ ? debugCameraOffsetZ_ = offset : offsetZ_ = offset; }
+
+		/// <summary>
+		/// 追従対象の設定
+		/// </summary>
+		/// <param name="object">3Dオブジェクト</param>
+		void SetTrackingObject(Object3D* object) { trackingObject_ = object; }
+
+	};
+}

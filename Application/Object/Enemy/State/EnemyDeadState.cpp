@@ -6,6 +6,8 @@
 
 #include <numbers>
 
+using namespace MyEngine;
+
 void EnemyDeadState::Enter() {
 
 	timer_ = 0.0f;

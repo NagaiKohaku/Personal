@@ -5,95 +5,98 @@
 #include "wrl.h"
 #include "vector"
 
-/// === 前方宣言 === ///
+namespace MyEngine {
 
-class DirectXCommon;
+	/// === 前方宣言 === ///
 
-class Camera;
+	class DirectXCommon;
 
-/// <summary>
-/// スカイボックス描画用の共通機能を提供するクラスです。
-/// </summary>
-class SkyBoxCommon {
-
-	///-------------------------------------------/// 
-	/// メンバ関数
-	///-------------------------------------------///
-public:
+	class Camera;
 
 	/// <summary>
-	/// SkyBoxCommonのシングルトンインスタンスを取得します。
+	/// スカイボックス描画用の共通機能を提供するクラスです。
 	/// </summary>
-	static SkyBoxCommon* GetInstance();
+	class SkyBoxCommon {
 
-	/// <summary>
-	/// SkyBoxCommonの初期化を行います。
-	/// </summary>
-	void Initialize();
+		///-------------------------------------------/// 
+		/// メンバ関数
+		///-------------------------------------------///
+	public:
 
-	/// <summary>
-	/// 更新処理
-	/// </summary>
-	void Update();
+		/// <summary>
+		/// SkyBoxCommonのシングルトンインスタンスを取得します。
+		/// </summary>
+		static SkyBoxCommon* GetInstance();
 
-	/// <summary>
-	/// スカイボックスの描画に必要な共通設定を行います。
-	/// </summary>
-	void CommonDrawSetting();
+		/// <summary>
+		/// SkyBoxCommonの初期化を行います。
+		/// </summary>
+		void Initialize();
 
-	///-------------------------------------------/// 
-	/// クラス内処理関数
-	///-------------------------------------------///
-private:
+		/// <summary>
+		/// 更新処理
+		/// </summary>
+		void Update();
 
-	/// <summary>
-	/// スカイボックス描画用のルートシグネチャを作成します。
-	/// </summary>
-	void CreateRootSignature();
+		/// <summary>
+		/// スカイボックスの描画に必要な共通設定を行います。
+		/// </summary>
+		void CommonDrawSetting();
 
-	/// <summary>
-	/// スカイボックス描画用のグラフィックパイプラインステートを作成します。
-	/// </summary>
-	void CreateGraphicsPipeline();
+		///-------------------------------------------/// 
+		/// クラス内処理関数
+		///-------------------------------------------///
+	private:
 
-	///-------------------------------------------/// 
-	/// メンバ変数
-	///-------------------------------------------///
-private:
+		/// <summary>
+		/// スカイボックス描画用のルートシグネチャを作成します。
+		/// </summary>
+		void CreateRootSignature();
 
-	//DirectX基底
-	DirectXCommon* dxCommon_ = nullptr;
+		/// <summary>
+		/// スカイボックス描画用のグラフィックパイプラインステートを作成します。
+		/// </summary>
+		void CreateGraphicsPipeline();
 
-	//カメラ
-	Camera* camera_ = nullptr;
+		///-------------------------------------------/// 
+		/// メンバ変数
+		///-------------------------------------------///
+	private:
 
-	//ルートシグネチャ
-	Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature_ = nullptr;
+		//DirectX基底
+		DirectXCommon* dxCommon_ = nullptr;
 
-	//グラフィックパイプラインステート
-	Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState_ = nullptr;
+		//カメラ
+		Camera* camera_ = nullptr;
 
-	///-------------------------------------------/// 
-	/// セッター・ゲッター
-	///-------------------------------------------///
-public:
+		//ルートシグネチャ
+		Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature_ = nullptr;
 
-	/// <summary>
-	/// DirectX基底を取得
-	/// </summary>
-	/// <returns>DirectX基底</returns>
-	DirectXCommon* GetDxCommon() const { return dxCommon_; }
+		//グラフィックパイプラインステート
+		Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState_ = nullptr;
 
-	/// <summary>
-	/// カメラを取得
-	/// </summary>
-	/// <returns>カメラ</returns>
-	Camera* GetCamera() const { return camera_; }
+		///-------------------------------------------/// 
+		/// セッター・ゲッター
+		///-------------------------------------------///
+	public:
 
-	/// <summary>
-	/// カメラの設定
-	/// </summary>
-	/// <param name="ptr">カメラ</param>
-	void SetDefaultCamera(Camera* ptr) { camera_ = ptr; }
+		/// <summary>
+		/// DirectX基底を取得
+		/// </summary>
+		/// <returns>DirectX基底</returns>
+		DirectXCommon* GetDxCommon() const { return dxCommon_; }
 
-};
+		/// <summary>
+		/// カメラを取得
+		/// </summary>
+		/// <returns>カメラ</returns>
+		Camera* GetCamera() const { return camera_; }
+
+		/// <summary>
+		/// カメラの設定
+		/// </summary>
+		/// <param name="ptr">カメラ</param>
+		void SetDefaultCamera(Camera* ptr) { camera_ = ptr; }
+
+	};
+}

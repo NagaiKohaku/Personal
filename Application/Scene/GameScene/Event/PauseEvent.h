@@ -6,7 +6,7 @@ class PauseEvent : public GameSceneEventBase {
 
 public:
 
-	void Start(Player* player, Camera* camera, FollowCamera* followCamera) override;
+	void Start(Player* player, MyEngine::Camera* camera, FollowCamera* followCamera) override;
 
 	void Exit() override;
 

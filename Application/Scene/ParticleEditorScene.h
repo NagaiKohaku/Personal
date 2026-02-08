@@ -12,7 +12,7 @@
 
 #include "memory"
 
-class ParticleEditorScene : public BaseScene {
+class ParticleEditorScene : public MyEngine::BaseScene {
 
 	///-------------------------------------------/// 
 	/// メンバ関数
@@ -61,13 +61,13 @@ private:
 private:
 
 	//カメラ
-	std::unique_ptr<Camera> camera_;
+	std::unique_ptr<MyEngine::Camera> camera_;
 
-	std::list<std::unique_ptr<EmitterGroup>> emitterGroups_;
+	std::list<std::unique_ptr<MyEngine::EmitterGroup>> emitterGroups_;
 
 	std::list<std::string> emitterGroupNames_;
 
-	std::vector<std::unique_ptr<DebugLine>> lines_;
+	std::vector<std::unique_ptr<MyEngine::DebugLine>> lines_;
 
 	std::vector<std::string> textureList_;
 

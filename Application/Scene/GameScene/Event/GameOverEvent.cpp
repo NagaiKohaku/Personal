@@ -6,6 +6,8 @@
 #include <Base/OffScreen.h>
 #include <Base/Input.h>
 
+using namespace MyEngine;
+
 void GameOverEvent::Start(Player* player, Camera* camera, FollowCamera* followCamera) {
 
 	//スプライトを映す

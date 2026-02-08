@@ -26,7 +26,7 @@ public:
 	/// </summary>
 	/// <param name="pos">生成時の座標を指定します。</param>
 	/// <param name="direction">移動方向を指定します。</param>
-	void Initialize(Vector3 pos, Vector3 direction) override;
+	void Initialize(MyEngine::Vector3 pos, MyEngine::Vector3 direction) override;
 
 	/// <summary>
 	/// 弾の状態を更新します
@@ -64,6 +64,6 @@ private:
 private:
 
 	//コライダー
-	std::unique_ptr<SphereCollider> collider_;
+	std::unique_ptr<MyEngine::SphereCollider> collider_;
 
 };

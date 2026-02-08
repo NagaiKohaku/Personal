@@ -25,7 +25,7 @@ public:
 	/// 指定座標に応じて影の位置とサイズを更新する
 	/// </summary>
 	/// <param name="pos">影の基準となる座標</param>
-	void Update(Vector3 pos);
+	void Update(MyEngine::Vector3 pos);
 
 	/// <summary>
 	/// 影オブジェクトを描画する
@@ -38,7 +38,7 @@ public:
 private:
 
 	// 影オブジェクト
-	std::unique_ptr<Object3D> shadow_;
+	std::unique_ptr<MyEngine::Object3D> shadow_;
 
 	// オブジェクト間の距離
 	float maxLength_;

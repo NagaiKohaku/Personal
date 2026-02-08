@@ -14,18 +14,18 @@ public:
 
 	struct UIObject {
 		std::string name;
-		std::unique_ptr<Object2D> object;
-		Vector2 uiPosition;
+		std::unique_ptr<MyEngine::Object2D> object;
+		MyEngine::Vector2 uiPosition;
 		float uiRotate;
-		Vector2 uiSize;
-		Vector4 uiColor;
+		MyEngine::Vector2 uiSize;
+		MyEngine::Vector4 uiColor;
 		bool isEdit;
 	};
 
 	struct UIGroup {
 		std::string name;
 		std::vector<UIObject> uiList;
-		WorldTransform transform;
+		MyEngine::WorldTransform transform;
 		bool isActive;
 	};
 
@@ -53,11 +53,11 @@ private:
 
 	void Edit();
 
-	void EditUIPosition(UIObject* uiObject, Vector2 uiMin, Vector2 uiMax, Vector2 mousePos);
+	void EditUIPosition(UIObject* uiObject, MyEngine::Vector2 uiMin, MyEngine::Vector2 uiMax, MyEngine::Vector2 mousePos);
 
-	void EditUISize(UIObject* uiObject, Vector2 uiMin, Vector2 uiMax, Vector2 mousePos);
+	void EditUISize(UIObject* uiObject, MyEngine::Vector2 uiMin, MyEngine::Vector2 uiMax, MyEngine::Vector2 mousePos);
 
-	bool CheckInZone(Vector2 uiMin, Vector2 uiMax, Vector2 mousePos);
+	bool CheckInZone(MyEngine::Vector2 uiMin, MyEngine::Vector2 uiMax, MyEngine::Vector2 mousePos);
 
 	void EnableEditMode(UIObject* uiObject, bool flag);
 
@@ -80,7 +80,7 @@ private:
 
 	UIObject* activeResizingUI_ = nullptr;
 
-	Vector2 initialPos_;
+	MyEngine::Vector2 initialPos_;
 
 	size_t stringBufSize_;
 
@@ -94,7 +94,7 @@ public:
 
 	UIGroup* GetUIGroup(const std::string groupName);
 
-	Object2D* Get2DObject(const std::string groupName, const std::string uiName);
+	MyEngine::Object2D* Get2DObject(const std::string groupName, const std::string uiName);
 
 	UIObject* GetUIObject(const std::string groupName, const std::string uiName);
 

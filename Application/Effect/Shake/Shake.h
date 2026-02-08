@@ -44,7 +44,7 @@ public:
 	/// カメラを設定
 	/// </summary>
 	/// <param name="ptr">カメラポインタ</param>
-	void SetCamera(Camera* ptr) { camera_ = ptr; }
+	void SetCamera(MyEngine::Camera* ptr) { camera_ = ptr; }
 
 	///-------------------------------------------/// 
 	/// メンバ変数
@@ -52,10 +52,10 @@ public:
 private:
 
 	//カメラ
-	Camera* camera_;
+	MyEngine::Camera* camera_;
 
 	//トランスフォーム
-	WorldTransform transform_;
+	MyEngine::WorldTransform transform_;
 
 	//タイマー
 	float timer_;

@@ -7,90 +7,93 @@
 
 #include <Math/Vector/Vector3.h>
 
-/// === 前方宣言 === ///
+namespace MyEngine {
 
-class DirectXCommon;
+	/// === 前方宣言 === ///
 
-class Camera;
+	class DirectXCommon;
 
-/// <summary>
-/// デバッグオブジェクト描画用の共通機能を提供するクラスです。
-/// </summary>
-class DebugObjectCommon {
-
-	///-------------------------------------------/// 
-	/// メンバ関数
-	///-------------------------------------------///
-public:
+	class Camera;
 
 	/// <summary>
-	/// DebugObjectCommonのシングルトンインスタンスを取得します。
+	/// デバッグオブジェクト描画用の共通機能を提供するクラスです。
 	/// </summary>
-	static DebugObjectCommon* GetInstance();
+	class DebugObjectCommon {
 
-	/// <summary>
-	/// DebugObjectCommonの初期化を行います。
-	/// </summary>
-	void Initialize();
+		///-------------------------------------------/// 
+		/// メンバ関数
+		///-------------------------------------------///
+	public:
 
-	/// <summary>
-	/// デバッグオブジェクトの描画に必要な共通設定を行います。
-	/// </summary>
-	void CommonDrawSetting();
+		/// <summary>
+		/// DebugObjectCommonのシングルトンインスタンスを取得します。
+		/// </summary>
+		static DebugObjectCommon* GetInstance();
 
-	///-------------------------------------------/// 
-	/// クラス内処理関数
-	///-------------------------------------------///
-private:
+		/// <summary>
+		/// DebugObjectCommonの初期化を行います。
+		/// </summary>
+		void Initialize();
 
-	/// <summary>
-	/// デバッグオブジェクト描画用のルートシグネチャを作成します。
-	/// </summary>
-	void CreateRootSignature();
+		/// <summary>
+		/// デバッグオブジェクトの描画に必要な共通設定を行います。
+		/// </summary>
+		void CommonDrawSetting();
 
-	/// <summary>
-	/// デバッグオブジェクト描画用のグラフィックパイプラインステートを作成します。
-	/// </summary>
-	void CreateGraphicsPipeline();
+		///-------------------------------------------/// 
+		/// クラス内処理関数
+		///-------------------------------------------///
+	private:
 
-	///-------------------------------------------/// 
-	/// メンバ変数
-	///-------------------------------------------///
-private:
+		/// <summary>
+		/// デバッグオブジェクト描画用のルートシグネチャを作成します。
+		/// </summary>
+		void CreateRootSignature();
 
-	//DirectX基底
-	DirectXCommon* dxCommon_ = nullptr;
+		/// <summary>
+		/// デバッグオブジェクト描画用のグラフィックパイプラインステートを作成します。
+		/// </summary>
+		void CreateGraphicsPipeline();
 
-	//カメラ
-	Camera* camera_ = nullptr;
+		///-------------------------------------------/// 
+		/// メンバ変数
+		///-------------------------------------------///
+	private:
 
-	//ルートシグネチャ
-	Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature_ = nullptr;
+		//DirectX基底
+		DirectXCommon* dxCommon_ = nullptr;
 
-	//グラフィックパイプラインステート
-	Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState_ = nullptr;
+		//カメラ
+		Camera* camera_ = nullptr;
 
-	///-------------------------------------------/// 
-	/// セッター・ゲッター
-	///-------------------------------------------///
-public:
+		//ルートシグネチャ
+		Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature_ = nullptr;
 
-	/// <summary>
-	/// DirectX基底を取得
-	/// </summary>
-	/// <returns>DirectX基底</returns>
-	DirectXCommon* GetDxCommon() const { return dxCommon_; }
+		//グラフィックパイプラインステート
+		Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState_ = nullptr;
 
-	/// <summary>
-	/// カメラを取得
-	/// </summary>
-	/// <returns>カメラ</returns>
-	Camera* GetCamera() const { return camera_; }
+		///-------------------------------------------/// 
+		/// セッター・ゲッター
+		///-------------------------------------------///
+	public:
 
-	/// <summary>
-	/// カメラの設定
-	/// </summary>
-	/// <param name="ptr">カメラ</param>
-	void SetDefaultCamera(Camera* ptr) { camera_ = ptr; }
+		/// <summary>
+		/// DirectX基底を取得
+		/// </summary>
+		/// <returns>DirectX基底</returns>
+		DirectXCommon* GetDxCommon() const { return dxCommon_; }
 
-};
+		/// <summary>
+		/// カメラを取得
+		/// </summary>
+		/// <returns>カメラ</returns>
+		Camera* GetCamera() const { return camera_; }
+
+		/// <summary>
+		/// カメラの設定
+		/// </summary>
+		/// <param name="ptr">カメラ</param>
+		void SetDefaultCamera(Camera* ptr) { camera_ = ptr; }
+
+	};
+}

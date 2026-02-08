@@ -11,391 +11,394 @@
 
 #include "3d/Mesh/ModelMesh.h"
 
-///=====================================================/// 
-/// モデルを初期化 (モデルデータ読み込み)
-///=====================================================///
-void Model::Initialize(const std::string& directoryPath, const std::string& filename) {
+namespace MyEngine {
 
-	//モデル基底のインスタンスを取得
-	modelCommon_ = ModelCommon::GetInstance();
+	///=====================================================/// 
+	/// モデルを初期化 (モデルデータ読み込み)
+	///=====================================================///
+	void Model::Initialize(const std::string& directoryPath, const std::string& filename) {
 
-	//モデルデータの読み込み
-	LoadObjFile(directoryPath, filename);
+		//モデル基底のインスタンスを取得
+		modelCommon_ = ModelCommon::GetInstance();
 
-	/// === メッシュの生成 === ///
+		//モデルデータの読み込み
+		LoadObjFile(directoryPath, filename);
 
-	//生成
-	mesh_ = std::make_unique<ModelMesh>();
+		/// === メッシュの生成 === ///
 
-	//頂点数の設定
-	mesh_->SetVertexCount(uint32_t(modelData_.vertices.size()));
+		//生成
+		mesh_ = std::make_unique<ModelMesh>();
 
-	//インデックス数の設定
-	mesh_->SetIndexCount(uint32_t(modelData_.indices.size()));
+		//頂点数の設定
+		mesh_->SetVertexCount(uint32_t(modelData_.vertices.size()));
 
-	//初期化
-	mesh_->Initialize();
+		//インデックス数の設定
+		mesh_->SetIndexCount(uint32_t(modelData_.indices.size()));
 
-	//頂点データとインデックスデータのコピー
-	mesh_->CopyMeshData(modelData_.indices, modelData_.vertices);
+		//初期化
+		mesh_->Initialize();
 
-	/// === マテリアルリソースの生成 === ///
+		//頂点データとインデックスデータのコピー
+		mesh_->CopyMeshData(modelData_.indices, modelData_.vertices);
 
-	//マテリアルリソースを作成
-	materialResource_ = modelCommon_->GetDxCommon()->CreateBufferResource(sizeof(Material));
+		/// === マテリアルリソースの生成 === ///
 
-	//書き込むためのアドレスを取得する
-	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));
+		//マテリアルリソースを作成
+		materialResource_ = modelCommon_->GetDxCommon()->CreateBufferResource(sizeof(Material));
 
-	//マテリアルデータの設定
-	materialData_->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-	materialData_->enableLighting = true;
-	materialData_->uvTransform = MakeIdentity4x4();
-	materialData_->shininess = 50.0f;
-	materialData_->environmentCoefficient = 1.0f;
+		//書き込むためのアドレスを取得する
+		materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));
 
-	//テクスチャの読み込み
-	TextureManager::GetInstance()->LoadTexture(textureFilePath_);
-}
+		//マテリアルデータの設定
+		materialData_->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+		materialData_->enableLighting = true;
+		materialData_->uvTransform = MakeIdentity4x4();
+		materialData_->shininess = 50.0f;
+		materialData_->environmentCoefficient = 1.0f;
 
-///=====================================================///
-/// モデルを初期化 (メッシュクラスから生成)
-/// =====================================================///
-void Model::Initialize(MeshType type, const std::string& textureFilePath) {
-
-	//モデル基底のインスタンスを取得
-	modelCommon_ = ModelCommon::GetInstance();
-
-	/// === メッシュの生成 === ///
-
-	//生成
-	mesh_ = CreateMesh(type);
-
-	//初期化
-	mesh_->Initialize();
-
-	//頂点データの設定
-	for (uint32_t i = 0; i < mesh_->GetVertexCount(); i++) {
-
-		modelData_.vertices.push_back(mesh_->GetVertexData()[i]);
+		//テクスチャの読み込み
+		TextureManager::GetInstance()->LoadTexture(textureFilePath_);
 	}
 
-	//インデックスデータの設定
-	for (uint32_t i = 0; i < mesh_->GetIndexCount(); i++) {
+	///=====================================================///
+	/// モデルを初期化 (メッシュクラスから生成)
+	/// =====================================================///
+	void Model::Initialize(MeshType type, const std::string& textureFilePath) {
 
-		modelData_.indices.push_back(mesh_->GetIndexData()[i]);
+		//モデル基底のインスタンスを取得
+		modelCommon_ = ModelCommon::GetInstance();
+
+		/// === メッシュの生成 === ///
+
+		//生成
+		mesh_ = CreateMesh(type);
+
+		//初期化
+		mesh_->Initialize();
+
+		//頂点データの設定
+		for (uint32_t i = 0; i < mesh_->GetVertexCount(); i++) {
+
+			modelData_.vertices.push_back(mesh_->GetVertexData()[i]);
+		}
+
+		//インデックスデータの設定
+		for (uint32_t i = 0; i < mesh_->GetIndexCount(); i++) {
+
+			modelData_.indices.push_back(mesh_->GetIndexData()[i]);
+		}
+
+		/// === マテリアルデータの生成 === ///
+
+		//マテリアルリソースを作成
+		materialResource_ = modelCommon_->GetDxCommon()->CreateBufferResource(sizeof(Material));
+
+		//書き込むためのアドレスを取得する
+		materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));
+
+		//マテリアルデータの設定
+		materialData_->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+		materialData_->enableLighting = true;
+		materialData_->uvTransform = MakeIdentity4x4();
+		materialData_->shininess = 50.0f;
+		materialData_->environmentCoefficient = 1.0f;
+
+		//テクスチャファイルパスの設定
+		textureFilePath_ = textureFilePath;
+
+		//テクスチャの読み込み
+		TextureManager::GetInstance()->LoadTexture(textureFilePath_);
 	}
 
-	/// === マテリアルデータの生成 === ///
+	///=====================================================/// 
+	/// モデルを初期化 (既存モデルからコピー)
+	///=====================================================///
+	void Model::Initialize(MeshType type, Model* model) {
 
-	//マテリアルリソースを作成
-	materialResource_ = modelCommon_->GetDxCommon()->CreateBufferResource(sizeof(Material));
+		//モデル基底のインスタンスを取得
+		modelCommon_ = ModelCommon::GetInstance();
 
-	//書き込むためのアドレスを取得する
-	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));
+		/// === モデルデータのコピー === ///
 
-	//マテリアルデータの設定
-	materialData_->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-	materialData_->enableLighting = true;
-	materialData_->uvTransform = MakeIdentity4x4();
-	materialData_->shininess = 50.0f;
-	materialData_->environmentCoefficient = 1.0f;
+		Copy(model);
 
-	//テクスチャファイルパスの設定
-	textureFilePath_ = textureFilePath;
+		/// === メッシュの生成 === ///
 
-	//テクスチャの読み込み
-	TextureManager::GetInstance()->LoadTexture(textureFilePath_);
-}
+		//生成
+		mesh_ = CreateMesh(type);
 
-///=====================================================/// 
-/// モデルを初期化 (既存モデルからコピー)
-///=====================================================///
-void Model::Initialize(MeshType type, Model* model) {
+		//頂点数を設定
+		mesh_->SetVertexCount(uint32_t(modelData_.vertices.size()));
 
-	//モデル基底のインスタンスを取得
-	modelCommon_ = ModelCommon::GetInstance();
+		//インデックス数を設定
+		mesh_->SetIndexCount(uint32_t(modelData_.indices.size()));
 
-	/// === モデルデータのコピー === ///
+		//初期化
+		mesh_->Initialize();
 
-	Copy(model);
+		//頂点データとインデックスデータのコピー
+		mesh_->CopyMeshData(modelData_.indices, modelData_.vertices);
 
-	/// === メッシュの生成 === ///
+		/// === マテリアルリソースの生成 === ///
 
-	//生成
-	mesh_ = CreateMesh(type);
+		//マテリアルリソースを作成
+		materialResource_ = modelCommon_->GetDxCommon()->CreateBufferResource(sizeof(Material));
 
-	//頂点数を設定
-	mesh_->SetVertexCount(uint32_t(modelData_.vertices.size()));
+		//書き込むためのアドレスを取得する
+		materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));
 
-	//インデックス数を設定
-	mesh_->SetIndexCount(uint32_t(modelData_.indices.size()));
+		//マテリアルデータの設定
+		materialData_->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+		materialData_->enableLighting = true;
+		materialData_->uvTransform = MakeIdentity4x4();
+		materialData_->shininess = 50.0f;
+		materialData_->environmentCoefficient = 1.0f;
+	}
 
-	//初期化
-	mesh_->Initialize();
+	///=====================================================/// 
+	/// モデルを描画
+	///=====================================================///
+	void Model::Draw() {
 
-	//頂点データとインデックスデータのコピー
-	mesh_->CopyMeshData(modelData_.indices, modelData_.vertices);
+		//メッシュの設定
+		mesh_->SendDataForGPU();
 
-	/// === マテリアルリソースの生成 === ///
+		//マテリアルデータの設定
+		modelCommon_->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource_.Get()->GetGPUVirtualAddress());
 
-	//マテリアルリソースを作成
-	materialResource_ = modelCommon_->GetDxCommon()->CreateBufferResource(sizeof(Material));
+		//テクスチャデータの設定
+		modelCommon_->GetDxCommon()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSrvHandleGPU(textureFilePath_));
 
-	//書き込むためのアドレスを取得する
-	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));
+		//描画コマンド発行
+		modelCommon_->GetDxCommon()->GetCommandList()->DrawIndexedInstanced(UINT(mesh_->GetIndexCount()), 1, 0, 0, 0);
 
-	//マテリアルデータの設定
-	materialData_->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-	materialData_->enableLighting = true;
-	materialData_->uvTransform = MakeIdentity4x4();
-	materialData_->shininess = 50.0f;
-	materialData_->environmentCoefficient = 1.0f;
-}
+	}
 
-///=====================================================/// 
-/// モデルを描画
-///=====================================================///
-void Model::Draw() {
+	///=====================================================/// 
+	/// モデルのメッシュデータを GPU に転送
+	///=====================================================///
+	void Model::SendMeshDataForGPU() {
 
-	//メッシュの設定
-	mesh_->SendDataForGPU();
+		//メッシュの設定
+		mesh_->SendDataForGPU();
+	}
 
-	//マテリアルデータの設定
-	modelCommon_->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource_.Get()->GetGPUVirtualAddress());
+	///=====================================================/// 
+	/// モデルのマテリアルデータを GPU に転送
+	///=====================================================///
+	void Model::SendMaterialDataForGPU() {
 
-	//テクスチャデータの設定
-	modelCommon_->GetDxCommon()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSrvHandleGPU(textureFilePath_));
+		//マテリアルデータの設定
+		modelCommon_->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource_.Get()->GetGPUVirtualAddress());
+	}
 
-	//描画コマンド発行
-	modelCommon_->GetDxCommon()->GetCommandList()->DrawIndexedInstanced(UINT(mesh_->GetIndexCount()), 1, 0, 0, 0);
+	///=====================================================/// 
+	/// モデルのテクスチャデータを GPU に転送
+	///=====================================================///
+	void Model::SendTextureDataForGPU() {
 
-}
+		//テクスチャデータの設定
+		modelCommon_->GetDxCommon()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSrvHandleGPU(textureFilePath_));
+	}
 
-///=====================================================/// 
-/// モデルのメッシュデータを GPU に転送
-///=====================================================///
-void Model::SendMeshDataForGPU() {
+	///=====================================================/// 
+	/// 指定したモデルのデータをコピー
+	///=====================================================///
+	void Model::Copy(Model* model) {
 
-	//メッシュの設定
-	mesh_->SendDataForGPU();
-}
+		modelData_ = model->modelData_;
 
-///=====================================================/// 
-/// モデルのマテリアルデータを GPU に転送
-///=====================================================///
-void Model::SendMaterialDataForGPU() {
+		textureFilePath_ = model->textureFilePath_;
+	}
 
-	//マテリアルデータの設定
-	modelCommon_->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource_.Get()->GetGPUVirtualAddress());
-}
+	///=====================================================/// 
+	/// OBJファイルを読み込み、モデルデータに格納
+	///=====================================================///
+	void Model::LoadObjFile(const std::string& directoryPath, const std::string& filename) {
 
-///=====================================================/// 
-/// モデルのテクスチャデータを GPU に転送
-///=====================================================///
-void Model::SendTextureDataForGPU() {
+		/// === ローカル変数 === ///
 
-	//テクスチャデータの設定
-	modelCommon_->GetDxCommon()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSrvHandleGPU(textureFilePath_));
-}
+		//三角面の頂点データ
+		MeshBase::VertexData triangle[3];
 
-///=====================================================/// 
-/// 指定したモデルのデータをコピー
-///=====================================================///
-void Model::Copy(Model* model) {
+		//位置
+		std::vector<Vector4> positions;
 
-	modelData_ = model->modelData_;
+		//法線
+		std::vector<Vector3> normals;
 
-	textureFilePath_ = model->textureFilePath_;
-}
+		//テクスチャ座標
+		std::vector<Vector2> texcoords;
 
-///=====================================================/// 
-/// OBJファイルを読み込み、モデルデータに格納
-///=====================================================///
-void Model::LoadObjFile(const std::string& directoryPath, const std::string& filename) {
+		//ファイルから読んだ1行を格納するもの
+		std::string line;
 
-	/// === ローカル変数 === ///
+		/// === objファイルからデータを読み込む === ///
 
-	//三角面の頂点データ
-	MeshBase::VertexData triangle[3];
+		//ファイルを開く
+		std::ifstream file(directoryPath + "/" + filename);
 
-	//位置
-	std::vector<Vector4> positions;
+		//ファイルが開けたかの確認
+		assert(file.is_open());
 
-	//法線
-	std::vector<Vector3> normals;
+		while (std::getline(file, line)) {
 
-	//テクスチャ座標
-	std::vector<Vector2> texcoords;
+			//識別子
+			std::string identifier;
 
-	//ファイルから読んだ1行を格納するもの
-	std::string line;
+			//1行
+			std::istringstream s(line);
 
-	/// === objファイルからデータを読み込む === ///
+			//先頭の識別子を読む
+			s >> identifier;
 
-	//ファイルを開く
-	std::ifstream file(directoryPath + "/" + filename);
+			if (identifier == "v") {
 
-	//ファイルが開けたかの確認
-	assert(file.is_open());
+				/// === 識別子が「v」であれば === ///
 
-	while (std::getline(file, line)) {
+				//座標データ
+				Vector4 position;
 
-		//識別子
-		std::string identifier;
+				//ファイルから読み込む
+				s >> position.x >> position.y >> position.z;
 
-		//1行
-		std::istringstream s(line);
+				//X軸を反転させる
+				position.x *= -1.0f;
 
-		//先頭の識別子を読む
-		s >> identifier;
+				position.w = 1.0f;
 
-		if (identifier == "v") {
+				//座標データを登録する
+				positions.push_back(position);
+			} else if (identifier == "vt") {
 
-			/// === 識別子が「v」であれば === ///
+				/// === 識別子が「vt」だったら === ///
 
-			//座標データ
-			Vector4 position;
+				//テクスチャ座標データ
+				Vector2 texCoord;
 
-			//ファイルから読み込む
-			s >> position.x >> position.y >> position.z;
+				//ファイルから読み込む
+				s >> texCoord.x >> texCoord.y;
 
-			//X軸を反転させる
-			position.x *= -1.0f;
+				//
+				texCoord.y = 1.0f - texCoord.y;
 
-			position.w = 1.0f;
+				//テクスチャ座標データを登録
+				texcoords.push_back(texCoord);
+			} else if (identifier == "vn") {
 
-			//座標データを登録する
-			positions.push_back(position);
-		} else if (identifier == "vt") {
+				/// === 識別子が「vn」であれば === ///
 
-			/// === 識別子が「vt」だったら === ///
+				//法線データ
+				Vector3 normal;
 
-			//テクスチャ座標データ
-			Vector2 texCoord;
+				//ファイルから読み込む
+				s >> normal.x >> normal.y >> normal.z;
 
-			//ファイルから読み込む
-			s >> texCoord.x >> texCoord.y;
+				//X軸を反転
+				normal.x *= -1.0f;
 
-			//
-			texCoord.y = 1.0f - texCoord.y;
+				//法線データを登録
+				normals.push_back(normal);
+			} else if (identifier == "f") {
 
-			//テクスチャ座標データを登録
-			texcoords.push_back(texCoord);
-		} else if (identifier == "vn") {
+				/// === 識別子が「f」だったら === ///
 
-			/// === 識別子が「vn」であれば === ///
+				//面は三角形限定。その他は未対応
+				for (int32_t faceVertex = 0; faceVertex < 3; ++faceVertex) {
 
-			//法線データ
-			Vector3 normal;
+					//頂点の要素
+					std::string vertexDefinition;
 
-			//ファイルから読み込む
-			s >> normal.x >> normal.y >> normal.z;
+					//頂点の要素を読み込む
+					s >> vertexDefinition;
 
-			//X軸を反転
-			normal.x *= -1.0f;
+					//頂点の要素へのIndexは[位置/UV/法線]で格納されているので、分類してIndexを取得する
+					std::istringstream v(vertexDefinition);
 
-			//法線データを登録
-			normals.push_back(normal);
-		} else if (identifier == "f") {
+					//頂点要素の格納用
+					uint32_t elementIndices[3];
 
-			/// === 識別子が「f」だったら === ///
+					for (int32_t element = 0; element < 3; ++element) {
 
-			//面は三角形限定。その他は未対応
-			for (int32_t faceVertex = 0; faceVertex < 3; ++faceVertex) {
+						//要素
+						std::string index;
 
-				//頂点の要素
-				std::string vertexDefinition;
+						//区切りで要素を読み込む
+						std::getline(v, index, '/');
 
-				//頂点の要素を読み込む
-				s >> vertexDefinition;
+						//要素を格納する
+						elementIndices[element] = std::stoi(index);
+					}
 
-				//頂点の要素へのIndexは[位置/UV/法線]で格納されているので、分類してIndexを取得する
-				std::istringstream v(vertexDefinition);
+					//格納した要素から値を取り出していく
+					Vector4 position = positions[elementIndices[0] - 1];
+					Vector2 texCoord = texcoords[elementIndices[1] - 1];
+					Vector3 normal = normals[elementIndices[2] - 1];
 
-				//頂点要素の格納用
-				uint32_t elementIndices[3];
-
-				for (int32_t element = 0; element < 3; ++element) {
-
-					//要素
-					std::string index;
-
-					//区切りで要素を読み込む
-					std::getline(v, index, '/');
-
-					//要素を格納する
-					elementIndices[element] = std::stoi(index);
+					//三角形の構築
+					triangle[faceVertex] = { position,texCoord,normal };
 				}
 
-				//格納した要素から値を取り出していく
-				Vector4 position = positions[elementIndices[0] - 1];
-				Vector2 texCoord = texcoords[elementIndices[1] - 1];
-				Vector3 normal = normals[elementIndices[2] - 1];
+				//頂点データの設定
+				for (int i = 2; i >= 0; i--) {
 
-				//三角形の構築
-				triangle[faceVertex] = { position,texCoord,normal };
+					modelData_.indices.push_back(uint32_t(modelData_.vertices.size()));
+					modelData_.vertices.push_back(triangle[i]);
+				}
+
+			} else if (identifier == "mtllib") {
+
+				/// ===  識別子が「mtllib」だったら=== ///
+
+				std::string materialFilename;
+
+				//materialTemplateLibraryファイルの名前を取得する
+				s >> materialFilename;
+
+				//マテリアルデータを読み込む
+				LoadMaterialTemplateFile(directoryPath, materialFilename);
 			}
-
-			//頂点データの設定
-			for (int i = 2; i >= 0; i--) {
-
-				modelData_.indices.push_back(uint32_t(modelData_.vertices.size()));
-				modelData_.vertices.push_back(triangle[i]);
-			}
-
-		} else if (identifier == "mtllib") {
-
-			/// ===  識別子が「mtllib」だったら=== ///
-
-			std::string materialFilename;
-
-			//materialTemplateLibraryファイルの名前を取得する
-			s >> materialFilename;
-
-			//マテリアルデータを読み込む
-			LoadMaterialTemplateFile(directoryPath, materialFilename);
 		}
 	}
-}
 
-///=====================================================/// 
-/// MTLファイルを読み込み、モデルのテクスチャパスを設定
-///=====================================================///
-void Model::LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename) {
+	///=====================================================/// 
+	/// MTLファイルを読み込み、モデルのテクスチャパスを設定
+	///=====================================================///
+	void Model::LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename) {
 
-	//ファイルから読んだ1行を格納するもの
-	std::string line;
+		//ファイルから読んだ1行を格納するもの
+		std::string line;
 
-	//ファイルを開く
-	std::ifstream file(directoryPath + "/" + filename);
+		//ファイルを開く
+		std::ifstream file(directoryPath + "/" + filename);
 
-	//開けなかったら止める
-	assert(file.is_open());
+		//開けなかったら止める
+		assert(file.is_open());
 
-	while (std::getline(file, line)) {
+		while (std::getline(file, line)) {
 
-		//識別子
-		std::string identifier;
+			//識別子
+			std::string identifier;
 
-		//1行
-		std::istringstream s(line);
+			//1行
+			std::istringstream s(line);
 
-		//先頭から識別子を読み込む
-		s >> identifier;
+			//先頭から識別子を読み込む
+			s >> identifier;
 
-		if (identifier == "map_Kd") {
+			if (identifier == "map_Kd") {
 
-			/// === 識別子が「map_kd」だったら === ///
+				/// === 識別子が「map_kd」だったら === ///
 
-			//ファイル名
-			std::string textureFilename;
+				//ファイル名
+				std::string textureFilename;
 
-			//ファイル名を読み込む
-			s >> textureFilename;
+				//ファイル名を読み込む
+				s >> textureFilename;
 
-			//連結してファイルパスにする
-			textureFilePath_ = directoryPath + "/" + textureFilename;
+				//連結してファイルパスにする
+				textureFilePath_ = directoryPath + "/" + textureFilename;
+			}
 		}
 	}
 }

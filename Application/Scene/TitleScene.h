@@ -15,7 +15,7 @@
 /// <summary>
 /// タイトルシーンの処理と演出を管理するクラスです
 /// </summary>
-class TitleScene : public BaseScene {
+class TitleScene : public MyEngine::BaseScene {
 
 	///-------------------------------------------/// 
 	/// メンバ関数
@@ -63,7 +63,7 @@ private:
 private:
 
 	//カメラ
-	std::unique_ptr<Camera> camera_;
+	std::unique_ptr<MyEngine::Camera> camera_;
 
 	//プレイヤー
 	Player* player_;
@@ -72,25 +72,25 @@ private:
 	std::unique_ptr<GroundManager> groundManager_;
 
 	//衝撃波エミッター(左)
-	std::unique_ptr<EmitterGroup> shockWaveLeftEmitter_;
+	std::unique_ptr<MyEngine::EmitterGroup> shockWaveLeftEmitter_;
 
 	//衝撃波エミッター(右)
-	std::unique_ptr<EmitterGroup> shockWaveRightEmitter_;
+	std::unique_ptr<MyEngine::EmitterGroup> shockWaveRightEmitter_;
 
 	//アニメーション座標リスト
-	std::vector<Vector3> animPos_;
+	std::vector<MyEngine::Vector3> animPos_;
 
 	//アニメーション間隔リスト
 	std::vector<float> animInterval;
 
 	//カメラの回転
-	Vector3 cameraRotate_;
+	MyEngine::Vector3 cameraRotate_;
 
 	//スペースキーの座標
-	Vector2 spaceKeyPos_;
+	MyEngine::Vector2 spaceKeyPos_;
 
 	//スペースキーのサイズ
-	Vector2 spaceKeySize_;
+	MyEngine::Vector2 spaceKeySize_;
 
 	//アニメーションタイマー
 	float animTimer_;

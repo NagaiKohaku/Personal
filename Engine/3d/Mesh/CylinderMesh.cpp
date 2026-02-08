@@ -1,90 +1,93 @@
 #include "CylinderMesh.h"
 
-///=====================================================/// 
-/// CylinderMeshの初期化
-///=====================================================///
-void CylinderMesh::Initialize() {
+namespace MyEngine {
 
-	/// === シングルトンインスタンスの取得 === ///
+	///=====================================================/// 
+	/// CylinderMeshの初期化
+	///=====================================================///
+	void CylinderMesh::Initialize() {
 
-	directXCommon_ = DirectXCommon::GetInstance();
+		/// === シングルトンインスタンスの取得 === ///
 
-	/// === 頂点リソースの生成 === ///
+		directXCommon_ = DirectXCommon::GetInstance();
 
-	//リソースの生成
-	vertexResource_ = directXCommon_->CreateBufferResource(sizeof(VertexData) * 4 * kCylinderDivide);
+		/// === 頂点リソースの生成 === ///
 
-	//バッファビューの作成
-	vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
+		//リソースの生成
+		vertexResource_ = directXCommon_->CreateBufferResource(sizeof(VertexData) * 4 * kCylinderDivide);
 
-	//使用するリソースのサイズを設定
-	vertexBufferView_.SizeInBytes = sizeof(VertexData) * 4 * kCylinderDivide;
+		//バッファビューの作成
+		vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
 
-	//1頂点当たりのサイズを設定
-	vertexBufferView_.StrideInBytes = sizeof(VertexData);
+		//使用するリソースのサイズを設定
+		vertexBufferView_.SizeInBytes = sizeof(VertexData) * 4 * kCylinderDivide;
 
-	//リソースにデータを書き込めるようにする
-	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData_));
+		//1頂点当たりのサイズを設定
+		vertexBufferView_.StrideInBytes = sizeof(VertexData);
 
-	/// === 頂点データの設定 === ///
+		//リソースにデータを書き込めるようにする
+		vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData_));
 
-	for (uint32_t index = 0; index < kCylinderDivide; ++index) {
+		/// === 頂点データの設定 === ///
 
-		float sin = std::sinf(index * radianPerDivide);
-		float cos = std::cosf(index * radianPerDivide);
-		float sinNext = std::sinf((index + 1) * radianPerDivide);
-		float cosNext = std::cosf((index + 1) * radianPerDivide);
-		float u = static_cast<float>(index) / static_cast<float>(kCylinderDivide);
-		float uNext = static_cast<float>(index + 1) / static_cast<float>(kCylinderDivide);
+		for (uint32_t index = 0; index < kCylinderDivide; ++index) {
 
-		//面の4頂点を設定
+			float sin = std::sinf(index * radianPerDivide);
+			float cos = std::cosf(index * radianPerDivide);
+			float sinNext = std::sinf((index + 1) * radianPerDivide);
+			float cosNext = std::cosf((index + 1) * radianPerDivide);
+			float u = static_cast<float>(index) / static_cast<float>(kCylinderDivide);
+			float uNext = static_cast<float>(index + 1) / static_cast<float>(kCylinderDivide);
 
-		//左下
-		vertexData_[index * 4 + 0].position = { -sin * kTopRadius,kHeight,cos * kTopRadius,1.0f };
-		vertexData_[index * 4 + 0].texcoord = { u,0.0f };
-		vertexData_[index * 4 + 0].normal = { -sin,0.0f,cos };
+			//面の4頂点を設定
 
-		//右下
-		vertexData_[index * 4 + 1].position = { -sinNext * kTopRadius,kHeight,cosNext * kTopRadius,1.0f };
-		vertexData_[index * 4 + 1].texcoord = { uNext,0.0f };
-		vertexData_[index * 4 + 1].normal = { -sinNext,0.0f,cosNext };
+			//左下
+			vertexData_[index * 4 + 0].position = { -sin * kTopRadius,kHeight,cos * kTopRadius,1.0f };
+			vertexData_[index * 4 + 0].texcoord = { u,0.0f };
+			vertexData_[index * 4 + 0].normal = { -sin,0.0f,cos };
 
-		//左上
-		vertexData_[index * 4 + 2].position = { -sin * kBottomRadius,0.0f,cos * kBottomRadius,1.0f };
-		vertexData_[index * 4 + 2].texcoord = { u,1.0f };
-		vertexData_[index * 4 + 2].normal = { -sin,0.0f,cos };
+			//右下
+			vertexData_[index * 4 + 1].position = { -sinNext * kTopRadius,kHeight,cosNext * kTopRadius,1.0f };
+			vertexData_[index * 4 + 1].texcoord = { uNext,0.0f };
+			vertexData_[index * 4 + 1].normal = { -sinNext,0.0f,cosNext };
 
-		//右上
-		vertexData_[index * 4 + 3].position = { -sinNext * kBottomRadius,0.0f,cosNext * kBottomRadius,1.0f };
-		vertexData_[index * 4 + 3].texcoord = { uNext,1.0f };
-		vertexData_[index * 4 + 3].normal = { -sinNext,0.0f,cosNext };
-	}
+			//左上
+			vertexData_[index * 4 + 2].position = { -sin * kBottomRadius,0.0f,cos * kBottomRadius,1.0f };
+			vertexData_[index * 4 + 2].texcoord = { u,1.0f };
+			vertexData_[index * 4 + 2].normal = { -sin,0.0f,cos };
 
-	/// === 頂点インデックスリソースの生成 === ///
+			//右上
+			vertexData_[index * 4 + 3].position = { -sinNext * kBottomRadius,0.0f,cosNext * kBottomRadius,1.0f };
+			vertexData_[index * 4 + 3].texcoord = { uNext,1.0f };
+			vertexData_[index * 4 + 3].normal = { -sinNext,0.0f,cosNext };
+		}
 
-	indexCount_ = 6 * kCylinderDivide;
+		/// === 頂点インデックスリソースの生成 === ///
 
-	//頂点インデックスリソースの生成
-	indexResource_ = directXCommon_->CreateBufferResource(sizeof(uint32_t) * indexCount_);
+		indexCount_ = 6 * kCylinderDivide;
 
-	//リソースの場所を取得
-	indexBufferView_.BufferLocation = indexResource_->GetGPUVirtualAddress();
+		//頂点インデックスリソースの生成
+		indexResource_ = directXCommon_->CreateBufferResource(sizeof(uint32_t) * indexCount_);
 
-	//使用するリソースのサイズを設定
-	indexBufferView_.SizeInBytes = sizeof(uint32_t) * indexCount_;
+		//リソースの場所を取得
+		indexBufferView_.BufferLocation = indexResource_->GetGPUVirtualAddress();
 
-	//フォーマットを設定
-	indexBufferView_.Format = DXGI_FORMAT_R32_UINT;
+		//使用するリソースのサイズを設定
+		indexBufferView_.SizeInBytes = sizeof(uint32_t) * indexCount_;
 
-	//リソースにデータを書き込めるようにする
-	indexResource_->Map(0, nullptr, reinterpret_cast<void**>(&indexData_));
+		//フォーマットを設定
+		indexBufferView_.Format = DXGI_FORMAT_R32_UINT;
 
-	for (uint32_t index = 0; index < kCylinderDivide; ++index) {
-		indexData_[index * 6 + 0] = index * 4 + 0;
-		indexData_[index * 6 + 1] = index * 4 + 1;
-		indexData_[index * 6 + 2] = index * 4 + 2;
-		indexData_[index * 6 + 3] = index * 4 + 1;
-		indexData_[index * 6 + 4] = index * 4 + 3;
-		indexData_[index * 6 + 5] = index * 4 + 2;
+		//リソースにデータを書き込めるようにする
+		indexResource_->Map(0, nullptr, reinterpret_cast<void**>(&indexData_));
+
+		for (uint32_t index = 0; index < kCylinderDivide; ++index) {
+			indexData_[index * 6 + 0] = index * 4 + 0;
+			indexData_[index * 6 + 1] = index * 4 + 1;
+			indexData_[index * 6 + 2] = index * 4 + 2;
+			indexData_[index * 6 + 3] = index * 4 + 1;
+			indexData_[index * 6 + 4] = index * 4 + 3;
+			indexData_[index * 6 + 5] = index * 4 + 2;
+		}
 	}
 }

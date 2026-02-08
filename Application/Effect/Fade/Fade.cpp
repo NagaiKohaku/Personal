@@ -7,6 +7,8 @@
 #include <Math/Utility/Random.h>
 #include <Math/Utility/Easing.h>
 
+using namespace MyEngine;
+
 ///=====================================================/// 
 /// Fadeのシングルトンインスタンスを取得
 ///=====================================================///

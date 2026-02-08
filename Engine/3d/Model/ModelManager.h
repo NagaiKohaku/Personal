@@ -6,64 +6,67 @@
 #include "memory"
 #include "map"
 
-/// <summary>
-/// ゲーム内で使用するモデルを管理するクラスです。
-/// </summary>
-class ModelManager {
-
-	///-------------------------------------------/// 
-	/// メンバ関数
-	///-------------------------------------------///
-public:
+namespace MyEngine {
 
 	/// <summary>
-	/// ModelManagerのシングルトンインスタンスを取得します。
+	/// ゲーム内で使用するモデルを管理するクラスです。
 	/// </summary>
-	static ModelManager* GetInstance();
+	class ModelManager {
 
-	/// <summary>
-	/// モデルマネージャを初期化し、基本的なプリミティブモデルを生成します。
-	/// </summary>
-	void Initialize();
+		///-------------------------------------------/// 
+		/// メンバ関数
+		///-------------------------------------------///
+	public:
 
-	/// <summary>
-	/// 指定されたモデル名とファイル名からモデルを読み込み、管理コンテナに登録します。
-	/// </summary>
-	/// <param name="modelName">管理用のモデル名</param>
-	/// <param name="modelFileName">モデルファイルの名前</param>
-	void LoadModel(const std::string& modelName, const std::string& modelFileName);
+		/// <summary>
+		/// ModelManagerのシングルトンインスタンスを取得します。
+		/// </summary>
+		static ModelManager* GetInstance();
 
-	/// <summary>
-	/// 指定されたモデル名、ディレクトリ、ファイル名からモデルを読み込み、管理コンテナに登録します。
-	/// </summary>
-	/// <param name="modelName">管理用のモデル名</param>
-	/// <param name="modelDirectory">モデルファイルが格納されているディレクトリ名</param>
-	/// <param name="modelFileName">モデルファイルの名前</param>
-	void LoadModel(const std::string& modelName, const std::string& modelDirectory, const std::string& modelFileName);
+		/// <summary>
+		/// モデルマネージャを初期化し、基本的なプリミティブモデルを生成します。
+		/// </summary>
+		void Initialize();
 
-	/// <summary>
-	/// 指定したタイプのメッシュモデルを生成し、テクスチャを設定して管理コンテナに登録します。
-	/// </summary>
-	/// <param name="modelName">管理用のモデル名</param>
-	/// <param name="type">生成するメッシュの種類</param>
-	/// <param name="textureFilePath">モデルに適用するテクスチャファイルのパス</param>
-	void CreateMeshModel(const std::string& modelName, MeshType type, const std::string& textureFilePath);
+		/// <summary>
+		/// 指定されたモデル名とファイル名からモデルを読み込み、管理コンテナに登録します。
+		/// </summary>
+		/// <param name="modelName">管理用のモデル名</param>
+		/// <param name="modelFileName">モデルファイルの名前</param>
+		void LoadModel(const std::string& modelName, const std::string& modelFileName);
 
-	/// <summary>
-	/// 登録済みモデルを検索し、見つかった場合は同じメッシュタイプで新しいモデルインスタンスを生成して返します。
-	/// </summary>
-	/// <param name="modelName">検索するモデルの名前</param>
-	/// <returns>名前が合致したモデルをコピーしたインスタンス</returns>
-	std::unique_ptr<Model> FindModel(const std::string& modelName);
+		/// <summary>
+		/// 指定されたモデル名、ディレクトリ、ファイル名からモデルを読み込み、管理コンテナに登録します。
+		/// </summary>
+		/// <param name="modelName">管理用のモデル名</param>
+		/// <param name="modelDirectory">モデルファイルが格納されているディレクトリ名</param>
+		/// <param name="modelFileName">モデルファイルの名前</param>
+		void LoadModel(const std::string& modelName, const std::string& modelDirectory, const std::string& modelFileName);
 
-	///-------------------------------------------/// 
-	/// メンバ変数
-	///-------------------------------------------///
-private:
+		/// <summary>
+		/// 指定したタイプのメッシュモデルを生成し、テクスチャを設定して管理コンテナに登録します。
+		/// </summary>
+		/// <param name="modelName">管理用のモデル名</param>
+		/// <param name="type">生成するメッシュの種類</param>
+		/// <param name="textureFilePath">モデルに適用するテクスチャファイルのパス</param>
+		void CreateMeshModel(const std::string& modelName, MeshType type, const std::string& textureFilePath);
 
-	//モデル基底
-	ModelCommon* modelCommon_;
+		/// <summary>
+		/// 登録済みモデルを検索し、見つかった場合は同じメッシュタイプで新しいモデルインスタンスを生成して返します。
+		/// </summary>
+		/// <param name="modelName">検索するモデルの名前</param>
+		/// <returns>名前が合致したモデルをコピーしたインスタンス</returns>
+		std::unique_ptr<Model> FindModel(const std::string& modelName);
 
-	//モデルリスト
-	std::map<std::string, std::unique_ptr<Model>> models_;
-};
+		///-------------------------------------------/// 
+		/// メンバ変数
+		///-------------------------------------------///
+	private:
+
+		//モデル基底
+		ModelCommon* modelCommon_;
+
+		//モデルリスト
+		std::map<std::string, std::unique_ptr<Model>> models_;
+	};
+}

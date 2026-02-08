@@ -7,62 +7,65 @@
 
 #include "wrl.h"
 
-/// === 前方宣言 === ///
-class WinApp;
+namespace MyEngine {
 
-class DirectXCommon;
+	/// === 前方宣言 === ///
+	class WinApp;
 
-/// <summary>
-/// ImGuiを管理・描画するクラスです。
-/// </summary>
-class ImGuiManager {
-
-	///-------------------------------------------/// 
-	/// メンバ関数
-	///-------------------------------------------///
-public:
+	class DirectXCommon;
 
 	/// <summary>
-	/// ImGuiManagerのシングルトンインスタンスを取得します。
+	/// ImGuiを管理・描画するクラスです。
 	/// </summary>
-	static ImGuiManager* GetInstance();
+	class ImGuiManager {
 
-	/// <summary>
-	/// ImGuiを初期化します。
-	/// </summary>
-	void Initialize();
+		///-------------------------------------------/// 
+		/// メンバ関数
+		///-------------------------------------------///
+	public:
 
-	/// <summary>
-	/// ImGuiのリソースを解放し、終了処理を行います。
-	/// </summary>
-	void Finalize();
+		/// <summary>
+		/// ImGuiManagerのシングルトンインスタンスを取得します。
+		/// </summary>
+		static ImGuiManager* GetInstance();
 
-	/// <summary>
-	/// ImGuiの描画コマンドを生成し、DirectX 12のコマンドリストに積み込みます。
-	/// </summary>
-	void Draw();
+		/// <summary>
+		/// ImGuiを初期化します。
+		/// </summary>
+		void Initialize();
 
-	/// <summary>
-	/// ImGuiの新しいフレームを開始します。
-	/// </summary>
-	void Begin();
+		/// <summary>
+		/// ImGuiのリソースを解放し、終了処理を行います。
+		/// </summary>
+		void Finalize();
 
-	/// <summary>
-	/// ImGuiのフレームを終了し、描画用コマンドを生成します。
-	/// </summary>
-	void End();
+		/// <summary>
+		/// ImGuiの描画コマンドを生成し、DirectX 12のコマンドリストに積み込みます。
+		/// </summary>
+		void Draw();
 
-	///-------------------------------------------/// 
-	/// メンバ変数
-	///-------------------------------------------///
-private:
+		/// <summary>
+		/// ImGuiの新しいフレームを開始します。
+		/// </summary>
+		void Begin();
 
-	//ウィンドウ管理
-	WinApp* winApp_;
+		/// <summary>
+		/// ImGuiのフレームを終了し、描画用コマンドを生成します。
+		/// </summary>
+		void End();
 
-	//DirectX基底
-	DirectXCommon* directXCommon_;
+		///-------------------------------------------/// 
+		/// メンバ変数
+		///-------------------------------------------///
+	private:
 
-	//SRVヒープ
-	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> srvHeap_;
-};
+		//ウィンドウ管理
+		WinApp* winApp_;
+
+		//DirectX基底
+		DirectXCommon* directXCommon_;
+
+		//SRVヒープ
+		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> srvHeap_;
+	};
+}

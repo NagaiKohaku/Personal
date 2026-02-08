@@ -1,8 +1,8 @@
-﻿#pragma once
+#pragma once
+
+#include <3d/Object/Object3D.h>
 
 #include "memory"
-
-class Object3D;
 
 /// <summary>
 /// 3D空間内の地面オブジェクトを管理するクラスです。
@@ -40,7 +40,7 @@ public:
 private:
 
 	//地面オブジェクト
-	std::unique_ptr<Object3D> object_;
+	std::unique_ptr<MyEngine::Object3D> object_;
 
 	//UV座標Y
 	float uvPosY;

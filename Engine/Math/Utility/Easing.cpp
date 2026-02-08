@@ -5,263 +5,266 @@
 #include <cmath>
 #include <algorithm>
 
-namespace {
+namespace MyEngine {
 
-	float EaseT(float t, EaseType type, float mag) {
+	namespace {
 
-		t = std::clamp(t, 0.0f, 1.0f);
+		float EaseT(float t, EaseType type, float mag) {
 
-		switch (type) {
-		case EaseType::LINEAR:
-			return t;
+			t = std::clamp(t, 0.0f, 1.0f);
 
-		case EaseType::EASE_IN:
-			return powf(t, mag);
+			switch (type) {
+			case EaseType::LINEAR:
+				return t;
 
-		case EaseType::EASE_OUT:
-			return 1.0f - powf(1.0f - t, mag);
+			case EaseType::EASE_IN:
+				return powf(t, mag);
 
-		case EaseType::EASE_INOUT:
-			if (t < 0.5f) {
-				return 2.0f * t * t;
+			case EaseType::EASE_OUT:
+				return 1.0f - powf(1.0f - t, mag);
+
+			case EaseType::EASE_INOUT:
+				if (t < 0.5f) {
+					return 2.0f * t * t;
+				}
+				return 1.0f - std::pow(-2.0f * t + 2.0f, 2.0f) * 0.5f;
 			}
-			return 1.0f - std::pow(-2.0f * t + 2.0f, 2.0f) * 0.5f;
+
+			return t;
 		}
 
-		return t;
+	} // unnamed namespace
+	//
+	//template float   Ease<float>(const float&, const float&, float, EaseType, float);
+	//template Vector2 Ease<Vector2>(const Vector2&, const Vector2&, float, EaseType, float);
+	//template Vector3 Ease<Vector3>(const Vector3&, const Vector3&, float, EaseType, float);
+	//template Vector4 Ease<Vector4>(const Vector4&, const Vector4&, float, EaseType, float);
+
+	template<>
+	float Ease<float>(const float& from, const float& to, float t, EaseType type, float mag) {
+
+		float easedT = EaseT(t, type, mag);
+
+		return from + (to - from) * easedT;
 	}
 
-} // unnamed namespace
-//
-//template float   Ease<float>(const float&, const float&, float, EaseType, float);
-//template Vector2 Ease<Vector2>(const Vector2&, const Vector2&, float, EaseType, float);
-//template Vector3 Ease<Vector3>(const Vector3&, const Vector3&, float, EaseType, float);
-//template Vector4 Ease<Vector4>(const Vector4&, const Vector4&, float, EaseType, float);
+	template<>
+	Vector2 Ease<Vector2>(const Vector2& from, const Vector2& to, float t, EaseType type, float mag) {
 
-template<>
-float Ease<float>(const float& from, const float& to, float t, EaseType type, float mag) {
+		float easedT = EaseT(t, type, mag);
 
-	float easedT = EaseT(t, type, mag);
+		return from + (to - from) * easedT;
+	}
 
-	return from + (to - from) * easedT;
-}
+	template<>
+	Vector3 Ease<Vector3>(const Vector3& from, const Vector3& to, float t, EaseType type, float mag) {
 
-template<>
-Vector2 Ease<Vector2>(const Vector2& from, const Vector2& to, float t, EaseType type, float mag) {
+		float easedT = EaseT(t, type, mag);
 
-	float easedT = EaseT(t, type, mag);
+		return from + (to - from) * easedT;
+	}
 
-	return from + (to - from) * easedT;
-}
+	template<>
+	Vector4 Ease<Vector4>(const Vector4& from, const Vector4& to, float t, EaseType type, float mag) {
 
-template<>
-Vector3 Ease<Vector3>(const Vector3& from,const Vector3& to,float t,EaseType type,float mag) {
+		float easedT = EaseT(t, type, mag);
 
-	float easedT = EaseT(t, type, mag);
+		return from + (to - from) * easedT;
+	}
+	///=====================================================///
+	///Lerp関数
+	///=====================================================///
+	float Lerp(float n1, float n2, float t) {
 
-	return from + (to - from) * easedT;
-}
+		float result;
 
-template<>
-Vector4 Ease<Vector4>(const Vector4& from, const Vector4& to, float t, EaseType type, float mag) {
+		result = (1.0f - t) * n1 + t * n2;
 
-	float easedT = EaseT(t, type, mag);
+		return result;
+	}
 
-	return from + (to - from) * easedT;
-}
-///=====================================================///
-///Lerp関数
-///=====================================================///
-float Lerp(float n1, float n2, float t) {
+	Vector2 Lerp(const Vector2& v1, const Vector2& v2, float t) {
+		Vector2 result;
 
-	float result;
+		result.x = (1.0f - t) * v1.x + t * v2.x;
+		result.y = (1.0f - t) * v1.y + t * v2.y;
 
-	result = (1.0f - t) * n1 + t * n2;
+		return result;
+	}
 
-	return result;
-}
+	Vector3 Lerp(const Vector3& v1, const Vector3& v2, float t) {
+		Vector3 result;
 
-Vector2 Lerp(const Vector2& v1, const Vector2& v2, float t) {
-	Vector2 result;
+		result.x = (1.0f - t) * v1.x + t * v2.x;
+		result.y = (1.0f - t) * v1.y + t * v2.y;
+		result.z = (1.0f - t) * v1.z + t * v2.z;
 
-	result.x = (1.0f - t) * v1.x + t * v2.x;
-	result.y = (1.0f - t) * v1.y + t * v2.y;
+		return result;
+	}
 
-	return result;
-}
+	Vector4 Lerp(const Vector4& v1, const Vector4& v2, float t) {
+		Vector4 result;
 
-Vector3 Lerp(const Vector3& v1, const Vector3& v2, float t) {
-	Vector3 result;
+		result.x = (1.0f - t) * v1.x + t * v2.x;
+		result.y = (1.0f - t) * v1.y + t * v2.y;
+		result.z = (1.0f - t) * v1.z + t * v2.z;
+		result.w = (1.0f - t) * v1.w + t * v2.w;
 
-	result.x = (1.0f - t) * v1.x + t * v2.x;
-	result.y = (1.0f - t) * v1.y + t * v2.y;
-	result.z = (1.0f - t) * v1.z + t * v2.z;
+		return result;
+	}
 
-	return result;
-}
+	///=====================================================///
+	///SLerp関数
+	///=====================================================///
+	Vector3 SLerp(const Vector3& v1, const Vector3& v2, float t) {
+		// なす角の計算
+		float angle = std::cosf(Dot(v1, v2));
 
-Vector4 Lerp(const Vector4& v1, const Vector4& v2, float t) {
-	Vector4 result;
+		// 線形補間を計算する
+		float scaleV1 = std::sinf((1.0f - t) * angle) / std::sinf(angle);
 
-	result.x = (1.0f - t) * v1.x + t * v2.x;
-	result.y = (1.0f - t) * v1.y + t * v2.y;
-	result.z = (1.0f - t) * v1.z + t * v2.z;
-	result.w = (1.0f - t) * v1.w + t * v2.w;
+		float scaleV2 = std::sinf(t * angle) / std::sinf(angle);
 
-	return result;
-}
+		Vector3 result;
 
-///=====================================================///
-///SLerp関数
-///=====================================================///
-Vector3 SLerp(const Vector3& v1, const Vector3& v2, float t) {
-	// なす角の計算
-	float angle = std::cosf(Dot(v1, v2));
+		result.x = scaleV1 * v1.x + scaleV2 * v2.x;
+		result.y = scaleV1 * v1.y + scaleV2 * v2.y;
+		result.z = scaleV1 * v1.z + scaleV2 * v2.z;
 
-	// 線形補間を計算する
-	float scaleV1 = std::sinf((1.0f - t) * angle) / std::sinf(angle);
+		return result;
+	}
 
-	float scaleV2 = std::sinf(t * angle) / std::sinf(angle);
+	///=====================================================/// 
+	///EaseIn関数
+	///=====================================================///
+	Vector2 EaseIn(const Vector2& v1, const Vector2& v2, float t, float mag) {
 
-	Vector3 result;
+		float easeT = powf(t, mag);
 
-	result.x = scaleV1 * v1.x + scaleV2 * v2.x;
-	result.y = scaleV1 * v1.y + scaleV2 * v2.y;
-	result.z = scaleV1 * v1.z + scaleV2 * v2.z;
+		Vector2 result;
 
-	return result;
-}
+		result = Lerp(v1, v2, easeT);
 
-///=====================================================/// 
-///EaseIn関数
-///=====================================================///
-Vector2 EaseIn(const Vector2& v1, const Vector2& v2, float t, float mag) {
+		return result;
+	}
 
-	float easeT = powf(t, mag);
+	Vector3 EaseIn(const Vector3& v1, const Vector3& v2, float t, float mag) {
 
-	Vector2 result;
+		float easeT = powf(t, mag);
 
-	result = Lerp(v1, v2, easeT);
+		Vector3 result;
 
-	return result;
-}
+		result = Lerp(v1, v2, easeT);
 
-Vector3 EaseIn(const Vector3& v1, const Vector3& v2, float t, float mag) {
+		return result;
+	}
 
-	float easeT = powf(t, mag);
+	Vector4 EaseIn(const Vector4& v1, const Vector4& v2, float t, float mag) {
 
-	Vector3 result;
+		float easeT = powf(t, mag);
 
-	result = Lerp(v1, v2, easeT);
+		Vector4 result;
 
-	return result;
-}
+		result = Lerp(v1, v2, easeT);
 
-Vector4 EaseIn(const Vector4& v1, const Vector4& v2, float t, float mag) {
+		return result;
+	}
 
-	float easeT = powf(t, mag);
+	///=====================================================/// 
+	///EaseOut関数
+	///=====================================================///
+	float EaseOut(const float& n1, const float& n2, float t, float mag) {
 
-	Vector4 result;
+		float easeT = 1.0f - powf(1.0f - t, mag);
 
-	result = Lerp(v1, v2, easeT);
+		float result;
 
-	return result;
-}
+		result = Lerp(n1, n2, easeT);
 
-///=====================================================/// 
-///EaseOut関数
-///=====================================================///
-float EaseOut(const float& n1, const float& n2, float t, float mag) {
+		return result;
+	}
 
-	float easeT = 1.0f - powf(1.0f - t, mag);
+	Vector2 EaseOut(const Vector2& v1, const Vector2& v2, float t, float mag) {
 
-	float result;
+		float easeT = 1.0f - powf(1.0f - t, mag);
 
-	result = Lerp(n1, n2, easeT);
+		Vector2 result;
 
-	return result;
-}
+		result = Lerp(v1, v2, easeT);
 
-Vector2 EaseOut(const Vector2& v1, const Vector2& v2, float t, float mag) {
+		return result;
+	}
 
-	float easeT = 1.0f - powf(1.0f - t, mag);
+	Vector3 EaseOut(const Vector3& v1, const Vector3& v2, float t, float mag) {
 
-	Vector2 result;
+		float easeT = 1.0f - powf(1.0f - t, mag);
 
-	result = Lerp(v1, v2, easeT);
+		Vector3 result;
 
-	return result;
-}
+		result = Lerp(v1, v2, easeT);
 
-Vector3 EaseOut(const Vector3& v1, const Vector3& v2, float t, float mag) {
+		return result;
+	}
 
-	float easeT = 1.0f - powf(1.0f - t, mag);
+	Vector4 EaseOut(const Vector4& v1, const Vector4& v2, float t, float mag) {
 
-	Vector3 result;
+		float easeT = 1.0f - powf(1.0f - t, mag);
 
-	result = Lerp(v1, v2, easeT);
+		Vector4 result;
 
-	return result;
-}
+		result = Lerp(v1, v2, easeT);
 
-Vector4 EaseOut(const Vector4& v1, const Vector4& v2, float t, float mag) {
+		return result;
+	}
 
-	float easeT = 1.0f - powf(1.0f - t, mag);
+	Vector3 EaseOutCirc(const Vector3& v1, const Vector3& v2, float t, float mag) {
 
-	Vector4 result;
+		float easeT = sqrtf(1.0f - powf(1.0f - t, mag));
 
-	result = Lerp(v1, v2, easeT);
+		Vector3 result;
 
-	return result;
-}
+		result = Lerp(v1, v2, easeT);
 
-Vector3 EaseOutCirc(const Vector3& v1, const Vector3& v2, float t, float mag) {
+		return result;
+	}
 
-	float easeT = sqrtf(1.0f - powf(1.0f - t, mag));
+	Vector3 EaseOutBack(const Vector3& v1, const Vector3& v2, float t, float mag) {
 
-	Vector3 result;
+		float c1 = mag;
 
-	result = Lerp(v1, v2, easeT);
+		float c3 = c1 + 1;
 
-	return result;
-}
+		float easeT = 1.0f + c3 * powf(t - 1.0f, 3.0f) + c1 * powf(t - 1.0f, 2.0f);
 
-Vector3 EaseOutBack(const Vector3& v1, const Vector3& v2, float t, float mag) {
+		Vector3 result;
 
-	float c1 = mag;
+		result = Lerp(v1, v2, easeT);
 
-	float c3 = c1 + 1;
+		return result;
+	}
 
-	float easeT = 1.0f + c3 * powf(t - 1.0f, 3.0f) + c1 * powf(t - 1.0f, 2.0f);
+	///=====================================================/// 
+	///EaseInOut関数
+	///=====================================================///
+	Vector3 EaseInOut(const Vector3& v1, const Vector3& v2, float t, float mag) {
 
-	Vector3 result;
+		float easeT = t < 0.5f ? powf(2.0f, mag - 1.0f) * powf(t, mag) : 1.0f - powf(-2.0f, mag) / 2.0f;
 
-	result = Lerp(v1, v2, easeT);
+		Vector3 result;
 
-	return result;
-}
+		result = Lerp(v1, v2, easeT);
 
-///=====================================================/// 
-///EaseInOut関数
-///=====================================================///
-Vector3 EaseInOut(const Vector3& v1, const Vector3& v2, float t, float mag) {
+		return result;
+	}
 
-	float easeT = t < 0.5f ? powf(2.0f, mag - 1.0f) * powf(t, mag) : 1.0f - powf(-2.0f, mag) / 2.0f;
+	Vector4 EaseInOut(const Vector4& v1, const Vector4& v2, float t, float mag) {
 
-	Vector3 result;
+		float easeT = t < 0.5f ? powf(2.0f, mag - 1.0f) * powf(t, mag) : 1.0f - powf(-2.0f, mag) / 2.0f;
 
-	result = Lerp(v1, v2, easeT);
+		Vector4 result;
 
-	return result;
-}
+		result = Lerp(v1, v2, easeT);
 
-Vector4 EaseInOut(const Vector4& v1, const Vector4& v2, float t, float mag) {
-
-	float easeT = t < 0.5f ? powf(2.0f, mag - 1.0f) * powf(t, mag) : 1.0f - powf(-2.0f, mag) / 2.0f;
-
-	Vector4 result;
-
-	result = Lerp(v1, v2, easeT);
-
-	return result;
+		return result;
+	}
 }

@@ -7,6 +7,8 @@
 #include <Base/OffScreen.h>
 #include <Base/Input.h>
 
+using namespace MyEngine;
+
 void ClearEvent::Start(Player* player, Camera* camera, FollowCamera* followCamera) {
 
 	player_ = player;

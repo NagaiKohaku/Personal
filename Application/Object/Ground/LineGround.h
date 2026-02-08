@@ -46,10 +46,10 @@ private:
 private:
 
 	//縦ライン群
-	std::list<std::unique_ptr<DebugLine>> verticalLines_;
+	std::list<std::unique_ptr<MyEngine::DebugLine>> verticalLines_;
 
 	//横ライン群
-	std::list<std::unique_ptr<DebugLine>> horizontalLines_;
+	std::list<std::unique_ptr<MyEngine::DebugLine>> horizontalLines_;
 
 	//ライン分割数
 	float lineDivide_ = 30.0f;

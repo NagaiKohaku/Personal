@@ -5,99 +5,102 @@
 #include "fstream"
 #include "filesystem"
 
-///=====================================================/// 
-/// SpriteManagerのシングルトンインスタンスを取得
-///=====================================================///
-SpriteManager* SpriteManager::GetInstance() {
-	static SpriteManager instance;
-	return &instance;
-}
+namespace MyEngine {
 
-///=====================================================/// 
-/// SpriteManagerを初期化
-///=====================================================///
-void SpriteManager::Initialize() {
+	///=====================================================/// 
+	/// SpriteManagerのシングルトンインスタンスを取得
+	///=====================================================///
+	SpriteManager* SpriteManager::GetInstance() {
+		static SpriteManager instance;
+		return &instance;
+	}
 
-	//スプライト基底のインスタンスを取得
-	spriteCommon_ = SpriteCommon::GetInstance();
+	///=====================================================/// 
+	/// SpriteManagerを初期化
+	///=====================================================///
+	void SpriteManager::Initialize() {
 
-	//スプライトデータを読み込む
-	for (const auto& entry : std::filesystem::directory_iterator("Resource/Sprite")) {
+		//スプライト基底のインスタンスを取得
+		spriteCommon_ = SpriteCommon::GetInstance();
 
-		if (entry.is_directory()) {
+		//スプライトデータを読み込む
+		for (const auto& entry : std::filesystem::directory_iterator("Resource/Sprite")) {
 
-			LoadSprite(entry.path().filename().string());
+			if (entry.is_directory()) {
+
+				LoadSprite(entry.path().filename().string());
+			}
 		}
 	}
-}
 
-///=====================================================/// 
-/// 指定した名前のスプライトを検索し、未登録であれば読み込む
-///=====================================================///
-void SpriteManager::LoadSprite(const std::string& spriteName) {
+	///=====================================================/// 
+	/// 指定した名前のスプライトを検索し、未登録であれば読み込む
+	///=====================================================///
+	void SpriteManager::LoadSprite(const std::string& spriteName) {
 
-	//引数の名前のスプライトが登録されているかを確認
-	if (sprites_.contains(spriteName)) {
+		//引数の名前のスプライトが登録されているかを確認
+		if (sprites_.contains(spriteName)) {
 
-		//登録済みであれば早期リターン
-		return;
-	}
+			//登録済みであれば早期リターン
+			return;
+		}
 
-	//登録するためのスプライトを宣言
-	std::unique_ptr<Sprite> newSprite = std::make_unique<Sprite>();
-
-	//スプライトを読み込む
-	newSprite->Initialize(spriteName);
-
-	//リストに登録
-	sprites_.insert(std::make_pair(spriteName, std::move(newSprite)));
-}
-
-///=====================================================///
-/// 指定した名前のスプライトを検索して新しいインスタンスを生成
-///=====================================================///
-std::unique_ptr<Sprite> SpriteManager::FindSprite(const std::string& spriteName) {
-
-	//引数の名前のスプライトが登録されているかを確認
-	if (sprites_.contains(spriteName)) {
-
-		//登録済みのスプライトからテクスチャパスを取得
-		std::string texturePath = sprites_.at(spriteName)->GetFileName();
-
-		//スプライトを生成
+		//登録するためのスプライトを宣言
 		std::unique_ptr<Sprite> newSprite = std::make_unique<Sprite>();
 
-		//初期化
-		newSprite->Initialize(texturePath);
+		//スプライトを読み込む
+		newSprite->Initialize(spriteName);
 
-		//新しく生成したスプライトを返す
-		return std::move(newSprite);
+		//リストに登録
+		sprites_.insert(std::make_pair(spriteName, std::move(newSprite)));
 	}
 
-	//登録されていなかったのでfalseを返す
-	return nullptr;
-}
+	///=====================================================///
+	/// 指定した名前のスプライトを検索して新しいインスタンスを生成
+	///=====================================================///
+	std::unique_ptr<Sprite> SpriteManager::FindSprite(const std::string& spriteName) {
 
-std::map<std::string, Sprite*> SpriteManager::GetSpriteList() {
+		//引数の名前のスプライトが登録されているかを確認
+		if (sprites_.contains(spriteName)) {
 
-	std::map<std::string, Sprite*> list;
+			//登録済みのスプライトからテクスチャパスを取得
+			std::string texturePath = sprites_.at(spriteName)->GetFileName();
 
-	for (auto& [name, sprite] : sprites_) {
+			//スプライトを生成
+			std::unique_ptr<Sprite> newSprite = std::make_unique<Sprite>();
 
-		list.insert(std::make_pair(name, sprite.get()));
+			//初期化
+			newSprite->Initialize(texturePath);
+
+			//新しく生成したスプライトを返す
+			return std::move(newSprite);
+		}
+
+		//登録されていなかったのでfalseを返す
+		return nullptr;
 	}
 
-	return list;
-}
+	std::map<std::string, Sprite*> SpriteManager::GetSpriteList() {
 
-std::vector<std::string> SpriteManager::GetSpriteNameList() {
+		std::map<std::string, Sprite*> list;
 
-	std::vector<std::string> list;
+		for (auto& [name, sprite] : sprites_) {
 
-	for (auto& [name, sprite] : sprites_) {
+			list.insert(std::make_pair(name, sprite.get()));
+		}
 
-		list.push_back(name);
+		return list;
 	}
 
-	return list;
+	std::vector<std::string> SpriteManager::GetSpriteNameList() {
+
+		std::vector<std::string> list;
+
+		for (auto& [name, sprite] : sprites_) {
+
+			list.push_back(name);
+		}
+
+		return list;
+	}
 }

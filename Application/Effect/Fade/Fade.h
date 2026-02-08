@@ -30,9 +30,9 @@ public:
 
 	//フェード用にスプライトの情報をまとめた構造体
 	struct FadeSprite {
-		std::unique_ptr<Object2D> sprite;
-		Vector2 startSize;
-		Vector2 endSize;
+		std::unique_ptr<MyEngine::Object2D> sprite;
+		MyEngine::Vector2 startSize;
+		MyEngine::Vector2 endSize;
 		float startTime;
 		float endTime;
 	};
@@ -109,13 +109,13 @@ private:
 	std::vector<FadeSprite> fadeSprites_;
 
 	//カメラ
-	Camera* camera_;
+	MyEngine::Camera* camera_;
 
 	//プレイヤー
 	Player* player_;
 
 	//プレイヤーの2D座標
-	Vector2 playerPos2D_;
+	MyEngine::Vector2 playerPos2D_;
 
 	//アルファ値
 	float alpha_ = 0.0f;
@@ -142,7 +142,7 @@ public:
 	/// <summary>
 	/// カメラの取得
 	/// </summary>
-	Camera* GetCamera() { return camera_; }
+	MyEngine::Camera* GetCamera() { return camera_; }
 
 	/// <summary>
 	/// プレイヤーの取得
@@ -157,7 +157,7 @@ public:
 	/// <summary>
 	/// カメラの設定
 	/// </summary>
-	void SetCamera(Camera* ptr) { camera_ = ptr; }
+	void SetCamera(MyEngine::Camera* ptr) { camera_ = ptr; }
 
 	/// <summary>
 	/// プレイヤーの設定

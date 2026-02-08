@@ -24,6 +24,8 @@
 #include "algorithm"
 #include "numbers"
 
+using namespace MyEngine;
+
 Player::~Player() {
 
 	for (auto& emitter : emitterList_) {

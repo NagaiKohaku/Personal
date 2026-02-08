@@ -8,83 +8,86 @@
 #include "d3dx12.h"
 #include "wrl.h"
 
-/// <summary>
-/// 平行光源（Directional Light）を管理するクラスです。
-/// </summary>
-class DirectionalLight {
+namespace MyEngine {
 
-	///-------------------------------------------/// 
-	/// 構造体
-	///-------------------------------------------///
-private:
+	/// <summary>
+	/// 平行光源（Directional Light）を管理するクラスです。
+	/// </summary>
+	class DirectionalLight {
 
-	//光源データ
-	struct LightData {
-		Vector4 color;     //色
-		Vector3 direction; //向き
-		float intensity;   //照度
+		///-------------------------------------------/// 
+		/// 構造体
+		///-------------------------------------------///
+	private:
+
+		//光源データ
+		struct LightData {
+			Vector4 color;     //色
+			Vector3 direction; //向き
+			float intensity;   //照度
+		};
+
+		///-------------------------------------------/// 
+		/// メンバ関数
+		///-------------------------------------------///
+	public:
+
+		/// <summary>
+		/// ディレクショナルライトを初期化します。
+		/// </summary>
+		void Initialize();
+
+		/// <summary>
+		/// ディレクショナルライトの更新処理を行います。
+		/// </summary>
+		void Update();
+
+		/// <summary>
+		/// GPUにディレクショナルライトのデータを送信します。
+		/// </summary>
+		void SendDataForGPU();
+
+		/// <summary>
+		/// ImGuiの表示
+		/// </summary>
+		void DisplayImGui();
+
+		///-------------------------------------------/// 
+		/// メンバ変数
+		///-------------------------------------------///
+	private:
+
+		//DirectX基底
+		DirectXCommon* dxCommon_ = nullptr;
+
+		//バッファリソース
+		Microsoft::WRL::ComPtr<ID3D12Resource> lightResource_ = nullptr;
+
+		//光源データ
+		LightData* lightData_ = nullptr;
+
+		///-------------------------------------------/// 
+		/// ゲッター・セッター
+		///-------------------------------------------///
+	public:
+
+		/// <summary>
+		/// 色の設定
+		/// </summary>
+		/// <param name="color">色</param>
+		void SetColor(const Vector4& color) { lightData_->color = color; }
+
+		/// <summary>
+		/// 方向の設定
+		/// </summary>
+		/// <param name="direction">方向</param>
+		void SetDirection(const Vector3& direction) { lightData_->direction = direction; }
+
+		/// <summary>
+		/// 照度の設定
+		/// </summary>
+		/// <param name="intensity">照度</param>
+		void SetIntensity(float intensity) { lightData_->intensity = intensity; }
+
 	};
-
-	///-------------------------------------------/// 
-	/// メンバ関数
-	///-------------------------------------------///
-public:
-
-	/// <summary>
-	/// ディレクショナルライトを初期化します。
-	/// </summary>
-	void Initialize();
-
-	/// <summary>
-	/// ディレクショナルライトの更新処理を行います。
-	/// </summary>
-	void Update();
-
-	/// <summary>
-	/// GPUにディレクショナルライトのデータを送信します。
-	/// </summary>
-	void SendDataForGPU();
-
-	/// <summary>
-	/// ImGuiの表示
-	/// </summary>
-	void DisplayImGui();
-
-	///-------------------------------------------/// 
-	/// メンバ変数
-	///-------------------------------------------///
-private:
-
-	//DirectX基底
-	DirectXCommon* dxCommon_ = nullptr;
-
-	//バッファリソース
-	Microsoft::WRL::ComPtr<ID3D12Resource> lightResource_ = nullptr;
-
-	//光源データ
-	LightData* lightData_ = nullptr;
-
-	///-------------------------------------------/// 
-	/// ゲッター・セッター
-	///-------------------------------------------///
-public:
-
-	/// <summary>
-	/// 色の設定
-	/// </summary>
-	/// <param name="color">色</param>
-	void SetColor(const Vector4& color) { lightData_->color = color; }
-
-	/// <summary>
-	/// 方向の設定
-	/// </summary>
-	/// <param name="direction">方向</param>
-	void SetDirection(const Vector3& direction) { lightData_->direction = direction; }
-
-	/// <summary>
-	/// 照度の設定
-	/// </summary>
-	/// <param name="intensity">照度</param>
-	void SetIntensity(float intensity) { lightData_->intensity = intensity; }
-
-};
+}

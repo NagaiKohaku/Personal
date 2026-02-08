@@ -12,7 +12,7 @@ class GameSceneProgress {
 
 public:
 
-	void Initialize(Player* player, Camera* camera, FollowCamera* followCamera);
+	void Initialize(Player* player, MyEngine::Camera* camera, FollowCamera* followCamera);
 
 	void Update();
 
@@ -26,7 +26,7 @@ private:
 
 	Player* player_;
 
-	Camera* camera_;
+	MyEngine::Camera* camera_;
 
 	FollowCamera* followCamera_;
 

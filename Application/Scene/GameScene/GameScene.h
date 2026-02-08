@@ -17,7 +17,7 @@
 /// <summary>
 /// ゲームシーン
 /// </summary>
-class GameScene : public BaseScene {
+class GameScene : public MyEngine::BaseScene {
 
 	///-------------------------------------------/// 
 	/// メンバ関数
@@ -55,7 +55,7 @@ public:
 private:
 
 	//カメラ
-	std::unique_ptr<Camera> camera_;
+	std::unique_ptr<MyEngine::Camera> camera_;
 
 	//追従カメラ
 	std::unique_ptr<FollowCamera> followCamera_;
@@ -73,19 +73,19 @@ private:
 	std::unique_ptr<GroundManager> groundManager_;
 
 	//衝撃波エミッター(左)
-	std::unique_ptr<EmitterGroup> shockWaveLeftEmitter_;
+	std::unique_ptr<MyEngine::EmitterGroup> shockWaveLeftEmitter_;
 
 	//衝撃波エミッター(右)
-	std::unique_ptr<EmitterGroup> shockWaveRightEmitter_;
+	std::unique_ptr<MyEngine::EmitterGroup> shockWaveRightEmitter_;
 
 	//シーンのイベント管理
 	std::unique_ptr<GameSceneProgress> sceneProgress_;
 
 	//スペースキースプライトの位置
-	Vector2 spaceKeyPos_;
+	MyEngine::Vector2 spaceKeyPos_;
 
 	//スペースキースプライトの大きさ
-	Vector2 spaceKeySize_;
+	MyEngine::Vector2 spaceKeySize_;
 
 	//矢印の長さ
 	float arrowLength_;

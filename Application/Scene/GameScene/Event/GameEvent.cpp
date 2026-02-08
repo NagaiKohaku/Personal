@@ -3,6 +3,8 @@
 #include <Base/Input.h>
 #include <Object/Manager/ObjectManager.h>
 
+using namespace MyEngine;
+
 void GameEvent::Start(Player* player, Camera* camera, FollowCamera* followCamera) {
 
 	player_ = player;

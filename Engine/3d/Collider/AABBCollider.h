@@ -4,49 +4,52 @@
 
 #include <Math/Shape/AABB.h>
 
-/// <summary>
-/// AABBコライダー
-/// </summary>
-class AABBCollider : public Collider {
-
-	///-------------------------------------------/// 
-	/// メンバ関数
-	///-------------------------------------------///
-public:
+namespace MyEngine {
 
 	/// <summary>
-	/// AABBCollider を初期化します。
+	/// AABBコライダー
 	/// </summary>
-	/// <param name="parent"> コライダーの親ワールドトランスフォーム </param>
-	void Initialize(WorldTransform* parent) override;
+	class AABBCollider : public Collider {
 
-	/// <summary>
-	/// AABBCollider を更新します。
-	/// </summary>
-	void Update() override;
+		///-------------------------------------------/// 
+		/// メンバ関数
+		///-------------------------------------------///
+	public:
 
-	/// <summary>
-	/// AABBCollider を描画します。
-	/// </summary>
-	void Draw() override;
+		/// <summary>
+		/// AABBCollider を初期化します。
+		/// </summary>
+		/// <param name="parent"> コライダーの親ワールドトランスフォーム </param>
+		void Initialize(WorldTransform* parent) override;
 
-	///-------------------------------------------/// 
-	/// メンバ変数
-	///-------------------------------------------///
-private:
+		/// <summary>
+		/// AABBCollider を更新します。
+		/// </summary>
+		void Update() override;
 
-	//AABB情報
-	AABB aabb_;
+		/// <summary>
+		/// AABBCollider を描画します。
+		/// </summary>
+		void Draw() override;
 
-	///-------------------------------------------/// 
-	/// ゲッター・セッター
-	///-------------------------------------------///
-public:
+		///-------------------------------------------/// 
+		/// メンバ変数
+		///-------------------------------------------///
+	private:
 
-	/// <summary>
-	/// AABBを取得
-	/// </summary>
-	/// <returns>AABB</returns>
-	AABB GetAABB() const { return aabb_; }
+		//AABB情報
+		AABB aabb_;
 
-};
+		///-------------------------------------------/// 
+		/// ゲッター・セッター
+		///-------------------------------------------///
+	public:
+
+		/// <summary>
+		/// AABBを取得
+		/// </summary>
+		/// <returns>AABB</returns>
+		AABB GetAABB() const { return aabb_; }
+
+	};
+}
