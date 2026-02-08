@@ -2,7 +2,7 @@
 
 #include "LevelEditor/ObjectData.h"
 
-#include "Math/Vector3.h"
+#include <Math/Vector/Vector3.h>
 
 #include "string"
 #include "vector"

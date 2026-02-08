@@ -2,8 +2,8 @@
 
 #include "d3d12.h"
 
-#include "Math/Vector4.h"
-#include "Math/Matrix4x4.h"
+#include <Math/Vector/Vector4.h>
+#include <Math/Matrix/Matrix4x4.h>
 
 #include "wrl.h"
 #include "vector"

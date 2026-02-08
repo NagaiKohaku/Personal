@@ -1,8 +1,8 @@
 #include "PauseEvent.h"
 
-#include <UIManager.h>
-#include <EmitterManager.h>
-#include <Fade/Fade.h>
+#include <Effect/Manager/UIManager.h>
+#include <Effect/Manager/EmitterManager.h>
+#include <Effect/Fade/Fade.h>
 #include <Base/Input.h>
 
 void PauseEvent::Start(Player* player, Camera* camera, FollowCamera* followCamera) {

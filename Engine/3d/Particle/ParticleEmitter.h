@@ -1,12 +1,12 @@
 #pragma once
 
 #include "Base/LayerType.h"
-#include "Math/Vector2.h"
-#include "Math/Vector3.h"
-#include "Math/Vector4.h"
-#include "Math/Matrix4x4.h"
-#include "Math/WorldTransform.h"
-#include "Math/AABB.h"
+#include <Math/Vector/Vector2.h>
+#include <Math/Vector/Vector3.h>
+#include <Math/Vector/Vector4.h>
+#include <Math/Matrix/Matrix4x4.h>
+#include <Math/Transform/WorldTransform.h>
+#include <Math/Shape/AABB.h>
 #include "3d/Mesh/MeshBase.h"
 #include "3d/Model/Model.h"
 

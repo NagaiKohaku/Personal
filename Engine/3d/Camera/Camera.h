@@ -1,8 +1,8 @@
 #pragma once
 #include "3d/Object/Object3D.h"
-#include "Math/Vector3.h"
-#include "Math/Matrix4x4.h"
-#include "Math/WorldTransform.h"
+#include <Math/Vector/Vector3.h>
+#include <Math/Matrix/Matrix4x4.h>
+#include <Math/Transform/WorldTransform.h>
 
 /// <summary>
 /// 3Dシーンの視点制御を行うカメラクラスです。

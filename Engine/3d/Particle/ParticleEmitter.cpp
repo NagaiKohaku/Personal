@@ -10,9 +10,9 @@
 #include "3d/Model/ModelManager.h"
 #include "3d/Collider/ColliderManager.h"
 
-#include "Math/MakeMatrixMath.h"
-#include "Math/Easing.h"
-#include "Math/Random.h"
+#include <Math/Utility/MakeMatrixMath.h>
+#include <Math/Utility/Easing.h>
+#include <Math/Utility/Random.h>
 
 #include "imgui.h"
 

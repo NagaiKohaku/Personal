@@ -2,7 +2,7 @@
 
 #include "imgui.h"
 
-#include "Math/Clamp.h"
+#include <Math/Utility/Clamp.h>
 
 ///=====================================================/// 
 /// ポイントライトの初期化

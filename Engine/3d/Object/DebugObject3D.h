@@ -2,8 +2,8 @@
 
 #include "3d/Model/Model.h"
 
-#include "Math/Matrix4x4.h"
-#include "Math/WorldTransform.h"
+#include <Math/Matrix/Matrix4x4.h>
+#include <Math/Transform/WorldTransform.h>
 
 #include "wrl.h"
 

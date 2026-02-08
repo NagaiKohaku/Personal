@@ -5,11 +5,11 @@
 #include "3d/Camera/Camera.h"
 #include "3d/Particle/EmitterGroup.h"
 
-#include "Player/Player.h"
-#include "Enemy/EnemyManager.h"
-#include "Bullet/BulletManager.h"
-#include "Camera/FollowCamera.h"
-#include "Ground/GroundManager.h"
+#include <Object/Player/Player.h>
+#include <Object/Enemy/EnemyManager.h>
+#include <Object/Bullet/Core/BulletManager.h>
+#include <Object/Camera/FollowCamera.h>
+#include <Object/Ground/GroundManager.h>
 #include "Scene/GameScene/GameSceneProgress.h"
 
 #include "memory"

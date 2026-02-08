@@ -2,7 +2,7 @@
 
 #include "3d/Mesh/MeshBase.h"
 
-#include "Math/Vector3.h"
+#include <Math/Vector/Vector3.h>
 
 /// <summary>
 /// 立方体メッシュ（Cube Mesh）を管理するクラスです。

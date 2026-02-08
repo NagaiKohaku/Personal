@@ -1,9 +1,9 @@
 #include "ClearEvent.h"
 
-#include <UIManager.h>
-#include <Flash/Flash.h>
-#include <Shake/Shake.h>
-#include <Fade/Fade.h>
+#include <Effect/Manager/UIManager.h>
+#include <Effect/Flash/Flash.h>
+#include <Effect/Shake/Shake.h>
+#include <Effect/Fade/Fade.h>
 #include <Base/OffScreen.h>
 #include <Base/Input.h>
 

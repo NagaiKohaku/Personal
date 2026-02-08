@@ -4,9 +4,9 @@
 #include "3d/Object/DebugObject3D.h"
 #include "3d/Object/DebugLine.h"
 
-#include "Math/WorldTransform.h"
-#include "Math/AABB.h"
-#include "Math/Sphere.h"
+#include <Math/Transform/WorldTransform.h>
+#include <Math/Shape/AABB.h>
+#include <Math/Shape/Sphere.h>
 
 #include "vector"
 #include "memory"

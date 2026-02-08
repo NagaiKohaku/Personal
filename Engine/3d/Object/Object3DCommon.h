@@ -4,7 +4,7 @@
 #include "3d/Light/PointLight.h"
 #include "3d/Light/SpotLight.h"
 
-#include "Math/Vector3.h"
+#include <Math/Vector/Vector3.h>
 
 #include "d3dx12.h"
 #include "d3d12.h"

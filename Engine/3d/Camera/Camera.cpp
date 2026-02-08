@@ -7,9 +7,9 @@
 #include "3d/Object/DebugObjectCommon.h"
 #include "3d/Object/SkyBoxCommon.h"
 
-#include "Math/MakeMatrixMath.h"
+#include <Math/Utility/MakeMatrixMath.h>
 
-#include "Shake/Shake.h"
+#include <Effect/Shake/Shake.h>
 
 #include "imgui.h"
 

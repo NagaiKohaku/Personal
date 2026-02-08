@@ -2,8 +2,8 @@
 
 #include "Base/DirectXCommon.h"
 
-#include "Math/Vector3.h"
-#include "Math/Vector4.h"
+#include <Math/Vector/Vector3.h>
+#include <Math/Vector/Vector4.h>
 
 #include "d3dx12.h"
 #include "wrl.h"

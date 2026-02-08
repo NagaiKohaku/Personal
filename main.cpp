@@ -19,15 +19,15 @@
 #include "3d/Model/ModelManager.h"
 #include "3d/Particle/ParticleCommon.h"
 #include "3d/Collider/ColliderManager.h"
-#include "ObjectManager.h"
-#include "UIManager.h"
-#include "EmitterManager.h"
+#include <Object/Manager/ObjectManager.h>
+#include <Effect/Manager/UIManager.h>
+#include <Effect/Manager/EmitterManager.h>
 
 #include "Scene/SceneManager.h"
 #include "LevelEditor/LevelDataLoader.h"
-#include "Fade/Fade.h"
-#include "Shake/Shake.h"
-#include "Flash/Flash.h"
+#include <Effect/Fade/Fade.h>
+#include <Effect/Shake/Shake.h>
+#include <Effect/Flash/Flash.h>
 
 
 //Windowsアプリでのエントリーポイント(main関数)

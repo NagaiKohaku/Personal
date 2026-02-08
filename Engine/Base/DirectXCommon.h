@@ -17,7 +17,7 @@
 #include "vector"
 #include "wrl.h"
 
-#include "Math/Vector4.h"
+#include <Math/Vector/Vector4.h>
 
 /// === 前方宣言 === ///
 class WinApp;
