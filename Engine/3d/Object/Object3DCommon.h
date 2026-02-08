@@ -93,7 +93,7 @@ private:
 private:
 
 	//DirectX基底
-	DirectXCommon* dxCommon_ = nullptr;
+	MyEngine::DirectXCommon* dxCommon_ = nullptr;
 
 	//ブレンドモード
 	BlendType3D blendMode_;
@@ -134,7 +134,7 @@ public:
 	/// DirectX基底を取得
 	/// </summary>
 	/// <returns></returns>
-	DirectXCommon* GetDxCommon() const { return dxCommon_; }
+	MyEngine::DirectXCommon* GetDxCommon() const { return dxCommon_; }
 
 	/// <summary>
 	/// デフォルトカメラを取得

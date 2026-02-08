@@ -10,7 +10,7 @@
 void PointLight::Initialize() {
 
 	//DirectX基底を取得
-	dxCommon_ = DirectXCommon::GetInstance();
+	dxCommon_ = MyEngine::DirectXCommon::GetInstance();
 
 	//リソースを作成
 	lightResource_ = dxCommon_->CreateBufferResource(sizeof(LightData));

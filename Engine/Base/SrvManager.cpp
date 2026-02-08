@@ -18,7 +18,7 @@ SrvManager* SrvManager::GetInstance() {
 void SrvManager::Initialize() {
 
 	//DirextX基底のインスタンスを取得
-	directXCommon = DirectXCommon::GetInstance();
+	directXCommon = MyEngine::DirectXCommon::GetInstance();
 
 	//srvデスクリプタヒープの初期化
 	srvDescriptorHeap_ = directXCommon->CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, kMaxSRVCount_, true);

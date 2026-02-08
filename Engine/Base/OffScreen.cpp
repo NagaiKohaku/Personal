@@ -29,7 +29,7 @@ void OffScreen::Initialize() {
 	/// === インスタンスの取得 === ///
 
 	//DirectX基底のインスタンスを取得
-	dxCommon_ = DirectXCommon::GetInstance();
+	dxCommon_ = MyEngine::DirectXCommon::GetInstance();
 
 	//RTVマネージャーのインスタンスを取得
 	rtvManager_ = RTVManager::GetInstance();

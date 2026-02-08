@@ -15,5 +15,5 @@ SpriteCommon* SpriteCommon::GetInstance() {
 void SpriteCommon::Initialize() {
 
 	//DirectX基底のインスタンスを取得
-	dxCommon_ = DirectXCommon::GetInstance();
+	dxCommon_ = MyEngine::DirectXCommon::GetInstance();
 }

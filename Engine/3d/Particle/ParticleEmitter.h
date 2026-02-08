@@ -280,7 +280,7 @@ private:
 	/// === 他クラスからの借り物 === ///
 
 	//DirectX基底
-	DirectXCommon* directXCommon_;
+	MyEngine::DirectXCommon* directXCommon_;
 
 	//テクスチャマネージャー
 	TextureManager* textureManager_;

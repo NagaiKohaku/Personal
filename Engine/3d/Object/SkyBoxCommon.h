@@ -1,15 +1,13 @@
 #pragma once
+
+#include <Base/DirectXCommon.h>
+#include <3d/Camera/Camera.h>
+
 #include "d3dx12.h"
 #include "d3d12.h"
 
 #include "wrl.h"
 #include "vector"
-
-/// === 前方宣言 === ///
-
-class DirectXCommon;
-
-class Camera;
 
 /// <summary>
 /// スカイボックス描画用の共通機能を提供するクラスです。
@@ -62,7 +60,7 @@ private:
 private:
 
 	//DirectX基底
-	DirectXCommon* dxCommon_ = nullptr;
+	MyEngine::DirectXCommon* dxCommon_ = nullptr;
 
 	//カメラ
 	Camera* camera_ = nullptr;
@@ -82,7 +80,7 @@ public:
 	/// DirectX基底を取得
 	/// </summary>
 	/// <returns>DirectX基底</returns>
-	DirectXCommon* GetDxCommon() const { return dxCommon_; }
+	MyEngine::DirectXCommon* GetDxCommon() const { return dxCommon_; }
 
 	/// <summary>
 	/// カメラを取得

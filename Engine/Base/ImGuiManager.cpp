@@ -24,7 +24,7 @@ void ImGuiManager::Initialize() {
 	winApp_ = WinApp::GetInstance();
 
 	//DirectX基底のインスタンスを取得
-	directXCommon_ = DirectXCommon::GetInstance();
+	directXCommon_ = MyEngine::DirectXCommon::GetInstance();
 
 	//デスクリプタヒープ設定
 	D3D12_DESCRIPTOR_HEAP_DESC desc = {};

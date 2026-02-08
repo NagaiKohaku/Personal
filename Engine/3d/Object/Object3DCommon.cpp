@@ -24,7 +24,7 @@ Object3DCommon* Object3DCommon::GetInstance() {
 void Object3DCommon::Initialize() {
 
 	//DirectX基底のインスタンスを取得
-	dxCommon_ = DirectXCommon::GetInstance();
+	dxCommon_ = MyEngine::DirectXCommon::GetInstance();
 
 	//グラフィックパイプラインの生成
 	CreateGraphicsPipeline();

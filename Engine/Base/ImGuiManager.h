@@ -1,4 +1,8 @@
 #pragma once
+
+#include <Base/WinApp.h>
+#include <Base/DirectXCommon.h>
+
 #include "d3d12.h"
 
 #include "imgui.h"
@@ -6,11 +10,6 @@
 #include "imgui_impl_win32.h"
 
 #include "wrl.h"
-
-/// === 前方宣言 === ///
-class WinApp;
-
-class DirectXCommon;
 
 /// <summary>
 /// ImGuiを管理・描画するクラスです。
@@ -61,7 +60,7 @@ private:
 	WinApp* winApp_;
 
 	//DirectX基底
-	DirectXCommon* directXCommon_;
+	MyEngine::DirectXCommon* directXCommon_;
 
 	//SRVヒープ
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> srvHeap_;

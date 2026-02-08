@@ -22,7 +22,7 @@ Object2DCommon* Object2DCommon::GetInstance() {
 void Object2DCommon::Initialize() {
 
 	//DirectX基底のインスタンスを取得
-	dxCommon_ = DirectXCommon::GetInstance();
+	dxCommon_ = MyEngine::DirectXCommon::GetInstance();
 
 	//グラフィックパイプラインの生成
 	CreateGraphicsPipeline();

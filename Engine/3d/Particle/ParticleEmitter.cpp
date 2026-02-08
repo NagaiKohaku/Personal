@@ -43,7 +43,7 @@ void ParticleEmitter::Initialize(const std::string& groupName, const std::string
 	/// === シングルトンインスタンスの取得 === ///
 
 	//DirectX基底のインスタンスを取得
-	directXCommon_ = DirectXCommon::GetInstance();
+	directXCommon_ = MyEngine::DirectXCommon::GetInstance();
 
 	//テクスチャマネージャーのインスタンスを取得
 	textureManager_ = TextureManager::GetInstance();

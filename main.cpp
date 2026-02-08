@@ -42,7 +42,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	winApp->Initialize();
 
 	//DirectX基底
-	DirectXCommon* directXCommon = DirectXCommon::GetInstance();
+	MyEngine::DirectXCommon* directXCommon = MyEngine::DirectXCommon::GetInstance();
 	directXCommon->Initialize();
 
 	//RTVマネージャー

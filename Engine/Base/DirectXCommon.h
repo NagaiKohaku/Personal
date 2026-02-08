@@ -50,250 +50,253 @@ struct D3DResourceLeakChecker {
 	}
 };
 
-/// <summary>
-/// DirectX12 の基本描画管理クラスです。
-/// </summary>
-class DirectXCommon {
-
-	///-------------------------------------------/// 
-	/// メンバ関数
-	///-------------------------------------------///
-public:
+namespace MyEngine {
 
 	/// <summary>
-	/// DirectXCommonのシングルトンインスタンスを取得します。
+	/// DirectX12 の基本描画管理クラスです。
 	/// </summary>
-	static DirectXCommon* GetInstance();
+	class DirectXCommon {
 
-	/// <summary>
-	/// DirectX12 の動作に必要な基本コンポーネントを初期化します。
-	/// </summary>
-	void Initialize();
+		///-------------------------------------------/// 
+		/// メンバ関数
+		///-------------------------------------------///
+	public:
 
-	/// <summary>
-	/// DirectX12 による描画処理を行うための各種レンダリング関連リソースを初期化します。
-	/// </summary>
-	void InitializeRendering();
+		/// <summary>
+		/// DirectXCommonのシングルトンインスタンスを取得します。
+		/// </summary>
+		static DirectXCommon* GetInstance();
 
-	/// <summary>
-	/// 次の描画に向けてコマンドリストを準備し、バックバッファを描画可能な状態にします。
-	/// </summary>
-	void PreDraw();
+		/// <summary>
+		/// DirectX12 の動作に必要な基本コンポーネントを初期化します。
+		/// </summary>
+		void Initialize();
 
-	/// <summary>
-	/// 描画処理の終了処理を行い、バックバッファを画面に表示します。
-	/// </summary>
-	void PostDraw();
+		/// <summary>
+		/// DirectX12 による描画処理を行うための各種レンダリング関連リソースを初期化します。
+		/// </summary>
+		void InitializeRendering();
 
-	/// <summary>
-	/// 指定されたHLSLファイルを読み込み、指定のシェーダープロファイルでコンパイルします。
-	/// </summary>
-	/// <param name="filePath">コンパイル対象のHLSLファイルパス</param>
-	/// <param name="profile">使用するシェーダープロファイル</param>
-	/// <returns>コンパイル後のシェーダーバイナリ</returns>
-	Microsoft::WRL::ComPtr<IDxcBlob> CompileShader(
-		const std::wstring& filePath,
-		const wchar_t* profile
-	);
+		/// <summary>
+		/// 次の描画に向けてコマンドリストを準備し、バックバッファを描画可能な状態にします。
+		/// </summary>
+		void PreDraw();
 
-	/// <summary>
-	/// 指定サイズのバッファ用リソースを生成します。
-	/// </summary>
-	/// <param name="sizeInBytes">バッファのサイズ（バイト単位）</param>
-	/// <returns>生成されたバッファリソース</returns>
-	Microsoft::WRL::ComPtr<ID3D12Resource> CreateBufferResource(size_t sizeInBytes);
+		/// <summary>
+		/// 描画処理の終了処理を行い、バックバッファを画面に表示します。
+		/// </summary>
+		void PostDraw();
 
-	/// <summary>
-	/// 指定された種類と数のデスクリプタヒープを生成します。
-	/// </summary>
-	/// <param name="heapType">生成するヒープの種類（CBV/SRV/UAVやRTV/DSVなど）</param>
-	/// <param name="numDescriptors">ヒープに含めるデスクリプタの数</param>
-	/// <param name="shaderVisible">シェーダーから参照可能にするかどうか</param>
-	/// <returns>生成されたデスクリプタヒープ</returns>
-	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> CreateDescriptorHeap(
-		D3D12_DESCRIPTOR_HEAP_TYPE heapType,
-		UINT numDescriptors,
-		bool shaderVisible
-	);
+		/// <summary>
+		/// 指定されたHLSLファイルを読み込み、指定のシェーダープロファイルでコンパイルします。
+		/// </summary>
+		/// <param name="filePath">コンパイル対象のHLSLファイルパス</param>
+		/// <param name="profile">使用するシェーダープロファイル</param>
+		/// <returns>コンパイル後のシェーダーバイナリ</returns>
+		Microsoft::WRL::ComPtr<IDxcBlob> CompileShader(
+			const std::wstring& filePath,
+			const wchar_t* profile
+		);
 
-	///-------------------------------------------/// 
-	/// クラス内処理関数
-	///-------------------------------------------///
-private:
+		/// <summary>
+		/// 指定サイズのバッファ用リソースを生成します。
+		/// </summary>
+		/// <param name="sizeInBytes">バッファのサイズ（バイト単位）</param>
+		/// <returns>生成されたバッファリソース</returns>
+		Microsoft::WRL::ComPtr<ID3D12Resource> CreateBufferResource(size_t sizeInBytes);
 
-	/// <summary>
-	/// DirectX12 のデバイスおよび関連コンポーネントを初期化します。
-	/// </summary>
-	void InitializeDevice();
+		/// <summary>
+		/// 指定された種類と数のデスクリプタヒープを生成します。
+		/// </summary>
+		/// <param name="heapType">生成するヒープの種類（CBV/SRV/UAVやRTV/DSVなど）</param>
+		/// <param name="numDescriptors">ヒープに含めるデスクリプタの数</param>
+		/// <param name="shaderVisible">シェーダーから参照可能にするかどうか</param>
+		/// <returns>生成されたデスクリプタヒープ</returns>
+		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> CreateDescriptorHeap(
+			D3D12_DESCRIPTOR_HEAP_TYPE heapType,
+			UINT numDescriptors,
+			bool shaderVisible
+		);
 
-	/// <summary>
-	/// コマンドキュー、コマンドアロケータ、コマンドリストを初期化します。
-	/// </summary>
-	void InitializeCommand();
+		///-------------------------------------------/// 
+		/// クラス内処理関数
+		///-------------------------------------------///
+	private:
 
-	/// <summary>
-	/// スワップチェーンを初期化し、画面に描画するためのバックバッファを構築します。
-	/// </summary>
-	void InitializeSwapChain();
+		/// <summary>
+		/// DirectX12 のデバイスおよび関連コンポーネントを初期化します。
+		/// </summary>
+		void InitializeDevice();
 
-	/// <summary>
-	/// 画面描画で使用する深度バッファとステンシルバッファを生成し、初期化します。
-	/// </summary>
-	void InitializeDepthBuffer();
+		/// <summary>
+		/// コマンドキュー、コマンドアロケータ、コマンドリストを初期化します。
+		/// </summary>
+		void InitializeCommand();
 
-	/// <summary>
-	/// バックバッファに描画するためのレンダーターゲットビューを初期化します。
-	/// </summary>
-	void InitializeRenderTargetView();
+		/// <summary>
+		/// スワップチェーンを初期化し、画面に描画するためのバックバッファを構築します。
+		/// </summary>
+		void InitializeSwapChain();
 
-	/// <summary>
-	/// 深度ステンシルバッファ用のビューを初期化します。
-	/// </summary>
-	void InitializeDepthStencilView();
+		/// <summary>
+		/// 画面描画で使用する深度バッファとステンシルバッファを生成し、初期化します。
+		/// </summary>
+		void InitializeDepthBuffer();
 
-	/// <summary>
-	/// GPUとCPU間で処理の同期を行うフェンスを初期化します。
-	/// </summary>
-	void InitializeFence();
+		/// <summary>
+		/// バックバッファに描画するためのレンダーターゲットビューを初期化します。
+		/// </summary>
+		void InitializeRenderTargetView();
 
-	/// <summary>
-	/// 描画時のビューポート（表示領域）を初期化します。
-	/// </summary>
-	void InitializeViewportRect();
+		/// <summary>
+		/// 深度ステンシルバッファ用のビューを初期化します。
+		/// </summary>
+		void InitializeDepthStencilView();
 
-	/// <summary>
-	/// 描画領域を限定するシザー矩形を初期化します。
-	/// </summary>
-	void InitializeScissorRect();
+		/// <summary>
+		/// GPUとCPU間で処理の同期を行うフェンスを初期化します。
+		/// </summary>
+		void InitializeFence();
 
-	/// <summary>
-	/// DirectX Shader Compiler（DXC）関連のコンパイル環境を初期化します。
-	/// </summary>
-	void InitializeDXCCompile();
+		/// <summary>
+		/// 描画時のビューポート（表示領域）を初期化します。
+		/// </summary>
+		void InitializeViewportRect();
 
-	/// <summary>
-	/// フレームレート固定用の基準時間を初期化します。
-	/// </summary>
-	void InitializeFixFPS();
+		/// <summary>
+		/// 描画領域を限定するシザー矩形を初期化します。
+		/// </summary>
+		void InitializeScissorRect();
 
-	/// <summary>
-	/// 1フレームあたりの処理時間を制御して、描画を60FPSに固定します。
-	/// </summary>
-	void UpdateFixFPS();
+		/// <summary>
+		/// DirectX Shader Compiler（DXC）関連のコンパイル環境を初期化します。
+		/// </summary>
+		void InitializeDXCCompile();
 
-	///-------------------------------------------/// 
-	/// メンバ変数
-	///-------------------------------------------///
-private:
+		/// <summary>
+		/// フレームレート固定用の基準時間を初期化します。
+		/// </summary>
+		void InitializeFixFPS();
 
-	//WinAppクラス(借り物)
-	WinApp* winApp = nullptr;
+		/// <summary>
+		/// 1フレームあたりの処理時間を制御して、描画を60FPSに固定します。
+		/// </summary>
+		void UpdateFixFPS();
 
-	//RTVマネージャー
-	RTVManager* rtvManager_ = nullptr;
+		///-------------------------------------------/// 
+		/// メンバ変数
+		///-------------------------------------------///
+	private:
 
-	//DSVマネージャー
-	DSVManager* dsvManager_ = nullptr;
+		//WinAppクラス(借り物)
+		WinApp* winApp = nullptr;
 
-	//メモリリークチェック
-	D3DResourceLeakChecker leakCheck;
+		//RTVマネージャー
+		RTVManager* rtvManager_ = nullptr;
 
-	//デバイス
-	Microsoft::WRL::ComPtr<ID3D12Device> device_ = nullptr;
+		//DSVマネージャー
+		DSVManager* dsvManager_ = nullptr;
 
-	//DXGIファクトリー
-	Microsoft::WRL::ComPtr<IDXGIFactory7> dxgiFactory_ = nullptr;
+		//メモリリークチェック
+		D3DResourceLeakChecker leakCheck;
 
-	//コマンドキュー
-	Microsoft::WRL::ComPtr<ID3D12CommandQueue> commandQueue_ = nullptr;
+		//デバイス
+		Microsoft::WRL::ComPtr<ID3D12Device> device_ = nullptr;
 
-	//コマンドアロケータ
-	Microsoft::WRL::ComPtr<ID3D12CommandAllocator> commandAllocator_ = nullptr;
+		//DXGIファクトリー
+		Microsoft::WRL::ComPtr<IDXGIFactory7> dxgiFactory_ = nullptr;
 
-	//コマンドリスト
-	Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> commandList_ = nullptr;
+		//コマンドキュー
+		Microsoft::WRL::ComPtr<ID3D12CommandQueue> commandQueue_ = nullptr;
 
-	//スワップチェーン
-	Microsoft::WRL::ComPtr<IDXGISwapChain4> swapChain_ = nullptr;
+		//コマンドアロケータ
+		Microsoft::WRL::ComPtr<ID3D12CommandAllocator> commandAllocator_ = nullptr;
 
-	//深度ステンシル
-	Microsoft::WRL::ComPtr<ID3D12Resource> depthStancilResource_ = nullptr;
+		//コマンドリスト
+		Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> commandList_ = nullptr;
 
-	//バックバッファー
-	std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>> backBuffers_;
+		//スワップチェーン
+		Microsoft::WRL::ComPtr<IDXGISwapChain4> swapChain_ = nullptr;
 
-	//オフスクリーン用のリソース
-	Microsoft::WRL::ComPtr<ID3D12Resource> offScreenResrouce_;
+		//深度ステンシル
+		Microsoft::WRL::ComPtr<ID3D12Resource> depthStancilResource_ = nullptr;
 
-	//RTVハンドル
-	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles_[2];
+		//バックバッファー
+		std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>> backBuffers_;
 
-	//RTVのメモリ番号
-	uint32_t rtvIndex_[2];
+		//オフスクリーン用のリソース
+		Microsoft::WRL::ComPtr<ID3D12Resource> offScreenResrouce_;
 
-	//DSVハンドル
-	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle_;
+		//RTVハンドル
+		D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles_[2];
 
-	//DSVのメモリ番号
-	uint32_t dsvIndex_ = 0;
+		//RTVのメモリ番号
+		uint32_t rtvIndex_[2];
 
-	//フェンス
-	Microsoft::WRL::ComPtr<ID3D12Fence> fence_ = nullptr;
+		//DSVハンドル
+		D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle_;
 
-	//フェンスの値
-	uint64_t fenceValue_ = 0;
+		//DSVのメモリ番号
+		uint32_t dsvIndex_ = 0;
 
-	//ビューポート
-	D3D12_VIEWPORT viewport_{};
+		//フェンス
+		Microsoft::WRL::ComPtr<ID3D12Fence> fence_ = nullptr;
 
-	//シザー矩形
-	D3D12_RECT scissorRect_{};
+		//フェンスの値
+		uint64_t fenceValue_ = 0;
 
-	//dxcUtils
-	IDxcUtils* dxcUtils_ = nullptr;
+		//ビューポート
+		D3D12_VIEWPORT viewport_{};
 
-	//dxcCompiler
-	IDxcCompiler3* dxcCompiler_ = nullptr;
+		//シザー矩形
+		D3D12_RECT scissorRect_{};
 
-	//includeHander
-	IDxcIncludeHandler* includeHandler_ = nullptr;
+		//dxcUtils
+		IDxcUtils* dxcUtils_ = nullptr;
 
-	//記録時間(FPS固定用)
-	std::chrono::steady_clock::time_point reference_;
+		//dxcCompiler
+		IDxcCompiler3* dxcCompiler_ = nullptr;
 
-	///-------------------------------------------/// 
-	/// ゲッター・セッター
-	///-------------------------------------------///
-public:
+		//includeHander
+		IDxcIncludeHandler* includeHandler_ = nullptr;
 
-	/// <summary>
-	/// デバイスを取得
-	/// </summary>
-	/// <returns>デバイス</returns>
-	ID3D12Device* GetDevice() { return device_.Get(); }
+		//記録時間(FPS固定用)
+		std::chrono::steady_clock::time_point reference_;
 
-	/// <summary>
-	/// コマンドリストを取得
-	/// </summary>
-	/// <returns>コマンドリスト</returns>
-	ID3D12GraphicsCommandList* GetCommandList() { return commandList_.Get(); }
+		///-------------------------------------------/// 
+		/// ゲッター・セッター
+		///-------------------------------------------///
+	public:
 
-	/// <summary>
-	/// バックバッファを取得
-	/// </summary>
-	/// <returns>バックバッファ</returns>
-	size_t GetBackBufferCount() const { return backBuffers_.size(); }
+		/// <summary>
+		/// デバイスを取得
+		/// </summary>
+		/// <returns>デバイス</returns>
+		ID3D12Device* GetDevice() { return device_.Get(); }
 
-	/// <summary>
-	/// ビューポート行列を取得
-	/// </summary>
-	/// <returns>ビューポート行列</returns>
-	D3D12_VIEWPORT GetViewport() const { return viewport_; }
+		/// <summary>
+		/// コマンドリストを取得
+		/// </summary>
+		/// <returns>コマンドリスト</returns>
+		ID3D12GraphicsCommandList* GetCommandList() { return commandList_.Get(); }
 
-	/// <summary>
-	/// シザリング矩形を取得
-	/// </summary>
-	/// <returns>シザリング矩形</returns>
-	D3D12_RECT GetScissorRect() const { return scissorRect_; }
+		/// <summary>
+		/// バックバッファを取得
+		/// </summary>
+		/// <returns>バックバッファ</returns>
+		size_t GetBackBufferCount() const { return backBuffers_.size(); }
 
-};
+		/// <summary>
+		/// ビューポート行列を取得
+		/// </summary>
+		/// <returns>ビューポート行列</returns>
+		D3D12_VIEWPORT GetViewport() const { return viewport_; }
+
+		/// <summary>
+		/// シザリング矩形を取得
+		/// </summary>
+		/// <returns>シザリング矩形</returns>
+		D3D12_RECT GetScissorRect() const { return scissorRect_; }
+
+	};
+}

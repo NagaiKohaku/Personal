@@ -118,7 +118,7 @@ private:
 private:
 
 	//DirectX基底
-	DirectXCommon* directXCommon_ = nullptr;
+	MyEngine::DirectXCommon* directXCommon_ = nullptr;
 
 	//SRVマネージャー
 	SrvManager* srvManager_ = nullptr;

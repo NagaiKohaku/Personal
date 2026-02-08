@@ -18,7 +18,7 @@ DSVManager* DSVManager::GetInstance() {
 void DSVManager::Initialize() {
 
 	//DirectX基底のインスタンスを取得
-	directXCommon = DirectXCommon::GetInstance();
+	directXCommon = MyEngine::DirectXCommon::GetInstance();
 
 	//DSVデスクリプタヒープの初期化
 	dsvDescriptorHeap_ = directXCommon->CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_DSV, kMaxDSVCount_, false);

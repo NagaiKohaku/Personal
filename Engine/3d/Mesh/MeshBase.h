@@ -103,7 +103,7 @@ public:
 protected:
 
 	//DirectX基底
-	DirectXCommon* directXCommon_ = nullptr;
+	MyEngine::DirectXCommon* directXCommon_ = nullptr;
 
 	//頂点数
 	uint32_t vertexCount_ = 0;

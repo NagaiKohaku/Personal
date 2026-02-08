@@ -1,5 +1,11 @@
 #pragma once
 
+#include <Base/DirectXCommon.h>
+#include <Base/RTVManager.h>
+#include <Base/DSVManager.h>
+#include <Base/SrvManager.h>
+#include <3d/Camera/Camera.h>
+
 #include "d3d12.h"
 
 #include <Math/Vector/Vector4.h>
@@ -9,18 +15,6 @@
 #include "vector"
 #include "cstdint"
 #include "string"
-
-/// === 前方宣言 === ///
-
-class DirectXCommon;
-
-class RTVManager;
-
-class DSVManager;
-
-class SrvManager;
-
-class Camera;
 
 /// <summary>
 /// オフスクリーン描画用のレンダーテクスチャや深度バッファを管理し、描画結果をスワップチェーンに転送できるクラスです。
@@ -135,7 +129,7 @@ private:
 private:
 
 	//DirectX基底
-	DirectXCommon* dxCommon_ = nullptr;
+	MyEngine::DirectXCommon* dxCommon_ = nullptr;
 
 	//RTVマネージャー
 	RTVManager* rtvManager_ = nullptr;

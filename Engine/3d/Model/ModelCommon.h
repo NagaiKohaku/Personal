@@ -28,7 +28,7 @@ public:
 private:
 
 	//DirectX基底
-	DirectXCommon* dxCommon_;
+	MyEngine::DirectXCommon* dxCommon_;
 
 	///-------------------------------------------/// 
 	/// ゲッター・セッター
@@ -39,6 +39,6 @@ public:
 	/// DirectX基底の取得
 	/// </summary>
 	/// <returns>DirectX基底</returns>
-	DirectXCommon* GetDxCommon() const { return dxCommon_; }
+	MyEngine::DirectXCommon* GetDxCommon() const { return dxCommon_; }
 
 };

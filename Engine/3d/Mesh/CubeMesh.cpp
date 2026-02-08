@@ -7,7 +7,7 @@ void CubeMesh::Initialize() {
 
 	/// === シングルトンインスタンスの取得 === ///
 
-	directXCommon_ = DirectXCommon::GetInstance();
+	directXCommon_ = MyEngine::DirectXCommon::GetInstance();
 
 	/// === 頂点リソースの生成 === ///
 

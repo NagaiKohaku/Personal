@@ -56,7 +56,7 @@ public:
 private:
 
 	//DirectX基底
-	DirectXCommon* dxCommon_ = nullptr;
+	MyEngine::DirectXCommon* dxCommon_ = nullptr;
 
 	//バッファリソース
 	Microsoft::WRL::ComPtr<ID3D12Resource> lightResource_ = nullptr;

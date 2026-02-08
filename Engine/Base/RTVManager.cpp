@@ -18,7 +18,7 @@ RTVManager* RTVManager::GetInstance() {
 void RTVManager::Initialize() {
 
 	//DirectX基底のインスタンスを取得
-	directXCommon = DirectXCommon::GetInstance();
+	directXCommon = MyEngine::DirectXCommon::GetInstance();
 
 	//RTVデスクリプタヒープの初期化
 	rtvDescriptorHeap_ = directXCommon->CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_RTV, kMaxRTVCount_, false);

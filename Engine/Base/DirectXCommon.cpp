@@ -10,17 +10,17 @@
 #include "format"
 
 ///=====================================================/// 
-/// DirectXCommonのシングルトンインスタンスを取得
+/// MyEngine::DirectXCommonのシングルトンインスタンスを取得
 ///=====================================================///
-DirectXCommon* DirectXCommon::GetInstance() {
-	static DirectXCommon instance;
+MyEngine::DirectXCommon* MyEngine::DirectXCommon::GetInstance() {
+	static MyEngine::DirectXCommon instance;
 	return &instance;
 }
 
 ///=====================================================/// 
 /// DirectX12 の動作に必要な基本コンポーネントを初期化
 ///=====================================================///
-void DirectXCommon::Initialize() {
+void MyEngine::DirectXCommon::Initialize() {
 
 	//WinAppクラスを借りる
 	winApp = WinApp::GetInstance();
@@ -39,7 +39,7 @@ void DirectXCommon::Initialize() {
 ///=================================================================///
 /// DirectX12 による描画処理を行うための各種レンダリング関連リソースを初期化
 ///=================================================================///
-void DirectXCommon::InitializeRendering() {
+void MyEngine::DirectXCommon::InitializeRendering() {
 
 	//RTVマネージャーの取得
 	rtvManager_ = RTVManager::GetInstance();
@@ -76,7 +76,7 @@ void DirectXCommon::InitializeRendering() {
 ///=====================================================/// 
 /// DirectX12 のデバイスおよび関連コンポーネントを初期化
 ///=====================================================///
-void DirectXCommon::InitializeDevice() {
+void MyEngine::DirectXCommon::InitializeDevice() {
 
 	//生成の成功を示す
 	HRESULT hr;
@@ -221,7 +221,7 @@ void DirectXCommon::InitializeDevice() {
 ///=====================================================/// 
 /// コマンドキュー、コマンドアロケータ、コマンドリストを初期化
 ///=====================================================///
-void DirectXCommon::InitializeCommand() {
+void MyEngine::DirectXCommon::InitializeCommand() {
 
 	//生成の成功を示す
 	HRESULT hr;
@@ -260,7 +260,7 @@ void DirectXCommon::InitializeCommand() {
 ///=========================================================/// 
 /// スワップチェーンを初期化し、画面に描画するためのバックバッファを構築
 ///=========================================================///
-void DirectXCommon::InitializeSwapChain() {
+void MyEngine::DirectXCommon::InitializeSwapChain() {
 
 	//生成の成功を示す
 	HRESULT hr;
@@ -290,7 +290,7 @@ void DirectXCommon::InitializeSwapChain() {
 ///========================================================/// 
 /// 画面描画で使用する深度バッファとステンシルバッファを生成し、初期化
 ///========================================================///
-void DirectXCommon::InitializeDepthBuffer() {
+void MyEngine::DirectXCommon::InitializeDepthBuffer() {
 
 	//リソースの情報
 	D3D12_RESOURCE_DESC resourceDesc{};
@@ -333,7 +333,7 @@ void DirectXCommon::InitializeDepthBuffer() {
 ///=====================================================/// 
 /// バックバッファに描画するためのレンダーターゲットビューを初期化
 ///=====================================================///
-void DirectXCommon::InitializeRenderTargetView() {
+void MyEngine::DirectXCommon::InitializeRenderTargetView() {
 
 	//生成の成功を示す
 	HRESULT hr;
@@ -388,7 +388,7 @@ void DirectXCommon::InitializeRenderTargetView() {
 ///=====================================================/// 
 /// 深度ステンシルバッファ用のビューを初期化
 ///=====================================================///
-void DirectXCommon::InitializeDepthStencilView() {
+void MyEngine::DirectXCommon::InitializeDepthStencilView() {
 
 	//DSVのメモリを確保
 	dsvIndex_ = dsvManager_->Allocate();
@@ -406,7 +406,7 @@ void DirectXCommon::InitializeDepthStencilView() {
 ///=====================================================/// 
 /// GPUとCPU間で処理の同期を行うフェンスを初期化
 ///=====================================================///
-void DirectXCommon::InitializeFence() {
+void MyEngine::DirectXCommon::InitializeFence() {
 
 	//生成の成功を示す
 	HRESULT hr;
@@ -427,7 +427,7 @@ void DirectXCommon::InitializeFence() {
 ///=====================================================/// 
 /// 描画時のビューポート（表示領域）を初期化
 ///=====================================================///
-void DirectXCommon::InitializeViewportRect() {
+void MyEngine::DirectXCommon::InitializeViewportRect() {
 
 	//クライアント領域のサイズと一緒にして画面全体に表示
 	viewport_.Width = static_cast<FLOAT>(WinApp::kClientWidth);
@@ -444,7 +444,7 @@ void DirectXCommon::InitializeViewportRect() {
 ///=====================================================/// 
 /// 描画領域を限定するシザー矩形を初期化
 ///=====================================================///
-void DirectXCommon::InitializeScissorRect() {
+void MyEngine::DirectXCommon::InitializeScissorRect() {
 
 	//基本的にビューポートと同じく矩形が編成されるようにする
 	scissorRect_.left = 0;
@@ -459,7 +459,7 @@ void DirectXCommon::InitializeScissorRect() {
 ///=====================================================/// 
 /// DXC関連のコンパイル環境を初期化
 ///=====================================================///
-void DirectXCommon::InitializeDXCCompile() {
+void MyEngine::DirectXCommon::InitializeDXCCompile() {
 
 	//生成の成功を示す
 	HRESULT hr;
@@ -495,7 +495,7 @@ void DirectXCommon::InitializeDXCCompile() {
 ///=====================================================/// 
 /// フレームレート固定用の基準時間を初期化
 ///=====================================================///
-void DirectXCommon::InitializeFixFPS() {
+void MyEngine::DirectXCommon::InitializeFixFPS() {
 
 	//現在時間を記録する
 	reference_ = std::chrono::steady_clock::now();
@@ -507,7 +507,7 @@ void DirectXCommon::InitializeFixFPS() {
 ///=====================================================/// 
 /// 1フレームあたりの処理時間を制御して、描画を60FPSに固定
 ///=====================================================///
-void DirectXCommon::UpdateFixFPS() {
+void MyEngine::DirectXCommon::UpdateFixFPS() {
 
 	//1/60秒ぴったりの時間
 	const std::chrono::microseconds kMinTime(uint64_t(1000000.0f / 60.0f));
@@ -540,7 +540,7 @@ void DirectXCommon::UpdateFixFPS() {
 ///===============================================================/// 
 /// 次の描画に向けてコマンドリストを準備し、バックバッファを描画可能な状態に遷移
 ///===============================================================///
-void DirectXCommon::PreDraw() {
+void MyEngine::DirectXCommon::PreDraw() {
 
 	/// === 現在のバッファをコマンドが詰めるようにする === ///
 
@@ -593,7 +593,7 @@ void DirectXCommon::PreDraw() {
 ///=====================================================/// 
 /// 描画処理の終了処理を行い、バックバッファを画面に表示
 ///=====================================================///
-void DirectXCommon::PostDraw() {
+void MyEngine::DirectXCommon::PostDraw() {
 
 	//生成の成功を示す
 	HRESULT hr;
@@ -693,7 +693,7 @@ void DirectXCommon::PostDraw() {
 ///================================================================/// 
 /// 指定されたHLSLファイルを読み込み、指定のシェーダープロファイルでコンパイル
 ///================================================================///
-Microsoft::WRL::ComPtr<IDxcBlob> DirectXCommon::CompileShader(
+Microsoft::WRL::ComPtr<IDxcBlob> MyEngine::DirectXCommon::CompileShader(
 	const std::wstring& filePath,
 	const wchar_t* profile
 ) {
@@ -794,7 +794,7 @@ Microsoft::WRL::ComPtr<IDxcBlob> DirectXCommon::CompileShader(
 ///=====================================================/// 
 /// 指定サイズのバッファ用リソースを生成
 ///=====================================================///
-Microsoft::WRL::ComPtr<ID3D12Resource> DirectXCommon::CreateBufferResource(size_t sizeInBytes) {
+Microsoft::WRL::ComPtr<ID3D12Resource> MyEngine::DirectXCommon::CreateBufferResource(size_t sizeInBytes) {
 
 	//頂点リソース用のヒープの情報
 	D3D12_HEAP_PROPERTIES uploadHeapProperties{};
@@ -840,7 +840,7 @@ Microsoft::WRL::ComPtr<ID3D12Resource> DirectXCommon::CreateBufferResource(size_
 ///=====================================================/// 
 /// 指定された種類と数のデスクリプタヒープを生成
 ///=====================================================///
-Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> DirectXCommon::CreateDescriptorHeap(
+Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> MyEngine::DirectXCommon::CreateDescriptorHeap(
 	D3D12_DESCRIPTOR_HEAP_TYPE heapType,
 	UINT numDescriptors,
 	bool shaderVisible

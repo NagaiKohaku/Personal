@@ -14,5 +14,5 @@ ModelCommon* ModelCommon::GetInstance() {
 void ModelCommon::Initialize() {
 
 	//DirectX基底のインスタンスを取得
-	dxCommon_ = DirectXCommon::GetInstance();
+	dxCommon_ = MyEngine::DirectXCommon::GetInstance();
 }

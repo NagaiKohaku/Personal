@@ -1,11 +1,10 @@
 #pragma once
 
+#include <Base/DirectXCommon.h>
+
 #include "d3d12.h"
 #include "cstdint"
 #include "wrl.h"
-
-/// === 前方宣言 === ///
-class DirectXCommon;
 
 /// <summary>
 /// 描画用レンダーターゲットビュー(RTV)の管理を行うクラスです。
@@ -63,7 +62,7 @@ public:
 private:
 
 	//DirectX基底
-	DirectXCommon* directXCommon = nullptr;
+	MyEngine::DirectXCommon* directXCommon = nullptr;
 
 	//現在のSRV番号
 	uint32_t useIndex_ = 0;

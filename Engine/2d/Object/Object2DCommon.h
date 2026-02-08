@@ -68,7 +68,7 @@ private:
 private:
 
 	//DirectX基底
-	DirectXCommon* dxCommon_ = nullptr;
+	MyEngine::DirectXCommon* dxCommon_ = nullptr;
 
 	//ブレンドモード
 	BlendType2D blendMode_;
@@ -88,7 +88,7 @@ public:
 	/// DirectXCommonのインスタンスへのポインタを取得します。
 	/// </summary>
 	/// <returns> DirectXCommonのインスタンスへのポインタ </returns>
-	DirectXCommon* GetDxCommon() const { return dxCommon_; }
+	MyEngine::DirectXCommon* GetDxCommon() const { return dxCommon_; }
 
 	/// <summary>
 	/// 描画時のブレンドモードを設定します。

@@ -1,13 +1,12 @@
 #pragma once
 
+#include <Base/DirectXCommon.h>
+
 #include "d3d12.h"
 
 #include "cstdint"
 #include "wrl.h"
 #include "queue"
-
-/// === 前方宣言 === ///
-class DirectXCommon;
 
 /// <summary>
 /// シェーダーリソースビューを管理する仕組みです。
@@ -84,7 +83,7 @@ public:
 private:
 
 	//DirectX基底
-	DirectXCommon* directXCommon = nullptr;
+	MyEngine::DirectXCommon* directXCommon = nullptr;
 
 	//解放済みSRV番号
 	std::queue<uint32_t> freeIndices_;

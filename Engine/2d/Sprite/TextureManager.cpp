@@ -22,7 +22,7 @@ TextureManager* TextureManager::GetInstance() {
 void TextureManager::Initialize() {
 
 	//DirectX基底のインスタンスを取得
-	directXCommon_ = DirectXCommon::GetInstance();
+	directXCommon_ = MyEngine::DirectXCommon::GetInstance();
 
 	//SRVマネージャーのインスタンスを取得
 	srvManager_ = SrvManager::GetInstance();
