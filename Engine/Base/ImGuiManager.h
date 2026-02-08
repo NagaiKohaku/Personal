@@ -57,7 +57,7 @@ public:
 private:
 
 	//ウィンドウ管理
-	WinApp* winApp_;
+	MyEngine::WinApp* winApp_;
 
 	//DirectX基底
 	MyEngine::DirectXCommon* directXCommon_;

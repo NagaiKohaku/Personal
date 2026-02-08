@@ -23,7 +23,7 @@ MyEngine::DirectXCommon* MyEngine::DirectXCommon::GetInstance() {
 void MyEngine::DirectXCommon::Initialize() {
 
 	//WinAppクラスを借りる
-	winApp = WinApp::GetInstance();
+	winApp = MyEngine::WinApp::GetInstance();
 
 	//FPS固定初期化
 	InitializeFixFPS();
@@ -269,8 +269,8 @@ void MyEngine::DirectXCommon::InitializeSwapChain() {
 	DXGI_SWAP_CHAIN_DESC1 swapChainDesc{};
 
 	//スワップチェーンの設定
-	swapChainDesc.Width = WinApp::kClientWidth;                  //画面の幅。ウィンドウのクライアント領域と同じものにしておく
-	swapChainDesc.Height = WinApp::kClientHeight;                //画面の高さ。ウィンドウのクライアント領域と同じものにしておく
+	swapChainDesc.Width = MyEngine::WinApp::kClientWidth;                  //画面の幅。ウィンドウのクライアント領域と同じものにしておく
+	swapChainDesc.Height = MyEngine::WinApp::kClientHeight;                //画面の高さ。ウィンドウのクライアント領域と同じものにしておく
 	swapChainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;           //色の形式
 	swapChainDesc.SampleDesc.Count = 1;                          //マルチサンプルしない
 	swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT; //描画のターゲットとして利用する
@@ -296,8 +296,8 @@ void MyEngine::DirectXCommon::InitializeDepthBuffer() {
 	D3D12_RESOURCE_DESC resourceDesc{};
 
 	//リソースの設定
-	resourceDesc.Width = WinApp::kClientWidth;                    //ウィンドウの幅
-	resourceDesc.Height = WinApp::kClientHeight;                  //ウィンドウの高さ
+	resourceDesc.Width = MyEngine::WinApp::kClientWidth;                    //ウィンドウの幅
+	resourceDesc.Height = MyEngine::WinApp::kClientHeight;                  //ウィンドウの高さ
 	resourceDesc.MipLevels = 1;                                   //mipmapの数
 	resourceDesc.DepthOrArraySize = 1;                            //奥行き or 配列Textureの配列数
 	resourceDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;          //DepthSthncilとして利用可能なフォーマット

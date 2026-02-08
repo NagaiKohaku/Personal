@@ -6,15 +6,14 @@
 #pragma comment(lib,"dinput8.lib")
 #pragma comment(lib,"dxguid.lib")
 
+#include <Base/WinApp.h>
+
 #include <Math/Vector/Vector2.h>
 #include <Math/Vector/Vector3.h>
 
 #include "cstdint"
 
 #include "wrl.h"
-
-/// === 前方宣言 === ///
-class WinApp;
 
 /// <summary>
 /// キーボード、マウスなどの入力デバイスを統括して管理するクラスです。
@@ -115,7 +114,7 @@ public:
 private:
 
 	//ウィンドウ管理
-	WinApp* winApp_ = nullptr;
+	MyEngine::WinApp* winApp_ = nullptr;
 
 	//DirectInput
 	Microsoft::WRL::ComPtr<IDirectInput8> directInput_ = nullptr;

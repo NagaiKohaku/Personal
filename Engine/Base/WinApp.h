@@ -5,78 +5,81 @@
 
 #pragma comment(lib,"winmm.lib")
 
-/// <summary>
-/// OSのウィンドウ管理を行う仕組みです。
-/// </summary>
-class WinApp {
-
-	///-------------------------------------------/// 
-	/// メンバ関数
-	///-------------------------------------------///
-public:
+namespace MyEngine {
 
 	/// <summary>
-	/// WinAppのシングルトンインスタンスを取得します。
+	/// OSのウィンドウ管理を行う仕組みです。
 	/// </summary>
-	static WinApp* GetInstance();
+	class WinApp {
 
-	/// <summary>
-	/// OSから送られてくるウィンドウメッセージを処理します。
-	/// </summary>
-	static LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
+		///-------------------------------------------/// 
+		/// メンバ関数
+		///-------------------------------------------///
+	public:
 
-	/// <summary>
-	/// ウィンドウを初期化して表示します。
-	/// </summary>
-	void Initialize();
+		/// <summary>
+		/// WinAppのシングルトンインスタンスを取得します。
+		/// </summary>
+		static WinApp* GetInstance();
 
-	/// <summary>
-	/// ウィンドウを閉じ、COMを解放します。
-	/// </summary>
-	void Finalize();
+		/// <summary>
+		/// OSから送られてくるウィンドウメッセージを処理します。
+		/// </summary>
+		static LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 
-	/// <summary>
-	/// ウィンドウに送られてきたメッセージを取得して処理します。
-	/// </summary>
-	bool ProcessMessage();
+		/// <summary>
+		/// ウィンドウを初期化して表示します。
+		/// </summary>
+		void Initialize();
 
-	///-------------------------------------------/// 
-	/// 静的メンバ変数
-	///-------------------------------------------///
-public:
+		/// <summary>
+		/// ウィンドウを閉じ、COMを解放します。
+		/// </summary>
+		void Finalize();
 
-	//ウィンドウの横幅
-	static const int32_t kClientWidth = 1280;
+		/// <summary>
+		/// ウィンドウに送られてきたメッセージを取得して処理します。
+		/// </summary>
+		bool ProcessMessage();
 
-	//ウィンドウの縦幅
-	static const int32_t kClientHeight = 720;
+		///-------------------------------------------/// 
+		/// 静的メンバ変数
+		///-------------------------------------------///
+	public:
 
-	///-------------------------------------------/// 
-	/// メンバ変数
-	///-------------------------------------------///
-private:
+		//ウィンドウの横幅
+		static const int32_t kClientWidth = 1280;
 
-	//ウィンドウクラス
-	WNDCLASS wc_{};
+		//ウィンドウの縦幅
+		static const int32_t kClientHeight = 720;
 
-	//ウィンドウハンドル
-	HWND hwnd_ = nullptr;
+		///-------------------------------------------/// 
+		/// メンバ変数
+		///-------------------------------------------///
+	private:
 
-	///-------------------------------------------/// 
-	/// ゲッター・セッター
-	///-------------------------------------------///
-public:
+		//ウィンドウクラス
+		WNDCLASS wc_{};
 
-	/// <summary>
-	/// インスタンスハンドルを取得
-	/// </summary>
-	/// <returns>インスタンスハンドル</returns>
-	HINSTANCE GetHInstance() const { return wc_.hInstance; }
+		//ウィンドウハンドル
+		HWND hwnd_ = nullptr;
 
-	/// <summary>
-	/// ウィンドウハンドルを取得
-	/// </summary>
-	/// <returns>ウィンドウハンドル</returns>
-	HWND GetHwnd() const { return hwnd_; }
+		///-------------------------------------------/// 
+		/// ゲッター・セッター
+		///-------------------------------------------///
+	public:
 
-};
+		/// <summary>
+		/// インスタンスハンドルを取得
+		/// </summary>
+		/// <returns>インスタンスハンドル</returns>
+		HINSTANCE GetHInstance() const { return wc_.hInstance; }
+
+		/// <summary>
+		/// ウィンドウハンドルを取得
+		/// </summary>
+		/// <returns>ウィンドウハンドル</returns>
+		HWND GetHwnd() const { return hwnd_; }
+
+	};
+}

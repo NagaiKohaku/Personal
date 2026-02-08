@@ -38,7 +38,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	///-------------------------------------------///
 
 	//ウィンドウ
-	WinApp* winApp = WinApp::GetInstance();
+	MyEngine::WinApp* winApp = MyEngine::WinApp::GetInstance();
 	winApp->Initialize();
 
 	//DirectX基底

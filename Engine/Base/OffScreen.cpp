@@ -48,8 +48,8 @@ void OffScreen::Initialize() {
 	//レンダーテクスチャの生成
 	renderTextureResrouce_ = CreateRenderTexture(
 		dxCommon_->GetDevice(),
-		WinApp::kClientWidth,
-		WinApp::kClientHeight,
+		MyEngine::WinApp::kClientWidth,
+		MyEngine::WinApp::kClientHeight,
 		DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,
 		offScreenClearColor_
 	);
@@ -57,8 +57,8 @@ void OffScreen::Initialize() {
 	//深度テクスチャの生成
 	depthTextureResource_ = CreateDepthTexture(
 		dxCommon_->GetDevice(),
-		WinApp::kClientWidth,
-		WinApp::kClientHeight,
+		MyEngine::WinApp::kClientWidth,
+		MyEngine::WinApp::kClientHeight,
 		DXGI_FORMAT_D24_UNORM_S8_UINT
 	);
 

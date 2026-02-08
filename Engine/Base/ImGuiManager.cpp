@@ -21,7 +21,7 @@ void ImGuiManager::Initialize() {
 	HRESULT hr;
 
 	//ウィンドウ管理のインスタンスを取得
-	winApp_ = WinApp::GetInstance();
+	winApp_ = MyEngine::WinApp::GetInstance();
 
 	//DirectX基底のインスタンスを取得
 	directXCommon_ = MyEngine::DirectXCommon::GetInstance();

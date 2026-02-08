@@ -48,7 +48,7 @@ void Fade::Update() {
 		if (player_ != nullptr) {
 
 			//プレイヤーの位置を2D座標に変換
-			Matrix4x4 viewport = MakeViewportMatrix(0, 0, WinApp::kClientWidth, WinApp::kClientHeight, 0, 1);
+			Matrix4x4 viewport = MakeViewportMatrix(0, 0, MyEngine::WinApp::kClientWidth, MyEngine::WinApp::kClientHeight, 0, 1);
 
 			Matrix4x4 viewProjectionViewport = camera_->GetViewProjectionMatrix() * viewport;
 
@@ -98,7 +98,7 @@ void Fade::StartFadeIn() {
 	//スプライトの初期座標・初期サイズの設定
 	for (auto& fadeSprite : fadeSprites_) {
 
-		fadeSprite.sprite->SetTranslate(Vector2(WinApp::kClientWidth / 2.0f,WinApp::kClientHeight / 2.0f));
+		fadeSprite.sprite->SetTranslate(Vector2(MyEngine::WinApp::kClientWidth / 2.0f, MyEngine::WinApp::kClientHeight / 2.0f));
 
 		fadeSprite.sprite->SetSize(fadeSprite.endSize);
 
@@ -166,7 +166,7 @@ void Fade::StartFadeOut() {
 
 	//スプライトの初期座標・初期サイズの設定
 	for (auto& fadeSprite : fadeSprites_) {
-		fadeSprite.sprite->SetTranslate(Vector2(WinApp::kClientWidth / 2.0f, WinApp::kClientHeight / 2.0f));
+		fadeSprite.sprite->SetTranslate(Vector2(MyEngine::WinApp::kClientWidth / 2.0f, MyEngine::WinApp::kClientHeight / 2.0f));
 		fadeSprite.sprite->SetSize(fadeSprite.startSize);
 	}
 }

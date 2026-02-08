@@ -6,10 +6,10 @@
 #include "wrl.h"
 
 ///=====================================================/// 
-/// WinAppのシングルトンインスタンスを取得
+/// MyEngine::WinAppのシングルトンインスタンスを取得
 ///=====================================================///
-WinApp* WinApp::GetInstance() {
-	static WinApp instance;
+MyEngine::WinApp* MyEngine::WinApp::GetInstance() {
+	static MyEngine::WinApp instance;
 	return &instance;
 }
 
@@ -21,7 +21,7 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hwnd, UINT msg
 ///=====================================================/// 
 /// OSから送られてくるウィンドウメッセージを処理
 ///=====================================================///
-LRESULT CALLBACK WinApp::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
+LRESULT CALLBACK MyEngine::WinApp::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
 
 #ifdef _USE_IMGUI
 
@@ -50,7 +50,7 @@ LRESULT CALLBACK WinApp::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM l
 ///=====================================================/// 
 /// ウィンドウを初期化して表示
 ///=====================================================///
-void WinApp::Initialize() {
+void MyEngine::WinApp::Initialize() {
 
 	///-------------------------------------------/// 
 	/// ウィンドウクラスの設定
@@ -112,7 +112,7 @@ void WinApp::Initialize() {
 ///=====================================================/// 
 /// ウィンドウを閉じ、COMを解放
 ///=====================================================///
-void WinApp::Finalize() {
+void MyEngine::WinApp::Finalize() {
 
 	//ウィンドウを閉じる
 	CloseWindow(hwnd_);
@@ -122,7 +122,7 @@ void WinApp::Finalize() {
 ///=====================================================/// 
 /// ウィンドウに送られてきたメッセージを取得して処理
 ///=====================================================///
-bool WinApp::ProcessMessage() {
+bool MyEngine::WinApp::ProcessMessage() {
 
 	//ウィンドウへのアクションの情報を受け取る
 	MSG msg{};

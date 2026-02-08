@@ -34,7 +34,7 @@ void Camera::Initialize() {
 	fovY_ = 0.45f;
 
 	//アスペクト比の設定
-	aspectRatio_ = static_cast<float>(WinApp::kClientWidth) / static_cast<float>(WinApp::kClientHeight);
+	aspectRatio_ = static_cast<float>(MyEngine::WinApp::kClientWidth) / static_cast<float>(MyEngine::WinApp::kClientHeight);
 
 	//NearClipの設定
 	nearClip_ = 0.1f;

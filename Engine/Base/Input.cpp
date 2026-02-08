@@ -20,7 +20,7 @@ void Input::Initialize() {
 	HRESULT result;
 
 	//ウィンドウ管理のインスタンスを取得
-	winApp_ = WinApp::GetInstance();
+	winApp_ = MyEngine::WinApp::GetInstance();
 
 	//DirectInputオブジェクトの生成
 	result = DirectInput8Create(

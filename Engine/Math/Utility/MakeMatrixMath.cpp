@@ -318,7 +318,7 @@ Vector3 Transform(const Vector3& v, const Matrix4x4& m) {
 Vector3 Vector3ToScreenSpace(Camera* camera, Vector3 pos) {
 
 	//ビューポート行列
-	Matrix4x4 viewport = MakeViewportMatrix(0, 0, WinApp::kClientWidth, WinApp::kClientHeight, 0, 1);
+	Matrix4x4 viewport = MakeViewportMatrix(0, 0, MyEngine::WinApp::kClientWidth, MyEngine::WinApp::kClientHeight, 0, 1);
 
 	//カメラのビュープロジェクション行列とビューポート行列を掛ける
 	Matrix4x4 viewProjectionViewport = camera->GetViewProjectionMatrix() * viewport;

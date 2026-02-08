@@ -81,7 +81,7 @@ void Object2D::Update() {
 	Matrix4x4 viewMatrix = MakeIdentity4x4();
 
 	//プロジェクション行列を生成
-	Matrix4x4 projectionMatrix = MakeOrthographicMatrix(0.0f, 0.0f, WinApp::kClientWidth, WinApp::kClientHeight, 0.0f, 100.0f);
+	Matrix4x4 projectionMatrix = MakeOrthographicMatrix(0.0f, 0.0f, MyEngine::WinApp::kClientWidth, MyEngine::WinApp::kClientHeight, 0.0f, 100.0f);
 
 	//WVPデータを設定
 	WVPData_->WVP = worldMatrix * (viewMatrix * projectionMatrix);

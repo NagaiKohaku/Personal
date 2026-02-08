@@ -17,11 +17,11 @@
 #include "vector"
 #include "wrl.h"
 
+#include <Base/WinApp.h>
+
 #include <Math/Vector/Vector4.h>
 
 /// === 前方宣言 === ///
-class WinApp;
-
 class RTVManager;
 
 class DSVManager;
@@ -189,7 +189,7 @@ namespace MyEngine {
 	private:
 
 		//WinAppクラス(借り物)
-		WinApp* winApp = nullptr;
+		MyEngine::WinApp* winApp = nullptr;
 
 		//RTVマネージャー
 		RTVManager* rtvManager_ = nullptr;
