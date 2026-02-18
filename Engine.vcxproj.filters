@@ -352,6 +352,8 @@
     <ClCompile Include="Engine\Math\Transform\WorldTransform.cpp">
       <Filter>Engine\Math\Transform</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\Base\Framework.cpp" />
+    <ClCompile Include="Engine\Base\Game.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application\Object\Camera\FollowCamera.h">
@@ -675,6 +677,8 @@
     <ClInclude Include="Engine\Math\Shape\AABB.h">
       <Filter>Engine\Math\Shape</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\Base\Framework.h" />
+    <ClInclude Include="Engine\Base\Game.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resource\Shader\DebugObject.hlsli">

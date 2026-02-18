@@ -189,6 +189,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Base\Audio.cpp" />
     <ClCompile Include="Engine\3d\Camera\Camera.cpp" />
     <ClCompile Include="Engine\Base\DirectXCommon.cpp" />
+    <ClCompile Include="Engine\Base\Framework.cpp" />
+    <ClCompile Include="Engine\Base\Game.cpp" />
     <ClCompile Include="Engine\Base\ImGuiManager.cpp" />
     <ClCompile Include="Engine\Base\Input.cpp" />
     <ClCompile Include="Engine\3d\Model\ModelManager.cpp" />
@@ -290,6 +292,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Application\Object\Bullet\Core\BulletManager.h" />
     <ClInclude Include="Engine\2d\Sprite\Sprite.h" />
     <ClInclude Include="Engine\2d\Sprite\SpriteCommon.h" />
+    <ClInclude Include="Engine\Base\Framework.h" />
+    <ClInclude Include="Engine\Base\Game.h" />
     <ClInclude Include="Engine\Base\LayerType.h" />
     <ClInclude Include="Engine\3d\Model\Model.h" />
     <ClInclude Include="Engine\3d\Model\ModelCommon.h" />
