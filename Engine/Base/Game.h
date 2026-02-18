@@ -3,11 +3,12 @@
 #include <Base/Framework.h>
 
 #include <Base/ImGuiManager.h>
+#include <2d/Sprite/SpriteManager.h>
+#include <3d/Collider/ColliderManager.h>
 #include <Object/Manager/ObjectManager.h>
 #include <Effect/Manager/EmitterManager.h>
 #include <Effect/Manager/UIManager.h>
-#include <2d/Sprite/SpriteManager.h>
-#include <3d/Collider/ColliderManager.h>
+#include <LevelEditor/LevelDataLoader.h>
 #include <Scene/SceneManager.h>
 #include <Effect/Fade/Fade.h>
 #include <Effect/Flash/Flash.h>
@@ -39,6 +40,8 @@ namespace MyEngine {
 		EmitterManager* emitterManager_;
 
 		UIManager* uiManager_;
+
+		LevelDataLoader* levelDataLoder_;
 
 		SceneManager* sceneManager_;
 

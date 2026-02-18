@@ -21,6 +21,9 @@ namespace MyEngine {
 		uiManager_ = UIManager::GetInstance();
 		uiManager_->Initialize();
 
+		levelDataLoder_ = LevelDataLoader::GetInstance();
+		levelDataLoder_->Initialize();
+
 		sceneManager_ = SceneManager::GetInstance();
 		sceneManager_->Initialize();
 
@@ -75,6 +78,8 @@ namespace MyEngine {
 		emitterManager_->Draw();
 
 		uiManager_->Draw();
+
+		sceneManager_->Draw();
 
 		fade_->Draw();
 
