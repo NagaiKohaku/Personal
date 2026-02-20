@@ -9,6 +9,8 @@
 #include "Scene/TitleScene.h"
 #include "Scene/ParticleEditorScene.h"
 
+using namespace MyEngine;
+
 ///=====================================================/// 
 /// SceneManagerのシングルトンインスタンスを取得
 ///=====================================================///
@@ -20,13 +22,15 @@ SceneManager* SceneManager::GetInstance() {
 ///=====================================================/// 
 /// 現在設定されているシーンの初期化処理を実行
 ///=====================================================///
-void SceneManager::Initialize() {
+void SceneManager::Initialize(Camera* cameraPtr) {
+
+	camera_ = cameraPtr;
 
 	/// ===シーンの中身の確認=== ///
 
 	if (currentScene_) {
 
-		currentScene_->Initialize();
+		currentScene_->Initialize(camera_);
 	}
 }
 
@@ -92,7 +96,7 @@ void SceneManager::ChangeScene(SceneType sceneType) {
 	currentScene_ = CreateScene(sceneType);
 
 	// シーンの初期化
-	Initialize();
+	Initialize(camera_);
 }
 
 ///=====================================================/// 

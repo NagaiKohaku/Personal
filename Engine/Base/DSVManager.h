@@ -34,7 +34,7 @@ namespace MyEngine {
 		/// <summary>
 		/// DSV用のデスクリプタヒープを初期化します。
 		/// </summary>
-		void Initialize();
+		void Initialize(DirectXCommon* dxCommonPtr);
 
 		/// <summary>
 		/// 描画前処理
@@ -73,7 +73,7 @@ namespace MyEngine {
 	private:
 
 		//DirectX基底
-		DirectXCommon* directXCommon = nullptr;
+		DirectXCommon* dxCommon_ = nullptr;
 
 		//現在のSRV番号
 		uint32_t useIndex_ = 0;

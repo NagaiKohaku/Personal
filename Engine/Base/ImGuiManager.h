@@ -32,7 +32,7 @@ namespace MyEngine {
 		/// <summary>
 		/// ImGuiを初期化します。
 		/// </summary>
-		void Initialize();
+		void Initialize(WinApp* winAppPtr, DirectXCommon* dxCommonPtr);
 
 		/// <summary>
 		/// ImGuiのリソースを解放し、終了処理を行います。
@@ -63,7 +63,7 @@ namespace MyEngine {
 		WinApp* winApp_;
 
 		//DirectX基底
-		DirectXCommon* directXCommon_;
+		DirectXCommon* dxCommon_;
 
 		//SRVヒープ
 		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> srvHeap_;

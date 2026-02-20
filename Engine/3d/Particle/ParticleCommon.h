@@ -43,7 +43,7 @@ namespace MyEngine {
 		/// <summary>
 		/// ParticleCommonの初期化を行います。
 		/// </summary>
-		void Initialize();
+		void Initialize(DirectXCommon* dxCommonPtr);
 
 		/// <summary>
 		/// パーティクルの描画に必要な共通設定を行います。

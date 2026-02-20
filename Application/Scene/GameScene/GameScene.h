@@ -27,7 +27,7 @@ public:
 	/// <summary>
 	/// ゲームシーンの初期化を行います。
 	/// </summary>
-	void Initialize() override;
+	void Initialize(MyEngine::Camera* cameraPtr) override;
 
 	/// <summary>
 	/// ゲームシーンの終了処理を行います。
@@ -53,9 +53,6 @@ public:
 	/// メンバ変数
 	///-------------------------------------------///
 private:
-
-	//カメラ
-	std::unique_ptr<MyEngine::Camera> camera_;
 
 	//追従カメラ
 	std::unique_ptr<FollowCamera> followCamera_;

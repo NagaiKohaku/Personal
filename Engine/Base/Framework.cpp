@@ -31,73 +31,73 @@ namespace MyEngine {
 		///-------------------------------------------///
 
 		//ウィンドウ
-		winApp_ = WinApp::GetInstance();
+		winApp_ = std::make_unique<WinApp>();
 		winApp_->Initialize();
 
 		//DirectX基底
-		directXCommon_ = DirectXCommon::GetInstance();
-		directXCommon_->Initialize();
+		dxCommon_ = std::make_unique<DirectXCommon>();
+		dxCommon_->Initialize(winApp_.get());
 
 		//RTVマネージャー
 		rtvManager_ = RTVManager::GetInstance();
-		rtvManager_->Initialize();
+		rtvManager_->Initialize(dxCommon_.get());
 
 		//DSVマネージャー
 		dsvManager_ = DSVManager::GetInstance();
-		dsvManager_->Initialize();
+		dsvManager_->Initialize(dxCommon_.get());
 
 		//SRVマネージャー
 		srvManager_ = SrvManager::GetInstance();
-		srvManager_->Initialize();
+		srvManager_->Initialize(dxCommon_.get());
 
 		//描画系の初期化
-		directXCommon_->InitializeRendering();
+		dxCommon_->InitializeRendering();
 
 		//オフスクリーン
 		offScreen_ = OffScreen::GetInstance();
-		offScreen_->Initialize();
+		offScreen_->Initialize(winApp_.get(), dxCommon_.get());
 
 		//スプライト基底
 		spriteCommon_ = SpriteCommon::GetInstance();
-		spriteCommon_->Initialize();
+		spriteCommon_->Initialize(dxCommon_.get());
 
 		//モデル基底
 		modelCommon_ = ModelCommon::GetInstance();
-		modelCommon_->Initialize();
+		modelCommon_->Initialize(dxCommon_.get());
 
 		//テクスチャマネージャー
-		TextureManager::GetInstance()->Initialize();
+		TextureManager::GetInstance()->Initialize(dxCommon_.get());
 
 		//モデルマネージャー
 		ModelManager::GetInstance()->Initialize();
 
 		//2Dオブジェクト基底
 		object2DCommon_ = Object2DCommon::GetInstance();
-		object2DCommon_->Initialize();
+		object2DCommon_->Initialize(dxCommon_.get());
 
 		//3Dオブジェクト基底
 		object3DCommon_ = Object3DCommon::GetInstance();
-		object3DCommon_->Initialize();
+		object3DCommon_->Initialize(dxCommon_.get());
 
 		//デバッグオブジェクト基底
 		debugObjectCommon_ = DebugObjectCommon::GetInstance();
-		debugObjectCommon_->Initialize();
+		debugObjectCommon_->Initialize(dxCommon_.get());
 
 		//スカイボックス基底
 		skyBoxCommon_ = SkyBoxCommon::GetInstance();
-		skyBoxCommon_->Initialize();
+		skyBoxCommon_->Initialize(dxCommon_.get());
 
 		//パーティクル基底
 		particleCommon_ = ParticleCommon::GetInstance();
-		particleCommon_->Initialize();
+		particleCommon_->Initialize(dxCommon_.get());
 
 		//ImGuiマネージャー
 		imGuiManager_ = ImGuiManager::GetInstance();
-		imGuiManager_->Initialize();
+		imGuiManager_->Initialize(winApp_.get(), dxCommon_.get());
 
 		//入力
 		input_ = Input::GetInstance();
-		input_->Initialize();
+		input_->Initialize(winApp_.get());
 
 		//音声
 		audio_ = Audio::GetInstance();
@@ -151,7 +151,7 @@ namespace MyEngine {
 
 		offScreen_->PostDraw();
 
-		directXCommon_->PreDraw();
+		dxCommon_->PreDraw();
 
 		srvManager_->PreDraw();
 
@@ -166,7 +166,7 @@ namespace MyEngine {
 
 #endif // _USE_IMGUI
 
-		directXCommon_->PostDraw();
+		dxCommon_->PostDraw();
 	}
 
 	void Framework::BeginImGui() {

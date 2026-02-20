@@ -15,23 +15,26 @@ namespace MyEngine {
 		objectManager_ = ObjectManager::GetInstance();
 		objectManager_->Initialize();
 
+		camera_ = std::make_unique<Camera>();
+		camera_->Initialize(static_cast<float>(Framework::GetWinApp()->GetWindowWidth()), static_cast<float>(Framework::GetWinApp()->GetWindowHeight()));
+
 		emitterManager_ = EmitterManager::GetInstance();
 		emitterManager_->Initialize();
 
 		uiManager_ = UIManager::GetInstance();
-		uiManager_->Initialize();
+		uiManager_->Initialize(camera_.get());
 
 		levelDataLoder_ = LevelDataLoader::GetInstance();
 		levelDataLoder_->Initialize();
 
 		sceneManager_ = SceneManager::GetInstance();
-		sceneManager_->Initialize();
+		sceneManager_->Initialize(camera_.get());
 
 		fade_ = Fade::GetInstance();
-		fade_->Initialize();
+		fade_->Initialize(Framework::GetWinApp(),camera_.get());
 
 		flash_ = Flash::GetInstance();
-		flash_->Initialize();
+		flash_->Initialize(camera_.get());
 
 		sceneManager_->ChangeScene(SceneManager::SceneType::kTitle);
 

@@ -36,7 +36,7 @@ namespace MyEngine {
 		/// <summary>
 		/// DirectInputを使用してキーボードとマウスの入力デバイスを初期化します。
 		/// </summary>
-		void Initialize();
+		void Initialize(WinApp* winAppPtr);
 
 		/// <summary>
 		/// 毎フレーム、キーボードとマウスの入力状態を更新します。

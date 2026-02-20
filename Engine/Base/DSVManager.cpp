@@ -17,16 +17,16 @@ namespace MyEngine {
 	///=====================================================/// 
 	/// DSV用のデスクリプタヒープを初期化
 	///=====================================================///
-	void DSVManager::Initialize() {
+	void DSVManager::Initialize(DirectXCommon* dxCommonPtr) {
 
 		//DirectX基底のインスタンスを取得
-		directXCommon = DirectXCommon::GetInstance();
+		dxCommon_ = dxCommonPtr;
 
 		//DSVデスクリプタヒープの初期化
-		dsvDescriptorHeap_ = directXCommon->CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_DSV, kMaxDSVCount_, false);
+		dsvDescriptorHeap_ = dxCommon_->CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_DSV, kMaxDSVCount_, false);
 
 		//DSVデスクリプタヒープのサイズを取得
-		dsvDescriptorSize_ = directXCommon->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
+		dsvDescriptorSize_ = dxCommon_->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
 	}
 
 	///=====================================================/// 
@@ -80,7 +80,7 @@ namespace MyEngine {
 		D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = GetCPUDescriptorHandle(dsvIndex);
 
 		//DSVHeapの先頭にDSVを作る
-		directXCommon->GetDevice()->CreateDepthStencilView(
+		dxCommon_->GetDevice()->CreateDepthStencilView(
 			pResource,
 			&dsvDesc,
 			dsvHandle
@@ -103,7 +103,7 @@ namespace MyEngine {
 		D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = GetCPUDescriptorHandle(dsvIndex);
 
 		//DSVHeapの先頭にDSVを作る
-		directXCommon->GetDevice()->CreateDepthStencilView(
+		dxCommon_->GetDevice()->CreateDepthStencilView(
 			pResource,
 			&dsvDesc,
 			dsvHandle

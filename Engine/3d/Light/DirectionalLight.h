@@ -35,7 +35,7 @@ namespace MyEngine {
 		/// <summary>
 		/// ディレクショナルライトを初期化します。
 		/// </summary>
-		void Initialize();
+		void Initialize(DirectXCommon* dxCommonPtr);
 
 		/// <summary>
 		/// ディレクショナルライトの更新処理を行います。

@@ -5,16 +5,16 @@ namespace MyEngine {
 	///=====================================================/// 
 	/// CylinderMeshの初期化
 	///=====================================================///
-	void CylinderMesh::Initialize() {
+	void CylinderMesh::Initialize(DirectXCommon* dxCommonPtr) {
 
 		/// === シングルトンインスタンスの取得 === ///
 
-		directXCommon_ = DirectXCommon::GetInstance();
+		dxCommon_ = dxCommonPtr;
 
 		/// === 頂点リソースの生成 === ///
 
 		//リソースの生成
-		vertexResource_ = directXCommon_->CreateBufferResource(sizeof(VertexData) * 4 * kCylinderDivide);
+		vertexResource_ = dxCommon_->CreateBufferResource(sizeof(VertexData) * 4 * kCylinderDivide);
 
 		//バッファビューの作成
 		vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
@@ -67,7 +67,7 @@ namespace MyEngine {
 		indexCount_ = 6 * kCylinderDivide;
 
 		//頂点インデックスリソースの生成
-		indexResource_ = directXCommon_->CreateBufferResource(sizeof(uint32_t) * indexCount_);
+		indexResource_ = dxCommon_->CreateBufferResource(sizeof(uint32_t) * indexCount_);
 
 		//リソースの場所を取得
 		indexBufferView_.BufferLocation = indexResource_->GetGPUVirtualAddress();

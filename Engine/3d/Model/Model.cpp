@@ -36,7 +36,7 @@ namespace MyEngine {
 		mesh_->SetIndexCount(uint32_t(modelData_.indices.size()));
 
 		//初期化
-		mesh_->Initialize();
+		mesh_->Initialize(modelCommon_->GetDxCommon());
 
 		//頂点データとインデックスデータのコピー
 		mesh_->CopyMeshData(modelData_.indices, modelData_.vertices);
@@ -74,7 +74,7 @@ namespace MyEngine {
 		mesh_ = CreateMesh(type);
 
 		//初期化
-		mesh_->Initialize();
+		mesh_->Initialize(modelCommon_->GetDxCommon());
 
 		//頂点データの設定
 		for (uint32_t i = 0; i < mesh_->GetVertexCount(); i++) {
@@ -134,7 +134,7 @@ namespace MyEngine {
 		mesh_->SetIndexCount(uint32_t(modelData_.indices.size()));
 
 		//初期化
-		mesh_->Initialize();
+		mesh_->Initialize(modelCommon_->GetDxCommon());
 
 		//頂点データとインデックスデータのコピー
 		mesh_->CopyMeshData(modelData_.indices, modelData_.vertices);

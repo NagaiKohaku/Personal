@@ -21,10 +21,10 @@ namespace MyEngine {
 	///=====================================================/// 
 	/// TextureManagerを初期化
 	///=====================================================///
-	void TextureManager::Initialize() {
+	void TextureManager::Initialize(DirectXCommon* dxCommonPtr) {
 
 		//DirectX基底のインスタンスを取得
-		directXCommon_ = DirectXCommon::GetInstance();
+		dxCommon_ = dxCommonPtr;
 
 		//SRVマネージャーのインスタンスを取得
 		srvManager_ = SrvManager::GetInstance();
@@ -101,7 +101,7 @@ namespace MyEngine {
 		srvDesc.Texture2D.MipLevels = UINT(textureData.metaData.mipLevels);
 
 		//SRVの生成
-		directXCommon_->GetDevice()->CreateShaderResourceView(textureData.resource.Get(), &srvDesc, textureData.srvHandleCPU);
+		dxCommon_->GetDevice()->CreateShaderResourceView(textureData.resource.Get(), &srvDesc, textureData.srvHandleCPU);
 	}
 
 	///==============================================================/// 
@@ -183,7 +183,7 @@ namespace MyEngine {
 		srvDesc.TextureCube.ResourceMinLODClamp = 0.0f;
 
 		//SRVの生成
-		directXCommon_->GetDevice()->CreateShaderResourceView(textureData.resource.Get(), &srvDesc, textureData.srvHandleCPU);
+		dxCommon_->GetDevice()->CreateShaderResourceView(textureData.resource.Get(), &srvDesc, textureData.srvHandleCPU);
 	}
 
 	///=====================================================/// 
@@ -244,7 +244,7 @@ namespace MyEngine {
 		//Resourceの生成
 		Microsoft::WRL::ComPtr<ID3D12Resource> resource = nullptr;
 
-		HRESULT hr = directXCommon_->GetDevice()->CreateCommittedResource(
+		HRESULT hr = dxCommon_->GetDevice()->CreateCommittedResource(
 			&heapProperties,                //Heapの設定
 			D3D12_HEAP_FLAG_NONE,           //Heapの特殊な設定。特になし
 			&resourceDesc,                  //Resourceの設定
@@ -284,7 +284,7 @@ namespace MyEngine {
 
 		Microsoft::WRL::ComPtr<ID3D12Resource> resource = nullptr;
 
-		HRESULT hr = directXCommon_->GetDevice()->CreateCommittedResource(
+		HRESULT hr = dxCommon_->GetDevice()->CreateCommittedResource(
 			&heapProperties,
 			D3D12_HEAP_FLAG_NONE,
 			&resourceDesc,
@@ -312,7 +312,7 @@ namespace MyEngine {
 
 		//サブリソースの生成
 		DirectX::PrepareUpload(
-			directXCommon_->GetDevice(), //デバイス
+			dxCommon_->GetDevice(), //デバイス
 			mipImages.GetImages(),       //イメージ
 			mipImages.GetImageCount(),   //イメージ数
 			mipImages.GetMetadata(),     //メタデータ
@@ -327,11 +327,11 @@ namespace MyEngine {
 		);
 
 		//中間リソースの場所を作成
-		Microsoft::WRL::ComPtr<ID3D12Resource> intermediateResource = directXCommon_->CreateBufferResource(intermediateSize);
+		Microsoft::WRL::ComPtr<ID3D12Resource> intermediateResource = dxCommon_->CreateBufferResource(intermediateSize);
 
 		//中間リソースをサブリソースにコピー
 		UpdateSubresources(
-			directXCommon_->GetCommandList(), //コマンドリスト
+			dxCommon_->GetCommandList(), //コマンドリスト
 			textureData.Get(),                //コピー先のテクスチャリソース
 			intermediateResource.Get(),       //コピー元の中間リソース
 			0,                                //中間リソースの開始オフセット
@@ -351,7 +351,7 @@ namespace MyEngine {
 		barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_GENERIC_READ;        //読み取り可能な状態に遷移
 
 		//コマンドリストにリソースバリアを設定
-		directXCommon_->GetCommandList()->ResourceBarrier(1, &barrier);
+		dxCommon_->GetCommandList()->ResourceBarrier(1, &barrier);
 
 		return intermediateResource;
 	}
@@ -381,7 +381,7 @@ namespace MyEngine {
 
 		resourceDesc = CD3DX12_RESOURCE_DESC::Buffer(uploadBufferSize);
 
-		directXCommon_->GetDevice()->CreateCommittedResource(
+		dxCommon_->GetDevice()->CreateCommittedResource(
 			&heapProperties,
 			D3D12_HEAP_FLAG_NONE,
 			&resourceDesc,
@@ -402,7 +402,7 @@ namespace MyEngine {
 		}
 
 		UpdateSubresources(
-			directXCommon_->GetCommandList(),
+			dxCommon_->GetCommandList(),
 			textureData.Get(),
 			intermediateResource.Get(),
 			0,
@@ -422,7 +422,7 @@ namespace MyEngine {
 		barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_GENERIC_READ;        //読み取り可能な状態に遷移
 
 		//コマンドリストにリソースバリアを設定
-		directXCommon_->GetCommandList()->ResourceBarrier(1, &barrier);
+		dxCommon_->GetCommandList()->ResourceBarrier(1, &barrier);
 
 		return intermediateResource;
 	}

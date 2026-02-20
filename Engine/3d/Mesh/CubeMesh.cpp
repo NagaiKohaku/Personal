@@ -5,11 +5,11 @@ namespace MyEngine {
 	///=====================================================/// 
 	/// CubeMeshの初期化
 	///=====================================================///
-	void CubeMesh::Initialize() {
+	void CubeMesh::Initialize(DirectXCommon* dxCommonPtr) {
 
 		/// === シングルトンインスタンスの取得 === ///
 
-		directXCommon_ = DirectXCommon::GetInstance();
+		dxCommon_ = dxCommonPtr;
 
 		/// === 頂点リソースの生成 === ///
 
@@ -17,7 +17,7 @@ namespace MyEngine {
 		vertexCount_ = 4 * 6;
 
 		//頂点リソースの生成
-		vertexResource_ = directXCommon_->CreateBufferResource(sizeof(VertexData) * vertexCount_);
+		vertexResource_ = dxCommon_->CreateBufferResource(sizeof(VertexData) * vertexCount_);
 
 		//頂点バッファビューの作成
 		vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
@@ -141,7 +141,7 @@ namespace MyEngine {
 		indexCount_ = 6 * 6;
 
 		//頂点インデックスリソースの生成
-		indexResource_ = directXCommon_->CreateBufferResource(sizeof(uint32_t) * indexCount_);
+		indexResource_ = dxCommon_->CreateBufferResource(sizeof(uint32_t) * indexCount_);
 
 		//リソースの場所を取得
 		indexBufferView_.BufferLocation = indexResource_->GetGPUVirtualAddress();

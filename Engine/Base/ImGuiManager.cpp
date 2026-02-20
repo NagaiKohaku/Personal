@@ -16,17 +16,17 @@ namespace MyEngine {
 	///=====================================================/// 
 	/// ImGuiを初期化
 	///=====================================================///
-	void ImGuiManager::Initialize() {
+	void ImGuiManager::Initialize(WinApp* winAppPtr, DirectXCommon* dxCommonPtr) {
 
 #ifdef _USE_IMGUI
 
 		HRESULT hr;
 
 		//ウィンドウ管理のインスタンスを取得
-		winApp_ = WinApp::GetInstance();
+		winApp_ = winAppPtr;
 
 		//DirectX基底のインスタンスを取得
-		directXCommon_ = DirectXCommon::GetInstance();
+		dxCommon_ = dxCommonPtr;
 
 		//デスクリプタヒープ設定
 		D3D12_DESCRIPTOR_HEAP_DESC desc = {};
@@ -35,7 +35,7 @@ namespace MyEngine {
 		desc.NumDescriptors = 1;
 		desc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
 
-		hr = directXCommon_->GetDevice()->CreateDescriptorHeap(&desc, IID_PPV_ARGS(&srvHeap_));
+		hr = dxCommon_->GetDevice()->CreateDescriptorHeap(&desc, IID_PPV_ARGS(&srvHeap_));
 
 		assert(SUCCEEDED(hr));
 
@@ -45,8 +45,8 @@ namespace MyEngine {
 		ImGui::StyleColorsDark();
 		ImGui_ImplWin32_Init(winApp_->GetHwnd());
 		ImGui_ImplDX12_Init(
-			directXCommon_->GetDevice(),
-			static_cast<int>(directXCommon_->GetBackBufferCount()),
+			dxCommon_->GetDevice(),
+			static_cast<int>(dxCommon_->GetBackBufferCount()),
 			DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,
 			srvHeap_.Get(),
 			srvHeap_->GetCPUDescriptorHandleForHeapStart(),
@@ -96,7 +96,7 @@ namespace MyEngine {
 
 #ifdef _USE_IMGUI
 
-		ID3D12GraphicsCommandList* commandList = directXCommon_->GetCommandList();
+		ID3D12GraphicsCommandList* commandList = dxCommon_->GetCommandList();
 
 		//デスクリプタヒープの配列をセットする
 		ID3D12DescriptorHeap* ppHeaps[] = { srvHeap_.Get() };

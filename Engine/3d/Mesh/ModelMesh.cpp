@@ -7,14 +7,14 @@ namespace MyEngine {
 	///=====================================================/// 
 	/// ModelMeshの初期化
 	///=====================================================///
-	void ModelMesh::Initialize() {
+	void ModelMesh::Initialize(DirectXCommon* dxCommonPtr) {
 
-		directXCommon_ = DirectXCommon::GetInstance();
+		dxCommon_ = dxCommonPtr;
 
 		/// === 頂点リソースの生成 === ///
 
 		//頂点リソースの生成
-		vertexResource_ = directXCommon_->CreateBufferResource(sizeof(VertexData) * vertexCount_);
+		vertexResource_ = dxCommon_->CreateBufferResource(sizeof(VertexData) * vertexCount_);
 
 		//リソースの先頭のアドレスを取得する
 		vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
@@ -31,7 +31,7 @@ namespace MyEngine {
 		/// === インデックスリソース === ///
 
 		//インデックスリソースを作成
-		indexResource_ = directXCommon_->CreateBufferResource(sizeof(uint32_t) * indexCount_);
+		indexResource_ = dxCommon_->CreateBufferResource(sizeof(uint32_t) * indexCount_);
 
 		//リソースの先頭アドレスを取得
 		indexBufferView_.BufferLocation = indexResource_->GetGPUVirtualAddress();

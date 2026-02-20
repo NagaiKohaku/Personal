@@ -62,7 +62,7 @@ namespace MyEngine {
 		/// <summary>
 		/// Object3DCommonの初期化を行います。
 		/// </summary>
-		void Initialize();
+		void Initialize(DirectXCommon* dxCommonPtr);
 
 		/// <summary>
 		/// Object3DCommonの更新処理を行います。

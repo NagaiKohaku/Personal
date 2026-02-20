@@ -37,7 +37,7 @@ namespace MyEngine {
 		/// <summary>
 		/// SRV用のデスクリプタヒープを初期化します。
 		/// </summary>
-		void Initialize();
+		void Initialize(DirectXCommon* dxCommonPtr);
 
 		/// <summary>
 		/// 描画前にSRV用のデスクリプタヒープをコマンドリストに設定します。
@@ -86,7 +86,7 @@ namespace MyEngine {
 	private:
 
 		//DirectX基底
-		DirectXCommon* directXCommon = nullptr;
+		DirectXCommon* dxCommon_ = nullptr;
 
 		//解放済みSRV番号
 		std::queue<uint32_t> freeIndices_;

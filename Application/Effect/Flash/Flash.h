@@ -1,6 +1,7 @@
 #pragma once
 
-#include "2d/Object/Object2D.h"
+#include <2d/Object/Object2D.h>
+#include <3d/Camera/Camera.h>
 
 /// <summary>
 /// 画面全体にフラッシュエフェクトを表示する管理クラスです。
@@ -17,7 +18,7 @@ public:
 	/// <summary>
 	/// フラッシュエフェクトの初期化を行います。
 	/// </summary>
-	void Initialize();
+	void Initialize(MyEngine::Camera* cameraPtr);
 
 	/// <summary>
 	/// フラッシュエフェクトの更新処理を行います。
@@ -38,6 +39,9 @@ public:
 
 private:
 
+	//カメラ
+	MyEngine::Camera* camera_;
+
 	//フラッシュ用オブジェクト
 	std::unique_ptr<MyEngine::Object2D> flashObject_;
 
@@ -55,4 +59,5 @@ private:
 
 	//フラッシュ色
 	MyEngine::Vector4 color_;
+
 };

@@ -9,10 +9,10 @@ namespace MyEngine {
 	///=====================================================/// 
 	/// ポイントライトの初期化
 	///=====================================================///
-	void PointLight::Initialize() {
+	void PointLight::Initialize(DirectXCommon* dxCommonPtr) {
 
 		//DirectX基底を取得
-		dxCommon_ = DirectXCommon::GetInstance();
+		dxCommon_ = dxCommonPtr;
 
 		//リソースを作成
 		lightResource_ = dxCommon_->CreateBufferResource(sizeof(LightData));

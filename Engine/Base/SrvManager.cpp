@@ -17,16 +17,16 @@ namespace MyEngine {
 	///=====================================================/// 
 	/// SRV用のデスクリプタヒープを初期化
 	///=====================================================///
-	void SrvManager::Initialize() {
+	void SrvManager::Initialize(DirectXCommon* dxCommonPtr) {
 
 		//DirextX基底のインスタンスを取得
-		directXCommon = DirectXCommon::GetInstance();
+		dxCommon_ = dxCommonPtr;
 
 		//srvデスクリプタヒープの初期化
-		srvDescriptorHeap_ = directXCommon->CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, kMaxSRVCount_, true);
+		srvDescriptorHeap_ = dxCommon_->CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, kMaxSRVCount_, true);
 
 		//srvデスクリプタヒープのサイズを取得
-		srvDescriptorSize_ = directXCommon->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+		srvDescriptorSize_ = dxCommon_->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 	}
 
 	///=====================================================/// 
@@ -38,7 +38,7 @@ namespace MyEngine {
 		ID3D12DescriptorHeap* descriptorHeaps[] = { srvDescriptorHeap_.Get() };
 
 		//コマンドリストにsrvデスクリプタヒープを設定する
-		directXCommon->GetCommandList()->SetDescriptorHeaps(1, descriptorHeaps);
+		dxCommon_->GetCommandList()->SetDescriptorHeaps(1, descriptorHeaps);
 	}
 
 	///=====================================================/// 
@@ -103,7 +103,7 @@ namespace MyEngine {
 		srvDesc.Texture2D.MipLevels = UINT(MipLevels);
 
 		//SRVの生成
-		directXCommon->GetDevice()->CreateShaderResourceView(pResource, &srvDesc, GetCPUDescriptorHandle(srvIndex));
+		dxCommon_->GetDevice()->CreateShaderResourceView(pResource, &srvDesc, GetCPUDescriptorHandle(srvIndex));
 	}
 
 	///=====================================================/// 
@@ -124,7 +124,7 @@ namespace MyEngine {
 		srvDesc.Buffer.StructureByteStride = structureByteStride;
 
 		//SRVの生成
-		directXCommon->GetDevice()->CreateShaderResourceView(pResource, &srvDesc, GetCPUDescriptorHandle(srvIndex));
+		dxCommon_->GetDevice()->CreateShaderResourceView(pResource, &srvDesc, GetCPUDescriptorHandle(srvIndex));
 	}
 
 	///=====================================================/// 
@@ -142,7 +142,7 @@ namespace MyEngine {
 		srvDesc.Texture2D.MipLevels = 1;
 
 		//SRVの生成
-		directXCommon->GetDevice()->CreateShaderResourceView(pResource, &srvDesc, GetCPUDescriptorHandle(srvIndex));
+		dxCommon_->GetDevice()->CreateShaderResourceView(pResource, &srvDesc, GetCPUDescriptorHandle(srvIndex));
 	}
 
 	///=====================================================/// 
@@ -160,7 +160,7 @@ namespace MyEngine {
 		srvDesc.Texture2D.MipLevels = 1;
 
 		//SRVの生成
-		directXCommon->GetDevice()->CreateShaderResourceView(pResource, &srvDesc, GetCPUDescriptorHandle(srvIndex));
+		dxCommon_->GetDevice()->CreateShaderResourceView(pResource, &srvDesc, GetCPUDescriptorHandle(srvIndex));
 	}
 
 	///=====================================================/// 
@@ -196,6 +196,6 @@ namespace MyEngine {
 	///=====================================================///
 	void SrvManager::SetGraphicsRootDescriptorTable(UINT RootParameterIndex, uint32_t srvIndex) {
 
-		directXCommon->GetCommandList()->SetGraphicsRootDescriptorTable(RootParameterIndex, GetGPUDescriptorHandle(srvIndex));
+		dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(RootParameterIndex, GetGPUDescriptorHandle(srvIndex));
 	}
 }

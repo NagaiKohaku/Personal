@@ -22,7 +22,7 @@ namespace MyEngine {
 		/// <summary>
 		/// ModelCommonの初期化を行います。
 		/// </summary>
-		void Initialize();
+		void Initialize(DirectXCommon* dxCommonPtr);
 
 		///-------------------------------------------/// 
 		/// メンバ変数

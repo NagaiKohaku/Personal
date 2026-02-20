@@ -64,12 +64,10 @@ void Shake::Update() {
 	Matrix4x4 viewMatrix = Inverse4x4(transform_.GetWorldMatrix());
 
 	//ビュープロジェクション行列の計算
-	Matrix4x4 viewProjectionMatrix = viewMatrix * camera_->GetProjectionMatrix();
+	Matrix4x4 viewProjectionMatrix = viewMatrix * camera_->Get2DViewProjectionMatrix();
 
 	//カメラに設定
 	camera_->SetViewMatrix(viewMatrix);
-
-	camera_->SetViewProjectionMatrix(viewProjectionMatrix);
 }
 
 ///=====================================================/// 

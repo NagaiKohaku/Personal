@@ -45,7 +45,7 @@ namespace MyEngine {
 		/// === シングルトンインスタンスの取得 === ///
 
 		//DirectX基底のインスタンスを取得
-		directXCommon_ = DirectXCommon::GetInstance();
+		directXCommon_ = ParticleCommon::GetInstance()->GetDxCommon();
 
 		//テクスチャマネージャーのインスタンスを取得
 		textureManager_ = TextureManager::GetInstance();
@@ -198,7 +198,7 @@ namespace MyEngine {
 		/// === パーティクルの更新 === ///
 
 		//カメラからビュープロジェクション行列を取得
-		Matrix4x4 viewProjectionMatrix = defaultCamera_->GetViewProjectionMatrix();
+		Matrix4x4 viewProjectionMatrix = defaultCamera_->Get3DViewProjectionMatrix();
 
 		//カメラからビュー行列を取得
 		Matrix4x4 viewMatrix = defaultCamera_->GetViewMatrix();

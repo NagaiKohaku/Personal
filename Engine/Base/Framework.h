@@ -50,9 +50,9 @@ namespace MyEngine {
 
 	private:
 
-		WinApp* winApp_;
+		std::unique_ptr<WinApp> winApp_;
 
-		DirectXCommon* directXCommon_;
+		std::unique_ptr<DirectXCommon> dxCommon_;
 
 		RTVManager* rtvManager_;
 
@@ -87,5 +87,9 @@ namespace MyEngine {
 	private:
 
 		bool endRequest_ = false;
+
+	public:
+
+		WinApp* GetWinApp() const { return winApp_.get(); }
 	};
 }

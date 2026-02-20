@@ -63,14 +63,9 @@ namespace MyEngine {
 	public:
 
 		/// <summary>
-		/// DirectXCommonのシングルトンインスタンスを取得します。
-		/// </summary>
-		static DirectXCommon* GetInstance();
-
-		/// <summary>
 		/// DirectX12 の動作に必要な基本コンポーネントを初期化します。
 		/// </summary>
-		void Initialize();
+		void Initialize(WinApp* winAppPtr);
 
 		/// <summary>
 		/// DirectX12 による描画処理を行うための各種レンダリング関連リソースを初期化します。
@@ -189,7 +184,7 @@ namespace MyEngine {
 	private:
 
 		//WinAppクラス(借り物)
-		WinApp* winApp = nullptr;
+		WinApp* winApp_ = nullptr;
 
 		//RTVマネージャー
 		RTVManager* rtvManager_ = nullptr;

@@ -42,7 +42,7 @@ namespace MyEngine {
 		/// <summary>
 		/// Object2DCommonの初期化を行います。
 		/// </summary>
-		void Initialize();
+		void Initialize(DirectXCommon* dxCommonPtr);
 
 		/// <summary>
 		/// 2Dオブジェクトの描画に必要な共通設定を行います。

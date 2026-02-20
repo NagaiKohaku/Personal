@@ -26,7 +26,7 @@ namespace MyEngine {
 		/// <summary>
 		/// SpriteCommonを初期化します。
 		/// </summary>
-		void Initialize();
+		void Initialize(DirectXCommon* dxCommonPtr);
 
 		///-------------------------------------------/// 
 		/// メンバ変数

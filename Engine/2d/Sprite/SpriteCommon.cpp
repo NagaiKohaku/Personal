@@ -13,9 +13,9 @@ namespace MyEngine {
 	///=====================================================/// 
 	/// SpriteCommonを初期化
 	///=====================================================///
-	void SpriteCommon::Initialize() {
+	void SpriteCommon::Initialize(DirectXCommon* dxCommonPtr) {
 
 		//DirectX基底のインスタンスを取得
-		dxCommon_ = DirectXCommon::GetInstance();
+		dxCommon_ = dxCommonPtr;
 	}
 }

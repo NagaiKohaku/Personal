@@ -19,10 +19,10 @@ namespace MyEngine {
 	///=====================================================/// 
 	/// DebugObjectCommonの初期化
 	///=====================================================///
-	void DebugObjectCommon::Initialize() {
+	void DebugObjectCommon::Initialize(DirectXCommon* dxCommonPtr) {
 
 		//DirectX基底のインスタンスを取得
-		dxCommon_ = DirectXCommon::GetInstance();
+		dxCommon_ = dxCommonPtr;
 
 		//グラフィックパイプラインの生成
 		CreateGraphicsPipeline();

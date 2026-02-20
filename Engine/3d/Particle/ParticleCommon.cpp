@@ -19,10 +19,10 @@ namespace MyEngine {
 	///=====================================================/// 
 	/// ParticleCommonの初期化
 	///=====================================================///
-	void ParticleCommon::Initialize() {
+	void ParticleCommon::Initialize(DirectXCommon* dxCommonPtr) {
 
 		//DirectX基底のインスタンスを取得
-		dxCommon_ = DirectXCommon::GetInstance();
+		dxCommon_ = dxCommonPtr;
 
 		//グラフィックパイプラインの生成
 		CreateGraphicsPipeline();

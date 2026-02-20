@@ -24,7 +24,7 @@ void Reticle::Initialize(Camera* cameraPtr) {
 	object2D_ = std::make_unique<Object2D>();
 
 	//初期化
-	object2D_->Initialize();
+	object2D_->Initialize(camera_);
 
 	//スプライトをセット
 	object2D_->SetSprite("Reticle");

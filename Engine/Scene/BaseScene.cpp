@@ -2,7 +2,9 @@
 
 namespace MyEngine {
 
-	void BaseScene::Initialize() {
+	void BaseScene::Initialize(Camera* cameraPtr) {
+
+		camera_ = cameraPtr;
 	}
 
 	void BaseScene::Finalize() {

@@ -17,16 +17,16 @@ namespace MyEngine {
 	///=====================================================/// 
 	/// RTV用のデスクリプタヒープを初期化
 	///=====================================================///
-	void RTVManager::Initialize() {
+	void RTVManager::Initialize(DirectXCommon* dxCommonPtr) {
 
 		//DirectX基底のインスタンスを取得
-		directXCommon = DirectXCommon::GetInstance();
+		dxCommon_ = dxCommonPtr;
 
 		//RTVデスクリプタヒープの初期化
-		rtvDescriptorHeap_ = directXCommon->CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_RTV, kMaxRTVCount_, false);
+		rtvDescriptorHeap_ = dxCommon_->CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_RTV, kMaxRTVCount_, false);
 
 		//RTVデスクリプタヒープのサイズを取得
-		rtvDescriptorSize_ = directXCommon->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+		rtvDescriptorSize_ = dxCommon_->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 	}
 
 	///=====================================================/// 
@@ -79,7 +79,7 @@ namespace MyEngine {
 		D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = GetCPUDescriptorHandle(rtvIndex);
 
 		//1つ目を作る
-		directXCommon->GetDevice()->CreateRenderTargetView(
+		dxCommon_->GetDevice()->CreateRenderTargetView(
 			pResource,
 			&rtvDesc,
 			rtvHandle

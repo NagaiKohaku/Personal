@@ -16,9 +16,11 @@ namespace MyEngine {
 	///=====================================================/// 
 	/// Object2Dの初期化
 	///=====================================================///
-	void Object2D::Initialize() {
+	void Object2D::Initialize(Camera* cameraPtr) {
 
 		/// === インスタンスの取得 === ///
+
+		camera_ = cameraPtr;
 
 		//2Dオブジェクト基底のインスタンスを取得
 		object2DCommon_ = Object2DCommon::GetInstance();
@@ -79,14 +81,11 @@ namespace MyEngine {
 		//ワールド行列を生成
 		Matrix4x4 worldMatrix = transform_.GetWorldMatrix();
 
-		//ビュー行列を単位行列で生成
-		Matrix4x4 viewMatrix = MakeIdentity4x4();
-
-		//プロジェクション行列を生成
-		Matrix4x4 projectionMatrix = MakeOrthographicMatrix(0.0f, 0.0f, WinApp::kClientWidth, WinApp::kClientHeight, 0.0f, 100.0f);
+		//ビュープロジェクション行列を取得
+		Matrix4x4 viewProjectionMatrix = camera_->Get2DViewProjectionMatrix();
 
 		//WVPデータを設定
-		WVPData_->WVP = worldMatrix * (viewMatrix * projectionMatrix);
+		WVPData_->WVP = worldMatrix * viewProjectionMatrix;
 		WVPData_->World = worldMatrix;
 		WVPData_->WorldInverseTranspose = Inverse4x4(worldMatrix);
 	}

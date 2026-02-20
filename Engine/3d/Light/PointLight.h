@@ -38,7 +38,7 @@ namespace MyEngine {
 		/// <summary>
 		/// ポイントライトの初期化を行います。
 		/// </summary>
-		void Initialize();
+		void Initialize(DirectXCommon* dxCommonPtr);
 
 		/// <summary>
 		/// ポイントライトのデータを毎フレーム更新します。

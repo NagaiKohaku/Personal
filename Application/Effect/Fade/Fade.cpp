@@ -1,6 +1,5 @@
 #include "Fade.h"
 
-#include <Base/WinApp.h>
 #include <2d/Sprite/SpriteManager.h>
 #include <Math/Utility/MakeMatrixMath.h>
 
@@ -20,7 +19,10 @@ Fade* Fade::GetInstance() {
 ///=====================================================/// 
 /// フェード処理に必要なスプライトやリソースを初期化
 ///=====================================================///
-void Fade::Initialize() {
+void Fade::Initialize(WinApp* winAppPtr, MyEngine::Camera* cameraPtr) {
+
+	winApp_ = winAppPtr;
+	camera_ = cameraPtr;
 
 	/// === フェードに使うスプライトの生成 === ///
 
@@ -50,9 +52,9 @@ void Fade::Update() {
 		if (player_ != nullptr) {
 
 			//プレイヤーの位置を2D座標に変換
-			Matrix4x4 viewport = MakeViewportMatrix(0, 0, WinApp::kClientWidth, WinApp::kClientHeight, 0, 1);
+			Matrix4x4 viewport = camera_->GetViewPortMatrix();
 
-			Matrix4x4 viewProjectionViewport = camera_->GetViewProjectionMatrix() * viewport;
+			Matrix4x4 viewProjectionViewport = camera_->Get3DViewProjectionMatrix() * viewport;
 
 			Vector3 screenPos = Transform(player_->GetWorldPos(), viewProjectionViewport);
 
@@ -100,7 +102,7 @@ void Fade::StartFadeIn() {
 	//スプライトの初期座標・初期サイズの設定
 	for (auto& fadeSprite : fadeSprites_) {
 
-		fadeSprite.sprite->SetTranslate(Vector2(WinApp::kClientWidth / 2.0f,WinApp::kClientHeight / 2.0f));
+		fadeSprite.sprite->SetTranslate(Vector2(winApp_->GetWindowWidth() / 2.0f,winApp_->GetWindowHeight() / 2.0f));
 
 		fadeSprite.sprite->SetSize(fadeSprite.endSize);
 
@@ -168,7 +170,7 @@ void Fade::StartFadeOut() {
 
 	//スプライトの初期座標・初期サイズの設定
 	for (auto& fadeSprite : fadeSprites_) {
-		fadeSprite.sprite->SetTranslate(Vector2(WinApp::kClientWidth / 2.0f, WinApp::kClientHeight / 2.0f));
+		fadeSprite.sprite->SetTranslate(Vector2(winApp_->GetWindowWidth() / 2.0f, winApp_->GetWindowHeight() / 2.0f));
 		fadeSprite.sprite->SetSize(fadeSprite.startSize);
 	}
 }
@@ -230,7 +232,7 @@ void Fade::CreateRingSprite() {
 	//オブジェクトを生成してパラメータの初期化をする
 	newObject = std::make_unique<Object2D>();
 
-	newObject->Initialize();
+	newObject->Initialize(camera_);
 
 	//リングスプライトをセット
 	newObject->SetSprite("BigRing");
@@ -278,7 +280,7 @@ void Fade::CreateCircleSprite() {
 	//オブジェクトを生成してパラメータの初期化をする
 	newObject = std::make_unique<Object2D>();
 
-	newObject->Initialize();
+	newObject->Initialize(camera_);
 
 	//円形スプライトをセット
 	newObject->SetSprite("BigCircle");

@@ -13,14 +13,6 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hwnd, UINT msg
 namespace MyEngine {
 
 	///=====================================================/// 
-	/// WinAppのシングルトンインスタンスを取得
-	///=====================================================///
-	WinApp* WinApp::GetInstance() {
-		static WinApp instance;
-		return &instance;
-	}
-
-	///=====================================================/// 
 	/// OSから送られてくるウィンドウメッセージを処理
 	///=====================================================///
 	LRESULT CALLBACK WinApp::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
@@ -37,7 +29,7 @@ namespace MyEngine {
 		//メッセージに応じてゲーム固有の処理を行う
 		switch (msg) {
 
-			//ウィンドウが破棄された
+		//ウィンドウが破棄された
 		case WM_DESTROY:
 
 			//OSに対して、アプリの終了を伝える
@@ -81,15 +73,15 @@ namespace MyEngine {
 		///-------------------------------------------///
 
 		//ウィンドウサイズを表す構造体にクライアント領域を入れる
-		RECT wrc = { 0,0,kClientWidth,kClientHeight };
+		RECT wrc = { 0,0,kWindowWidth_,kWindowHeight_ };
 
 		//クライアント領域を元に実際のサイズにwrcを変更してもらう
 		AdjustWindowRect(&wrc, WS_OVERLAPPEDWINDOW, false);
 
 		//ウィンドウの生成
 		hwnd_ = CreateWindow(
-			wc_.lpszClassName,           //利用するクラス名
-			L"LE3B_21_ナガイ_コハク_ロードフライト",      //タイトルバーの文字
+			wc_.lpszClassName,          //利用するクラス名
+			kWindowTitle_,              //タイトルバーの文字
 			WS_OVERLAPPEDWINDOW,        //よく見るウィンドウスタイル
 			CW_USEDEFAULT,              //表示X座標(Windowsに任せる)
 			CW_USEDEFAULT,              //表示Y座標(WindowsOSに任せる)
@@ -97,7 +89,7 @@ namespace MyEngine {
 			wrc.bottom - wrc.top,       //ウィンドウ縦幅
 			nullptr,                    //親ウィンドウハンドル
 			nullptr,                    //メニューハンドル
-			wc_.hInstance,               //インスタンスハンドル
+			wc_.hInstance,              //インスタンスハンドル
 			nullptr                     //オプション
 		);
 

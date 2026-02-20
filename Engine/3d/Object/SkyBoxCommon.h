@@ -31,7 +31,7 @@ namespace MyEngine {
 		/// <summary>
 		/// SkyBoxCommonの初期化を行います。
 		/// </summary>
-		void Initialize();
+		void Initialize(DirectXCommon* dxCommonPtr);
 
 		/// <summary>
 		/// 更新処理

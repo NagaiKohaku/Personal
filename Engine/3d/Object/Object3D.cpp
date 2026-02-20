@@ -172,7 +172,7 @@ namespace MyEngine {
 			/// === カメラ情報があったら === ///
 
 			//カメラのビュープロジェクション行列を取得
-			const Matrix4x4& viewProjectionMatrix = camera_->GetViewProjectionMatrix();
+			const Matrix4x4& viewProjectionMatrix = camera_->Get3DViewProjectionMatrix();
 
 			//ワールドビュープロジェクション行列の計算
 			worldViewProjectionMatrix *= viewProjectionMatrix;
@@ -199,7 +199,7 @@ namespace MyEngine {
 			/// === カメラ情報があったら === ///
 
 			//カメラのビュープロジェクション行列を取得
-			const Matrix4x4& viewProjectionMatrix = camera_->GetViewProjectionMatrix();
+			const Matrix4x4& viewProjectionMatrix = camera_->Get3DViewProjectionMatrix();
 
 			//ワールドビュープロジェクション行列の計算
 			worldViewProjectionMatrix *= viewProjectionMatrix;

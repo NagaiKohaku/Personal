@@ -57,7 +57,7 @@ namespace MyEngine {
 		/// <summary>
 		/// TextureManagerを初期化します。
 		/// </summary>
-		void Initialize();
+		void Initialize(DirectXCommon* dxCommonPtr);
 
 		/// <summary>
 		/// 指定されたファイルパスのテクスチャを読み込み、GPU上に展開します。
@@ -120,7 +120,7 @@ namespace MyEngine {
 	private:
 
 		//DirectX基底
-		DirectXCommon* directXCommon_ = nullptr;
+		DirectXCommon* dxCommon_ = nullptr;
 
 		//SRVマネージャー
 		SrvManager* srvManager_ = nullptr;

@@ -14,6 +14,8 @@ namespace MyEngine {
 
 	/// === 前方宣言 === ///
 
+	class WinApp;
+
 	class DirectXCommon;
 
 	class RTVManager;
@@ -53,7 +55,7 @@ namespace MyEngine {
 		/// <summary>
 		/// オフスクリーン描画用のリソースやパイプラインを初期化します。
 		/// </summary>
-		void Initialize();
+		void Initialize(WinApp* winAppPtr, DirectXCommon* dxCommonPtr);
 
 		/// <summary>
 		/// オフスクリーン描画用のレンダーターゲットと深度バッファの描画準備を行います。
@@ -135,6 +137,9 @@ namespace MyEngine {
 		/// メンバ変数
 		///-------------------------------------------///
 	private:
+
+		//ウィンドウクラス
+		WinApp* winApp_ = nullptr;
 
 		//DirectX基底
 		DirectXCommon* dxCommon_ = nullptr;

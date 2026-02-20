@@ -17,12 +17,12 @@ namespace MyEngine {
 	///=====================================================/// 
 	/// DirectInputを使用してキーボードとマウスの入力デバイスを初期化
 	///=====================================================///
-	void Input::Initialize() {
+	void Input::Initialize(WinApp* winAppPtr) {
 
 		HRESULT result;
 
 		//ウィンドウ管理のインスタンスを取得
-		winApp_ = WinApp::GetInstance();
+		winApp_ = winAppPtr;
 
 		//DirectInputオブジェクトの生成
 		result = DirectInput8Create(

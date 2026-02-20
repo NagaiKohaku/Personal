@@ -2,6 +2,8 @@
 
 namespace MyEngine {
 
+	class Camera;
+
 	///=====================================================/// 
 	/// ベースシーン
 	///=====================================================///
@@ -20,7 +22,7 @@ namespace MyEngine {
 		/// <summary>
 		/// 初期化
 		/// </summary>
-		virtual void Initialize();
+		virtual void Initialize(Camera* cameraPtr);
 
 		/// <summary>
 		/// 終了処理
@@ -41,6 +43,11 @@ namespace MyEngine {
 		/// デバッグ
 		/// </summary>
 		virtual void ImGui();
+
+	protected:
+
+		//カメラ
+		Camera* camera_;
 
 	};
 }

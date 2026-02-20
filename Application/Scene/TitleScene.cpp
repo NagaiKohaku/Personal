@@ -24,15 +24,11 @@ using namespace MyEngine;
 ///=====================================================/// 
 /// タイトルシーンの各種オブジェクトを初期化
 ///=====================================================///
-void TitleScene::Initialize() {
+void TitleScene::Initialize(Camera* cameraPtr) {
 
 	/// === カメラの設定 === ///
 
-	//カメラを生成
-	camera_ = std::make_unique<Camera>();
-
-	//カメラの初期化
-	camera_->Initialize();
+	BaseScene::Initialize(cameraPtr);
 
 	//デバッグカメラを使用しない
 	camera_->SetDebugCameraFlag(false);
@@ -44,9 +40,9 @@ void TitleScene::Initialize() {
 
 	cameraRotate_ = { 0.3f,0.0f,0.0f };
 
-	Shake::GetInstance()->SetCamera(camera_.get());
+	Shake::GetInstance()->SetCamera(camera_);
 
-	EmitterManager::GetInstance()->SetCamera(camera_.get());
+	EmitterManager::GetInstance()->SetCamera(camera_);
 
 	/// === 3Dオブジェクトの設定 === ///
 
@@ -60,7 +56,7 @@ void TitleScene::Initialize() {
 
 	player_ = ObjectManager::GetInstance()->GetPlayer();
 
-	player_->Initialize(camera_.get(),nullptr,false);
+	player_->Initialize(camera_,nullptr,false);
 
 	player_->SetPosition({ 0.0f,1.0f,0.0f });
 
@@ -77,21 +73,18 @@ void TitleScene::Initialize() {
 	//衝撃波エミッター(左)
 	shockWaveLeftEmitter_ = std::make_unique<EmitterGroup>();
 
-	shockWaveLeftEmitter_->Initialize(camera_.get());
+	shockWaveLeftEmitter_->Initialize(camera_);
 
 	shockWaveLeftEmitter_->LoadEmitter("ShockWaveLeft");
 
 	//衝撃波エミッター(右)
 	shockWaveRightEmitter_ = std::make_unique<EmitterGroup>();
 
-	shockWaveRightEmitter_->Initialize(camera_.get());
+	shockWaveRightEmitter_->Initialize(camera_);
 
 	shockWaveRightEmitter_->LoadEmitter("ShockWaveRight");
 
 	/// === その他 === ///
-
-	//フェードにカメラとプレイヤーを設定
-	Fade::GetInstance()->SetCamera(camera_.get());
 
 	Fade::GetInstance()->SetPlayer(player_);
 
@@ -143,9 +136,6 @@ void TitleScene::Finalize() {
 	ObjectManager::GetInstance()->ClearAll();
 
 	UIManager::GetInstance()->DeleteUI("Title");
-
-	//フェードのカメラとプレイヤーを解除
-	Fade::GetInstance()->SetCamera(nullptr);
 
 	Fade::GetInstance()->SetPlayer(nullptr);
 

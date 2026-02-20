@@ -23,11 +23,6 @@ namespace MyEngine {
 		static LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 
 		/// <summary>
-		/// WinAppのシングルトンインスタンスを取得します。
-		/// </summary>
-		static WinApp* GetInstance();
-
-		/// <summary>
 		/// ウィンドウを初期化して表示します。
 		/// </summary>
 		void Initialize();
@@ -43,15 +38,18 @@ namespace MyEngine {
 		bool ProcessMessage();
 
 		///-------------------------------------------/// 
-		/// 静的メンバ変数
+		/// メンバ定数
 		///-------------------------------------------///
 	public:
 
 		//ウィンドウの横幅
-		static const int32_t kClientWidth = 1280;
+		const int32_t kWindowWidth_ = 1280;
 
 		//ウィンドウの縦幅
-		static const int32_t kClientHeight = 720;
+		const int32_t kWindowHeight_ = 720;
+
+		//ウィンドウのタイトル
+		const wchar_t* kWindowTitle_ = L"LE3B_21_ナガイ_コハク_ロードフライト";
 
 		///-------------------------------------------/// 
 		/// メンバ変数
@@ -80,6 +78,18 @@ namespace MyEngine {
 		/// </summary>
 		/// <returns>ウィンドウハンドル</returns>
 		HWND GetHwnd() const { return hwnd_; }
+
+		/// <summary>
+		/// ウィンドウの横幅を取得
+		/// </summary>
+		/// <returns>ウィンドウの横幅</returns>
+		int32_t GetWindowWidth() const { return kWindowWidth_; }
+
+		/// <summary>
+		/// ウィンドウの縦幅を取得
+		/// </summary>
+		/// <returns>ウィンドウの縦幅</returns>
+		int32_t GetWindowHeight() const { return kWindowHeight_; }
 
 	};
 }

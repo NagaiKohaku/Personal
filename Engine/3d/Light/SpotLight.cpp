@@ -11,10 +11,10 @@ namespace MyEngine {
 	///=====================================================/// 
 	/// スポットライトを初期化
 	///=====================================================///
-	void SpotLight::Initialize() {
+	void SpotLight::Initialize(DirectXCommon* dxCommonPtr) {
 
 		//DirectX基底を取得
-		dxCommon_ = DirectXCommon::GetInstance();
+		dxCommon_ = dxCommonPtr;
 
 		//リソースを作成
 		lightResource_ = dxCommon_->CreateBufferResource(sizeof(LightData));

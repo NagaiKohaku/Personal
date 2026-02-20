@@ -7,10 +7,10 @@ namespace MyEngine {
 	///=====================================================/// 
 	/// ディレクショナルライトを初期化
 	///=====================================================///
-	void DirectionalLight::Initialize() {
+	void DirectionalLight::Initialize(DirectXCommon* dxCommonPtr) {
 
 		//DirectX基底を取得
-		dxCommon_ = DirectXCommon::GetInstance();
+		dxCommon_ = dxCommonPtr;
 
 		//リソースを作成
 		lightResource_ = dxCommon_->CreateBufferResource(sizeof(LightData));

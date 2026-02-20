@@ -8,10 +8,10 @@ namespace MyEngine {
 	void MeshBase::SendDataForGPU() {
 
 		//頂点データをGPUに転送
-		directXCommon_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView_);
+		dxCommon_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView_);
 
 		//インデックスデータをGPUに転送
-		directXCommon_->GetCommandList()->IASetIndexBuffer(&indexBufferView_);
+		dxCommon_->GetCommandList()->IASetIndexBuffer(&indexBufferView_);
 	}
 
 	///=====================================================/// 

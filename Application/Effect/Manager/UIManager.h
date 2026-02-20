@@ -1,6 +1,7 @@
 #pragma once
 
 #include <2d/Object/Object2D.h>
+#include <3d/Camera/Camera.h>
 #include <Math/Transform/WorldTransform.h>
 
 #include <vector>
@@ -33,7 +34,7 @@ public:
 
 	static UIManager* GetInstance();
 
-	void Initialize();
+	void Initialize(MyEngine::Camera* cameraPtr);
 
 	void Update();
 
@@ -68,6 +69,9 @@ private:
 	void SaveUIState(const std::string& fileName);
 
 private:
+
+	//カメラ
+	MyEngine::Camera* camera_;
 
 	std::string directoryPath_;
 

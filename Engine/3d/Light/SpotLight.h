@@ -44,7 +44,7 @@ namespace MyEngine {
 		/// <summary>
 		/// スポットライトを初期化します。
 		/// </summary>
-		void Initialize();
+		void Initialize(DirectXCommon* dxCommonPtr);
 
 		/// <summary>
 		/// スポットライトを毎フレーム更新します。

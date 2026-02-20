@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Scene/BaseScene.h>
+#include <3d/Camera/Camera.h>
 
 #include "memory"
 
@@ -37,7 +38,7 @@ public:
 	/// <summary>
 	/// 現在設定されているシーンの初期化処理を実行します。
 	/// </summary>
-	void Initialize();
+	void Initialize(MyEngine::Camera* cameraPtr);
 
 	/// <summary>
 	/// 現在設定されているシーンの更新処理を実行します。
@@ -68,6 +69,9 @@ public:
 	///メンバ変数
 	///-------------------------------------------///
 private:
+
+	//カメラ
+	MyEngine::Camera* camera_;
 
 	//現在のシーン
 	std::unique_ptr<MyEngine::BaseScene> currentScene_;
