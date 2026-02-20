@@ -2,9 +2,9 @@
 
 #include "Base/WinApp.h"
 #include "Base/DirectXCommon.h"
-#include "Base/RTVManager.h"
-#include "Base/DSVManager.h"
-#include "Base/SrvManager.h"
+#include "Base/View/RTVManager.h"
+#include "Base/View/DSVManager.h"
+#include "Base/View/SRVManager.h"
 #include "3d/Camera/Camera.h"
 #include <Math/Utility/MakeMatrixMath.h>
 #include "Other/Log.h"
@@ -26,7 +26,7 @@ namespace MyEngine {
 	///=====================================================/// 
 	/// オフスクリーン描画用のリソースやパイプラインを初期化
 	///=====================================================///
-	void OffScreen::Initialize(WinApp* winAppPtr, DirectXCommon* dxCommonPtr) {
+	void OffScreen::Initialize(WinApp* winAppPtr, DirectXCommon* dxCommonPtr, RTVManager* rtvPtr, DSVManager* dsvPtr, SRVManager* srvPtr) {
 
 		/// === インスタンスの取得 === ///
 
@@ -37,13 +37,13 @@ namespace MyEngine {
 		dxCommon_ = dxCommonPtr;
 
 		//RTVマネージャーのインスタンスを取得
-		rtvManager_ = RTVManager::GetInstance();
+		rtvManager_ = rtvPtr;
 
 		//DSVマネージャーのインスタンスを取得
-		dsvManager_ = DSVManager::GetInstance();
+		dsvManager_ = dsvPtr;
 
 		//SRVマネージャーのインスタンスを取得
-		srvManager_ = SrvManager::GetInstance();
+		srvManager_ = srvPtr;
 
 		//CopyImageシェーダーを初期値に設定
 		currentShaderName_ = L"CopyImage";

@@ -1,7 +1,7 @@
 #include "ParticleEmitter.h"
 
 #include "Base/DirectXCommon.h"
-#include "Base/SrvManager.h"
+#include "Base/View/SRVManager.h"
 #include "Base/Renderer.h"
 #include "Base/Input.h"
 #include "2d/Sprite/TextureManager.h"
@@ -51,7 +51,7 @@ namespace MyEngine {
 		textureManager_ = TextureManager::GetInstance();
 
 		//SRVマネージャーのインスタンスを取得
-		srvManager_ = SrvManager::GetInstance();
+		srvManager_ = ParticleCommon::GetInstance()->GetSRVManager();
 
 		//カメラ情報の設定
 		defaultCamera_ = camera;

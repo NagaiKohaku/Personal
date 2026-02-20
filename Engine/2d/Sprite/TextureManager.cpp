@@ -21,13 +21,13 @@ namespace MyEngine {
 	///=====================================================/// 
 	/// TextureManagerを初期化
 	///=====================================================///
-	void TextureManager::Initialize(DirectXCommon* dxCommonPtr) {
+	void TextureManager::Initialize(DirectXCommon* dxCommonPtr, SRVManager* srvPtr) {
 
 		//DirectX基底のインスタンスを取得
 		dxCommon_ = dxCommonPtr;
 
 		//SRVマネージャーのインスタンスを取得
-		srvManager_ = SrvManager::GetInstance();
+		srvManager_ = srvPtr;
 
 		//テクスチャデータの最大数を設定
 		textureData_.reserve(srvManager_->kMaxSRVCount_);

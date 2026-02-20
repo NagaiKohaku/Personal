@@ -1,13 +1,13 @@
 #include "DirectXCommon.h"
 
-#include "Base/WinApp.h"
-#include "Base/RTVManager.h"
-#include "Base/DSVManager.h"
+#include <Base/WinApp.h>
+#include <Base/View/RTVManager.h>
+#include <Base/View/DSVManager.h>
 
-#include "Other/Log.h"
+#include <Other/Log.h>
 
-#include "cassert"
-#include "format"
+#include <cassert>
+#include <format>
 
 namespace MyEngine {
 
@@ -33,13 +33,13 @@ namespace MyEngine {
 	///=================================================================///
 	/// DirectX12 による描画処理を行うための各種レンダリング関連リソースを初期化
 	///=================================================================///
-	void DirectXCommon::InitializeRendering() {
+	void DirectXCommon::InitializeRendering(RTVManager* rtvPtr, DSVManager* dsvPtr) {
 
 		//RTVマネージャーの取得
-		rtvManager_ = RTVManager::GetInstance();
+		rtvManager_ = rtvPtr;
 
 		//DSVマネージャーの取得
-		dsvManager_ = DSVManager::GetInstance();
+		dsvManager_ = dsvPtr;
 
 		//スワップチェーンの初期化
 		InitializeSwapChain();

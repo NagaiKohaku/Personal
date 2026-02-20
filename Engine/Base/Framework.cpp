@@ -39,23 +39,23 @@ namespace MyEngine {
 		dxCommon_->Initialize(winApp_.get());
 
 		//RTVマネージャー
-		rtvManager_ = RTVManager::GetInstance();
+		rtvManager_ = std::make_unique<RTVManager>();
 		rtvManager_->Initialize(dxCommon_.get());
 
 		//DSVマネージャー
-		dsvManager_ = DSVManager::GetInstance();
+		dsvManager_ = std::make_unique<DSVManager>();
 		dsvManager_->Initialize(dxCommon_.get());
 
 		//SRVマネージャー
-		srvManager_ = SrvManager::GetInstance();
+		srvManager_ = std::make_unique<SRVManager>();
 		srvManager_->Initialize(dxCommon_.get());
 
 		//描画系の初期化
-		dxCommon_->InitializeRendering();
+		dxCommon_->InitializeRendering(rtvManager_.get(), dsvManager_.get());
 
 		//オフスクリーン
 		offScreen_ = OffScreen::GetInstance();
-		offScreen_->Initialize(winApp_.get(), dxCommon_.get());
+		offScreen_->Initialize(winApp_.get(), dxCommon_.get(), rtvManager_.get(), dsvManager_.get(), srvManager_.get());
 
 		//スプライト基底
 		spriteCommon_ = SpriteCommon::GetInstance();
@@ -66,7 +66,7 @@ namespace MyEngine {
 		modelCommon_->Initialize(dxCommon_.get());
 
 		//テクスチャマネージャー
-		TextureManager::GetInstance()->Initialize(dxCommon_.get());
+		TextureManager::GetInstance()->Initialize(dxCommon_.get(), srvManager_.get());
 
 		//モデルマネージャー
 		ModelManager::GetInstance()->Initialize();
@@ -89,7 +89,7 @@ namespace MyEngine {
 
 		//パーティクル基底
 		particleCommon_ = ParticleCommon::GetInstance();
-		particleCommon_->Initialize(dxCommon_.get());
+		particleCommon_->Initialize(dxCommon_.get(), srvManager_.get());
 
 		//ImGuiマネージャー
 		imGuiManager_ = ImGuiManager::GetInstance();

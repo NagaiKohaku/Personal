@@ -22,7 +22,7 @@ namespace MyEngine {
 
 	class DSVManager;
 
-	class SrvManager;
+	class SRVManager;
 
 	class Camera;
 
@@ -55,7 +55,7 @@ namespace MyEngine {
 		/// <summary>
 		/// オフスクリーン描画用のリソースやパイプラインを初期化します。
 		/// </summary>
-		void Initialize(WinApp* winAppPtr, DirectXCommon* dxCommonPtr);
+		void Initialize(WinApp* winAppPtr, DirectXCommon* dxCommonPtr, RTVManager* rtvPtr, DSVManager* dsvPtr, SRVManager* srvPtr);
 
 		/// <summary>
 		/// オフスクリーン描画用のレンダーターゲットと深度バッファの描画準備を行います。
@@ -151,7 +151,7 @@ namespace MyEngine {
 		DSVManager* dsvManager_ = nullptr;
 
 		//SRVマネージャー
-		SrvManager* srvManager_ = nullptr;
+		SRVManager* srvManager_ = nullptr;
 
 		//カメラ
 		Camera* camera_ = nullptr;

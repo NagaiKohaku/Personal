@@ -2,9 +2,9 @@
 
 #include <Base/WinApp.h>
 #include <Base/DirectXCommon.h>
-#include <Base/RTVManager.h>
-#include <Base/DSVManager.h>
-#include <Base/SrvManager.h>
+#include <Base/View/RTVManager.h>
+#include <Base/View/DSVManager.h>
+#include <Base/View/SRVManager.h>
 #include <Base/OffScreen.h>
 #include <2d/Sprite/SpriteCommon.h>
 #include <3d/Model/ModelCommon.h>
@@ -54,11 +54,11 @@ namespace MyEngine {
 
 		std::unique_ptr<DirectXCommon> dxCommon_;
 
-		RTVManager* rtvManager_;
+		std::unique_ptr<RTVManager> rtvManager_;
 
-		DSVManager* dsvManager_;
+		std::unique_ptr<DSVManager> dsvManager_;
 
-		SrvManager* srvManager_;
+		std::unique_ptr<SRVManager> srvManager_;
 
 		OffScreen* offScreen_;
 

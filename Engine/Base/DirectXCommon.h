@@ -1,23 +1,21 @@
 #pragma once
-#include "Windows.h"
-#include "d3d12.h"
-#include "dxgi1_6.h"
-#include "dxgidebug.h"
-#include "dxcapi.h"
+#include <Windows.h>
+#include <d3d12.h>
+#include <dxgi1_6.h>
+#include <dxgidebug.h>
+#include <dxcapi.h>
 
 #pragma comment(lib,"d3d12.lib")
 #pragma comment(lib,"dxgi.lib")
 #pragma comment(lib,"dxguid.lib")
 #pragma comment(lib,"dxcompiler.lib")
 
-#include "cstdint"
-#include "string"
-#include "chrono"
-#include "thread"
-#include "vector"
-#include "wrl.h"
-
-#include <Math/Vector/Vector4.h>
+#include <cstdint>
+#include <string>
+#include <chrono>
+#include <thread>
+#include <vector>
+#include <wrl.h>
 
 namespace MyEngine {
 
@@ -70,7 +68,7 @@ namespace MyEngine {
 		/// <summary>
 		/// DirectX12 による描画処理を行うための各種レンダリング関連リソースを初期化します。
 		/// </summary>
-		void InitializeRendering();
+		void InitializeRendering(RTVManager* rtvPtr, DSVManager* dsvPtr);
 
 		/// <summary>
 		/// 次の描画に向けてコマンドリストを準備し、バックバッファを描画可能な状態にします。
