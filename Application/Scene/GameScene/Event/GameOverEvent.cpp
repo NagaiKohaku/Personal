@@ -8,7 +8,9 @@
 
 using namespace MyEngine;
 
-void GameOverEvent::Start(Player* player, Camera* camera, FollowCamera* followCamera) {
+void GameOverEvent::Start(MyEngine::EngineContext context, Player* player, FollowCamera* followCamera) {
+
+	context_ = context;
 
 	//スプライトを映す
 	UIManager::GetInstance()->GetUIGroup("GameOver")->isActive = true;
@@ -22,7 +24,7 @@ void GameOverEvent::Start(Player* player, Camera* camera, FollowCamera* followCa
 	Shake::GetInstance()->Start(1.0f, 0.5f);
 
 	//色を反転させる
-	OffScreen::GetInstance()->SetColorReverseRatio(1.0f);
+	context_.offScreen->SetColorReverseRatio(1.0f);
 }
 
 void GameOverEvent::Exit() {
@@ -30,7 +32,7 @@ void GameOverEvent::Exit() {
 
 void GameOverEvent::Update() {
 
-	if (Input::GetInstance()->IsTriggerPushKey(DIK_SPACE)) {
+	if (context_.input->IsTriggerPushKey(DIK_SPACE)) {
 
 		if (!isFade_) {
 

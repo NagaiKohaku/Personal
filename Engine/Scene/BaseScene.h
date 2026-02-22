@@ -1,8 +1,8 @@
 #pragma once
 
-namespace MyEngine {
+#include <Scene/EngineContext.h>
 
-	class Camera;
+namespace MyEngine {
 
 	///=====================================================/// 
 	/// ベースシーン
@@ -22,7 +22,7 @@ namespace MyEngine {
 		/// <summary>
 		/// 初期化
 		/// </summary>
-		virtual void Initialize(Camera* cameraPtr);
+		virtual void Initialize(EngineContext context);
 
 		/// <summary>
 		/// 終了処理
@@ -46,8 +46,7 @@ namespace MyEngine {
 
 	protected:
 
-		//カメラ
-		Camera* camera_;
-
+		//エンジン総合参照
+		EngineContext context_;
 	};
 }

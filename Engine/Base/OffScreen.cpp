@@ -16,14 +16,6 @@
 namespace MyEngine {
 
 	///=====================================================/// 
-	/// OffScreenのシングルトンインスタンスを取得
-	///=====================================================///
-	OffScreen* OffScreen::GetInstance() {
-		static OffScreen instance;
-		return &instance;
-	}
-
-	///=====================================================/// 
 	/// オフスクリーン描画用のリソースやパイプラインを初期化
 	///=====================================================///
 	void OffScreen::Initialize(WinApp* winAppPtr, DirectXCommon* dxCommonPtr, RTVManager* rtvPtr, DSVManager* dsvPtr, SRVManager* srvPtr) {

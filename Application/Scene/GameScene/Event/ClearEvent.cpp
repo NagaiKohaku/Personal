@@ -9,16 +9,16 @@
 
 using namespace MyEngine;
 
-void ClearEvent::Start(Player* player, Camera* camera, FollowCamera* followCamera) {
+void ClearEvent::Start(MyEngine::EngineContext context, Player* player, FollowCamera* followCamera) {
 
+	context_ = context;
 	player_ = player;
-	camera_ = camera;
 
 	motionNum_ = 1;
 
 	canMove_ = false;
 
-	motionPoint_.push_back({ player_->GetWorldPos(),camera_->GetWorldTransform().rotate_,0.0f,EaseType::LINEAR,1.0f });
+	motionPoint_.push_back({ player_->GetWorldPos(),context_.camera->GetWorldTransform().rotate_,0.0f,EaseType::LINEAR,1.0f });
 	motionPoint_.push_back({ Vector3(0.0f,4.0f,0.0f),Vector3(0.0f,0.0f,0.0f),1.5f,EaseType::EASE_OUT,2.0f });
 	motionPoint_.push_back({ Vector3(0.0f,40.0f,600.0f),Vector3(0.0f,0.0f,0.0f),2.5f,EaseType::EASE_OUT,2.0f });
 
@@ -39,7 +39,7 @@ void ClearEvent::Start(Player* player, Camera* camera, FollowCamera* followCamer
 	Flash::GetInstance()->Start(0.5f, Vector4(0.0f, 0.0f, 0.0f, 1.0f));
 
 	//色を反転させる
-	OffScreen::GetInstance()->SetColorReverseRatio(0.75f);
+	context_.offScreen->SetColorReverseRatio(0.75f);
 }
 
 void ClearEvent::Exit() {
@@ -47,7 +47,7 @@ void ClearEvent::Exit() {
 
 void ClearEvent::Update() {
 
-	if (Input::GetInstance()->IsTriggerPushKey(DIK_SPACE)) {
+	if (context_.input->IsTriggerPushKey(DIK_SPACE)) {
 
 		canMove_ = true;
 
@@ -58,7 +58,7 @@ void ClearEvent::Update() {
 		Flash::GetInstance()->Start(0.5f, Vector4(1.0f, 1.0f, 1.0f, 1.0f));
 
 		//色を反転させる
-		OffScreen::GetInstance()->SetColorReverseRatio(0.0f);
+		context_.offScreen->SetColorReverseRatio(0.0f);
 	}
 
 	if (canMove_) {

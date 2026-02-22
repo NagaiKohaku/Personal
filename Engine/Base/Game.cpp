@@ -16,7 +16,7 @@ namespace MyEngine {
 		objectManager_->Initialize();
 
 		camera_ = std::make_unique<Camera>();
-		camera_->Initialize(static_cast<float>(Framework::GetWinApp()->GetWindowWidth()), static_cast<float>(Framework::GetWinApp()->GetWindowHeight()));
+		camera_->Initialize(static_cast<float>(Framework::GetWinApp()->GetWindowWidth()), static_cast<float>(Framework::GetWinApp()->GetWindowHeight()), Framework::GetOffScreen());
 
 		emitterManager_ = EmitterManager::GetInstance();
 		emitterManager_->Initialize();
@@ -27,11 +27,16 @@ namespace MyEngine {
 		levelDataLoder_ = LevelDataLoader::GetInstance();
 		levelDataLoder_->Initialize();
 
+		engineContext_.offScreen = Framework::GetOffScreen();
+		engineContext_.camera = camera_.get();
+		engineContext_.audio = Framework::GetAudio();
+		engineContext_.input = Framework::GetInput();
+
 		sceneManager_ = SceneManager::GetInstance();
-		sceneManager_->Initialize(camera_.get());
+		sceneManager_->Initialize(engineContext_);
 
 		fade_ = Fade::GetInstance();
-		fade_->Initialize(Framework::GetWinApp(),camera_.get());
+		fade_->Initialize(Framework::GetWinApp(), camera_.get());
 
 		flash_ = Flash::GetInstance();
 		flash_->Initialize(camera_.get());

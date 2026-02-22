@@ -20,7 +20,9 @@ namespace MyEngine {
 	///=====================================================/// 
 	/// カメラの各種パラメータを初期化
 	///=====================================================///
-	void Camera::Initialize(float windowWidth, float windowHeight) {
+	void Camera::Initialize(float windowWidth, float windowHeight, OffScreen* offScreenPtr) {
+
+		offScreen_ = offScreenPtr;
 
 		//カメラの座標の設定
 		transform_.Initialize();
@@ -65,7 +67,7 @@ namespace MyEngine {
 		//デバッグカメラフラグの設定
 		isDebugCamera_ = false;
 
-		OffScreen::GetInstance()->SetDefaultCamera(this);
+		offScreen_->SetDefaultCamera(this);
 
 		Object3DCommon::GetInstance()->SetDefaultCamera(this);
 

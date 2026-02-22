@@ -11,27 +11,29 @@
 #include "fstream"
 #include "filesystem"
 
+#include <Scene/EngineContext.h>
+
 using namespace MyEngine;
 
 ///=====================================================/// 
 /// パーティクルエディタ用シーンの初期化
 ///=====================================================///
-void ParticleEditorScene::Initialize(Camera* cameraPtr) {
+void ParticleEditorScene::Initialize(EngineContext context) {
 
 	/// === カメラの設定 === ///
 
-	BaseScene::Initialize(cameraPtr);
+	BaseScene::Initialize(context);
 
-	camera_->SetDebugCameraFlag(true);
+	context_.camera->SetDebugCameraFlag(true);
 
-	camera_->SetOffsetZ(-30.0f);
+	context_.camera->SetOffsetZ(-30.0f);
 
-	camera_->SetRotate({ 0.6f,-0.3f,0.0f });
+	context_.camera->SetRotate({ 0.6f,-0.3f,0.0f });
 
 	//デフォルトカメラを設定
-	Object3DCommon::GetInstance()->SetDefaultCamera(camera_);
+	Object3DCommon::GetInstance()->SetDefaultCamera(context_.camera);
 
-	DebugObjectCommon::GetInstance()->SetDefaultCamera(camera_);
+	DebugObjectCommon::GetInstance()->SetDefaultCamera(context_.camera);
 
 	/// === テクスチャの読み込み === ///
 
@@ -110,7 +112,7 @@ void ParticleEditorScene::Initialize(Camera* cameraPtr) {
 void ParticleEditorScene::Update() {
 
 	//カメラをデバッグ状態で更新
-	camera_->Update();
+	context_.camera->Update();
 
 	//エミッターグループの更新
 	for (auto& group : emitterGroups_) {
@@ -211,7 +213,7 @@ void ParticleEditorScene::CreateGroup() {
 	//デフォルトグループの生成
 	std::unique_ptr<EmitterGroup> newGroup = std::make_unique<EmitterGroup>();
 
-	newGroup->Initialize(camera_);
+	newGroup->Initialize(context_.camera);
 
 	newGroup->SetTextureList(textureList_);
 
@@ -229,7 +231,7 @@ void ParticleEditorScene::LoadGroup(const std::string& groupName) {
 	std::unique_ptr<EmitterGroup> newGroup = std::make_unique<EmitterGroup>();
 
 	//グループの初期化
-	newGroup->Initialize(camera_);
+	newGroup->Initialize(context_.camera);
 
 	//テクスチャリストの設定
 	newGroup->SetTextureList(textureList_);

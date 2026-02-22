@@ -1,9 +1,9 @@
 #pragma once
 
-#include <3d/Camera/Camera.h>
 #include <Object/Camera/FollowCamera.h>
 #include <Object/Player/Player.h>
 
+#include <Scene/EngineContext.h>
 #include <Scene/GameScene/Event/GameSceneEventBase.h>
 
 #include <memory>
@@ -12,7 +12,7 @@ class GameSceneProgress {
 
 public:
 
-	void Initialize(Player* player, MyEngine::Camera* camera, FollowCamera* followCamera);
+	void Initialize(MyEngine::EngineContext context, Player* player, FollowCamera* followCamera);
 
 	void Update();
 
@@ -24,9 +24,9 @@ private:
 
 	std::unique_ptr<GameSceneEventBase> event_;
 
-	Player* player_;
+	MyEngine::EngineContext context_;
 
-	MyEngine::Camera* camera_;
+	Player* player_;
 
 	FollowCamera* followCamera_;
 

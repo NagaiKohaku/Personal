@@ -27,7 +27,7 @@ public:
 	/// <summary>
 	/// ゲームシーンの初期化を行います。
 	/// </summary>
-	void Initialize(MyEngine::Camera* cameraPtr) override;
+	void Initialize(MyEngine::EngineContext context) override;
 
 	/// <summary>
 	/// ゲームシーンの終了処理を行います。

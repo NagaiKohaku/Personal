@@ -1,14 +1,14 @@
 #pragma once
 
-#include "d3d12.h"
+#include <d3d12.h>
 
 #include <Math/Vector/Vector4.h>
 #include <Math/Matrix/Matrix4x4.h>
 
-#include "wrl.h"
-#include "vector"
-#include "cstdint"
-#include "string"
+#include <wrl.h>
+#include <vector>
+#include <cstdint>
+#include <string>
 
 namespace MyEngine {
 
@@ -46,11 +46,6 @@ namespace MyEngine {
 		/// メンバ関数
 		///-------------------------------------------///
 	public:
-
-		/// <summary>
-		/// OffScreenのシングルトンインスタンスを取得します。
-		/// </summary>
-		static OffScreen* GetInstance();
 
 		/// <summary>
 		/// オフスクリーン描画用のリソースやパイプラインを初期化します。

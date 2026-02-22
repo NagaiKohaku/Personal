@@ -5,10 +5,10 @@
 
 using namespace MyEngine;
 
-void GameEvent::Start(Player* player, Camera* camera, FollowCamera* followCamera) {
+void GameEvent::Start(MyEngine::EngineContext context, Player* player, FollowCamera* followCamera) {
 
+	context_ = context;
 	player_ = player;
-	camera_ = camera;
 	followCamera_ = followCamera;
 
 	canMove_ = true;
@@ -26,7 +26,7 @@ void GameEvent::Update() {
 
 GameSceneEventBase::EventType GameEvent::RequestNextEvent() const {
 
-	if (Input::GetInstance()->IsTriggerPushKey(DIK_ESCAPE)) {
+	if (context_.input->IsTriggerPushKey(DIK_ESCAPE)) {
 
 		return EventType::PAUSE;
 	}

@@ -10,6 +10,7 @@
 #include <Effect/Manager/UIManager.h>
 #include <LevelEditor/LevelDataLoader.h>
 #include <3d/Camera/Camera.h>
+#include <Scene/EngineContext.h>
 #include <Scene/SceneManager.h>
 #include <Effect/Fade/Fade.h>
 #include <Effect/Flash/Flash.h>
@@ -45,6 +46,8 @@ namespace MyEngine {
 		LevelDataLoader* levelDataLoder_;
 
 		std::unique_ptr<Camera> camera_;
+
+		EngineContext engineContext_;
 
 		SceneManager* sceneManager_;
 

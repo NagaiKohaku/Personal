@@ -33,24 +33,26 @@
 
 #include "numbers"
 
+#include <Scene/EngineContext.h>
+
 using namespace MyEngine;
 
 ///=====================================================/// 
 /// 初期化
 ///=====================================================///
-void GameScene::Initialize(Camera* cameraPtr) {
+void GameScene::Initialize(MyEngine::EngineContext context) {
 
 	/// === カメラの設定 === ///
 
-	BaseScene::Initialize(cameraPtr);
+	BaseScene::Initialize(context);
 
 	//デバッグカメラを使用しない
-	camera_->SetDebugCameraFlag(false);
+	context_.camera->SetDebugCameraFlag(false);
 
 	//シェイクにカメラをセット
-	Shake::GetInstance()->SetCamera(camera_);
+	Shake::GetInstance()->SetCamera(context_.camera);
 
-	EmitterManager::GetInstance()->SetCamera(camera_);
+	EmitterManager::GetInstance()->SetCamera(context_.camera);
 
 	/// === エネミーマネージャーの生成 === ///
 
@@ -74,16 +76,16 @@ void GameScene::Initialize(Camera* cameraPtr) {
 
 	player_ = ObjectManager::GetInstance()->GetPlayer();
 
-	player_->Initialize(camera_, bulletManager_.get(), false);
+	player_->Initialize(context_.camera, bulletManager_.get(), false);
 
 	//エネミーマネージャーの初期化
-	enemyManager_->Initialize(camera_, bulletManager_.get(), player_);
+	enemyManager_->Initialize(context_.camera, bulletManager_.get(), player_);
 
 	/// === 追尾カメラの生成 === ///
 
 	followCamera_ = std::make_unique<FollowCamera>();
 
-	followCamera_->Initialize(camera_, player_);
+	followCamera_->Initialize(context_.camera, player_);
 
 	//最初は無効化する
 	followCamera_->SetIsActive(false);
@@ -101,7 +103,7 @@ void GameScene::Initialize(Camera* cameraPtr) {
 	//衝撃波エミッター(左)
 	shockWaveLeftEmitter_ = std::make_unique<EmitterGroup>();
 
-	shockWaveLeftEmitter_->Initialize(camera_);
+	shockWaveLeftEmitter_->Initialize(context_.camera);
 
 	shockWaveLeftEmitter_->LoadEmitter("ShockWaveLeft");
 
@@ -109,13 +111,13 @@ void GameScene::Initialize(Camera* cameraPtr) {
 
 	shockWaveRightEmitter_ = std::make_unique<EmitterGroup>();
 
-	shockWaveRightEmitter_->Initialize(camera_);
+	shockWaveRightEmitter_->Initialize(context_.camera);
 
 	shockWaveRightEmitter_->LoadEmitter("ShockWaveRight");
 
 	sceneProgress_ = std::make_unique<GameSceneProgress>();
 
-	sceneProgress_->Initialize(player_,camera_,followCamera_.get());
+	sceneProgress_->Initialize(context_, player_, followCamera_.get());
 
 	/// === 他変数の設定 === ///
 
@@ -162,7 +164,7 @@ void GameScene::Update() {
 	followCamera_->Update();
 
 	//カメラをデバッグ状態で更新
-	camera_->Update();
+	context_.camera->Update();
 
 	sceneProgress_->Update();
 
@@ -211,7 +213,7 @@ void GameScene::Update() {
 	float alphaNum = EaseOut(0.0f, 1.0f, arrowTimer_ / 1.0f);
 
 	//3Dオブジェクトの座標をスクリーン座標に変換する
-	Vector3 playerScreenPos = Vector3ToScreenSpace(camera_, player_->GetWorldPos());
+	Vector3 playerScreenPos = Vector3ToScreenSpace(context_.camera, player_->GetWorldPos());
 
 	UIManager::GetInstance()->Get2DObject("GameOver", "LeftArrow")->SetTranslate({ spaceKeyPos_.x - spaceKeySize_.x / 2.0f - 64.0f - lerpNum,spaceKeyPos_.y });
 
@@ -313,7 +315,7 @@ void GameScene::ImGui() {
 
 	if (ImGui::TreeNode("Camera")) {
 
-		camera_->DisplayImGui();
+		context_.camera->DisplayImGui();
 
 		ImGui::TreePop();
 	}

@@ -26,7 +26,7 @@ void GameSceneEventBase::UpdateEventMotion() {
 	//キーフレーム間を補間
 	player_->SetPosition(Ease(from.playerPosition, to.playerPosition, t, to.easeType, to.easeMag));
 
-	camera_->GetWorldTransform().rotate_ = Ease(from.cameraRotation, to.cameraRotation, t, to.easeType, to.easeMag);
+	context_.camera->GetWorldTransform().rotate_ = Ease(from.cameraRotation, to.cameraRotation, t, to.easeType, to.easeMag);
 
 	//キーを進ませる
 	if (t == 1.0f) {

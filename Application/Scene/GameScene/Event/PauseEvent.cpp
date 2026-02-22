@@ -7,8 +7,9 @@
 
 using namespace MyEngine;
 
-void PauseEvent::Start(Player* player, Camera* camera, FollowCamera* followCamera) {
+void PauseEvent::Start(MyEngine::EngineContext context, Player* player, FollowCamera* followCamera) {
 
+	context_ = context;
 	player_ = player;
 
 	canMove_ = false;
@@ -37,12 +38,12 @@ void PauseEvent::Update() {
 
 	if (delay_) {
 
-		if (Input::GetInstance()->IsTriggerPushKey(DIK_ESCAPE)) {
+		if (context_.input->IsTriggerPushKey(DIK_ESCAPE)) {
 
 			isFinished_ = true;
 		}
 
-		if (Input::GetInstance()->IsTriggerPushKey(DIK_SPACE)) {
+		if (context_.input->IsTriggerPushKey(DIK_SPACE)) {
 
 			Fade::GetInstance()->StartFadeOut();
 		}

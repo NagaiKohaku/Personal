@@ -25,7 +25,7 @@ public:
 	/// <summary>
 	/// タイトルシーンの各種オブジェクトを初期化する関数です
 	/// </summary>
-	void Initialize(MyEngine::Camera* cameraPtr) override;
+	void Initialize(MyEngine::EngineContext context) override;
 
 	/// <summary>
 	/// タイトルシーン終了時に各種オブジェクトを解放する関数です

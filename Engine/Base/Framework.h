@@ -60,7 +60,7 @@ namespace MyEngine {
 
 		std::unique_ptr<SRVManager> srvManager_;
 
-		OffScreen* offScreen_;
+		std::unique_ptr<OffScreen> offScreen_;
 
 		SpriteCommon* spriteCommon_;
 
@@ -91,5 +91,11 @@ namespace MyEngine {
 	public:
 
 		WinApp* GetWinApp() const { return winApp_.get(); }
+
+		OffScreen* GetOffScreen() const { return offScreen_.get(); }
+
+		Audio* GetAudio() const { return audio_; }
+
+		Input* GetInput() const { return input_; }
 	};
 }

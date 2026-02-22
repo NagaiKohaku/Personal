@@ -4,17 +4,17 @@
 
 using namespace MyEngine;
 
-void GameSceneProgress::Initialize(Player* player, Camera* camera, FollowCamera* followCamera) {
+void GameSceneProgress::Initialize(MyEngine::EngineContext context, Player* player, FollowCamera* followCamera) {
+
+	context_ = context;
 
 	player_ = player;
-
-	camera_ = camera;
 
 	followCamera_ = followCamera;
 
 	event_ = GameSceneEventFactory::Create(GameSceneEventBase::EventType::START);
 
-	event_->Start(player_, camera_, followCamera_);
+	event_->Start(context_, player_, followCamera_);
 
 }
 
@@ -35,5 +35,5 @@ void GameSceneProgress::ChangeEvent(GameSceneEventBase::EventType type) {
 
 	event_ = GameSceneEventFactory::Create(type);
 
-	event_->Start(player_, camera_, followCamera_);
+	event_->Start(context_, player_, followCamera_);
 }

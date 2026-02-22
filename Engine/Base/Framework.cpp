@@ -54,7 +54,7 @@ namespace MyEngine {
 		dxCommon_->InitializeRendering(rtvManager_.get(), dsvManager_.get());
 
 		//オフスクリーン
-		offScreen_ = OffScreen::GetInstance();
+		offScreen_ = std::make_unique<OffScreen>();
 		offScreen_->Initialize(winApp_.get(), dxCommon_.get(), rtvManager_.get(), dsvManager_.get(), srvManager_.get());
 
 		//スプライト基底

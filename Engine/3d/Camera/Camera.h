@@ -1,4 +1,5 @@
 #pragma once
+#include <Base/OffScreen.h>
 #include <3d/Object/Object3D.h>
 #include <Math/Vector/Vector3.h>
 #include <Math/Matrix/Matrix4x4.h>
@@ -19,7 +20,7 @@ namespace MyEngine {
 		/// <summary>
 		/// カメラの各種パラメータを初期化します。
 		/// </summary>
-		void Initialize(float windowWidth, float windowHeight);
+		void Initialize(float windowWidth, float windowHeight, OffScreen* offScreenPtr);
 
 		/// <summary>
 		/// カメラの状態を更新します。
@@ -40,6 +41,8 @@ namespace MyEngine {
 		/// メンバ変数
 		///-------------------------------------------///
 	private:
+
+		OffScreen* offScreen_;
 
 		//追従対象
 		Object3D* trackingObject_;

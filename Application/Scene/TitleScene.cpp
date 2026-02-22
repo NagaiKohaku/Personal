@@ -19,30 +19,32 @@
 
 #include <imgui.h>
 
+#include <Scene/EngineContext.h>
+
 using namespace MyEngine;
 
 ///=====================================================/// 
 /// タイトルシーンの各種オブジェクトを初期化
 ///=====================================================///
-void TitleScene::Initialize(Camera* cameraPtr) {
+void TitleScene::Initialize(MyEngine::EngineContext context) {
 
 	/// === カメラの設定 === ///
 
-	BaseScene::Initialize(cameraPtr);
+	BaseScene::Initialize(context);
 
 	//デバッグカメラを使用しない
-	camera_->SetDebugCameraFlag(false);
+	context_.camera->SetDebugCameraFlag(false);
 
 	//カメラの座標
-	camera_->GetWorldTransform().translate_ = { 0.0f,1.0f,0.0f };
+	context_.camera->GetWorldTransform().translate_ = { 0.0f,1.0f,0.0f };
 
-	camera_->SetOffsetZ(-20.0f);
+	context_.camera->SetOffsetZ(-20.0f);
 
 	cameraRotate_ = { 0.3f,0.0f,0.0f };
 
-	Shake::GetInstance()->SetCamera(camera_);
+	Shake::GetInstance()->SetCamera(context_.camera);
 
-	EmitterManager::GetInstance()->SetCamera(camera_);
+	EmitterManager::GetInstance()->SetCamera(context_.camera);
 
 	/// === 3Dオブジェクトの設定 === ///
 
@@ -56,7 +58,7 @@ void TitleScene::Initialize(Camera* cameraPtr) {
 
 	player_ = ObjectManager::GetInstance()->GetPlayer();
 
-	player_->Initialize(camera_,nullptr,false);
+	player_->Initialize(context_.camera,nullptr,false);
 
 	player_->SetPosition({ 0.0f,1.0f,0.0f });
 
@@ -73,14 +75,14 @@ void TitleScene::Initialize(Camera* cameraPtr) {
 	//衝撃波エミッター(左)
 	shockWaveLeftEmitter_ = std::make_unique<EmitterGroup>();
 
-	shockWaveLeftEmitter_->Initialize(camera_);
+	shockWaveLeftEmitter_->Initialize(context_.camera);
 
 	shockWaveLeftEmitter_->LoadEmitter("ShockWaveLeft");
 
 	//衝撃波エミッター(右)
 	shockWaveRightEmitter_ = std::make_unique<EmitterGroup>();
 
-	shockWaveRightEmitter_->Initialize(camera_);
+	shockWaveRightEmitter_->Initialize(context_.camera);
 
 	shockWaveRightEmitter_->LoadEmitter("ShockWaveRight");
 
@@ -163,11 +165,11 @@ void TitleScene::Update() {
 	}
 
 	//色反転していたら徐々に戻す
-	if (OffScreen::GetInstance()->GetColorReverseRatio() > 0.0f) {
+	if (context_.offScreen->GetColorReverseRatio() > 0.0f) {
 
-		float currentNum = OffScreen::GetInstance()->GetColorReverseRatio();
+		float currentNum = context_.offScreen->GetColorReverseRatio();
 
-		OffScreen::GetInstance()->SetColorReverseRatio(Lerp(currentNum, 0.0f, 0.1f));
+		context_.offScreen->SetColorReverseRatio(Lerp(currentNum, 0.0f, 0.1f));
 	}
 
 	if (!isFade_) {
@@ -188,7 +190,7 @@ void TitleScene::Update() {
 			}
 
 			//カメラの回転を設定
-			camera_->SetRotate(cameraRotate_);
+			context_.camera->SetRotate(cameraRotate_);
 		}
 	}
 
@@ -217,7 +219,7 @@ void TitleScene::Update() {
 	UIManager::GetInstance()->Get2DObject("Title", "RightArrow")->SetTranslate({ spaceKeyPos_.x + spaceKeySize_.x / 2.0f + 64.0f + lerpNum,spaceKeyPos_.y });
 
 	//カメラの更新
-	camera_->Update();
+	context_.camera->Update();
 
 	//プレイヤーの更新
 	player_->Update();
@@ -349,7 +351,7 @@ void TitleScene::Start() {
 	//最後のアニメーションの時はカメラをプレイヤーに向ける
 	if (animNum_ >= static_cast<int>(animPos_.size())) {
 
-		Vector3 cameraPos = camera_->GetWorldTransform().GetWorldTranslate();
+		Vector3 cameraPos = context_.camera->GetWorldTransform().GetWorldTranslate();
 
 		Vector3 direction = Normalize(playerPos - cameraPos);
 
@@ -359,13 +361,13 @@ void TitleScene::Start() {
 			0.0f
 		};
 
-		camera_->SetRotate(toPlayerRot);
+		context_.camera->SetRotate(toPlayerRot);
 
 	} else {
 
-		Vector3 cameraRot = camera_->GetWorldTransform().rotate_;
+		Vector3 cameraRot = context_.camera->GetWorldTransform().rotate_;
 
 		//カメラを前方に向ける
-		camera_->SetRotate(EaseOut(cameraRot, Vector3(0.0f, 0.0f, 0.0f), t, 2.0f));
+		context_.camera->SetRotate(EaseOut(cameraRot, Vector3(0.0f, 0.0f, 0.0f), t, 2.0f));
 	}
 }
