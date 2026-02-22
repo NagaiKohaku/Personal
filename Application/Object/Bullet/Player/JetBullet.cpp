@@ -16,47 +16,7 @@ JetBullet::~JetBullet() {
 ///=====================================================///
 void JetBullet::Initialize(Vector3 pos, Vector3 direction) {
 
-	/// === オブジェクトの生成 === ///
-
-	//生成
-	object_ = std::make_unique<Object3D>();
-
-	//初期化
-	object_->Initialize();
-
-	//座標の設定
-	object_->GetWorldTransform().translate_ = pos;
-
-	//サイズの設定
-	object_->GetWorldTransform().scale_ = { 0.5f,0.5f,0.5f };
-
-	//モデルの設定
-	object_->SetModel("Sphere");
-
-	/// === コライダーの生成 === ///
-
-	//生成
-	collider_ = std::make_unique<SphereCollider>();
-
-	//初期化
-	collider_->Initialize(&object_->GetWorldTransform());
-
-	//タグの設定
-	collider_->SetTag(Collider::Tag::PLAYERBULLETLIGHT);
-
-	//大きさの設定
-	collider_->SetRadius(0.5f);
-
-	/// === 他変数の設定 === ///
-
-	//移動速度の設定
-	speed_ = 1.5f;
-
-	//移動量の設定
-	velocity_ = direction * speed_;
-
-	//最大寿命の設定
-	lifeTimeMax_ = 2.0f;
+	BulletBase::Initialize(pos, direction);
 }
 
 ///=====================================================/// 
@@ -64,26 +24,7 @@ void JetBullet::Initialize(Vector3 pos, Vector3 direction) {
 ///=====================================================///
 void JetBullet::Update() {
 
-	//弾の寿命を更新
-	lifeTimer_ += 1.0f / 60.0f;
-
-	//弾の寿命が最大寿命を超えたら
-	if (lifeTimer_ >= lifeTimeMax_) {
-
-		isDead_ = true;
-	}
-
-	//弾の移動
-	Move();
-
-	//接触時判定
-	IsCollision();
-
-	//オブジェクトの更新
-	object_->Update();
-
-	//コライダーの更新
-	collider_->Update();
+	BulletBase::Update();
 }
 
 ///=====================================================/// 
@@ -91,8 +32,7 @@ void JetBullet::Update() {
 ///=====================================================///
 void JetBullet::TransformUpdate() {
 
-	//オブジェクトの座標のみ更新
-	object_->Update();
+	BulletBase::TransformUpdate();
 }
 
 ///=====================================================/// 
@@ -100,11 +40,7 @@ void JetBullet::TransformUpdate() {
 ///=====================================================///
 void JetBullet::Draw() {
 
-	//オブジェクトの描画
-	object_->Draw(LayerType::OBJECT);
-
-	//コライダーの描画
-	collider_->Draw();
+	BulletBase::Draw();
 }
 
 ///=====================================================/// 
@@ -112,8 +48,7 @@ void JetBullet::Draw() {
 ///=====================================================///
 void JetBullet::Move() {
 
-	//オブジェクトの移動
-	object_->GetWorldTransform().translate_ += velocity_;
+	BulletBase::Move();
 }
 
 ///=====================================================/// 

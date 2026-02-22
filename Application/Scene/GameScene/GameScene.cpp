@@ -42,9 +42,10 @@ using namespace MyEngine;
 ///=====================================================///
 void GameScene::Initialize(MyEngine::EngineContext context) {
 
-	/// === カメラの設定 === ///
-
+	//シーンの初期化
 	BaseScene::Initialize(context);
+
+	/// === カメラの設定 === ///
 
 	//デバッグカメラを使用しない
 	context_.camera->SetDebugCameraFlag(false);

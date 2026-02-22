@@ -51,19 +51,35 @@ private:
 	/// <summary>
 	/// 弾の移動処理を行います
 	/// </summary>
-	void Move();
+	void Move() override;
 
 	/// <summary>
 	/// 他オブジェクトと接触している場合の処理を行います
 	/// </summary>
-	void IsCollision();
+	void IsCollision() override;
 
-	///-------------------------------------------/// 
-	/// メンバ変数
-	///-------------------------------------------///
 private:
 
-	//コライダー
-	std::unique_ptr<MyEngine::SphereCollider> collider_;
+	const MyEngine::Vector3 objectSize_ = { 0.5f,0.5f,0.5f };
+
+	const float colliderSize_ = 0.5f;
+
+	const float speed_ = 1.5f;
+
+	const float lifeTime_ = 2.0f;
+
+	const MyEngine::Collider::Tag colliderTag_ = MyEngine::Collider::Tag::PLAYERBULLETLIGHT;
+
+private:
+
+	MyEngine::Vector3 GetObjectSize() const override { return objectSize_; }
+
+	float GetColliderSize() const override { return colliderSize_; }
+
+	float GetSpeed() const override { return speed_; }
+
+	float GetLifeTime() const override { return lifeTime_; }
+
+	MyEngine::Collider::Tag GetColliderTag() const override { return colliderTag_; }
 
 };
