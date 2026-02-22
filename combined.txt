@@ -92,6 +92,7 @@
 └── └──     ├── Shadow.cpp
 └── └──     └── Shadow.h
 └── └── Scene/
+└──     ├── EngineContext.h
 └──     ├── GameScene/
 └──     └── ├── Event/
 └──     └── └── ├── ClearEvent.cpp
@@ -201,10 +202,12 @@
 └── ├── Base/
 └── └── ├── Audio.cpp
 └── └── ├── Audio.h
-└── └── ├── DSVManager.cpp
-└── └── ├── DSVManager.h
 └── └── ├── DirectXCommon.cpp
 └── └── ├── DirectXCommon.h
+└── └── ├── Framework.cpp
+└── └── ├── Framework.h
+└── └── ├── Game.cpp
+└── └── ├── Game.h
 └── └── ├── ImGuiManager.cpp
 └── └── ├── ImGuiManager.h
 └── └── ├── Input.cpp
@@ -212,12 +215,17 @@
 └── └── ├── LayerType.h
 └── └── ├── OffScreen.cpp
 └── └── ├── OffScreen.h
-└── └── ├── RTVManager.cpp
-└── └── ├── RTVManager.h
 └── └── ├── Renderer.cpp
 └── └── ├── Renderer.h
-└── └── ├── SrvManager.cpp
-└── └── ├── SrvManager.h
+└── └── ├── View/
+└── └── └── ├── DSVManager.cpp
+└── └── └── ├── DSVManager.h
+└── └── └── ├── RTVManager.cpp
+└── └── └── ├── RTVManager.h
+└── └── └── ├── SRVManager.cpp
+└── └── └── ├── SRVManager.h
+└── └── └── ├── ViewManagerBase.cpp
+└── └── └── └── ViewManagerBase.h
 └── └── ├── WinApp.cpp
 └── └── └── WinApp.h
 └── ├── Math/
@@ -393,7 +401,6 @@ File Path: Application/Effect/Fade/Fade.cpp
 ============================================================
 #include "Fade.h"
 
-#include <Base/WinApp.h>
 #include <2d/Sprite/SpriteManager.h>
 #include <Math/Utility/MakeMatrixMath.h>
 
@@ -413,7 +420,10 @@ Fade* Fade::GetInstance() {
 ///=====================================================/// 
 /// フェード処理に必要なスプライトやリソースを初期化
 ///=====================================================///
-void Fade::Initialize() {
+void Fade::Initialize(WinApp* winAppPtr, MyEngine::Camera* cameraPtr) {
+
+	winApp_ = winAppPtr;
+	camera_ = cameraPtr;
 
 	/// === フェードに使うスプライトの生成 === ///
 
@@ -443,9 +453,9 @@ void Fade::Update() {
 		if (player_ != nullptr) {
 
 			//プレイヤーの位置を2D座標に変換
-			Matrix4x4 viewport = MakeViewportMatrix(0, 0, WinApp::kClientWidth, WinApp::kClientHeight, 0, 1);
+			Matrix4x4 viewport = camera_->GetViewPortMatrix();
 
-			Matrix4x4 viewProjectionViewport = camera_->GetViewProjectionMatrix() * viewport;
+			Matrix4x4 viewProjectionViewport = camera_->Get3DViewProjectionMatrix() * viewport;
 
 			Vector3 screenPos = Transform(player_->GetWorldPos(), viewProjectionViewport);
 
@@ -493,7 +503,7 @@ void Fade::StartFadeIn() {
 	//スプライトの初期座標・初期サイズの設定
 	for (auto& fadeSprite : fadeSprites_) {
 
-		fadeSprite.sprite->SetTranslate(Vector2(WinApp::kClientWidth / 2.0f,WinApp::kClientHeight / 2.0f));
+		fadeSprite.sprite->SetTranslate(Vector2(winApp_->GetWindowWidth() / 2.0f,winApp_->GetWindowHeight() / 2.0f));
 
 		fadeSprite.sprite->SetSize(fadeSprite.endSize);
 
@@ -561,7 +571,7 @@ void Fade::StartFadeOut() {
 
 	//スプライトの初期座標・初期サイズの設定
 	for (auto& fadeSprite : fadeSprites_) {
-		fadeSprite.sprite->SetTranslate(Vector2(WinApp::kClientWidth / 2.0f, WinApp::kClientHeight / 2.0f));
+		fadeSprite.sprite->SetTranslate(Vector2(winApp_->GetWindowWidth() / 2.0f, winApp_->GetWindowHeight() / 2.0f));
 		fadeSprite.sprite->SetSize(fadeSprite.startSize);
 	}
 }
@@ -623,7 +633,7 @@ void Fade::CreateRingSprite() {
 	//オブジェクトを生成してパラメータの初期化をする
 	newObject = std::make_unique<Object2D>();
 
-	newObject->Initialize();
+	newObject->Initialize(camera_);
 
 	//リングスプライトをセット
 	newObject->SetSprite("BigRing");
@@ -671,7 +681,7 @@ void Fade::CreateCircleSprite() {
 	//オブジェクトを生成してパラメータの初期化をする
 	newObject = std::make_unique<Object2D>();
 
-	newObject->Initialize();
+	newObject->Initialize(camera_);
 
 	//円形スプライトをセット
 	newObject->SetSprite("BigCircle");
@@ -700,6 +710,7 @@ File Path: Application/Effect/Fade/Fade.h
 ============================================================
 #pragma once
 
+#include <Base/WinApp.h>
 #include <2d/Object/Object2D.h>
 #include <Math/Transform/WorldTransform.h>
 
@@ -750,7 +761,7 @@ public:
 	/// <summary>
 	/// フェード処理に必要なスプライトやリソースを初期化する関数です。
 	/// </summary>
-	void Initialize();
+	void Initialize(MyEngine::WinApp* winAppPtr, MyEngine::Camera* cameraPtr);
 
 	/// <summary>
 	/// フェード処理の状態を毎フレーム更新する関数です。
@@ -802,6 +813,9 @@ private:
 	///=====================================================///
 private:
 
+	//ウィンドウクラス
+	MyEngine::WinApp* winApp_;
+
 	//フェード状態
 	FadeState state_ = FadeState::NONE;
 
@@ -840,24 +854,9 @@ public:
 	FadeState GetState() const { return state_; }
 
 	/// <summary>
-	/// カメラの取得
-	/// </summary>
-	MyEngine::Camera* GetCamera() { return camera_; }
-
-	/// <summary>
-	/// プレイヤーの取得
-	/// </summary>
-	Player* GetPlayer() { return player_; }
-
-	/// <summary>
 	/// フェード状態の設定
 	/// </summary>
 	void SetState(FadeState state) { state_ = state; }
-
-	/// <summary>
-	/// カメラの設定
-	/// </summary>
-	void SetCamera(MyEngine::Camera* ptr) { camera_ = ptr; }
 
 	/// <summary>
 	/// プレイヤーの設定
@@ -886,12 +885,14 @@ Flash* Flash::GetInstance() {
 ///=====================================================/// 
 /// フラッシュエフェクトの初期化
 ///=====================================================///
-void Flash::Initialize() {
+void Flash::Initialize(MyEngine::Camera* cameraPtr) {
+
+	camera_ = cameraPtr;
 
 	//フラッシュ用オブジェクトの生成
 	flashObject_ = std::make_unique<Object2D>();
 
-	flashObject_->Initialize();
+	flashObject_->Initialize(camera_);
 
 	flashObject_->SetSprite("white_128x128");
 
@@ -985,7 +986,8 @@ File Path: Application/Effect/Flash/Flash.h
 ============================================================
 #pragma once
 
-#include "2d/Object/Object2D.h"
+#include <2d/Object/Object2D.h>
+#include <3d/Camera/Camera.h>
 
 /// <summary>
 /// 画面全体にフラッシュエフェクトを表示する管理クラスです。
@@ -1002,7 +1004,7 @@ public:
 	/// <summary>
 	/// フラッシュエフェクトの初期化を行います。
 	/// </summary>
-	void Initialize();
+	void Initialize(MyEngine::Camera* cameraPtr);
 
 	/// <summary>
 	/// フラッシュエフェクトの更新処理を行います。
@@ -1023,6 +1025,9 @@ public:
 
 private:
 
+	//カメラ
+	MyEngine::Camera* camera_;
+
 	//フラッシュ用オブジェクト
 	std::unique_ptr<MyEngine::Object2D> flashObject_;
 
@@ -1040,6 +1045,7 @@ private:
 
 	//フラッシュ色
 	MyEngine::Vector4 color_;
+
 };
 
 ============================================================
@@ -1190,7 +1196,9 @@ UIManager* UIManager::GetInstance() {
 	return &instance;
 }
 
-void UIManager::Initialize() {
+void UIManager::Initialize(Camera* cameraPtr) {
+
+	camera_ = cameraPtr;
 
 	spriteNameList_ = SpriteManager::GetInstance()->GetSpriteNameList();
 
@@ -1430,7 +1438,7 @@ void UIManager::CreateUI(const std::string& groupName, const std::string uiName,
 
 	newUIObject.object = std::make_unique<Object2D>();
 
-	newUIObject.object->Initialize();
+	newUIObject.object->Initialize(camera_);
 
 	newUIObject.object->SetSprite(spriteName);
 
@@ -1832,6 +1840,7 @@ File Path: Application/Effect/Manager/UIManager.h
 #pragma once
 
 #include <2d/Object/Object2D.h>
+#include <3d/Camera/Camera.h>
 #include <Math/Transform/WorldTransform.h>
 
 #include <vector>
@@ -1864,7 +1873,7 @@ public:
 
 	static UIManager* GetInstance();
 
-	void Initialize();
+	void Initialize(MyEngine::Camera* cameraPtr);
 
 	void Update();
 
@@ -1899,6 +1908,9 @@ private:
 	void SaveUIState(const std::string& fileName);
 
 private:
+
+	//カメラ
+	MyEngine::Camera* camera_;
 
 	std::string directoryPath_;
 
@@ -2000,12 +2012,10 @@ void Shake::Update() {
 	Matrix4x4 viewMatrix = Inverse4x4(transform_.GetWorldMatrix());
 
 	//ビュープロジェクション行列の計算
-	Matrix4x4 viewProjectionMatrix = viewMatrix * camera_->GetProjectionMatrix();
+	Matrix4x4 viewProjectionMatrix = viewMatrix * camera_->Get2DViewProjectionMatrix();
 
 	//カメラに設定
 	camera_->SetViewMatrix(viewMatrix);
-
-	camera_->SetViewProjectionMatrix(viewProjectionMatrix);
 }
 
 ///=====================================================/// 
@@ -2489,6 +2499,123 @@ File Path: Application/Object/Bullet/Core/BulletBase.cpp
 ============================================================
 #include "BulletBase.h"
 
+using namespace MyEngine;
+
+///=====================================================/// 
+/// 弾が破棄される際に関連するコライダーを削除
+///=====================================================///
+BulletBase::~BulletBase() {
+
+	//コライダーを削除
+	collider_->Remove();
+}
+
+///=====================================================/// 
+/// 弾を初期化し、パラメータを設定
+///=====================================================///
+void BulletBase::Initialize(Vector3 pos, Vector3 direction) {
+
+	/// === オブジェクトの生成 === ///
+
+	//生成
+	object_ = std::make_unique<Object3D>();
+
+	//初期化
+	object_->Initialize();
+
+	//座標の設定
+	object_->GetWorldTransform().translate_ = pos;
+
+	//サイズの設定
+	object_->GetWorldTransform().scale_ = GetObjectSize();
+
+	//モデルの設定
+	object_->SetModel("Sphere");
+
+	/// === コライダーの生成 === ///
+
+	//生成
+	collider_ = std::make_unique<SphereCollider>();
+
+	//初期化
+	collider_->Initialize(&object_->GetWorldTransform());
+
+	//タグの設定
+	collider_->SetTag(GetColliderTag());
+
+	//大きさの設定
+	collider_->SetRadius(GetColliderSize());
+
+	/// === 他変数の設定 === ///
+
+	//移動速度の設定
+	speed_ = GetSpeed();
+
+	//移動量の設定
+	velocity_ = direction * speed_;
+
+	//最大寿命の設定
+	lifeTimeMax_ = GetLifeTime();
+
+	isDead_ = false;
+}
+
+///=====================================================/// 
+/// 弾の状態を更新
+///=====================================================///
+void BulletBase::Update() {
+
+	//弾の寿命を更新
+	lifeTimer_ += 1.0f / 60.0f;
+
+	//弾の寿命が最大寿命を超えたら
+	if (lifeTimer_ >= lifeTimeMax_) {
+
+		isDead_ = true;
+	}
+
+	//弾の移動
+	Move();
+
+	//接触時判定
+	IsCollision();
+
+	//オブジェクトの更新
+	object_->Update();
+
+	//コライダーの更新
+	collider_->Update();
+}
+
+///=====================================================/// 
+/// 弾の座標更新処理を行う
+///=====================================================///
+void BulletBase::TransformUpdate() {
+
+	//オブジェクトの座標のみ更新
+	object_->Update();
+}
+
+///=====================================================/// 
+/// 弾の描画処理を行う
+///=====================================================///
+void BulletBase::Draw() {
+
+	//オブジェクトの描画
+	object_->Draw(LayerType::OBJECT);
+
+	//コライダーの描画
+	collider_->Draw();
+}
+
+///=====================================================/// 
+/// 弾の移動処理を行う
+///=====================================================///
+void BulletBase::Move() {
+
+	//オブジェクトの移動
+	object_->GetWorldTransform().translate_ += velocity_;
+}
 
 ============================================================
 File Path: Application/Object/Bullet/Core/BulletBase.h
@@ -2497,6 +2624,8 @@ File Path: Application/Object/Bullet/Core/BulletBase.h
 
 #include "3d/Object/Object3D.h"
 
+#include "3d/Collider/SphereCollider.h"
+
 #include "memory"
 
 ///=====================================================/// 
@@ -2504,67 +2633,101 @@ File Path: Application/Object/Bullet/Core/BulletBase.h
 ///=====================================================///
 class BulletBase {
 
-	///-------------------------------------------/// 
-	/// メンバ関数
-	///-------------------------------------------///
 public:
 
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
-	virtual ~BulletBase() = default;
+	virtual ~BulletBase();
 
 	/// <summary>
 	/// 初期化
 	/// </summary>
 	/// <param name="pos">初期座標</param>
 	/// <param name="direction">発射方向</param>
-	virtual void Initialize(MyEngine::Vector3 pos, MyEngine::Vector3 direction) = 0;
+	void Initialize(MyEngine::Vector3 pos, MyEngine::Vector3 direction);
 
 	/// <summary>
 	/// 更新
 	/// </summary>
-	virtual void Update() = 0;
+	void Update();
 
 	/// <summary>
 	/// 座標のみ更新
 	/// </summary>
-	virtual void TransformUpdate() = 0;
+	void TransformUpdate();
 
 	/// <summary>
 	/// 描画
 	/// </summary>
-	virtual void Draw() = 0;
+	void Draw();
 
-	///-------------------------------------------/// 
-	/// メンバ変数
-	///-------------------------------------------///
+protected:
+
+	/// <summary>
+	/// 弾の移動処理を行います
+	void Move();
+
+	/// <summary>
+	/// 他オブジェクトと接触している場合の処理を行います
+	/// </summary>
+	virtual void IsCollision() = 0;
+
+protected:
+
+	/// <summary>
+	/// 派生クラスのオブジェクトのサイズ情報を取得
+	/// </summary>
+	/// <returns>オブジェクトのサイズ</returns>
+	virtual MyEngine::Vector3 GetObjectSize() const = 0;
+
+	/// <summary>
+	/// 派生クラスのコライダーのサイズ情報を取得
+	/// </summary>
+	/// <returns>コライダーのサイズ</returns>
+	virtual float GetColliderSize() const = 0;
+
+	/// <summary>
+	/// 派生クラスの移動速度情報を取得
+	/// </summary>
+	/// <returns>移動速度</returns>
+	virtual float GetSpeed() const = 0;
+
+	/// <summary>
+	/// 派生クラスの生存時間情報を取得
+	/// </summary>
+	/// <returns>生存時間</returns>
+	virtual float GetLifeTime() const = 0;
+
+	/// <summary>
+	/// 派生クラスのコライダーのタグ情報を取得
+	/// </summary>
+	/// <returns>コライダーのタグ</returns>
+	virtual MyEngine::Collider::Tag GetColliderTag() const = 0;
+
 protected:
 
 	//オブジェクト
 	std::unique_ptr<MyEngine::Object3D> object_ = nullptr;
 
-	//大きさ
-	float size_ = 1.0f;
+	//コライダー
+	std::unique_ptr<MyEngine::SphereCollider> collider_;
 
 	//移動速度
-	float speed_ = 0.0f;
+	float speed_;
 
 	//移動量
-	MyEngine::Vector3 velocity_ = { 0.0f,0.0f,0.0f };
+	MyEngine::Vector3 velocity_;
 
 	//弾の寿命
-	float lifeTimer_ = 0.0f;
+	float lifeTimer_;
 
 	//弾の最大寿命
-	float lifeTimeMax_ = 0.0f;
+	float lifeTimeMax_;
 
 	//消滅フラグ
-	bool isDead_ = false;
+	bool isDead_;
 
-	///-------------------------------------------/// 
-	/// ゲッター・セッター
-	///-------------------------------------------///
 public:
 
 	/// <summary>
@@ -2779,123 +2942,6 @@ File Path: Application/Object/Bullet/Enemy/EnemyBullet.cpp
 using namespace MyEngine;
 
 ///=====================================================/// 
-/// 弾が破棄される際に関連するコライダーを削除
-///=====================================================///
-EnemyBullet::~EnemyBullet() {
-
-	//コライダーを削除
-	collider_->Remove();
-}
-
-///=====================================================/// 
-/// 弾を初期化し、パラメータを設定
-///=====================================================///
-void EnemyBullet::Initialize(Vector3 pos, Vector3 direction) {
-
-	/// === パラメータの設定 === ///
-
-	//大きさの設定
-	size_ = 0.5f;
-
-	//移動速度の設定
-	speed_ = 0.5f;
-
-	//移動量の設定
-	velocity_ = direction * speed_;
-
-	//最大寿命の設定
-	lifeTimeMax_ = 2.0f;
-
-	/// === オブジェクトの生成 === ///
-
-	//生成
-	object_ = std::make_unique<Object3D>();
-
-	//初期化
-	object_->Initialize();
-
-	//座標の設定
-	object_->GetWorldTransform().translate_ = pos;
-
-	//サイズの設定
-	object_->GetWorldTransform().scale_ = { size_,size_,size_ };
-
-	//モデルの設定
-	object_->SetModel("Sphere");
-
-	/// === コライダーの生成 === ///
-
-	//生成
-	collider_ = std::make_unique<SphereCollider>();
-
-	//初期化
-	collider_->Initialize(&object_->GetWorldTransform());
-
-	//タグの設定
-	collider_->SetTag(Collider::Tag::ENEMYBULLET);
-
-	//大きさの設定
-	collider_->SetRadius(size_);
-}
-
-///=====================================================/// 
-/// 弾の状態を更新
-///=====================================================///
-void EnemyBullet::Update() {
-
-	//弾の寿命を更新
-	lifeTimer_ += 1.0f / 60.0f;
-
-	//弾の寿命が最大寿命を超えたら
-	if (lifeTimer_ >= lifeTimeMax_) {
-
-		isDead_ = true;
-	}
-
-	//弾の移動
-	Move();
-
-	//接触時処理
-	IsCollision();
-
-	//オブジェクトの更新
-	object_->Update();
-
-	//コライダーの更新
-	collider_->Update();
-}
-
-///=====================================================/// 
-/// 弾の座標更新処理を行う
-///=====================================================///
-void EnemyBullet::TransformUpdate() {
-
-	//オブジェクトの座標のみ更新
-	object_->Update();
-}
-
-///=====================================================/// 
-/// 弾の描画処理を行う
-///=====================================================///
-void EnemyBullet::Draw() {
-
-	//オブジェクトの描画
-	object_->Draw(LayerType::OBJECT);
-
-	//コライダーの描画
-	collider_->Draw();
-}
-
-///=====================================================/// 
-/// 弾の移動処理を行う
-///=====================================================///
-void EnemyBullet::Move() {
-
-	//オブジェクトの移動
-	object_->GetWorldTransform().translate_ += velocity_;
-}
-
-///=====================================================/// 
 /// 他オブジェクトと接触している場合の処理を行う
 ///=====================================================///
 void EnemyBullet::IsCollision() {
@@ -2927,60 +2973,61 @@ File Path: Application/Object/Bullet/Enemy/EnemyBullet.h
 /// </summary>
 class EnemyBullet : public BulletBase {
 
-	///-------------------------------------------/// 
-	/// メンバ関数
-	///-------------------------------------------///
-public:
-
-	/// <summary>
-	/// 弾が破棄される際に関連するコライダーを削除します。
-	/// </summary>
-	~EnemyBullet();
-
-	/// <summary>
-	/// 弾を初期化し、パラメータを設定します。
-	/// </summary>
-	/// <param name="pos">生成時の座標を指定します。</param>
-	/// <param name="direction">移動方向を指定します。</param>
-	void Initialize(MyEngine::Vector3 pos, MyEngine::Vector3 direction) override;
-
-	/// <summary>
-	/// 弾の状態を更新します
-	/// </summary>
-	void Update() override;
-
-	/// <summary>
-	/// 弾の座標更新処理を行います
-	/// </summary>
-	void TransformUpdate() override;
-
-	/// <summary>
-	/// 弾の描画処理を行います
-	/// </summary>
-	void Draw() override;
-
-	///-------------------------------------------/// 
-	/// クラス内処理関数
-	///-------------------------------------------///
 private:
-
-	/// <summary>
-	/// 弾の移動処理を行います
-	/// </summary>
-	void Move();
 
 	/// <summary>
 	/// 他オブジェクトと接触している場合の処理を行います
 	/// </summary>
-	void IsCollision();
+	void IsCollision() override;
 
-	///-------------------------------------------/// 
-	/// メンバ変数
-	///-------------------------------------------///
 private:
 
-	//コライダー
-	std::unique_ptr<MyEngine::SphereCollider> collider_;
+	//オブジェクトのサイズ
+	const MyEngine::Vector3 objectSize_ = { 0.5f,0.5f,0.5f };
+
+	//コライダーのサイズ
+	const float colliderSize_ = 0.5f;
+
+	//移動速度
+	const float speed_ = 0.5f;
+
+	//生存時間
+	const float lifeTime_ = 2.0f;
+
+	//コライダーのタグ
+	const MyEngine::Collider::Tag colliderTag_ = MyEngine::Collider::Tag::ENEMYBULLET;
+
+private:
+
+	/// <summary>
+	/// 基底クラスにオブジェクトのサイズ情報取得させる
+	/// </summary>
+	/// <returns>オブジェクトのサイズ</returns>
+	MyEngine::Vector3 GetObjectSize() const override { return objectSize_; }
+
+	/// <summary>
+	/// 基底クラスにコライダーのサイズ情報取得させる
+	/// </summary>
+	/// <returns>コライダーのサイズ</returns>
+	float GetColliderSize() const override { return colliderSize_; }
+
+	/// <summary>
+	/// 基底クラスに移動速度情報取得させる
+	/// </summary>
+	/// <returns>移動速度</returns>
+	float GetSpeed() const override { return speed_; }
+
+	/// <summary>
+	/// 基底クラスに生存時間情報取得させる
+	/// </summary>
+	/// <returns>生存時間</returns>
+	float GetLifeTime() const override { return lifeTime_; }
+
+	/// <summary>
+	/// 基底クラスにコライダーのタグ情報取得させる
+	/// </summary>
+	/// <returns>コライダーのタグ</returns>
+	MyEngine::Collider::Tag GetColliderTag() const override { return colliderTag_; }
 
 };
 
@@ -2990,120 +3037,6 @@ File Path: Application/Object/Bullet/Player/JetBullet.cpp
 #include "JetBullet.h"
 
 using namespace MyEngine;
-
-///=====================================================/// 
-/// 弾が破棄される際に関連するコライダーを削除
-///=====================================================///
-JetBullet::~JetBullet() {
-
-	//コライダーを削除
-	collider_->Remove();
-}
-
-///=====================================================/// 
-/// 弾を初期化し、パラメータを設定
-///=====================================================///
-void JetBullet::Initialize(Vector3 pos, Vector3 direction) {
-
-	/// === オブジェクトの生成 === ///
-
-	//生成
-	object_ = std::make_unique<Object3D>();
-
-	//初期化
-	object_->Initialize();
-
-	//座標の設定
-	object_->GetWorldTransform().translate_ = pos;
-
-	//サイズの設定
-	object_->GetWorldTransform().scale_ = { 0.5f,0.5f,0.5f };
-
-	//モデルの設定
-	object_->SetModel("Sphere");
-
-	/// === コライダーの生成 === ///
-
-	//生成
-	collider_ = std::make_unique<SphereCollider>();
-
-	//初期化
-	collider_->Initialize(&object_->GetWorldTransform());
-
-	//タグの設定
-	collider_->SetTag(Collider::Tag::PLAYERBULLETLIGHT);
-
-	//大きさの設定
-	collider_->SetRadius(0.5f);
-
-	/// === 他変数の設定 === ///
-
-	//移動速度の設定
-	speed_ = 1.5f;
-
-	//移動量の設定
-	velocity_ = direction * speed_;
-
-	//最大寿命の設定
-	lifeTimeMax_ = 2.0f;
-}
-
-///=====================================================/// 
-/// 弾の状態を更新
-///=====================================================///
-void JetBullet::Update() {
-
-	//弾の寿命を更新
-	lifeTimer_ += 1.0f / 60.0f;
-
-	//弾の寿命が最大寿命を超えたら
-	if (lifeTimer_ >= lifeTimeMax_) {
-
-		isDead_ = true;
-	}
-
-	//弾の移動
-	Move();
-
-	//接触時判定
-	IsCollision();
-
-	//オブジェクトの更新
-	object_->Update();
-
-	//コライダーの更新
-	collider_->Update();
-}
-
-///=====================================================/// 
-/// 弾の座標更新処理を行う
-///=====================================================///
-void JetBullet::TransformUpdate() {
-
-	//オブジェクトの座標のみ更新
-	object_->Update();
-}
-
-///=====================================================/// 
-/// 弾の描画処理を行う
-///=====================================================///
-void JetBullet::Draw() {
-
-	//オブジェクトの描画
-	object_->Draw(LayerType::OBJECT);
-
-	//コライダーの描画
-	collider_->Draw();
-}
-
-///=====================================================/// 
-/// 弾の移動処理を行う
-///=====================================================///
-void JetBullet::Move() {
-
-	//オブジェクトの移動
-	object_->GetWorldTransform().translate_ += velocity_;
-}
 
 ///=====================================================/// 
 /// 他オブジェクトと接触している場合の処理を行う
@@ -3137,60 +3070,61 @@ File Path: Application/Object/Bullet/Player/JetBullet.h
 /// </summary>
 class JetBullet : public BulletBase {
 
-	///-------------------------------------------/// 
-	/// メンバ関数
-	///-------------------------------------------///
-public:
-
-	/// <summary>
-	/// 弾が破棄される際に関連するコライダーを削除します。
-	/// </summary>
-	~JetBullet();
-
-	/// <summary>
-	/// 弾を初期化し、パラメータを設定します。
-	/// </summary>
-	/// <param name="pos">生成時の座標を指定します。</param>
-	/// <param name="direction">移動方向を指定します。</param>
-	void Initialize(MyEngine::Vector3 pos, MyEngine::Vector3 direction) override;
-
-	/// <summary>
-	/// 弾の状態を更新します
-	/// </summary>
-	void Update() override;
-
-	/// <summary>
-	/// 弾の座標更新処理を行います
-	/// </summary>
-	void TransformUpdate() override;
-
-	/// <summary>
-	/// 弾の描画処理を行います
-	/// </summary>
-	void Draw() override;
-
-	///-------------------------------------------/// 
-	/// クラス内処理関数
-	///-------------------------------------------///
 private:
-
-	/// <summary>
-	/// 弾の移動処理を行います
-	/// </summary>
-	void Move();
 
 	/// <summary>
 	/// 他オブジェクトと接触している場合の処理を行います
 	/// </summary>
-	void IsCollision();
+	void IsCollision() override;
 
-	///-------------------------------------------/// 
-	/// メンバ変数
-	///-------------------------------------------///
 private:
 
-	//コライダー
-	std::unique_ptr<MyEngine::SphereCollider> collider_;
+	//オブジェクトのサイズ
+	const MyEngine::Vector3 objectSize_ = { 0.5f,0.5f,0.5f };
+
+	//コライダーのサイズ
+	const float colliderSize_ = 0.5f;
+
+	//移動速度
+	const float speed_ = 1.5f;
+
+	//生存時間
+	const float lifeTime_ = 2.0f;
+
+	//コライダーのタグ
+	const MyEngine::Collider::Tag colliderTag_ = MyEngine::Collider::Tag::PLAYERBULLETLIGHT;
+
+private:
+
+	/// <summary>
+	/// 基底クラスにオブジェクトのサイズ情報取得させる
+	/// </summary>
+	/// <returns>オブジェクトのサイズ</returns>
+	MyEngine::Vector3 GetObjectSize() const override { return objectSize_; }
+
+	/// <summary>
+	/// 基底クラスにコライダーのサイズ情報取得させる
+	/// </summary>
+	/// <returns>コライダーのサイズ</returns>
+	float GetColliderSize() const override { return colliderSize_; }
+
+	/// <summary>
+	/// 基底クラスに移動速度情報取得させる
+	/// </summary>
+	/// <returns>移動速度</returns>
+	float GetSpeed() const override { return speed_; }
+
+	/// <summary>
+	/// 基底クラスに生存時間情報取得させる
+	/// </summary>
+	/// <returns>生存時間</returns>
+	float GetLifeTime() const override { return lifeTime_; }
+
+	/// <summary>
+	/// 基底クラスにコライダーのタグ情報取得させる
+	/// </summary>
+	/// <returns>コライダーのタグ</returns>
+	MyEngine::Collider::Tag GetColliderTag() const override { return colliderTag_; }
 
 };
 
@@ -3200,112 +3134,6 @@ File Path: Application/Object/Bullet/Player/TankBullet.cpp
 #include "TankBullet.h"
 
 using namespace MyEngine;
-
-///=====================================================/// 
-/// 弾が破棄される際に関連するコライダーを削除
-///=====================================================///
-TankBullet::~TankBullet() {
-
-	//コライダーを削除
-	collider_->Remove();
-}
-
-///=====================================================/// 
-/// 弾を初期化し、パラメータを設定
-///=====================================================///
-void TankBullet::Initialize(Vector3 pos, Vector3 direction) {
-
-	/// === オブジェクトの生成 === ///
-
-	//生成
-	object_ = std::make_unique<Object3D>();
-
-	//初期化
-	object_->Initialize();
-
-	//座標の設定
-	object_->GetWorldTransform().translate_ = pos;
-
-	//サイズの設定
-	object_->GetWorldTransform().scale_ = { 0.5f,0.5f,0.5f };
-
-	//モデルの設定
-	object_->SetModel("Sphere");
-
-	/// === コライダーの生成 === ///
-
-	//生成
-	collider_ = std::make_unique<SphereCollider>();
-
-	//初期化
-	collider_->Initialize(&object_->GetWorldTransform());
-
-	//タグの設定
-	collider_->SetTag(Collider::Tag::PLAYERBULLETMEDIUM);
-
-	//大きさの設定
-	collider_->SetRadius(1.0f);
-
-	/// === 他変数の設定 === ///
-
-	//移動速度の設定
-	speed_ = 1.5f;
-
-	//移動量の設定
-	velocity_ = direction * speed_;
-
-	//最大寿命の設定
-	lifeTimeMax_ = 2.0f;
-
-}
-
-///=====================================================/// 
-/// 弾の状態を更新
-///=====================================================///
-void TankBullet::Update() {
-
-	//弾の移動
-	Move();
-
-	//接触時判定
-	IsCollision();
-
-	//オブジェクトの更新
-	object_->Update();
-
-	//コライダーの更新
-	collider_->Update();
-}
-
-///=====================================================/// 
-/// 弾の座標更新処理を行う
-///=====================================================///
-void TankBullet::TransformUpdate() {
-
-	//オブジェクトの座標のみ更新
-	object_->Update();
-}
-
-///=====================================================/// 
-/// 弾の描画処理を行う
-///=====================================================///
-void TankBullet::Draw() {
-
-	//オブジェクトの描画
-	object_->Draw(LayerType::OBJECT);
-
-	//コライダーの描画
-	collider_->Draw();
-}
-
-///=====================================================/// 
-/// 弾の移動処理を行う
-///=====================================================///
-void TankBullet::Move() {
-
-	//オブジェクトの移動
-	object_->GetWorldTransform().translate_ += velocity_;
-}
 
 ///=====================================================/// 
 /// 他オブジェクトと接触している場合の処理を行う
@@ -3339,59 +3167,61 @@ File Path: Application/Object/Bullet/Player/TankBullet.h
 /// </summary>
 class TankBullet : public BulletBase {
 
-	///-------------------------------------------/// 
-	/// メンバ関数
-	///-------------------------------------------///
-public:
-
-	/// <summary>
-	/// 弾が破棄される際に関連するコライダーを削除します。
-	/// </summary>
-	~TankBullet();
-
-	/// <summary>
-	/// 弾を初期化し、パラメータを設定します。
-	/// </summary>
-	/// <param name="pos">生成時の座標を指定します。</param>
-	/// <param name="direction">移動方向を指定します。</param>
-	void Initialize(MyEngine::Vector3 pos, MyEngine::Vector3 direction) override;
-
-	/// <summary>
-	/// 弾の状態を更新します
-	/// </summary>
-	void Update() override;
-
-	/// <summary>
-	/// 弾の座標更新処理を行います
-	/// </summary>
-	void TransformUpdate() override;
-
-	/// <summary>
-	/// 弾の描画処理を行います
-	/// </summary>
-	void Draw() override;
-
-	///-------------------------------------------/// 
-	/// クラス内処理関数
-	///-------------------------------------------///
 private:
-
-	/// <summary>
-	/// 弾の移動処理を行います
-	void Move();
 
 	/// <summary>
 	/// 他オブジェクトと接触している場合の処理を行います
 	/// </summary>
-	void IsCollision();
+	void IsCollision() override;
 
-	///-------------------------------------------/// 
-	/// メンバ変数
-	///-------------------------------------------///
 private:
 
-	//コライダー
-	std::unique_ptr<MyEngine::SphereCollider> collider_;
+	//オブジェクトのサイズ
+	const MyEngine::Vector3 objectSize_ = { 1.0f,1.0f,1.0f };
+
+	//コライダーのサイズ
+	const float colliderSize_ = 1.0f;
+
+	//移動速度
+	const float speed_ = 1.0f;
+
+	//生存時間
+	const float lifeTime_ = 2.0f;
+
+	//コライダーのタグ
+	const MyEngine::Collider::Tag colliderTag_ = MyEngine::Collider::Tag::PLAYERBULLETMEDIUM;
+
+private:
+
+	/// <summary>
+	/// 基底クラスにオブジェクトのサイズ情報取得させる
+	/// </summary>
+	/// <returns>オブジェクトのサイズ</returns>
+	MyEngine::Vector3 GetObjectSize() const override { return objectSize_; }
+
+	/// <summary>
+	/// 基底クラスにコライダーのサイズ情報取得させる
+	/// </summary>
+	/// <returns>コライダーのサイズ</returns>
+	float GetColliderSize() const override { return colliderSize_; }
+
+	/// <summary>
+	/// 基底クラスに移動速度情報取得させる
+	/// </summary>
+	/// <returns>移動速度</returns>
+	float GetSpeed() const override { return speed_; }
+
+	/// <summary>
+	/// 基底クラスに生存時間情報取得させる
+	/// </summary>
+	/// <returns>生存時間</returns>
+	float GetLifeTime() const override { return lifeTime_; }
+
+	/// <summary>
+	/// 基底クラスにコライダーのタグ情報取得させる
+	/// </summary>
+	/// <returns>コライダーのタグ</returns>
+	MyEngine::Collider::Tag GetColliderTag() const override { return colliderTag_; }
 
 };
 
@@ -7155,7 +6985,7 @@ void Reticle::Initialize(Camera* cameraPtr) {
 	object2D_ = std::make_unique<Object2D>();
 
 	//初期化
-	object2D_->Initialize();
+	object2D_->Initialize(camera_);
 
 	//スプライトをセット
 	object2D_->SetSprite("Reticle");
@@ -8008,6 +7838,28 @@ private:
 };
 
 ============================================================
+File Path: Application/Scene/EngineContext.h
+============================================================
+#pragma once
+
+#include <Base/OffScreen.h>
+#include <3d/Camera/Camera.h>
+#include <Base/Audio.h>
+#include <Base/Input.h>
+
+namespace MyEngine {
+
+	struct EngineContext final {
+
+		OffScreen* offScreen;
+		Camera* camera;
+		Audio* audio;
+		Input* input;
+
+	};
+}
+
+============================================================
 File Path: Application/Scene/GameScene/Event/ClearEvent.cpp
 ============================================================
 #include "ClearEvent.h"
@@ -8018,23 +7870,41 @@ File Path: Application/Scene/GameScene/Event/ClearEvent.cpp
 #include <Effect/Fade/Fade.h>
 #include <Base/OffScreen.h>
 #include <Base/Input.h>
+#include <Math/Utility/MakeMatrixMath.h>
 
 using namespace MyEngine;
 
-void ClearEvent::Start(Player* player, Camera* camera, FollowCamera* followCamera) {
+void ClearEvent::Start(MyEngine::EngineContext context, Player* player, FollowCamera* followCamera) {
 
+	context_ = context;
 	player_ = player;
-	camera_ = camera;
 
 	motionNum_ = 1;
 
 	canMove_ = false;
 
-	motionPoint_.push_back({ player_->GetWorldPos(),camera_->GetWorldTransform().rotate_,0.0f,EaseType::LINEAR,1.0f });
+	motionPoint_.push_back({ player_->GetWorldPos(),context_.camera->GetWorldTransform().rotate_,0.0f,EaseType::LINEAR,1.0f });
 	motionPoint_.push_back({ Vector3(0.0f,4.0f,0.0f),Vector3(0.0f,0.0f,0.0f),1.5f,EaseType::EASE_OUT,2.0f });
 	motionPoint_.push_back({ Vector3(0.0f,40.0f,600.0f),Vector3(0.0f,0.0f,0.0f),2.5f,EaseType::EASE_OUT,2.0f });
 
 	player_->SetIsMoveActive(false);
+
+	/// === エミッターの生成 === ///
+
+	//衝撃波エミッター(左)
+	shockWaveLeftEmitter_ = std::make_unique<EmitterGroup>();
+
+	shockWaveLeftEmitter_->Initialize(context_.camera);
+
+	shockWaveLeftEmitter_->LoadEmitter("ShockWaveLeft");
+
+	//衝撃波エミッター(右)
+
+	shockWaveRightEmitter_ = std::make_unique<EmitterGroup>();
+
+	shockWaveRightEmitter_->Initialize(context_.camera);
+
+	shockWaveRightEmitter_->LoadEmitter("ShockWaveRight");
 
 	//スプライトを映す
 	UIManager::GetInstance()->GetUIGroup("Clear")->isActive = true;
@@ -8044,6 +7914,10 @@ void ClearEvent::Start(Player* player, Camera* camera, FollowCamera* followCamer
 
 	UIManager::GetInstance()->GetUIGroup("Help")->isActive = false;
 
+	spaceKeyPos_ = UIManager::GetInstance()->Get2DObject("Clear", "Space")->GetTranslate();
+
+	spaceKeySize_ = UIManager::GetInstance()->Get2DObject("Clear", "Space")->GetSize();
+
 	//シェイクを始める
 	Shake::GetInstance()->Start(1.0f, 1.0f);
 
@@ -8051,7 +7925,13 @@ void ClearEvent::Start(Player* player, Camera* camera, FollowCamera* followCamer
 	Flash::GetInstance()->Start(0.5f, Vector4(0.0f, 0.0f, 0.0f, 1.0f));
 
 	//色を反転させる
-	OffScreen::GetInstance()->SetColorReverseRatio(0.75f);
+	context_.offScreen->SetColorReverseRatio(0.75f);
+
+	arrowLength_ = 20.0f;
+
+	arrowTimer_ = 0.0f;
+
+	timerDirection_ = 1.0f;
 }
 
 void ClearEvent::Exit() {
@@ -8059,7 +7939,42 @@ void ClearEvent::Exit() {
 
 void ClearEvent::Update() {
 
-	if (Input::GetInstance()->IsTriggerPushKey(DIK_SPACE)) {
+	arrowTimer_ += (1.0f / 60.0f) * timerDirection_;
+
+	if (arrowTimer_ >= 1.0f) {
+
+		arrowTimer_ = 1.0f;
+
+		timerDirection_ *= -1.0f;
+	}
+
+	if (arrowTimer_ <= 0.0f) {
+
+		arrowTimer_ = 0.0f;
+
+		timerDirection_ *= -1.0f;
+	}
+
+	//右衝撃波エミッターの更新
+	shockWaveRightEmitter_->Update();
+
+	//左衝撃波エミッターの更新
+	shockWaveLeftEmitter_->Update();
+
+	shockWaveRightEmitter_->GetWorldTransform().translate_ = player_->GetWorldPos() + Vector3(1.75f, 0.0f, 0.0f);
+
+	shockWaveLeftEmitter_->GetWorldTransform().translate_ = player_->GetWorldPos() + Vector3(-1.75f, 0.0f, 0.0f);
+
+	float lerpNum = EaseOut(0.0f, arrowLength_, arrowTimer_ / 1.0f);
+
+	//3Dオブジェクトの座標をスクリーン座標に変換する
+	Vector3 playerScreenPos = Vector3ToScreenSpace(context_.camera, player_->GetWorldPos());
+
+	UIManager::GetInstance()->Get2DObject("Clear", "LeftArrow")->SetTranslate({ spaceKeyPos_.x - spaceKeySize_.x / 2.0f - 64.0f - lerpNum,spaceKeyPos_.y });
+
+	UIManager::GetInstance()->Get2DObject("Clear", "RightArrow")->SetTranslate({ spaceKeyPos_.x + spaceKeySize_.x / 2.0f + 64.0f + lerpNum,spaceKeyPos_.y });
+
+	if (context_.input->IsTriggerPushKey(DIK_SPACE)) {
 
 		canMove_ = true;
 
@@ -8070,7 +7985,7 @@ void ClearEvent::Update() {
 		Flash::GetInstance()->Start(0.5f, Vector4(1.0f, 1.0f, 1.0f, 1.0f));
 
 		//色を反転させる
-		OffScreen::GetInstance()->SetColorReverseRatio(0.0f);
+		context_.offScreen->SetColorReverseRatio(0.0f);
 	}
 
 	if (canMove_) {
@@ -8083,9 +7998,21 @@ void ClearEvent::Update() {
 
 			Fade::GetInstance()->StartFadeOut();
 
+			shockWaveRightEmitter_->Emit();
+			shockWaveLeftEmitter_->Emit();
+
 			isFade_ = true;
 		}
 	}
+}
+
+void ClearEvent::Draw() {
+
+	//右衝撃波エミッターの描画
+	shockWaveRightEmitter_->Draw();
+
+	//左衝撃波エミッターの描画
+	shockWaveLeftEmitter_->Draw();
 }
 
 GameSceneEventBase::EventType ClearEvent::RequestNextEvent() const {
@@ -8104,17 +8031,41 @@ class ClearEvent : public GameSceneEventBase {
 
 public:
 
-	void Start(Player* player, MyEngine::Camera* camera, FollowCamera* followCamera) override;
+	void Start(MyEngine::EngineContext context, Player* player, FollowCamera* followCamera) override;
 
 	void Exit() override;
 
 	void Update() override;
 
+	void Draw() override;
+
 	EventType RequestNextEvent() const override;
 
 private:
 
+	//衝撃波エミッター(左)
+	std::unique_ptr<MyEngine::EmitterGroup> shockWaveLeftEmitter_;
+
+	//衝撃波エミッター(右)
+	std::unique_ptr<MyEngine::EmitterGroup> shockWaveRightEmitter_;
+
+	//スペースキースプライトの位置
+	MyEngine::Vector2 spaceKeyPos_;
+
+	//スペースキースプライトの大きさ
+	MyEngine::Vector2 spaceKeySize_;
+
+	//矢印の長さ
+	float arrowLength_;
+
+	//矢印のタイマー
+	float arrowTimer_;
+
+	//アニメーションタイマーの進行方向
+	float timerDirection_;
+
 	bool isFade_ = false;
+
 };
 
 ============================================================
@@ -8124,16 +8075,20 @@ File Path: Application/Scene/GameScene/Event/GameEvent.cpp
 
 #include <Base/Input.h>
 #include <Object/Manager/ObjectManager.h>
+#include <Effect/Manager/UIManager.h>
+#include <Math/Utility/MakeMatrixMath.h>
 
 using namespace MyEngine;
 
-void GameEvent::Start(Player* player, Camera* camera, FollowCamera* followCamera) {
+void GameEvent::Start(MyEngine::EngineContext context, Player* player, FollowCamera* followCamera) {
 
+	context_ = context;
 	player_ = player;
-	camera_ = camera;
 	followCamera_ = followCamera;
 
 	canMove_ = true;
+
+	UIManager::GetInstance()->GetUIGroup("Reticle")->isActive = true;
 
 	followCamera_->SetIsActive(true);
 
@@ -8144,11 +8099,53 @@ void GameEvent::Exit() {
 }
 
 void GameEvent::Update() {
+
+	//3Dオブジェクトの座標をスクリーン座標に変換する
+	Vector3 playerScreenPos = Vector3ToScreenSpace(context_.camera, player_->GetWorldPos());
+
+	UIManager::GetInstance()->GetUIGroup("Reticle")->transform.translate_ = playerScreenPos;
+
+	if (Input::GetInstance()->isPushKey(DIK_W)) {
+
+		UIManager::GetInstance()->Get2DObject("Reticle", "WButton")->GetSprite()->SetRatio(1.0f);
+	} else {
+
+		UIManager::GetInstance()->Get2DObject("Reticle", "WButton")->GetSprite()->SetRatio(0.0f);
+	}
+
+	if (Input::GetInstance()->isPushKey(DIK_A)) {
+
+		UIManager::GetInstance()->Get2DObject("Reticle", "AButton")->GetSprite()->SetRatio(1.0f);
+	} else {
+
+		UIManager::GetInstance()->Get2DObject("Reticle", "AButton")->GetSprite()->SetRatio(0.0f);
+	}
+
+	if (Input::GetInstance()->isPushKey(DIK_S)) {
+
+		UIManager::GetInstance()->Get2DObject("Reticle", "SButton")->GetSprite()->SetRatio(1.0f);
+	} else {
+
+		UIManager::GetInstance()->Get2DObject("Reticle", "SButton")->GetSprite()->SetRatio(0.0f);
+	}
+
+	if (Input::GetInstance()->isPushKey(DIK_D)) {
+
+		UIManager::GetInstance()->Get2DObject("Reticle", "DButton")->GetSprite()->SetRatio(1.0f);
+	} else {
+
+		UIManager::GetInstance()->Get2DObject("Reticle", "DButton")->GetSprite()->SetRatio(0.0f);
+	}
+
+	UIManager::GetInstance()->Get2DObject("Reticle", "SpaceButton")->GetSprite()->SetRatio(player_->GetAttackTimeRatio());
+}
+
+void GameEvent::Draw() {
 }
 
 GameSceneEventBase::EventType GameEvent::RequestNextEvent() const {
 
-	if (Input::GetInstance()->IsTriggerPushKey(DIK_ESCAPE)) {
+	if (context_.input->IsTriggerPushKey(DIK_ESCAPE)) {
 
 		return EventType::PAUSE;
 	}
@@ -8178,11 +8175,13 @@ class GameEvent : public GameSceneEventBase {
 
 public:
 
-	void Start(Player* player, MyEngine::Camera* camera, FollowCamera* followCamera) override;
+	void Start(MyEngine::EngineContext context, Player* player, FollowCamera* followCamera) override;
 
 	void Exit() override;
 
 	void Update() override;
+
+	void Draw() override;
 
 	EventType RequestNextEvent() const override;
 
@@ -8201,7 +8200,9 @@ File Path: Application/Scene/GameScene/Event/GameOverEvent.cpp
 
 using namespace MyEngine;
 
-void GameOverEvent::Start(Player* player, Camera* camera, FollowCamera* followCamera) {
+void GameOverEvent::Start(MyEngine::EngineContext context, Player* player, FollowCamera* followCamera) {
+
+	context_ = context;
 
 	//スプライトを映す
 	UIManager::GetInstance()->GetUIGroup("GameOver")->isActive = true;
@@ -8211,11 +8212,21 @@ void GameOverEvent::Start(Player* player, Camera* camera, FollowCamera* followCa
 
 	UIManager::GetInstance()->GetUIGroup("Help")->isActive = false;
 
+	spaceKeyPos_ = UIManager::GetInstance()->Get2DObject("GameOver", "Space")->GetTranslate();
+
+	spaceKeySize_ = UIManager::GetInstance()->Get2DObject("GameOver", "Space")->GetSize();
+
 	//シェイクを始める
 	Shake::GetInstance()->Start(1.0f, 0.5f);
 
 	//色を反転させる
-	OffScreen::GetInstance()->SetColorReverseRatio(1.0f);
+	context_.offScreen->SetColorReverseRatio(1.0f);
+
+	arrowLength_ = 20.0f;
+
+	arrowTimer_ = 0.0f;
+
+	timerDirection_ = 1.0f;
 }
 
 void GameOverEvent::Exit() {
@@ -8223,7 +8234,29 @@ void GameOverEvent::Exit() {
 
 void GameOverEvent::Update() {
 
-	if (Input::GetInstance()->IsTriggerPushKey(DIK_SPACE)) {
+	arrowTimer_ += (1.0f / 60.0f) * timerDirection_;
+
+	if (arrowTimer_ >= 1.0f) {
+
+		arrowTimer_ = 1.0f;
+
+		timerDirection_ *= -1.0f;
+	}
+
+	if (arrowTimer_ <= 0.0f) {
+
+		arrowTimer_ = 0.0f;
+
+		timerDirection_ *= -1.0f;
+	}
+
+	float lerpNum = EaseOut(0.0f, arrowLength_, arrowTimer_ / 1.0f);
+
+	UIManager::GetInstance()->Get2DObject("GameOver", "LeftArrow")->SetTranslate({ spaceKeyPos_.x - spaceKeySize_.x / 2.0f - 64.0f - lerpNum,spaceKeyPos_.y });
+
+	UIManager::GetInstance()->Get2DObject("GameOver", "RightArrow")->SetTranslate({ spaceKeyPos_.x + spaceKeySize_.x / 2.0f + 64.0f + lerpNum,spaceKeyPos_.y });
+
+	if (context_.input->IsTriggerPushKey(DIK_SPACE)) {
 
 		if (!isFade_) {
 
@@ -8232,6 +8265,9 @@ void GameOverEvent::Update() {
 			isFade_ = true;
 		}
 	}
+}
+
+void GameOverEvent::Draw() {
 }
 
 GameSceneEventBase::EventType GameOverEvent::RequestNextEvent() const {
@@ -8250,15 +8286,32 @@ class GameOverEvent : public GameSceneEventBase {
 
 public:
 
-	void Start(Player* player, MyEngine::Camera* camera, FollowCamera* followCamera) override;
+	void Start(MyEngine::EngineContext context, Player* player, FollowCamera* followCamera) override;
 
 	void Exit() override;
 
 	void Update() override;
 
+	void Draw() override;
+
 	EventType RequestNextEvent() const override;
 
 private:
+
+	//スペースキースプライトの位置
+	MyEngine::Vector2 spaceKeyPos_;
+
+	//スペースキースプライトの大きさ
+	MyEngine::Vector2 spaceKeySize_;
+
+	//矢印の長さ
+	float arrowLength_;
+
+	//矢印のタイマー
+	float arrowTimer_;
+
+	//アニメーションタイマーの進行方向
+	float timerDirection_;
 
 	bool isFade_ = false;
 };
@@ -8294,7 +8347,7 @@ void GameSceneEventBase::UpdateEventMotion() {
 	//キーフレーム間を補間
 	player_->SetPosition(Ease(from.playerPosition, to.playerPosition, t, to.easeType, to.easeMag));
 
-	camera_->GetWorldTransform().rotate_ = Ease(from.cameraRotation, to.cameraRotation, t, to.easeType, to.easeMag);
+	context_.camera->GetWorldTransform().rotate_ = Ease(from.cameraRotation, to.cameraRotation, t, to.easeType, to.easeMag);
 
 	//キーを進ませる
 	if (t == 1.0f) {
@@ -8314,8 +8367,7 @@ File Path: Application/Scene/GameScene/Event/GameSceneEventBase.h
 ============================================================
 #pragma once
 
-#include <3d/Camera/Camera.h>
-
+#include <Scene/EngineContext.h>
 #include <Object/Player/Player.h>
 #include <Object/Camera/FollowCamera.h>
 
@@ -8350,9 +8402,10 @@ protected:
 public:
 	virtual ~GameSceneEventBase() = default;
 
-	virtual void Start(Player* player, MyEngine::Camera* camera, FollowCamera* followCamera) = 0;   // 開始時1回
+	virtual void Start(MyEngine::EngineContext context, Player* player, FollowCamera* followCamera) = 0;   // 開始時1回
 	virtual void Exit() = 0;    // 終了処理
 	virtual void Update() = 0;  // 毎フレーム
+	virtual void Draw() = 0;
 
 	virtual EventType RequestNextEvent() const { return EventType::NONE; }
 
@@ -8362,9 +8415,9 @@ protected:
 
 protected:
 
-	Player* player_ = nullptr;
+	MyEngine::EngineContext context_;
 
-	MyEngine::Camera* camera_ = nullptr;
+	Player* player_ = nullptr;
 
 	FollowCamera* followCamera_ = nullptr;
 
@@ -8453,8 +8506,9 @@ File Path: Application/Scene/GameScene/Event/PauseEvent.cpp
 
 using namespace MyEngine;
 
-void PauseEvent::Start(Player* player, Camera* camera, FollowCamera* followCamera) {
+void PauseEvent::Start(MyEngine::EngineContext context, Player* player, FollowCamera* followCamera) {
 
+	context_ = context;
 	player_ = player;
 
 	canMove_ = false;
@@ -8466,6 +8520,10 @@ void PauseEvent::Start(Player* player, Camera* camera, FollowCamera* followCamer
 	EmitterManager::GetInstance()->SetIsUpdate(false);
 
 	player_->SetIsMoveActive(false);
+
+	timer_ = 0.0f;
+
+	timerDirection_ = 1.0f;
 }
 
 void PauseEvent::Exit() {
@@ -8481,20 +8539,43 @@ void PauseEvent::Exit() {
 
 void PauseEvent::Update() {
 
+	timer_ += (1.0f / 60.0f) * timerDirection_;
+
+	if (timer_ >= 1.0f) {
+
+		timer_ = 1.0f;
+
+		timerDirection_ *= -1.0f;
+	}
+
+	if (timer_ <= 0.0f) {
+
+		timer_ = 0.0f;
+
+		timerDirection_ *= -1.0f;
+	}
+
+	float alphaNum = EaseOut(0.0f, 1.0f, timer_ / 1.0f);
+
+	UIManager::GetInstance()->Get2DObject("Pause", "Text")->GetSprite()->SetColor(Vector4(1.0f, 1.0f, 1.0f, alphaNum));
+
 	if (delay_) {
 
-		if (Input::GetInstance()->IsTriggerPushKey(DIK_ESCAPE)) {
+		if (context_.input->IsTriggerPushKey(DIK_ESCAPE)) {
 
 			isFinished_ = true;
 		}
 
-		if (Input::GetInstance()->IsTriggerPushKey(DIK_SPACE)) {
+		if (context_.input->IsTriggerPushKey(DIK_SPACE)) {
 
 			Fade::GetInstance()->StartFadeOut();
 		}
 	}
 
 	delay_ = true;
+}
+
+void PauseEvent::Draw() {
 }
 
 GameSceneEventBase::EventType PauseEvent::RequestNextEvent() const {
@@ -8519,15 +8600,22 @@ class PauseEvent : public GameSceneEventBase {
 
 public:
 
-	void Start(Player* player, MyEngine::Camera* camera, FollowCamera* followCamera) override;
+	void Start(MyEngine::EngineContext context, Player* player, FollowCamera* followCamera) override;
 
 	void Exit() override;
 
 	void Update() override;
 
+	void Draw() override;
+
 	EventType RequestNextEvent() const override;
 
 private:
+
+	float timer_;
+
+	//アニメーションタイマーの進行方向
+	float timerDirection_;
 
 	bool delay_ = false;
 
@@ -8542,10 +8630,10 @@ File Path: Application/Scene/GameScene/Event/StartEvent.cpp
 
 using namespace MyEngine;
 
-void StartEvent::Start(Player* player, Camera* camera, FollowCamera* followCamera) {
+void StartEvent::Start(MyEngine::EngineContext context, Player* player, FollowCamera* followCamera) {
 
+	context_ = context;
 	player_ = player;
-	camera_ = camera;
 	followCamera_ = followCamera;
 
 	motionNum_ = 1;
@@ -8568,6 +8656,9 @@ void StartEvent::Exit() {
 void StartEvent::Update() {
 
 	UpdateEventMotion();
+}
+
+void StartEvent::Draw() {
 }
 
 GameSceneEventBase::EventType StartEvent::RequestNextEvent() const {
@@ -8594,11 +8685,13 @@ class StartEvent : public GameSceneEventBase {
 
 public:
 
-	void Start(Player* player, MyEngine::Camera* camera, FollowCamera* followCamera) override;
+	void Start(MyEngine::EngineContext context, Player* player, FollowCamera* followCamera) override;
 
 	void Exit() override;
 
 	void Update() override;
+
+	void Draw() override;
 
 	EventType RequestNextEvent() const override;
 
@@ -8642,26 +8735,28 @@ File Path: Application/Scene/GameScene/GameScene.cpp
 
 #include "numbers"
 
+#include <Scene/EngineContext.h>
+
 using namespace MyEngine;
 
 ///=====================================================/// 
 /// 初期化
 ///=====================================================///
-void GameScene::Initialize() {
+void GameScene::Initialize(MyEngine::EngineContext context) {
+
+	//シーンの初期化
+	BaseScene::Initialize(context);
 
 	/// === カメラの設定 === ///
 
-	camera_ = std::make_unique<Camera>();
-
-	camera_->Initialize();
-
 	//デバッグカメラを使用しない
-	camera_->SetDebugCameraFlag(false);
+	context_.camera->SetDebugCameraFlag(false);
 
 	//シェイクにカメラをセット
-	Shake::GetInstance()->SetCamera(camera_.get());
+	Shake::GetInstance()->SetCamera(context_.camera);
 
-	EmitterManager::GetInstance()->SetCamera(camera_.get());
+	//エミッターマネージャーにカメラをセット
+	EmitterManager::GetInstance()->SetCamera(context_.camera);
 
 	/// === エネミーマネージャーの生成 === ///
 
@@ -8685,61 +8780,37 @@ void GameScene::Initialize() {
 
 	player_ = ObjectManager::GetInstance()->GetPlayer();
 
-	player_->Initialize(camera_.get(), bulletManager_.get(), false);
+	player_->Initialize(context_.camera, bulletManager_.get(), false);
 
-	//エネミーマネージャーの初期化
-	enemyManager_->Initialize(camera_.get(), bulletManager_.get(), player_);
+	/// === 敵の生成 === ///
+
+	enemyManager_->Initialize(context_.camera, bulletManager_.get(), player_);
 
 	/// === 追尾カメラの生成 === ///
 
 	followCamera_ = std::make_unique<FollowCamera>();
 
-	followCamera_->Initialize(camera_.get(), player_);
+	followCamera_->Initialize(context_.camera, player_);
 
-	//最初は無効化する
+	//最初は追従を無効化する
 	followCamera_->SetIsActive(false);
 
-	/// === ゲームオーバースプライトの生成 === ///
+	/// === UIの生成 === ///
 
+	//ゲームシーンのUIを生成する
 	UIManager::GetInstance()->LoadUI("GameScene");
 
-	spaceKeyPos_ = UIManager::GetInstance()->Get2DObject("GameOver", "Space")->GetTranslate();
-
-	spaceKeySize_ = UIManager::GetInstance()->Get2DObject("GameOver", "Space")->GetSize();
-
-	/// === エミッターの生成 === ///
-
-	//衝撃波エミッター(左)
-	shockWaveLeftEmitter_ = std::make_unique<EmitterGroup>();
-
-	shockWaveLeftEmitter_->Initialize(camera_.get());
-
-	shockWaveLeftEmitter_->LoadEmitter("ShockWaveLeft");
-
-	//衝撃波エミッター(右)
-
-	shockWaveRightEmitter_ = std::make_unique<EmitterGroup>();
-
-	shockWaveRightEmitter_->Initialize(camera_.get());
-
-	shockWaveRightEmitter_->LoadEmitter("ShockWaveRight");
+	/// === イベントの生成 === ///
 
 	sceneProgress_ = std::make_unique<GameSceneProgress>();
 
-	sceneProgress_->Initialize(player_,camera_.get(),followCamera_.get());
+	sceneProgress_->Initialize(context_, player_, followCamera_.get());
 
-	/// === 他変数の設定 === ///
-
-	arrowLength_ = 20.0f;
-
-	arrowTimer_ = 0.0f;
-
-	timerDirection_ = 1.0f;
-
-	Fade::GetInstance()->SetCamera(camera_.get());
+	/// === フェードの設定 === ///
 
 	Fade::GetInstance()->SetPlayer(player_);
 
+	//フェードイン開始
 	Fade::GetInstance()->StartFadeIn();
 
 }
@@ -8752,9 +8823,6 @@ void GameScene::Finalize() {
 	ObjectManager::GetInstance()->ClearAll();
 
 	UIManager::GetInstance()->DeleteAllUI();
-
-	//演出系の参照リセット
-	Fade::GetInstance()->SetCamera(nullptr);
 
 	Fade::GetInstance()->SetPlayer(nullptr);
 
@@ -8777,7 +8845,7 @@ void GameScene::Update() {
 	followCamera_->Update();
 
 	//カメラをデバッグ状態で更新
-	camera_->Update();
+	context_.camera->Update();
 
 	sceneProgress_->Update();
 
@@ -8804,81 +8872,6 @@ void GameScene::Update() {
 
 		groundManager_->TransformUpdate();
 	}
-
-	arrowTimer_ += (1.0f / 60.0f) * timerDirection_;
-
-	if (arrowTimer_ >= 1.0f) {
-
-		arrowTimer_ = 1.0f;
-
-		timerDirection_ *= -1.0f;
-	}
-
-	if (arrowTimer_ <= 0.0f) {
-
-		arrowTimer_ = 0.0f;
-
-		timerDirection_ *= -1.0f;
-	}
-
-	float lerpNum = EaseOut(0.0f, arrowLength_, arrowTimer_ / 1.0f);
-
-	float alphaNum = EaseOut(0.0f, 1.0f, arrowTimer_ / 1.0f);
-
-	//3Dオブジェクトの座標をスクリーン座標に変換する
-	Vector3 playerScreenPos = Vector3ToScreenSpace(camera_.get(), player_->GetWorldPos());
-
-	UIManager::GetInstance()->Get2DObject("GameOver", "LeftArrow")->SetTranslate({ spaceKeyPos_.x - spaceKeySize_.x / 2.0f - 64.0f - lerpNum,spaceKeyPos_.y });
-
-	UIManager::GetInstance()->Get2DObject("GameOver", "RightArrow")->SetTranslate({ spaceKeyPos_.x + spaceKeySize_.x / 2.0f + 64.0f + lerpNum,spaceKeyPos_.y });
-
-	UIManager::GetInstance()->Get2DObject("Clear", "LeftArrow")->SetTranslate({ spaceKeyPos_.x - spaceKeySize_.x / 2.0f - 64.0f - lerpNum,spaceKeyPos_.y });
-
-	UIManager::GetInstance()->Get2DObject("Clear", "RightArrow")->SetTranslate({ spaceKeyPos_.x + spaceKeySize_.x / 2.0f + 64.0f + lerpNum,spaceKeyPos_.y });
-
-	UIManager::GetInstance()->GetUIGroup("Reticle")->transform.translate_ = playerScreenPos;
-
-	UIManager::GetInstance()->Get2DObject("Pause", "Text")->GetSprite()->SetColor(Vector4(1.0f, 1.0f, 1.0f, alphaNum));
-
-	if (Input::GetInstance()->isPushKey(DIK_W)) {
-
-		UIManager::GetInstance()->Get2DObject("Reticle", "WButton")->GetSprite()->SetRatio(1.0f);
-	} else {
-
-		UIManager::GetInstance()->Get2DObject("Reticle", "WButton")->GetSprite()->SetRatio(0.0f);
-	}
-
-	if (Input::GetInstance()->isPushKey(DIK_A)) {
-
-		UIManager::GetInstance()->Get2DObject("Reticle", "AButton")->GetSprite()->SetRatio(1.0f);
-	} else {
-
-		UIManager::GetInstance()->Get2DObject("Reticle", "AButton")->GetSprite()->SetRatio(0.0f);
-	}
-
-	if (Input::GetInstance()->isPushKey(DIK_S)) {
-
-		UIManager::GetInstance()->Get2DObject("Reticle", "SButton")->GetSprite()->SetRatio(1.0f);
-	} else {
-
-		UIManager::GetInstance()->Get2DObject("Reticle", "SButton")->GetSprite()->SetRatio(0.0f);
-	}
-
-	if (Input::GetInstance()->isPushKey(DIK_D)) {
-
-		UIManager::GetInstance()->Get2DObject("Reticle", "DButton")->GetSprite()->SetRatio(1.0f);
-	} else {
-
-		UIManager::GetInstance()->Get2DObject("Reticle", "DButton")->GetSprite()->SetRatio(0.0f);
-	}
-
-	UIManager::GetInstance()->Get2DObject("Reticle", "SpaceButton")->GetSprite()->SetRatio(player_->GetAttackTimeRatio());
-
-	//右衝撃波エミッターの更新
-	shockWaveRightEmitter_->Update();
-
-	//左衝撃波エミッターの更新
-	shockWaveLeftEmitter_->Update();
 
 	//フェードアウトが終わったら
 	if (Fade::GetInstance()->GetState() == Fade::FadeState::FADE_OUT_END) {
@@ -8908,11 +8901,8 @@ void GameScene::Draw() {
 	//グラウンドマネージャーの描画
 	groundManager_->Draw();
 
-	//右衝撃波エミッターの描画
-	shockWaveRightEmitter_->Draw();
-
-	//左衝撃波エミッターの描画
-	shockWaveLeftEmitter_->Draw();
+	//イベントの描画
+	sceneProgress_->Draw();
 
 }
 
@@ -8928,7 +8918,7 @@ void GameScene::ImGui() {
 
 	if (ImGui::TreeNode("Camera")) {
 
-		camera_->DisplayImGui();
+		context_.camera->DisplayImGui();
 
 		ImGui::TreePop();
 	}
@@ -8977,7 +8967,7 @@ public:
 	/// <summary>
 	/// ゲームシーンの初期化を行います。
 	/// </summary>
-	void Initialize() override;
+	void Initialize(MyEngine::EngineContext context) override;
 
 	/// <summary>
 	/// ゲームシーンの終了処理を行います。
@@ -9004,9 +8994,6 @@ public:
 	///-------------------------------------------///
 private:
 
-	//カメラ
-	std::unique_ptr<MyEngine::Camera> camera_;
-
 	//追従カメラ
 	std::unique_ptr<FollowCamera> followCamera_;
 
@@ -9022,30 +9009,8 @@ private:
 	//グラウンドマネージャー
 	std::unique_ptr<GroundManager> groundManager_;
 
-	//衝撃波エミッター(左)
-	std::unique_ptr<MyEngine::EmitterGroup> shockWaveLeftEmitter_;
-
-	//衝撃波エミッター(右)
-	std::unique_ptr<MyEngine::EmitterGroup> shockWaveRightEmitter_;
-
 	//シーンのイベント管理
 	std::unique_ptr<GameSceneProgress> sceneProgress_;
-
-	//スペースキースプライトの位置
-	MyEngine::Vector2 spaceKeyPos_;
-
-	//スペースキースプライトの大きさ
-	MyEngine::Vector2 spaceKeySize_;
-
-	//矢印の長さ
-	float arrowLength_;
-
-	//矢印のタイマー
-	float arrowTimer_;
-
-	//アニメーションタイマーの進行方向
-	float timerDirection_;
-
 };
 
 ============================================================
@@ -9057,17 +9022,17 @@ File Path: Application/Scene/GameScene/GameSceneProgress.cpp
 
 using namespace MyEngine;
 
-void GameSceneProgress::Initialize(Player* player, Camera* camera, FollowCamera* followCamera) {
+void GameSceneProgress::Initialize(MyEngine::EngineContext context, Player* player, FollowCamera* followCamera) {
+
+	context_ = context;
 
 	player_ = player;
-
-	camera_ = camera;
 
 	followCamera_ = followCamera;
 
 	event_ = GameSceneEventFactory::Create(GameSceneEventBase::EventType::START);
 
-	event_->Start(player_, camera_, followCamera_);
+	event_->Start(context_, player_, followCamera_);
 
 }
 
@@ -9082,13 +9047,18 @@ void GameSceneProgress::Update() {
 	}
 }
 
+void GameSceneProgress::Draw() {
+
+	event_->Draw();
+}
+
 void GameSceneProgress::ChangeEvent(GameSceneEventBase::EventType type) {
 
 	event_->Exit();
 
 	event_ = GameSceneEventFactory::Create(type);
 
-	event_->Start(player_, camera_, followCamera_);
+	event_->Start(context_, player_, followCamera_);
 }
 
 ============================================================
@@ -9096,10 +9066,10 @@ File Path: Application/Scene/GameScene/GameSceneProgress.h
 ============================================================
 #pragma once
 
-#include <3d/Camera/Camera.h>
 #include <Object/Camera/FollowCamera.h>
 #include <Object/Player/Player.h>
 
+#include <Scene/EngineContext.h>
 #include <Scene/GameScene/Event/GameSceneEventBase.h>
 
 #include <memory>
@@ -9108,9 +9078,11 @@ class GameSceneProgress {
 
 public:
 
-	void Initialize(Player* player, MyEngine::Camera* camera, FollowCamera* followCamera);
+	void Initialize(MyEngine::EngineContext context, Player* player, FollowCamera* followCamera);
 
 	void Update();
+
+	void Draw();
 
 private:
 
@@ -9120,9 +9092,9 @@ private:
 
 	std::unique_ptr<GameSceneEventBase> event_;
 
-	Player* player_;
+	MyEngine::EngineContext context_;
 
-	MyEngine::Camera* camera_;
+	Player* player_;
 
 	FollowCamera* followCamera_;
 
@@ -9147,30 +9119,29 @@ File Path: Application/Scene/ParticleEditorScene.cpp
 #include "fstream"
 #include "filesystem"
 
+#include <Scene/EngineContext.h>
+
 using namespace MyEngine;
 
 ///=====================================================/// 
 /// パーティクルエディタ用シーンの初期化
 ///=====================================================///
-void ParticleEditorScene::Initialize() {
+void ParticleEditorScene::Initialize(EngineContext context) {
 
 	/// === カメラの設定 === ///
 
-	//カメラを生成
-	camera_ = std::make_unique<Camera>();
+	BaseScene::Initialize(context);
 
-	camera_->Initialize();
+	context_.camera->SetDebugCameraFlag(true);
 
-	camera_->SetDebugCameraFlag(true);
+	context_.camera->SetOffsetZ(-30.0f);
 
-	camera_->SetOffsetZ(-30.0f);
-
-	camera_->SetRotate({ 0.6f,-0.3f,0.0f });
+	context_.camera->SetRotate({ 0.6f,-0.3f,0.0f });
 
 	//デフォルトカメラを設定
-	Object3DCommon::GetInstance()->SetDefaultCamera(camera_.get());
+	Object3DCommon::GetInstance()->SetDefaultCamera(context_.camera);
 
-	DebugObjectCommon::GetInstance()->SetDefaultCamera(camera_.get());
+	DebugObjectCommon::GetInstance()->SetDefaultCamera(context_.camera);
 
 	/// === テクスチャの読み込み === ///
 
@@ -9249,7 +9220,7 @@ void ParticleEditorScene::Initialize() {
 void ParticleEditorScene::Update() {
 
 	//カメラをデバッグ状態で更新
-	camera_->Update();
+	context_.camera->Update();
 
 	//エミッターグループの更新
 	for (auto& group : emitterGroups_) {
@@ -9350,7 +9321,7 @@ void ParticleEditorScene::CreateGroup() {
 	//デフォルトグループの生成
 	std::unique_ptr<EmitterGroup> newGroup = std::make_unique<EmitterGroup>();
 
-	newGroup->Initialize(camera_.get());
+	newGroup->Initialize(context_.camera);
 
 	newGroup->SetTextureList(textureList_);
 
@@ -9368,7 +9339,7 @@ void ParticleEditorScene::LoadGroup(const std::string& groupName) {
 	std::unique_ptr<EmitterGroup> newGroup = std::make_unique<EmitterGroup>();
 
 	//グループの初期化
-	newGroup->Initialize(camera_.get());
+	newGroup->Initialize(context_.camera);
 
 	//テクスチャリストの設定
 	newGroup->SetTextureList(textureList_);
@@ -9393,7 +9364,6 @@ File Path: Application/Scene/ParticleEditorScene.h
 #include "3d/Object/DebugLine.h"
 #include "3d/Particle/ParticleEmitter.h"
 #include "3d/Particle/EmitterGroup.h"
-#include "3d/Object/DebugLine.h"
 
 #include "memory"
 
@@ -9407,7 +9377,7 @@ public:
 	/// <summary>
 	/// パーティクルエディタ用シーンの初期化を行います。
 	/// </summary>
-	void Initialize() override;
+	void Initialize(MyEngine::EngineContext context) override;
 
 	/// <summary>
 	/// パーティクルエディタシーンの毎フレーム更新処理を行います。
@@ -9445,9 +9415,6 @@ private:
 	///-------------------------------------------///
 private:
 
-	//カメラ
-	std::unique_ptr<MyEngine::Camera> camera_;
-
 	std::list<std::unique_ptr<MyEngine::EmitterGroup>> emitterGroups_;
 
 	std::list<std::string> emitterGroupNames_;
@@ -9484,34 +9451,32 @@ File Path: Application/Scene/TitleScene.cpp
 
 #include <imgui.h>
 
+#include <Scene/EngineContext.h>
+
 using namespace MyEngine;
 
 ///=====================================================/// 
 /// タイトルシーンの各種オブジェクトを初期化
 ///=====================================================///
-void TitleScene::Initialize() {
+void TitleScene::Initialize(MyEngine::EngineContext context) {
 
 	/// === カメラの設定 === ///
 
-	//カメラを生成
-	camera_ = std::make_unique<Camera>();
-
-	//カメラの初期化
-	camera_->Initialize();
+	BaseScene::Initialize(context);
 
 	//デバッグカメラを使用しない
-	camera_->SetDebugCameraFlag(false);
+	context_.camera->SetDebugCameraFlag(false);
 
 	//カメラの座標
-	camera_->GetWorldTransform().translate_ = { 0.0f,1.0f,0.0f };
+	context_.camera->GetWorldTransform().translate_ = { 0.0f,1.0f,0.0f };
 
-	camera_->SetOffsetZ(-20.0f);
+	context_.camera->SetOffsetZ(-20.0f);
 
 	cameraRotate_ = { 0.3f,0.0f,0.0f };
 
-	Shake::GetInstance()->SetCamera(camera_.get());
+	Shake::GetInstance()->SetCamera(context_.camera);
 
-	EmitterManager::GetInstance()->SetCamera(camera_.get());
+	EmitterManager::GetInstance()->SetCamera(context_.camera);
 
 	/// === 3Dオブジェクトの設定 === ///
 
@@ -9525,7 +9490,7 @@ void TitleScene::Initialize() {
 
 	player_ = ObjectManager::GetInstance()->GetPlayer();
 
-	player_->Initialize(camera_.get(),nullptr,false);
+	player_->Initialize(context_.camera,nullptr,false);
 
 	player_->SetPosition({ 0.0f,1.0f,0.0f });
 
@@ -9542,21 +9507,18 @@ void TitleScene::Initialize() {
 	//衝撃波エミッター(左)
 	shockWaveLeftEmitter_ = std::make_unique<EmitterGroup>();
 
-	shockWaveLeftEmitter_->Initialize(camera_.get());
+	shockWaveLeftEmitter_->Initialize(context_.camera);
 
 	shockWaveLeftEmitter_->LoadEmitter("ShockWaveLeft");
 
 	//衝撃波エミッター(右)
 	shockWaveRightEmitter_ = std::make_unique<EmitterGroup>();
 
-	shockWaveRightEmitter_->Initialize(camera_.get());
+	shockWaveRightEmitter_->Initialize(context_.camera);
 
 	shockWaveRightEmitter_->LoadEmitter("ShockWaveRight");
 
 	/// === その他 === ///
-
-	//フェードにカメラとプレイヤーを設定
-	Fade::GetInstance()->SetCamera(camera_.get());
 
 	Fade::GetInstance()->SetPlayer(player_);
 
@@ -9609,9 +9571,6 @@ void TitleScene::Finalize() {
 
 	UIManager::GetInstance()->DeleteUI("Title");
 
-	//フェードのカメラとプレイヤーを解除
-	Fade::GetInstance()->SetCamera(nullptr);
-
 	Fade::GetInstance()->SetPlayer(nullptr);
 
 	//シェイクのカメラを解除
@@ -9638,11 +9597,11 @@ void TitleScene::Update() {
 	}
 
 	//色反転していたら徐々に戻す
-	if (OffScreen::GetInstance()->GetColorReverseRatio() > 0.0f) {
+	if (context_.offScreen->GetColorReverseRatio() > 0.0f) {
 
-		float currentNum = OffScreen::GetInstance()->GetColorReverseRatio();
+		float currentNum = context_.offScreen->GetColorReverseRatio();
 
-		OffScreen::GetInstance()->SetColorReverseRatio(Lerp(currentNum, 0.0f, 0.1f));
+		context_.offScreen->SetColorReverseRatio(Lerp(currentNum, 0.0f, 0.1f));
 	}
 
 	if (!isFade_) {
@@ -9663,7 +9622,7 @@ void TitleScene::Update() {
 			}
 
 			//カメラの回転を設定
-			camera_->SetRotate(cameraRotate_);
+			context_.camera->SetRotate(cameraRotate_);
 		}
 	}
 
@@ -9692,7 +9651,7 @@ void TitleScene::Update() {
 	UIManager::GetInstance()->Get2DObject("Title", "RightArrow")->SetTranslate({ spaceKeyPos_.x + spaceKeySize_.x / 2.0f + 64.0f + lerpNum,spaceKeyPos_.y });
 
 	//カメラの更新
-	camera_->Update();
+	context_.camera->Update();
 
 	//プレイヤーの更新
 	player_->Update();
@@ -9824,7 +9783,7 @@ void TitleScene::Start() {
 	//最後のアニメーションの時はカメラをプレイヤーに向ける
 	if (animNum_ >= static_cast<int>(animPos_.size())) {
 
-		Vector3 cameraPos = camera_->GetWorldTransform().GetWorldTranslate();
+		Vector3 cameraPos = context_.camera->GetWorldTransform().GetWorldTranslate();
 
 		Vector3 direction = Normalize(playerPos - cameraPos);
 
@@ -9834,14 +9793,14 @@ void TitleScene::Start() {
 			0.0f
 		};
 
-		camera_->SetRotate(toPlayerRot);
+		context_.camera->SetRotate(toPlayerRot);
 
 	} else {
 
-		Vector3 cameraRot = camera_->GetWorldTransform().rotate_;
+		Vector3 cameraRot = context_.camera->GetWorldTransform().rotate_;
 
 		//カメラを前方に向ける
-		camera_->SetRotate(EaseOut(cameraRot, Vector3(0.0f, 0.0f, 0.0f), t, 2.0f));
+		context_.camera->SetRotate(EaseOut(cameraRot, Vector3(0.0f, 0.0f, 0.0f), t, 2.0f));
 	}
 }
 
@@ -9875,7 +9834,7 @@ public:
 	/// <summary>
 	/// タイトルシーンの各種オブジェクトを初期化する関数です
 	/// </summary>
-	void Initialize() override;
+	void Initialize(MyEngine::EngineContext context) override;
 
 	/// <summary>
 	/// タイトルシーン終了時に各種オブジェクトを解放する関数です
@@ -9911,9 +9870,6 @@ private:
 	/// メンバ変数
 	///-------------------------------------------///
 private:
-
-	//カメラ
-	std::unique_ptr<MyEngine::Camera> camera_;
 
 	//プレイヤー
 	Player* player_;
@@ -9985,9 +9941,11 @@ namespace MyEngine {
 	///=====================================================/// 
 	/// Object2Dの初期化
 	///=====================================================///
-	void Object2D::Initialize() {
+	void Object2D::Initialize(Camera* cameraPtr) {
 
 		/// === インスタンスの取得 === ///
+
+		camera_ = cameraPtr;
 
 		//2Dオブジェクト基底のインスタンスを取得
 		object2DCommon_ = Object2DCommon::GetInstance();
@@ -10048,14 +10006,11 @@ namespace MyEngine {
 		//ワールド行列を生成
 		Matrix4x4 worldMatrix = transform_.GetWorldMatrix();
 
-		//ビュー行列を単位行列で生成
-		Matrix4x4 viewMatrix = MakeIdentity4x4();
-
-		//プロジェクション行列を生成
-		Matrix4x4 projectionMatrix = MakeOrthographicMatrix(0.0f, 0.0f, WinApp::kClientWidth, WinApp::kClientHeight, 0.0f, 100.0f);
+		//ビュープロジェクション行列を取得
+		Matrix4x4 viewProjectionMatrix = camera_->Get2DViewProjectionMatrix();
 
 		//WVPデータを設定
-		WVPData_->WVP = worldMatrix * (viewMatrix * projectionMatrix);
+		WVPData_->WVP = worldMatrix * viewProjectionMatrix;
 		WVPData_->World = worldMatrix;
 		WVPData_->WorldInverseTranspose = Inverse4x4(worldMatrix);
 	}
@@ -10132,21 +10087,22 @@ File Path: Engine/2d/Object/Object2D.h
 ============================================================
 #pragma once
 
-#include "DirectXTex.h"
-#include "d3d12.h"
+#include <DirectXTex.h>
+#include <d3d12.h>
 
-#include "Base/LayerType.h"
+#include <Base/LayerType.h>
 
-#include "2d/Object/Object2DCommon.h"
-#include "2d/Sprite/Sprite.h"
+#include <2d/Object/Object2DCommon.h>
+#include <2d/Sprite/Sprite.h>
+#include <3d/Camera/Camera.h>
 
 #include <Math/Vector/Vector2.h>
 #include <Math/Vector/Vector3.h>
 #include <Math/Matrix/Matrix4x4.h>
 #include <Math/Transform/WorldTransform.h>
 
-#include "string"
-#include "wrl.h"
+#include <string>
+#include <wrl.h>
 
 namespace MyEngine {
 
@@ -10182,7 +10138,7 @@ namespace MyEngine {
 		/// <summary>
 		/// Object2Dの初期化を行います。
 		/// </summary>
-		void Initialize();
+		void Initialize(Camera* cameraPtr);
 
 		/// <summary>
 		/// Object2Dのスプライトおよび座標変換行列(WVP)を更新します。
@@ -10205,9 +10161,13 @@ namespace MyEngine {
 		///-------------------------------------------///
 	private:
 
+		//カメラ
+		Camera* camera_;
+
 		//2Dオブジェクト基底
 		Object2DCommon* object2DCommon_;
 
+		//トランスフォーム
 		WorldTransform transform_;
 
 		//座標変換行列リソース
@@ -10311,10 +10271,10 @@ namespace MyEngine {
 	///=====================================================/// 
 	/// Object2DCommonの初期化
 	///=====================================================///
-	void Object2DCommon::Initialize() {
+	void Object2DCommon::Initialize(DirectXCommon* dxCommonPtr) {
 
 		//DirectX基底のインスタンスを取得
-		dxCommon_ = DirectXCommon::GetInstance();
+		dxCommon_ = dxCommonPtr;
 
 		//グラフィックパイプラインの生成
 		CreateGraphicsPipeline();
@@ -10676,7 +10636,7 @@ namespace MyEngine {
 		/// <summary>
 		/// Object2DCommonの初期化を行います。
 		/// </summary>
-		void Initialize();
+		void Initialize(DirectXCommon* dxCommonPtr);
 
 		/// <summary>
 		/// 2Dオブジェクトの描画に必要な共通設定を行います。
@@ -11312,10 +11272,10 @@ namespace MyEngine {
 	///=====================================================/// 
 	/// SpriteCommonを初期化
 	///=====================================================///
-	void SpriteCommon::Initialize() {
+	void SpriteCommon::Initialize(DirectXCommon* dxCommonPtr) {
 
 		//DirectX基底のインスタンスを取得
-		dxCommon_ = DirectXCommon::GetInstance();
+		dxCommon_ = dxCommonPtr;
 	}
 }
 
@@ -11350,7 +11310,7 @@ namespace MyEngine {
 		/// <summary>
 		/// SpriteCommonを初期化します。
 		/// </summary>
-		void Initialize();
+		void Initialize(DirectXCommon* dxCommonPtr);
 
 		///-------------------------------------------/// 
 		/// メンバ変数
@@ -11575,13 +11535,13 @@ namespace MyEngine {
 	///=====================================================/// 
 	/// TextureManagerを初期化
 	///=====================================================///
-	void TextureManager::Initialize() {
+	void TextureManager::Initialize(DirectXCommon* dxCommonPtr, SRVManager* srvPtr) {
 
 		//DirectX基底のインスタンスを取得
-		directXCommon_ = DirectXCommon::GetInstance();
+		dxCommon_ = dxCommonPtr;
 
 		//SRVマネージャーのインスタンスを取得
-		srvManager_ = SrvManager::GetInstance();
+		srvManager_ = srvPtr;
 
 		//テクスチャデータの最大数を設定
 		textureData_.reserve(srvManager_->kMaxSRVCount_);
@@ -11655,7 +11615,7 @@ namespace MyEngine {
 		srvDesc.Texture2D.MipLevels = UINT(textureData.metaData.mipLevels);
 
 		//SRVの生成
-		directXCommon_->GetDevice()->CreateShaderResourceView(textureData.resource.Get(), &srvDesc, textureData.srvHandleCPU);
+		dxCommon_->GetDevice()->CreateShaderResourceView(textureData.resource.Get(), &srvDesc, textureData.srvHandleCPU);
 	}
 
 	///==============================================================/// 
@@ -11737,7 +11697,7 @@ namespace MyEngine {
 		srvDesc.TextureCube.ResourceMinLODClamp = 0.0f;
 
 		//SRVの生成
-		directXCommon_->GetDevice()->CreateShaderResourceView(textureData.resource.Get(), &srvDesc, textureData.srvHandleCPU);
+		dxCommon_->GetDevice()->CreateShaderResourceView(textureData.resource.Get(), &srvDesc, textureData.srvHandleCPU);
 	}
 
 	///=====================================================/// 
@@ -11798,7 +11758,7 @@ namespace MyEngine {
 		//Resourceの生成
 		Microsoft::WRL::ComPtr<ID3D12Resource> resource = nullptr;
 
-		HRESULT hr = directXCommon_->GetDevice()->CreateCommittedResource(
+		HRESULT hr = dxCommon_->GetDevice()->CreateCommittedResource(
 			&heapProperties,                //Heapの設定
 			D3D12_HEAP_FLAG_NONE,           //Heapの特殊な設定。特になし
 			&resourceDesc,                  //Resourceの設定
@@ -11838,7 +11798,7 @@ namespace MyEngine {
 
 		Microsoft::WRL::ComPtr<ID3D12Resource> resource = nullptr;
 
-		HRESULT hr = directXCommon_->GetDevice()->CreateCommittedResource(
+		HRESULT hr = dxCommon_->GetDevice()->CreateCommittedResource(
 			&heapProperties,
 			D3D12_HEAP_FLAG_NONE,
 			&resourceDesc,
@@ -11866,7 +11826,7 @@ namespace MyEngine {
 
 		//サブリソースの生成
 		DirectX::PrepareUpload(
-			directXCommon_->GetDevice(), //デバイス
+			dxCommon_->GetDevice(), //デバイス
 			mipImages.GetImages(),       //イメージ
 			mipImages.GetImageCount(),   //イメージ数
 			mipImages.GetMetadata(),     //メタデータ
@@ -11881,11 +11841,11 @@ namespace MyEngine {
 		);
 
 		//中間リソースの場所を作成
-		Microsoft::WRL::ComPtr<ID3D12Resource> intermediateResource = directXCommon_->CreateBufferResource(intermediateSize);
+		Microsoft::WRL::ComPtr<ID3D12Resource> intermediateResource = dxCommon_->CreateBufferResource(intermediateSize);
 
 		//中間リソースをサブリソースにコピー
 		UpdateSubresources(
-			directXCommon_->GetCommandList(), //コマンドリスト
+			dxCommon_->GetCommandList(), //コマンドリスト
 			textureData.Get(),                //コピー先のテクスチャリソース
 			intermediateResource.Get(),       //コピー元の中間リソース
 			0,                                //中間リソースの開始オフセット
@@ -11905,7 +11865,7 @@ namespace MyEngine {
 		barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_GENERIC_READ;        //読み取り可能な状態に遷移
 
 		//コマンドリストにリソースバリアを設定
-		directXCommon_->GetCommandList()->ResourceBarrier(1, &barrier);
+		dxCommon_->GetCommandList()->ResourceBarrier(1, &barrier);
 
 		return intermediateResource;
 	}
@@ -11935,7 +11895,7 @@ namespace MyEngine {
 
 		resourceDesc = CD3DX12_RESOURCE_DESC::Buffer(uploadBufferSize);
 
-		directXCommon_->GetDevice()->CreateCommittedResource(
+		dxCommon_->GetDevice()->CreateCommittedResource(
 			&heapProperties,
 			D3D12_HEAP_FLAG_NONE,
 			&resourceDesc,
@@ -11956,7 +11916,7 @@ namespace MyEngine {
 		}
 
 		UpdateSubresources(
-			directXCommon_->GetCommandList(),
+			dxCommon_->GetCommandList(),
 			textureData.Get(),
 			intermediateResource.Get(),
 			0,
@@ -11976,7 +11936,7 @@ namespace MyEngine {
 		barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_GENERIC_READ;        //読み取り可能な状態に遷移
 
 		//コマンドリストにリソースバリアを設定
-		directXCommon_->GetCommandList()->ResourceBarrier(1, &barrier);
+		dxCommon_->GetCommandList()->ResourceBarrier(1, &barrier);
 
 		return intermediateResource;
 	}
@@ -11989,7 +11949,7 @@ File Path: Engine/2d/Sprite/TextureManager.h
 
 #include "Base/DirectXCommon.h"
 
-#include "Base/SrvManager.h"
+#include "Base/View/SRVManager.h"
 
 #include "DirectXTex.h"
 #include "d3d12.h"
@@ -12044,7 +12004,7 @@ namespace MyEngine {
 		/// <summary>
 		/// TextureManagerを初期化します。
 		/// </summary>
-		void Initialize();
+		void Initialize(DirectXCommon* dxCommonPtr, SRVManager* srvPtr);
 
 		/// <summary>
 		/// 指定されたファイルパスのテクスチャを読み込み、GPU上に展開します。
@@ -12107,10 +12067,10 @@ namespace MyEngine {
 	private:
 
 		//DirectX基底
-		DirectXCommon* directXCommon_ = nullptr;
+		DirectXCommon* dxCommon_ = nullptr;
 
 		//SRVマネージャー
-		SrvManager* srvManager_ = nullptr;
+		SRVManager* srvManager_ = nullptr;
 
 		//テクスチャデータリスト
 		std::unordered_map<std::string, TextureData> textureData_;
@@ -12169,7 +12129,9 @@ namespace MyEngine {
 	///=====================================================/// 
 	/// カメラの各種パラメータを初期化
 	///=====================================================///
-	void Camera::Initialize() {
+	void Camera::Initialize(float windowWidth, float windowHeight, OffScreen* offScreenPtr) {
+
+		offScreen_ = offScreenPtr;
 
 		//カメラの座標の設定
 		transform_.Initialize();
@@ -12185,7 +12147,7 @@ namespace MyEngine {
 		fovY_ = 0.45f;
 
 		//アスペクト比の設定
-		aspectRatio_ = static_cast<float>(WinApp::kClientWidth) / static_cast<float>(WinApp::kClientHeight);
+		aspectRatio_ = windowWidth / windowHeight;
 
 		//NearClipの設定
 		nearClip_ = 0.1f;
@@ -12196,11 +12158,14 @@ namespace MyEngine {
 		//ビュー行列の生成
 		viewMatrix_ = Inverse4x4(transform_.GetWorldMatrix());
 
-		//プロジェクション行列の生成
-		projectionMatrix_ = MakePerspectiveFovMatrix(fovY_, aspectRatio_, nearClip_, farClip_);
+		//ビューポート行列の生成
+		viewportMatrix_ = MakeViewportMatrix(0, 0, windowWidth, windowHeight, 0, 1);
 
-		//ビュープロジェクション行列の生成
-		viewProjectionMatrix_ = viewMatrix_ * projectionMatrix_;
+		//透視投影行列の生成
+		perspectiveProjectionMatrix_ = MakePerspectiveFovMatrix(fovY_, aspectRatio_, nearClip_, farClip_);
+
+		//直交投影行列の生成
+		orthographicProjectionMatrix_ = MakeOrthographicMatrix(0.0f, 0.0f, windowWidth, windowHeight, 0.0f, 100.0f);
 
 		//Z軸のオフセットの設定
 		offsetZ_ = 0.0f;
@@ -12211,7 +12176,7 @@ namespace MyEngine {
 		//デバッグカメラフラグの設定
 		isDebugCamera_ = false;
 
-		OffScreen::GetInstance()->SetDefaultCamera(this);
+		offScreen_->SetDefaultCamera(this);
 
 		Object3DCommon::GetInstance()->SetDefaultCamera(this);
 
@@ -12299,12 +12264,6 @@ namespace MyEngine {
 			//ビュー行列の計算
 			viewMatrix_ = Inverse4x4(debugTransform_.GetWorldMatrix());
 
-			//プロジェクション行列の計算
-			projectionMatrix_ = MakePerspectiveFovMatrix(fovY_, aspectRatio_, nearClip_, farClip_);
-
-			//ビュープロジェクション行列の計算
-			viewProjectionMatrix_ = viewMatrix_ * projectionMatrix_;
-
 		} else {
 
 			/// === 通常カメラの場合 === ///
@@ -12340,12 +12299,6 @@ namespace MyEngine {
 			//ビュー行列の計算
 			viewMatrix_ = Inverse4x4(transform_.GetWorldMatrix());
 
-			//プロジェクション行列の計算
-			projectionMatrix_ = MakePerspectiveFovMatrix(fovY_, aspectRatio_, nearClip_, farClip_);
-
-			//ビュープロジェクション行列の計算
-			viewProjectionMatrix_ = viewMatrix_ * projectionMatrix_;
-
 			Shake::GetInstance()->Update();
 		}
 	}
@@ -12373,7 +12326,20 @@ namespace MyEngine {
 		}
 
 #endif // _USE_IMGUI
+	}
+	Matrix4x4 Camera::Get3DViewProjectionMatrix() const {
 
+		Matrix4x4 viewProjectionMatrix = viewMatrix_ * perspectiveProjectionMatrix_;
+
+		return viewProjectionMatrix;
+	}
+	Matrix4x4 Camera::Get2DViewProjectionMatrix() const {
+
+		Matrix4x4 viewMatrix = MakeIdentity4x4();
+
+		Matrix4x4 viewProjectionMatrix = viewMatrix * orthographicProjectionMatrix_;
+
+		return viewProjectionMatrix;
 	}
 }
 
@@ -12381,7 +12347,8 @@ namespace MyEngine {
 File Path: Engine/3d/Camera/Camera.h
 ============================================================
 #pragma once
-#include "3d/Object/Object3D.h"
+#include <Base/OffScreen.h>
+#include <3d/Object/Object3D.h>
 #include <Math/Vector/Vector3.h>
 #include <Math/Matrix/Matrix4x4.h>
 #include <Math/Transform/WorldTransform.h>
@@ -12401,7 +12368,7 @@ namespace MyEngine {
 		/// <summary>
 		/// カメラの各種パラメータを初期化します。
 		/// </summary>
-		void Initialize();
+		void Initialize(float windowWidth, float windowHeight, OffScreen* offScreenPtr);
 
 		/// <summary>
 		/// カメラの状態を更新します。
@@ -12423,6 +12390,8 @@ namespace MyEngine {
 		///-------------------------------------------///
 	private:
 
+		OffScreen* offScreen_;
+
 		//追従対象
 		Object3D* trackingObject_;
 
@@ -12435,11 +12404,14 @@ namespace MyEngine {
 		//ビュー行列
 		Matrix4x4 viewMatrix_;
 
-		//プロジェクション行列
-		Matrix4x4 projectionMatrix_;
+		//ビューポート行列
+		Matrix4x4 viewportMatrix_;
 
-		//ビュープロジェクション行列
-		Matrix4x4 viewProjectionMatrix_;
+		//直交投影行列
+		Matrix4x4 orthographicProjectionMatrix_;
+
+		//透視投影行列
+		Matrix4x4 perspectiveProjectionMatrix_;
 
 		//視野角
 		float fovY_;
@@ -12480,16 +12452,34 @@ namespace MyEngine {
 		const Matrix4x4& GetViewMatrix() const { return viewMatrix_; }
 
 		/// <summary>
-		/// プロジェクション行列を取得
+		/// ビューポート行列を取得
 		/// </summary>
-		/// <returns>プロジェクション行列</returns>
-		const Matrix4x4& GetProjectionMatrix() const { return projectionMatrix_; }
+		/// <returns>ビューポート行列</returns>
+		const Matrix4x4& GetViewPortMatrix() const { return viewportMatrix_; }
 
 		/// <summary>
-		/// ビュープロジェクション行列を取得
+		/// 透視投影行列を取得
 		/// </summary>
-		/// <returns>ビュープロジェクション行列</returns>
-		const Matrix4x4& GetViewProjectionMatrix() const { return viewProjectionMatrix_; }
+		/// <returns>透視投影行列</returns>
+		const Matrix4x4& Get3DProjectionMatrix() const { return perspectiveProjectionMatrix_; }
+
+		/// <summary>
+		/// 直交投影行列を取得
+		/// </summary>
+		/// <returns>直交投影行列</returns>
+		const Matrix4x4& Get2DProjectionMatrix() const { return orthographicProjectionMatrix_; }
+
+		/// <summary>
+		/// ビュー透視投影行列を取得
+		/// </summary>
+		/// <returns>ビュー透視投影行列</returns>
+		Matrix4x4 Get3DViewProjectionMatrix() const;
+
+		/// <summary>
+		/// ビュー直交投影行列を取得
+		/// </summary>
+		/// <returns>ビュー直交投影行列</returns>
+		Matrix4x4 Get2DViewProjectionMatrix() const;
 
 		/// <summary>
 		/// デバッグカメラフラグを取得
@@ -12497,11 +12487,11 @@ namespace MyEngine {
 		/// <returns>フラグ</returns>
 		bool IsDebugCamera() const { return isDebugCamera_; }
 
+		/// <summary>
+		/// ビュー行列の設定
+		/// </summary>
+		/// <param name="matrix">ビュー行列</param>
 		void SetViewMatrix(Matrix4x4 matrix) { viewMatrix_ = matrix; }
-
-		void SetProjectionMatrix(Matrix4x4 matrix) { projectionMatrix_ = matrix; }
-
-		void SetViewProjectionMatrix(Matrix4x4 matrix) { viewProjectionMatrix_ = matrix; }
 
 		/// <summary>
 		/// fovYの設定
@@ -13498,10 +13488,10 @@ namespace MyEngine {
 	///=====================================================/// 
 	/// ディレクショナルライトを初期化
 	///=====================================================///
-	void DirectionalLight::Initialize() {
+	void DirectionalLight::Initialize(DirectXCommon* dxCommonPtr) {
 
 		//DirectX基底を取得
-		dxCommon_ = DirectXCommon::GetInstance();
+		dxCommon_ = dxCommonPtr;
 
 		//リソースを作成
 		lightResource_ = dxCommon_->CreateBufferResource(sizeof(LightData));
@@ -13601,7 +13591,7 @@ namespace MyEngine {
 		/// <summary>
 		/// ディレクショナルライトを初期化します。
 		/// </summary>
-		void Initialize();
+		void Initialize(DirectXCommon* dxCommonPtr);
 
 		/// <summary>
 		/// ディレクショナルライトの更新処理を行います。
@@ -13672,10 +13662,10 @@ namespace MyEngine {
 	///=====================================================/// 
 	/// ポイントライトの初期化
 	///=====================================================///
-	void PointLight::Initialize() {
+	void PointLight::Initialize(DirectXCommon* dxCommonPtr) {
 
 		//DirectX基底を取得
-		dxCommon_ = DirectXCommon::GetInstance();
+		dxCommon_ = dxCommonPtr;
 
 		//リソースを作成
 		lightResource_ = dxCommon_->CreateBufferResource(sizeof(LightData));
@@ -13795,7 +13785,7 @@ namespace MyEngine {
 		/// <summary>
 		/// ポイントライトの初期化を行います。
 		/// </summary>
-		void Initialize();
+		void Initialize(DirectXCommon* dxCommonPtr);
 
 		/// <summary>
 		/// ポイントライトのデータを毎フレーム更新します。
@@ -13879,10 +13869,10 @@ namespace MyEngine {
 	///=====================================================/// 
 	/// スポットライトを初期化
 	///=====================================================///
-	void SpotLight::Initialize() {
+	void SpotLight::Initialize(DirectXCommon* dxCommonPtr) {
 
 		//DirectX基底を取得
-		dxCommon_ = DirectXCommon::GetInstance();
+		dxCommon_ = dxCommonPtr;
 
 		//リソースを作成
 		lightResource_ = dxCommon_->CreateBufferResource(sizeof(LightData));
@@ -14032,7 +14022,7 @@ namespace MyEngine {
 		/// <summary>
 		/// スポットライトを初期化します。
 		/// </summary>
-		void Initialize();
+		void Initialize(DirectXCommon* dxCommonPtr);
 
 		/// <summary>
 		/// スポットライトを毎フレーム更新します。
@@ -14131,11 +14121,11 @@ namespace MyEngine {
 	///=====================================================/// 
 	/// CubeMeshの初期化
 	///=====================================================///
-	void CubeMesh::Initialize() {
+	void CubeMesh::Initialize(DirectXCommon* dxCommonPtr) {
 
 		/// === シングルトンインスタンスの取得 === ///
 
-		directXCommon_ = DirectXCommon::GetInstance();
+		dxCommon_ = dxCommonPtr;
 
 		/// === 頂点リソースの生成 === ///
 
@@ -14143,7 +14133,7 @@ namespace MyEngine {
 		vertexCount_ = 4 * 6;
 
 		//頂点リソースの生成
-		vertexResource_ = directXCommon_->CreateBufferResource(sizeof(VertexData) * vertexCount_);
+		vertexResource_ = dxCommon_->CreateBufferResource(sizeof(VertexData) * vertexCount_);
 
 		//頂点バッファビューの作成
 		vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
@@ -14267,7 +14257,7 @@ namespace MyEngine {
 		indexCount_ = 6 * 6;
 
 		//頂点インデックスリソースの生成
-		indexResource_ = directXCommon_->CreateBufferResource(sizeof(uint32_t) * indexCount_);
+		indexResource_ = dxCommon_->CreateBufferResource(sizeof(uint32_t) * indexCount_);
 
 		//リソースの場所を取得
 		indexBufferView_.BufferLocation = indexResource_->GetGPUVirtualAddress();
@@ -14317,7 +14307,7 @@ namespace MyEngine {
 		/// <summary>
 		/// CubeMeshの初期化を行います。
 		/// </summary>
-		void Initialize() override;
+		void Initialize(DirectXCommon* dxCommonPtr) override;
 
 		///-------------------------------------------/// 
 		/// メンバ変数
@@ -14339,16 +14329,16 @@ namespace MyEngine {
 	///=====================================================/// 
 	/// CylinderMeshの初期化
 	///=====================================================///
-	void CylinderMesh::Initialize() {
+	void CylinderMesh::Initialize(DirectXCommon* dxCommonPtr) {
 
 		/// === シングルトンインスタンスの取得 === ///
 
-		directXCommon_ = DirectXCommon::GetInstance();
+		dxCommon_ = dxCommonPtr;
 
 		/// === 頂点リソースの生成 === ///
 
 		//リソースの生成
-		vertexResource_ = directXCommon_->CreateBufferResource(sizeof(VertexData) * 4 * kCylinderDivide);
+		vertexResource_ = dxCommon_->CreateBufferResource(sizeof(VertexData) * 4 * kCylinderDivide);
 
 		//バッファビューの作成
 		vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
@@ -14401,7 +14391,7 @@ namespace MyEngine {
 		indexCount_ = 6 * kCylinderDivide;
 
 		//頂点インデックスリソースの生成
-		indexResource_ = directXCommon_->CreateBufferResource(sizeof(uint32_t) * indexCount_);
+		indexResource_ = dxCommon_->CreateBufferResource(sizeof(uint32_t) * indexCount_);
 
 		//リソースの場所を取得
 		indexBufferView_.BufferLocation = indexResource_->GetGPUVirtualAddress();
@@ -14450,7 +14440,7 @@ namespace MyEngine {
 		/// <summary>
 		/// CylinderMeshの初期化を行います。
 		/// </summary>
-		void Initialize() override;
+		void Initialize(DirectXCommon* dxCommonPtr) override;
 
 		///-------------------------------------------/// 
 		/// メンバ変数
@@ -14487,10 +14477,10 @@ namespace MyEngine {
 	void MeshBase::SendDataForGPU() {
 
 		//頂点データをGPUに転送
-		directXCommon_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView_);
+		dxCommon_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView_);
 
 		//インデックスデータをGPUに転送
-		directXCommon_->GetCommandList()->IASetIndexBuffer(&indexBufferView_);
+		dxCommon_->GetCommandList()->IASetIndexBuffer(&indexBufferView_);
 	}
 
 	///=====================================================/// 
@@ -14554,7 +14544,7 @@ namespace MyEngine {
 		/// <summary>
 		/// メッシュを初期化する純粋仮想関数。
 		/// </summary>
-		virtual void Initialize() = 0;
+		virtual void Initialize(DirectXCommon* dxCommonPtr) = 0;
 
 		/// <summary>
 		/// GPUにメッシュのデータを送信します。
@@ -14615,7 +14605,7 @@ namespace MyEngine {
 	protected:
 
 		//DirectX基底
-		DirectXCommon* directXCommon_ = nullptr;
+		DirectXCommon* dxCommon_ = nullptr;
 
 		//頂点数
 		uint32_t vertexCount_ = 0;
@@ -14791,14 +14781,14 @@ namespace MyEngine {
 	///=====================================================/// 
 	/// ModelMeshの初期化
 	///=====================================================///
-	void ModelMesh::Initialize() {
+	void ModelMesh::Initialize(DirectXCommon* dxCommonPtr) {
 
-		directXCommon_ = DirectXCommon::GetInstance();
+		dxCommon_ = dxCommonPtr;
 
 		/// === 頂点リソースの生成 === ///
 
 		//頂点リソースの生成
-		vertexResource_ = directXCommon_->CreateBufferResource(sizeof(VertexData) * vertexCount_);
+		vertexResource_ = dxCommon_->CreateBufferResource(sizeof(VertexData) * vertexCount_);
 
 		//リソースの先頭のアドレスを取得する
 		vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
@@ -14815,7 +14805,7 @@ namespace MyEngine {
 		/// === インデックスリソース === ///
 
 		//インデックスリソースを作成
-		indexResource_ = directXCommon_->CreateBufferResource(sizeof(uint32_t) * indexCount_);
+		indexResource_ = dxCommon_->CreateBufferResource(sizeof(uint32_t) * indexCount_);
 
 		//リソースの先頭アドレスを取得
 		indexBufferView_.BufferLocation = indexResource_->GetGPUVirtualAddress();
@@ -14854,7 +14844,7 @@ namespace MyEngine {
 		/// <summary>
 		/// ModelMeshの初期化を行います。
 		/// </summary>
-		void Initialize() override;
+		void Initialize(DirectXCommon* dxCommonPtr) override;
 	};
 }
 
@@ -14870,16 +14860,16 @@ namespace MyEngine {
 	///=====================================================/// 
 	/// PlaneMeshの初期化
 	///=====================================================///
-	void PlaneMesh::Initialize() {
+	void PlaneMesh::Initialize(DirectXCommon* dxCommonPtr) {
 
-		directXCommon_ = DirectXCommon::GetInstance();
+		dxCommon_ = dxCommonPtr;
 
 		/// === 頂点リソースの生成 === ///
 
 		vertexCount_ = 4;
 
 		//頂点リソースの生成
-		vertexResource_ = directXCommon_->CreateBufferResource(sizeof(VertexData) * vertexCount_);
+		vertexResource_ = dxCommon_->CreateBufferResource(sizeof(VertexData) * vertexCount_);
 
 		//頂点バッファビューの作成
 		vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
@@ -14916,7 +14906,7 @@ namespace MyEngine {
 		indexCount_ = 6;
 
 		//頂点インデックスリソースの生成
-		indexResource_ = directXCommon_->CreateBufferResource(sizeof(uint32_t) * indexCount_);
+		indexResource_ = dxCommon_->CreateBufferResource(sizeof(uint32_t) * indexCount_);
 
 		//リソースの場所を取得
 		indexBufferView_.BufferLocation = indexResource_->GetGPUVirtualAddress();
@@ -14962,7 +14952,7 @@ namespace MyEngine {
 		/// <summary>
 		/// PlaneMeshの初期化を行います。
 		/// </summary>
-		void Initialize() override;
+		void Initialize(DirectXCommon* dxCommonPtr) override;
 
 		///-------------------------------------------/// 
 		/// メンバ変数
@@ -14985,14 +14975,14 @@ namespace MyEngine {
 	///=====================================================/// 
 	/// RingMeshの初期化
 	///=====================================================///
-	void RingMesh::Initialize() {
+	void RingMesh::Initialize(DirectXCommon* dxCommonPtr) {
 
-		directXCommon_ = DirectXCommon::GetInstance();
+		dxCommon_ = dxCommonPtr;
 
 		/// === 頂点リソースの生成 === ///
 
 		//頂点リソースの生成
-		vertexResource_ = directXCommon_->CreateBufferResource(sizeof(VertexData) * 4 * kRingDivide);
+		vertexResource_ = dxCommon_->CreateBufferResource(sizeof(VertexData) * 4 * kRingDivide);
 
 		//頂点バッファビューの作成
 		vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
@@ -15039,7 +15029,7 @@ namespace MyEngine {
 		indexCount_ = 6 * kRingDivide;
 
 		//頂点インデックスリソースの生成
-		indexResource_ = directXCommon_->CreateBufferResource(sizeof(uint32_t) * indexCount_);
+		indexResource_ = dxCommon_->CreateBufferResource(sizeof(uint32_t) * indexCount_);
 
 		//リソースの場所を取得
 		indexBufferView_.BufferLocation = indexResource_->GetGPUVirtualAddress();
@@ -15088,7 +15078,7 @@ namespace MyEngine {
 		/// <summary>
 		/// RingMeshの初期化を行います。
 		/// </summary>
-		void Initialize() override;
+		void Initialize(DirectXCommon* dxCommonPtr) override;
 
 		///-------------------------------------------/// 
 		/// メンバ変数
@@ -15121,11 +15111,11 @@ namespace MyEngine {
 	///=====================================================/// 
 	/// SphereMeshの初期化
 	///=====================================================///
-	void SphereMesh::Initialize() {
+	void SphereMesh::Initialize(DirectXCommon* dxCommonPtr) {
 
 		/// === シングルトンインスタンスの取得 === ///
 
-		directXCommon_ = DirectXCommon::GetInstance();
+		dxCommon_ = dxCommonPtr;
 
 		/// === 頂点リソースの生成 === ///
 
@@ -15133,7 +15123,7 @@ namespace MyEngine {
 		vertexCount_ = (kLatitudeCount + 1) * (kLongitudeCount + 1);
 
 		//リソースの生成
-		vertexResource_ = directXCommon_->CreateBufferResource(sizeof(VertexData) * 4 * vertexCount_);
+		vertexResource_ = dxCommon_->CreateBufferResource(sizeof(VertexData) * 4 * vertexCount_);
 
 		//バッファビューの作成
 		vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
@@ -15245,7 +15235,7 @@ namespace MyEngine {
 		indexCount_ = 6 * kLatitudeCount * kLongitudeCount;
 
 		//リソースの生成
-		indexResource_ = directXCommon_->CreateBufferResource(sizeof(uint32_t) * indexCount_);
+		indexResource_ = dxCommon_->CreateBufferResource(sizeof(uint32_t) * indexCount_);
 
 		//リソースの場所を取得
 		indexBufferView_.BufferLocation = indexResource_->GetGPUVirtualAddress();
@@ -15307,7 +15297,7 @@ namespace MyEngine {
 		/// <summary>
 		/// SphereMeshの初期化を行います。
 		/// </summary>
-		void Initialize() override;
+		void Initialize(DirectXCommon* dxCommonPtr) override;
 
 		///-------------------------------------------/// 
 		/// メンバ変数
@@ -15369,7 +15359,7 @@ namespace MyEngine {
 		mesh_->SetIndexCount(uint32_t(modelData_.indices.size()));
 
 		//初期化
-		mesh_->Initialize();
+		mesh_->Initialize(modelCommon_->GetDxCommon());
 
 		//頂点データとインデックスデータのコピー
 		mesh_->CopyMeshData(modelData_.indices, modelData_.vertices);
@@ -15407,7 +15397,7 @@ namespace MyEngine {
 		mesh_ = CreateMesh(type);
 
 		//初期化
-		mesh_->Initialize();
+		mesh_->Initialize(modelCommon_->GetDxCommon());
 
 		//頂点データの設定
 		for (uint32_t i = 0; i < mesh_->GetVertexCount(); i++) {
@@ -15467,7 +15457,7 @@ namespace MyEngine {
 		mesh_->SetIndexCount(uint32_t(modelData_.indices.size()));
 
 		//初期化
-		mesh_->Initialize();
+		mesh_->Initialize(modelCommon_->GetDxCommon());
 
 		//頂点データとインデックスデータのコピー
 		mesh_->CopyMeshData(modelData_.indices, modelData_.vertices);
@@ -15984,10 +15974,10 @@ namespace MyEngine {
 	///=====================================================/// 
 	/// ModelCommonの初期化
 	///=====================================================///
-	void ModelCommon::Initialize() {
+	void ModelCommon::Initialize(DirectXCommon* dxCommonPtr) {
 
 		//DirectX基底のインスタンスを取得
-		dxCommon_ = DirectXCommon::GetInstance();
+		dxCommon_ = dxCommonPtr;
 	}
 }
 
@@ -16018,7 +16008,7 @@ namespace MyEngine {
 		/// <summary>
 		/// ModelCommonの初期化を行います。
 		/// </summary>
-		void Initialize();
+		void Initialize(DirectXCommon* dxCommonPtr);
 
 		///-------------------------------------------/// 
 		/// メンバ変数
@@ -16454,7 +16444,7 @@ namespace MyEngine {
 		if (camera_) {
 
 			//ビュープロジェクション行列
-			const Matrix4x4& viewProjectionMatrix = camera_->GetViewProjectionMatrix();
+			const Matrix4x4& viewProjectionMatrix = camera_->Get3DViewProjectionMatrix();
 
 			//ワールド行列にビュープロジェクション行列を乗算
 			worldViewProjectionMatrix *= viewProjectionMatrix;
@@ -16753,7 +16743,7 @@ namespace MyEngine {
 		if (camera_) {
 
 			//カメラのビュープロジェクション行列を取得
-			const Matrix4x4& viewProjectionMatrix = camera_->GetViewProjectionMatrix();
+			const Matrix4x4& viewProjectionMatrix = camera_->Get3DViewProjectionMatrix();
 
 			//ワールドビュープロジェクション行列の計算
 			worldViewProjectionMatrix *= viewProjectionMatrix;
@@ -16935,10 +16925,10 @@ namespace MyEngine {
 	///=====================================================/// 
 	/// DebugObjectCommonの初期化
 	///=====================================================///
-	void DebugObjectCommon::Initialize() {
+	void DebugObjectCommon::Initialize(DirectXCommon* dxCommonPtr) {
 
 		//DirectX基底のインスタンスを取得
-		dxCommon_ = DirectXCommon::GetInstance();
+		dxCommon_ = dxCommonPtr;
 
 		//グラフィックパイプラインの生成
 		CreateGraphicsPipeline();
@@ -17218,7 +17208,7 @@ namespace MyEngine {
 		/// <summary>
 		/// DebugObjectCommonの初期化を行います。
 		/// </summary>
-		void Initialize();
+		void Initialize(DirectXCommon* dxCommonPtr);
 
 		/// <summary>
 		/// デバッグオブジェクトの描画に必要な共通設定を行います。
@@ -17460,7 +17450,7 @@ namespace MyEngine {
 			/// === カメラ情報があったら === ///
 
 			//カメラのビュープロジェクション行列を取得
-			const Matrix4x4& viewProjectionMatrix = camera_->GetViewProjectionMatrix();
+			const Matrix4x4& viewProjectionMatrix = camera_->Get3DViewProjectionMatrix();
 
 			//ワールドビュープロジェクション行列の計算
 			worldViewProjectionMatrix *= viewProjectionMatrix;
@@ -17487,7 +17477,7 @@ namespace MyEngine {
 			/// === カメラ情報があったら === ///
 
 			//カメラのビュープロジェクション行列を取得
-			const Matrix4x4& viewProjectionMatrix = camera_->GetViewProjectionMatrix();
+			const Matrix4x4& viewProjectionMatrix = camera_->Get3DViewProjectionMatrix();
 
 			//ワールドビュープロジェクション行列の計算
 			worldViewProjectionMatrix *= viewProjectionMatrix;
@@ -17739,10 +17729,10 @@ namespace MyEngine {
 	///=====================================================/// 
 	/// Object3DCommonの初期化
 	///=====================================================///
-	void Object3DCommon::Initialize() {
+	void Object3DCommon::Initialize(DirectXCommon* dxCommonPtr) {
 
 		//DirectX基底のインスタンスを取得
-		dxCommon_ = DirectXCommon::GetInstance();
+		dxCommon_ = dxCommonPtr;
 
 		//グラフィックパイプラインの生成
 		CreateGraphicsPipeline();
@@ -17751,7 +17741,7 @@ namespace MyEngine {
 		directionalLight_ = std::make_unique<DirectionalLight>();
 
 		//平行光源ライトの初期化
-		directionalLight_->Initialize();
+		directionalLight_->Initialize(dxCommon_);
 
 		directionalLight_->SetIntensity(1.0f);
 
@@ -17759,7 +17749,7 @@ namespace MyEngine {
 		pointLight_ = std::make_unique<PointLight>();
 
 		//点光源ライトの初期化
-		pointLight_->Initialize();
+		pointLight_->Initialize(dxCommon_);
 
 		pointLight_->SetIntensity(0.0f);
 
@@ -17767,7 +17757,7 @@ namespace MyEngine {
 		spotLight_ = std::make_unique<SpotLight>();
 
 		//スポットライトの初期化
-		spotLight_->Initialize();
+		spotLight_->Initialize(dxCommon_);
 
 		spotLight_->SetIntensity(0.0f);
 
@@ -18238,7 +18228,7 @@ namespace MyEngine {
 		/// <summary>
 		/// Object3DCommonの初期化を行います。
 		/// </summary>
-		void Initialize();
+		void Initialize(DirectXCommon* dxCommonPtr);
 
 		/// <summary>
 		/// Object3DCommonの更新処理を行います。
@@ -18580,7 +18570,7 @@ namespace MyEngine {
 		if (camera_) {
 
 			//カメラのビュープロジェクション行列を取得
-			const Matrix4x4& viewProjectionMatrix = camera_->GetViewProjectionMatrix();
+			const Matrix4x4& viewProjectionMatrix = camera_->Get3DViewProjectionMatrix();
 
 			//ワールドビュープロジェクション行列の計算
 			worldViewProjectionMatrix *= viewProjectionMatrix;
@@ -18815,10 +18805,10 @@ namespace MyEngine {
 	///=====================================================/// 
 	/// SkyBoxCommonの初期化
 	///=====================================================///
-	void SkyBoxCommon::Initialize() {
+	void SkyBoxCommon::Initialize(DirectXCommon* dxCommonPtr) {
 
 		//DirectX基底のインスタンスを取得
-		dxCommon_ = DirectXCommon::GetInstance();
+		dxCommon_ = dxCommonPtr;
 
 		//グラフィックパイプラインの生成
 		CreateGraphicsPipeline();
@@ -19101,7 +19091,7 @@ namespace MyEngine {
 		/// <summary>
 		/// SkyBoxCommonの初期化を行います。
 		/// </summary>
-		void Initialize();
+		void Initialize(DirectXCommon* dxCommonPtr);
 
 		/// <summary>
 		/// 更新処理
@@ -19650,11 +19640,12 @@ File Path: Engine/3d/Particle/ParticleCommon.cpp
 ============================================================
 #include "ParticleCommon.h"
 
-#include "Base/DirectXCommon.h"
+#include <Base/DirectXCommon.h>
+#include <Base/View/SRVManager.h>
 
-#include "Other/Log.h"
+#include <Other/Log.h>
 
-#include "cassert"
+#include <cassert>
 
 namespace MyEngine {
 
@@ -19669,10 +19660,13 @@ namespace MyEngine {
 	///=====================================================/// 
 	/// ParticleCommonの初期化
 	///=====================================================///
-	void ParticleCommon::Initialize() {
+	void ParticleCommon::Initialize(DirectXCommon* dxCommonPtr, SRVManager* srvPtr) {
 
 		//DirectX基底のインスタンスを取得
-		dxCommon_ = DirectXCommon::GetInstance();
+		dxCommon_ = dxCommonPtr;
+
+		//SRVマネージャーのインスタンスを取得
+		srvManager_ = srvPtr;
 
 		//グラフィックパイプラインの生成
 		CreateGraphicsPipeline();
@@ -20006,6 +20000,8 @@ namespace MyEngine {
 
 	class DirectXCommon;
 
+	class SRVManager;
+
 	/// <summary>
 	/// パーティクル描画用の共通機能を提供するクラスです。
 	/// </summary>
@@ -20038,7 +20034,7 @@ namespace MyEngine {
 		/// <summary>
 		/// ParticleCommonの初期化を行います。
 		/// </summary>
-		void Initialize();
+		void Initialize(DirectXCommon* dxCommonPtr, SRVManager* srvPtr);
 
 		/// <summary>
 		/// パーティクルの描画に必要な共通設定を行います。
@@ -20068,6 +20064,9 @@ namespace MyEngine {
 		//DirectX基底
 		DirectXCommon* dxCommon_ = nullptr;
 
+		//
+		SRVManager* srvManager_ = nullptr;
+
 		//ブレンドモード
 		BlendTypeParticle blendMode_;
 
@@ -20089,6 +20088,12 @@ namespace MyEngine {
 		DirectXCommon* GetDxCommon() const { return dxCommon_; }
 
 		/// <summary>
+		/// SRVマネージャーを取得
+		/// </summary>
+		/// <returns>SRVマネージャー</returns>
+		SRVManager* GetSRVManager() const { return srvManager_; }
+
+		/// <summary>
 		/// ブレンドモードの設定
 		/// </summary>
 		/// <param name="blendType">ブレンドタイプ</param>
@@ -20103,7 +20108,7 @@ File Path: Engine/3d/Particle/ParticleEmitter.cpp
 #include "ParticleEmitter.h"
 
 #include "Base/DirectXCommon.h"
-#include "Base/SrvManager.h"
+#include "Base/View/SRVManager.h"
 #include "Base/Renderer.h"
 #include "Base/Input.h"
 #include "2d/Sprite/TextureManager.h"
@@ -20147,13 +20152,13 @@ namespace MyEngine {
 		/// === シングルトンインスタンスの取得 === ///
 
 		//DirectX基底のインスタンスを取得
-		directXCommon_ = DirectXCommon::GetInstance();
+		directXCommon_ = ParticleCommon::GetInstance()->GetDxCommon();
 
 		//テクスチャマネージャーのインスタンスを取得
 		textureManager_ = TextureManager::GetInstance();
 
 		//SRVマネージャーのインスタンスを取得
-		srvManager_ = SrvManager::GetInstance();
+		srvManager_ = ParticleCommon::GetInstance()->GetSRVManager();
 
 		//カメラ情報の設定
 		defaultCamera_ = camera;
@@ -20300,7 +20305,7 @@ namespace MyEngine {
 		/// === パーティクルの更新 === ///
 
 		//カメラからビュープロジェクション行列を取得
-		Matrix4x4 viewProjectionMatrix = defaultCamera_->GetViewProjectionMatrix();
+		Matrix4x4 viewProjectionMatrix = defaultCamera_->Get3DViewProjectionMatrix();
 
 		//カメラからビュー行列を取得
 		Matrix4x4 viewMatrix = defaultCamera_->GetViewMatrix();
@@ -21310,7 +21315,7 @@ namespace MyEngine {
 
 	class TextureManager;
 
-	class SrvManager;
+	class SRVManager;
 
 	class Camera;
 
@@ -21573,7 +21578,7 @@ namespace MyEngine {
 		TextureManager* textureManager_;
 
 		//SRVマネージャー
-		SrvManager* srvManager_;
+		SRVManager* srvManager_;
 
 		//パーティクルマネージャー
 		ParticleManager* particleManager_;
@@ -22237,291 +22242,28 @@ namespace MyEngine {
 }
 
 ============================================================
-File Path: Engine/Base/DSVManager.cpp
-============================================================
-#include "DSVManager.h"
-
-#include "Base/DirectXCommon.h"
-
-#include "cassert"
-
-namespace MyEngine {
-
-	///=====================================================/// 
-	/// DSVManagerのシングルトンインスタンスを取得
-	///=====================================================///
-	DSVManager* DSVManager::GetInstance() {
-		static DSVManager instance;
-		return &instance;
-	}
-
-	///=====================================================/// 
-	/// DSV用のデスクリプタヒープを初期化
-	///=====================================================///
-	void DSVManager::Initialize() {
-
-		//DirectX基底のインスタンスを取得
-		directXCommon = DirectXCommon::GetInstance();
-
-		//DSVデスクリプタヒープの初期化
-		dsvDescriptorHeap_ = directXCommon->CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_DSV, kMaxDSVCount_, false);
-
-		//DSVデスクリプタヒープのサイズを取得
-		dsvDescriptorSize_ = directXCommon->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
-	}
-
-	///=====================================================/// 
-	/// 描画前処理
-	///=====================================================///
-	void DSVManager::PreDraw() {
-	}
-
-	///=====================================================/// 
-	/// DSVの番号を割り当て
-	///=====================================================///
-	uint32_t DSVManager::Allocate() {
-
-		//DSV番号が最大数を越えていないかの確認
-		assert(kMaxDSVCount_ > useIndex_);
-
-		//現在のDSV番号を返す
-		int index = useIndex_;
-
-		//1つずらした番号を確保する
-		useIndex_++;
-
-		return index;
-	}
-
-	///=====================================================///  
-	/// DSVを割り当て可能かどうかを確認
-	///=====================================================///
-	bool DSVManager::AllocateCheck() {
-
-		//DSV番号が最大数を越えていないかの確認
-		if (kMaxDSVCount_ > useIndex_) {
-			return true;
-		}
-
-		return false;
-	}
-
-	///=====================================================/// 
-	/// 指定されたリソースに対してDSVを生成
-	///=====================================================///
-	void DSVManager::CreateDepthStencilView(uint32_t dsvIndex, ID3D12Resource* pResource) {
-
-		//DSVの情報
-		D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc{};
-
-		//DSVの設定
-		dsvDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;        //Format。基本的にはResourceに合わせる
-		dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D; //2DTexture
-
-		D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = GetCPUDescriptorHandle(dsvIndex);
-
-		//DSVHeapの先頭にDSVを作る
-		directXCommon->GetDevice()->CreateDepthStencilView(
-			pResource,
-			&dsvDesc,
-			dsvHandle
-		);
-
-	}
-
-	///================================================================/// 
-	/// 指定されたリソースに対して32ビット浮動小数点形式の深度ステンシルビューを生成
-	///================================================================///
-	void DSVManager::CreateDepthTexture(uint32_t dsvIndex, ID3D12Resource* pResource) {
-
-		//DSVの情報
-		D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc{};
-
-		//DSVの設定
-		dsvDesc.Format = DXGI_FORMAT_D32_FLOAT;     //Format。基本的にはResourceに合わせる
-		dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D; //2DTexture
-
-		D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = GetCPUDescriptorHandle(dsvIndex);
-
-		//DSVHeapの先頭にDSVを作る
-		directXCommon->GetDevice()->CreateDepthStencilView(
-			pResource,
-			&dsvDesc,
-			dsvHandle
-		);
-	}
-
-	///=====================================================/// 
-	/// CPUデスクリプターを取得
-	///=====================================================///
-	D3D12_CPU_DESCRIPTOR_HANDLE DSVManager::GetCPUDescriptorHandle(uint32_t index) {
-
-		//デスクリプタの最初のメモリを取得
-		D3D12_CPU_DESCRIPTOR_HANDLE handleCPU = dsvDescriptorHeap_->GetCPUDescriptorHandleForHeapStart();
-
-		//メモリを番号分進ませる
-		handleCPU.ptr += (dsvDescriptorSize_ * index);
-
-		return handleCPU;
-	}
-
-	///=====================================================/// 
-	/// GPUデスクリプターを取得
-	///=====================================================///
-	D3D12_GPU_DESCRIPTOR_HANDLE DSVManager::GetGPUDescriptorHandle(uint32_t index) {
-
-		//デスクリプタの最初のメモリを取得
-		D3D12_GPU_DESCRIPTOR_HANDLE handleGPU = dsvDescriptorHeap_->GetGPUDescriptorHandleForHeapStart();
-
-		//メモリを番号分進ませる
-		handleGPU.ptr += (dsvDescriptorSize_ * index);
-
-		return handleGPU;
-	}
-}
-
-============================================================
-File Path: Engine/Base/DSVManager.h
-============================================================
-#pragma once
-#include "d3d12.h"
-#include "cstdint"
-#include "wrl.h"
-
-namespace MyEngine {
-
-	/// === 前方宣言 === ///
-	class DirectXCommon;
-
-	/// <summary>
-	/// DirectX12 の深度ステンシルビュー (DSV) を管理するクラスです。
-	/// </summary>
-	class DSVManager {
-
-		///-------------------------------------------/// 
-		/// 静的メンバ変数
-		///-------------------------------------------///
-	public:
-
-		//最大DSV数
-		static const uint32_t kMaxDSVCount_ = 2;
-
-		///-------------------------------------------/// 
-		/// メンバ関数
-		///-------------------------------------------///
-	public:
-
-		/// <summary>
-		/// DSVManagerのシングルトンインスタンスを取得します。
-		/// </summary>
-		static DSVManager* GetInstance();
-
-		/// <summary>
-		/// DSV用のデスクリプタヒープを初期化します。
-		/// </summary>
-		void Initialize();
-
-		/// <summary>
-		/// 描画前処理
-		/// </summary>
-		void PreDraw();
-
-		/// <summary>
-		/// DSVの番号を割り当てます。
-		/// </summary>
-		/// <returns>割り当てられたDSV番号</returns>
-		uint32_t Allocate();
-
-		/// <summary>
-		/// DSVを割り当て可能かどうかを確認します。
-		/// </summary>
-		/// <returns>true: 割り当て可能 / false: 割り当て不可</returns>
-		bool AllocateCheck();
-
-		/// <summary>
-		/// 指定されたリソースに対してDSVを生成します。
-		/// </summary>
-		/// <param name="dsvIndex">割り当て済みのDSV番号</param>
-		/// <param name="pResource">DSVを作成する対象のリソース</param>
-		void CreateDepthStencilView(uint32_t dsvIndex, ID3D12Resource* pResource);
-
-		/// <summary>
-		/// 指定されたリソースに対して32ビット浮動小数点形式の深度ステンシルビューを生成します。
-		/// </summary>
-		/// <param name="dsvIndex">割り当て済みのDSV番号</param>
-		/// <param name="pResource">DSVを作成する対象のリソース</param>
-		void CreateDepthTexture(uint32_t dsvIndex, ID3D12Resource* pResource);
-
-		///-------------------------------------------/// 
-		/// メンバ変数
-		///-------------------------------------------///
-	private:
-
-		//DirectX基底
-		DirectXCommon* directXCommon = nullptr;
-
-		//現在のSRV番号
-		uint32_t useIndex_ = 0;
-
-		//DSV用のデスクリプタサイズ
-		uint32_t dsvDescriptorSize_;
-
-		//DSVデスクリプタヒープ
-		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> dsvDescriptorHeap_;
-
-		///-------------------------------------------/// 
-		/// ゲッター・セッター
-		///-------------------------------------------///
-	public:
-
-		/// <summary>
-		/// CPUデスクリプターを取得
-		/// </summary>
-		/// <param name="index">デスクリプタの番号</param>
-		/// <returns>CPUデスクリプタ</returns>
-		D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(uint32_t index);
-
-		/// <summary>
-		/// GPUデスクリプターを取得
-		/// </summary>
-		/// <param name="index">デスクリプタ番号</param>
-		/// <returns>GPUデスクリプタ</returns>
-		D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(uint32_t index);
-
-	};
-}
-
-============================================================
 File Path: Engine/Base/DirectXCommon.cpp
 ============================================================
 #include "DirectXCommon.h"
 
-#include "Base/WinApp.h"
-#include "Base/RTVManager.h"
-#include "Base/DSVManager.h"
+#include <Base/WinApp.h>
+#include <Base/View/RTVManager.h>
+#include <Base/View/DSVManager.h>
 
-#include "Other/Log.h"
+#include <Other/Log.h>
 
-#include "cassert"
-#include "format"
+#include <cassert>
+#include <format>
 
 namespace MyEngine {
 
 	///=====================================================/// 
-	/// DirectXCommonのシングルトンインスタンスを取得
-	///=====================================================///
-	DirectXCommon* DirectXCommon::GetInstance() {
-		static DirectXCommon instance;
-		return &instance;
-	}
-
-	///=====================================================/// 
 	/// DirectX12 の動作に必要な基本コンポーネントを初期化
 	///=====================================================///
-	void DirectXCommon::Initialize() {
+	void DirectXCommon::Initialize(WinApp* winAppPtr) {
 
 		//WinAppクラスを借りる
-		winApp = WinApp::GetInstance();
+		winApp_ = winAppPtr;
 
 		//FPS固定初期化
 		InitializeFixFPS();
@@ -22537,13 +22279,13 @@ namespace MyEngine {
 	///=================================================================///
 	/// DirectX12 による描画処理を行うための各種レンダリング関連リソースを初期化
 	///=================================================================///
-	void DirectXCommon::InitializeRendering() {
+	void DirectXCommon::InitializeRendering(RTVManager* rtvPtr, DSVManager* dsvPtr) {
 
 		//RTVマネージャーの取得
-		rtvManager_ = RTVManager::GetInstance();
+		rtvManager_ = rtvPtr;
 
 		//DSVマネージャーの取得
-		dsvManager_ = DSVManager::GetInstance();
+		dsvManager_ = dsvPtr;
 
 		//スワップチェーンの初期化
 		InitializeSwapChain();
@@ -22767,8 +22509,8 @@ namespace MyEngine {
 		DXGI_SWAP_CHAIN_DESC1 swapChainDesc{};
 
 		//スワップチェーンの設定
-		swapChainDesc.Width = WinApp::kClientWidth;                  //画面の幅。ウィンドウのクライアント領域と同じものにしておく
-		swapChainDesc.Height = WinApp::kClientHeight;                //画面の高さ。ウィンドウのクライアント領域と同じものにしておく
+		swapChainDesc.Width = winApp_->GetWindowWidth();             //画面の幅。ウィンドウのクライアント領域と同じものにしておく
+		swapChainDesc.Height = winApp_->GetWindowHeight();           //画面の高さ。ウィンドウのクライアント領域と同じものにしておく
 		swapChainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;           //色の形式
 		swapChainDesc.SampleDesc.Count = 1;                          //マルチサンプルしない
 		swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT; //描画のターゲットとして利用する
@@ -22776,7 +22518,7 @@ namespace MyEngine {
 		swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;    //モニタにうつしたら、中身を破棄
 
 		//スワップチェーンを初期化
-		hr = dxgiFactory_->CreateSwapChainForHwnd(commandQueue_.Get(), winApp->GetHwnd(), &swapChainDesc, nullptr, nullptr, reinterpret_cast<IDXGISwapChain1**>(swapChain_.GetAddressOf()));
+		hr = dxgiFactory_->CreateSwapChainForHwnd(commandQueue_.Get(), winApp_->GetHwnd(), &swapChainDesc, nullptr, nullptr, reinterpret_cast<IDXGISwapChain1**>(swapChain_.GetAddressOf()));
 
 		//正常に生成できているか確認
 		assert(SUCCEEDED(hr));
@@ -22794,8 +22536,8 @@ namespace MyEngine {
 		D3D12_RESOURCE_DESC resourceDesc{};
 
 		//リソースの設定
-		resourceDesc.Width = WinApp::kClientWidth;                    //ウィンドウの幅
-		resourceDesc.Height = WinApp::kClientHeight;                  //ウィンドウの高さ
+		resourceDesc.Width = winApp_->GetWindowWidth();               //ウィンドウの幅
+		resourceDesc.Height = winApp_->GetWindowHeight();             //ウィンドウの高さ
 		resourceDesc.MipLevels = 1;                                   //mipmapの数
 		resourceDesc.DepthOrArraySize = 1;                            //奥行き or 配列Textureの配列数
 		resourceDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;          //DepthSthncilとして利用可能なフォーマット
@@ -22928,8 +22670,8 @@ namespace MyEngine {
 	void DirectXCommon::InitializeViewportRect() {
 
 		//クライアント領域のサイズと一緒にして画面全体に表示
-		viewport_.Width = static_cast<FLOAT>(WinApp::kClientWidth);
-		viewport_.Height = static_cast<FLOAT>(WinApp::kClientHeight);
+		viewport_.Width = static_cast<FLOAT>(winApp_->GetWindowWidth());
+		viewport_.Height = static_cast<FLOAT>(winApp_->GetWindowHeight());
 		viewport_.TopLeftX = 0;
 		viewport_.TopLeftY = 0;
 		viewport_.MinDepth = 0.0f;
@@ -22946,9 +22688,9 @@ namespace MyEngine {
 
 		//基本的にビューポートと同じく矩形が編成されるようにする
 		scissorRect_.left = 0;
-		scissorRect_.right = WinApp::kClientWidth;
+		scissorRect_.right = winApp_->GetWindowWidth();
 		scissorRect_.top = 0;
-		scissorRect_.bottom = WinApp::kClientHeight;
+		scissorRect_.bottom = winApp_->GetWindowHeight();
 
 		//初期化完了のログを出す
 		OutPutLog("Complete Initialize ScissorRect\n");
@@ -23375,25 +23117,23 @@ namespace MyEngine {
 File Path: Engine/Base/DirectXCommon.h
 ============================================================
 #pragma once
-#include "Windows.h"
-#include "d3d12.h"
-#include "dxgi1_6.h"
-#include "dxgidebug.h"
-#include "dxcapi.h"
+#include <Windows.h>
+#include <d3d12.h>
+#include <dxgi1_6.h>
+#include <dxgidebug.h>
+#include <dxcapi.h>
 
 #pragma comment(lib,"d3d12.lib")
 #pragma comment(lib,"dxgi.lib")
 #pragma comment(lib,"dxguid.lib")
 #pragma comment(lib,"dxcompiler.lib")
 
-#include "cstdint"
-#include "string"
-#include "chrono"
-#include "thread"
-#include "vector"
-#include "wrl.h"
-
-#include <Math/Vector/Vector4.h>
+#include <cstdint>
+#include <string>
+#include <chrono>
+#include <thread>
+#include <vector>
+#include <wrl.h>
 
 namespace MyEngine {
 
@@ -23439,19 +23179,14 @@ namespace MyEngine {
 	public:
 
 		/// <summary>
-		/// DirectXCommonのシングルトンインスタンスを取得します。
-		/// </summary>
-		static DirectXCommon* GetInstance();
-
-		/// <summary>
 		/// DirectX12 の動作に必要な基本コンポーネントを初期化します。
 		/// </summary>
-		void Initialize();
+		void Initialize(WinApp* winAppPtr);
 
 		/// <summary>
 		/// DirectX12 による描画処理を行うための各種レンダリング関連リソースを初期化します。
 		/// </summary>
-		void InitializeRendering();
+		void InitializeRendering(RTVManager* rtvPtr, DSVManager* dsvPtr);
 
 		/// <summary>
 		/// 次の描画に向けてコマンドリストを準備し、バックバッファを描画可能な状態にします。
@@ -23565,7 +23300,7 @@ namespace MyEngine {
 	private:
 
 		//WinAppクラス(借り物)
-		WinApp* winApp = nullptr;
+		WinApp* winApp_ = nullptr;
 
 		//RTVマネージャー
 		RTVManager* rtvManager_ = nullptr;
@@ -23678,6 +23413,467 @@ namespace MyEngine {
 }
 
 ============================================================
+File Path: Engine/Base/Framework.cpp
+============================================================
+#include "Framework.h"
+
+#include <2d/Sprite/TextureManager.h>
+#include <3d/Model/ModelManager.h>
+
+namespace MyEngine {
+
+	void Framework::Run() {
+
+		// エンジンの初期化
+		Initialize();
+
+		while (true) {
+
+			Update();
+
+			if (IsEndRequest()) {
+				break;
+			}
+
+			Draw();
+		}
+
+		Finalize();
+	}
+
+	void Framework::Initialize() {
+
+		///-------------------------------------------/// 
+		/// エンジン初期化
+		///-------------------------------------------///
+
+		//ウィンドウ
+		winApp_ = std::make_unique<WinApp>();
+		winApp_->Initialize();
+
+		//DirectX基底
+		dxCommon_ = std::make_unique<DirectXCommon>();
+		dxCommon_->Initialize(winApp_.get());
+
+		//RTVマネージャー
+		rtvManager_ = std::make_unique<RTVManager>();
+		rtvManager_->Initialize(dxCommon_.get());
+
+		//DSVマネージャー
+		dsvManager_ = std::make_unique<DSVManager>();
+		dsvManager_->Initialize(dxCommon_.get());
+
+		//SRVマネージャー
+		srvManager_ = std::make_unique<SRVManager>();
+		srvManager_->Initialize(dxCommon_.get());
+
+		//描画系の初期化
+		dxCommon_->InitializeRendering(rtvManager_.get(), dsvManager_.get());
+
+		//オフスクリーン
+		offScreen_ = std::make_unique<OffScreen>();
+		offScreen_->Initialize(winApp_.get(), dxCommon_.get(), rtvManager_.get(), dsvManager_.get(), srvManager_.get());
+
+		//スプライト基底
+		spriteCommon_ = SpriteCommon::GetInstance();
+		spriteCommon_->Initialize(dxCommon_.get());
+
+		//モデル基底
+		modelCommon_ = ModelCommon::GetInstance();
+		modelCommon_->Initialize(dxCommon_.get());
+
+		//テクスチャマネージャー
+		TextureManager::GetInstance()->Initialize(dxCommon_.get(), srvManager_.get());
+
+		//モデルマネージャー
+		ModelManager::GetInstance()->Initialize();
+
+		//2Dオブジェクト基底
+		object2DCommon_ = Object2DCommon::GetInstance();
+		object2DCommon_->Initialize(dxCommon_.get());
+
+		//3Dオブジェクト基底
+		object3DCommon_ = Object3DCommon::GetInstance();
+		object3DCommon_->Initialize(dxCommon_.get());
+
+		//デバッグオブジェクト基底
+		debugObjectCommon_ = DebugObjectCommon::GetInstance();
+		debugObjectCommon_->Initialize(dxCommon_.get());
+
+		//スカイボックス基底
+		skyBoxCommon_ = SkyBoxCommon::GetInstance();
+		skyBoxCommon_->Initialize(dxCommon_.get());
+
+		//パーティクル基底
+		particleCommon_ = ParticleCommon::GetInstance();
+		particleCommon_->Initialize(dxCommon_.get(), srvManager_.get());
+
+		//ImGuiマネージャー
+		imGuiManager_ = ImGuiManager::GetInstance();
+		imGuiManager_->Initialize(winApp_.get(), dxCommon_.get());
+
+		//入力
+		input_ = Input::GetInstance();
+		input_->Initialize(winApp_.get());
+
+		//音声
+		audio_ = Audio::GetInstance();
+		audio_->Initialize();
+
+		//レンダラー
+		renderer_ = Renderer::GetInstance();
+		renderer_->Initialize();
+
+	}
+
+	void Framework::Finalize() {
+
+		audio_->Finalize();
+
+		imGuiManager_->Finalize();
+
+		winApp_->Finalize();
+	}
+
+	void Framework::Update() {
+
+		if (winApp_->ProcessMessage()) {
+			endRequest_ = true;
+		}
+
+		audio_->Update();
+
+		input_->Update();
+
+		object3DCommon_->Update();
+
+#ifdef _USE_IMGUI
+
+		offScreen_->ImGui();
+
+#endif // _USE_IMGUI
+
+	}
+
+	void Framework::PreDraw() {
+
+		offScreen_->PreDraw();
+
+		srvManager_->PreDraw();
+	}
+
+	void Framework::PostDraw() {
+
+		renderer_->OffScreenDraw();
+
+		offScreen_->PostDraw();
+
+		dxCommon_->PreDraw();
+
+		srvManager_->PreDraw();
+
+		offScreen_->DrawToSwapChain();
+
+		renderer_->SwapChainDraw();
+
+#ifdef _USE_IMGUI
+
+		//ImGuiの描画
+		imGuiManager_->Draw();
+
+#endif // _USE_IMGUI
+
+		dxCommon_->PostDraw();
+	}
+
+	void Framework::BeginImGui() {
+
+		imGuiManager_->Begin();
+	}
+
+	void Framework::EndImGui() {
+
+		imGuiManager_->End();
+	}
+
+}
+
+============================================================
+File Path: Engine/Base/Framework.h
+============================================================
+#pragma once
+
+#include <Base/WinApp.h>
+#include <Base/DirectXCommon.h>
+#include <Base/View/RTVManager.h>
+#include <Base/View/DSVManager.h>
+#include <Base/View/SRVManager.h>
+#include <Base/OffScreen.h>
+#include <2d/Sprite/SpriteCommon.h>
+#include <3d/Model/ModelCommon.h>
+#include <2d/Object/Object2DCommon.h>
+#include <3d/Object/Object3DCommon.h>
+#include <3d/Object/DebugObjectCommon.h>
+#include <3d/Object/SkyBoxCommon.h>
+#include <3d/Particle/ParticleCommon.h>
+#include <Base/ImGuiManager.h>
+#include <Base/Renderer.h>
+#include <Base/Input.h>
+#include <Base/Audio.h>
+
+namespace MyEngine {
+
+	class Framework {
+
+	public:
+
+		void Run();
+
+		void PreDraw();
+
+		void PostDraw();
+
+		void BeginImGui();
+
+		void EndImGui();
+
+	public:
+
+		virtual ~Framework() = default;
+
+		virtual void Initialize();
+
+		virtual void Finalize();
+
+		virtual void Update();
+
+		virtual void Draw() = 0;
+
+		virtual bool IsEndRequest() { return endRequest_; }
+
+	private:
+
+		std::unique_ptr<WinApp> winApp_;
+
+		std::unique_ptr<DirectXCommon> dxCommon_;
+
+		std::unique_ptr<RTVManager> rtvManager_;
+
+		std::unique_ptr<DSVManager> dsvManager_;
+
+		std::unique_ptr<SRVManager> srvManager_;
+
+		std::unique_ptr<OffScreen> offScreen_;
+
+		SpriteCommon* spriteCommon_;
+
+		ModelCommon* modelCommon_;
+
+		Object2DCommon* object2DCommon_;
+
+		Object3DCommon* object3DCommon_;
+
+		DebugObjectCommon* debugObjectCommon_;
+
+		SkyBoxCommon* skyBoxCommon_;
+
+		ParticleCommon* particleCommon_;
+
+		ImGuiManager* imGuiManager_;
+
+		Renderer* renderer_;
+
+		Audio* audio_;
+
+		Input* input_;
+
+	private:
+
+		bool endRequest_ = false;
+
+	public:
+
+		WinApp* GetWinApp() const { return winApp_.get(); }
+
+		OffScreen* GetOffScreen() const { return offScreen_.get(); }
+
+		Audio* GetAudio() const { return audio_; }
+
+		Input* GetInput() const { return input_; }
+	};
+}
+
+============================================================
+File Path: Engine/Base/Game.cpp
+============================================================
+#include "Game.h"
+
+namespace MyEngine {
+
+	void Game::Initialize() {
+
+		Framework::Initialize();
+
+		spriteManager_ = SpriteManager::GetInstance();
+		spriteManager_->Initialize();
+
+		colliderManager_ = ColliderManager::GetInstance();
+		colliderManager_->Initialize();
+
+		objectManager_ = ObjectManager::GetInstance();
+		objectManager_->Initialize();
+
+		camera_ = std::make_unique<Camera>();
+		camera_->Initialize(static_cast<float>(Framework::GetWinApp()->GetWindowWidth()), static_cast<float>(Framework::GetWinApp()->GetWindowHeight()), Framework::GetOffScreen());
+
+		emitterManager_ = EmitterManager::GetInstance();
+		emitterManager_->Initialize();
+
+		uiManager_ = UIManager::GetInstance();
+		uiManager_->Initialize(camera_.get());
+
+		levelDataLoder_ = LevelDataLoader::GetInstance();
+		levelDataLoder_->Initialize();
+
+		engineContext_.offScreen = Framework::GetOffScreen();
+		engineContext_.camera = camera_.get();
+		engineContext_.audio = Framework::GetAudio();
+		engineContext_.input = Framework::GetInput();
+
+		sceneManager_ = SceneManager::GetInstance();
+		sceneManager_->Initialize(engineContext_);
+
+		fade_ = Fade::GetInstance();
+		fade_->Initialize(Framework::GetWinApp(), camera_.get());
+
+		flash_ = Flash::GetInstance();
+		flash_->Initialize(camera_.get());
+
+		sceneManager_->ChangeScene(SceneManager::SceneType::kTitle);
+
+	}
+
+	void Game::Update() {
+
+		Framework::BeginImGui();
+
+		Framework::Update();
+
+		objectManager_->Update();
+
+		emitterManager_->Update();
+
+		uiManager_->Update();
+
+		colliderManager_->Update();
+
+		sceneManager_->Update();
+
+		fade_->Update();
+
+		flash_->Update();
+
+#ifdef _USE_IMGUI
+
+		uiManager_->ImGui();
+
+		sceneManager_->ImGui();
+
+#endif // _USE_IMGUI
+
+		Framework::EndImGui();
+
+	}
+
+	void Game::Draw() {
+
+		Framework::PreDraw();
+
+		objectManager_->Draw();
+
+		emitterManager_->Draw();
+
+		uiManager_->Draw();
+
+		sceneManager_->Draw();
+
+		fade_->Draw();
+
+		flash_->Draw();
+
+		Framework::PostDraw();
+	}
+
+	void Game::Finalize() {
+
+		Framework::Finalize();
+
+	}
+}
+
+============================================================
+File Path: Engine/Base/Game.h
+============================================================
+#pragma once
+
+#include <Base/Framework.h>
+
+#include <Base/ImGuiManager.h>
+#include <2d/Sprite/SpriteManager.h>
+#include <3d/Collider/ColliderManager.h>
+#include <Object/Manager/ObjectManager.h>
+#include <Effect/Manager/EmitterManager.h>
+#include <Effect/Manager/UIManager.h>
+#include <LevelEditor/LevelDataLoader.h>
+#include <3d/Camera/Camera.h>
+#include <Scene/EngineContext.h>
+#include <Scene/SceneManager.h>
+#include <Effect/Fade/Fade.h>
+#include <Effect/Flash/Flash.h>
+
+#include <memory>
+
+namespace MyEngine {
+
+	class Game : public Framework {
+
+	public:
+
+		void Initialize() override;
+
+		void Update() override;
+
+		void Draw() override;
+
+		void Finalize() override;
+
+	private:
+
+		SpriteManager* spriteManager_;
+
+		ColliderManager* colliderManager_;
+
+		ObjectManager* objectManager_;
+
+		EmitterManager* emitterManager_;
+
+		UIManager* uiManager_;
+
+		LevelDataLoader* levelDataLoder_;
+
+		std::unique_ptr<Camera> camera_;
+
+		EngineContext engineContext_;
+
+		SceneManager* sceneManager_;
+
+		Fade* fade_;
+
+		Flash* flash_;
+	};
+}
+
+============================================================
 File Path: Engine/Base/ImGuiManager.cpp
 ============================================================
 #include "ImGuiManager.h"
@@ -23698,17 +23894,17 @@ namespace MyEngine {
 	///=====================================================/// 
 	/// ImGuiを初期化
 	///=====================================================///
-	void ImGuiManager::Initialize() {
+	void ImGuiManager::Initialize(WinApp* winAppPtr, DirectXCommon* dxCommonPtr) {
 
 #ifdef _USE_IMGUI
 
 		HRESULT hr;
 
 		//ウィンドウ管理のインスタンスを取得
-		winApp_ = WinApp::GetInstance();
+		winApp_ = winAppPtr;
 
 		//DirectX基底のインスタンスを取得
-		directXCommon_ = DirectXCommon::GetInstance();
+		dxCommon_ = dxCommonPtr;
 
 		//デスクリプタヒープ設定
 		D3D12_DESCRIPTOR_HEAP_DESC desc = {};
@@ -23717,7 +23913,7 @@ namespace MyEngine {
 		desc.NumDescriptors = 1;
 		desc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
 
-		hr = directXCommon_->GetDevice()->CreateDescriptorHeap(&desc, IID_PPV_ARGS(&srvHeap_));
+		hr = dxCommon_->GetDevice()->CreateDescriptorHeap(&desc, IID_PPV_ARGS(&srvHeap_));
 
 		assert(SUCCEEDED(hr));
 
@@ -23727,8 +23923,8 @@ namespace MyEngine {
 		ImGui::StyleColorsDark();
 		ImGui_ImplWin32_Init(winApp_->GetHwnd());
 		ImGui_ImplDX12_Init(
-			directXCommon_->GetDevice(),
-			static_cast<int>(directXCommon_->GetBackBufferCount()),
+			dxCommon_->GetDevice(),
+			static_cast<int>(dxCommon_->GetBackBufferCount()),
 			DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,
 			srvHeap_.Get(),
 			srvHeap_->GetCPUDescriptorHandleForHeapStart(),
@@ -23778,7 +23974,7 @@ namespace MyEngine {
 
 #ifdef _USE_IMGUI
 
-		ID3D12GraphicsCommandList* commandList = directXCommon_->GetCommandList();
+		ID3D12GraphicsCommandList* commandList = dxCommon_->GetCommandList();
 
 		//デスクリプタヒープの配列をセットする
 		ID3D12DescriptorHeap* ppHeaps[] = { srvHeap_.Get() };
@@ -23859,7 +24055,7 @@ namespace MyEngine {
 		/// <summary>
 		/// ImGuiを初期化します。
 		/// </summary>
-		void Initialize();
+		void Initialize(WinApp* winAppPtr, DirectXCommon* dxCommonPtr);
 
 		/// <summary>
 		/// ImGuiのリソースを解放し、終了処理を行います。
@@ -23890,7 +24086,7 @@ namespace MyEngine {
 		WinApp* winApp_;
 
 		//DirectX基底
-		DirectXCommon* directXCommon_;
+		DirectXCommon* dxCommon_;
 
 		//SRVヒープ
 		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> srvHeap_;
@@ -23919,12 +24115,12 @@ namespace MyEngine {
 	///=====================================================/// 
 	/// DirectInputを使用してキーボードとマウスの入力デバイスを初期化
 	///=====================================================///
-	void Input::Initialize() {
+	void Input::Initialize(WinApp* winAppPtr) {
 
 		HRESULT result;
 
 		//ウィンドウ管理のインスタンスを取得
-		winApp_ = WinApp::GetInstance();
+		winApp_ = winAppPtr;
 
 		//DirectInputオブジェクトの生成
 		result = DirectInput8Create(
@@ -24209,7 +24405,7 @@ namespace MyEngine {
 		/// <summary>
 		/// DirectInputを使用してキーボードとマウスの入力デバイスを初期化します。
 		/// </summary>
-		void Initialize();
+		void Initialize(WinApp* winAppPtr);
 
 		/// <summary>
 		/// 毎フレーム、キーボードとマウスの入力状態を更新します。
@@ -24344,9 +24540,9 @@ File Path: Engine/Base/OffScreen.cpp
 
 #include "Base/WinApp.h"
 #include "Base/DirectXCommon.h"
-#include "Base/RTVManager.h"
-#include "Base/DSVManager.h"
-#include "Base/SrvManager.h"
+#include "Base/View/RTVManager.h"
+#include "Base/View/DSVManager.h"
+#include "Base/View/SRVManager.h"
 #include "3d/Camera/Camera.h"
 #include <Math/Utility/MakeMatrixMath.h>
 #include "Other/Log.h"
@@ -24358,31 +24554,26 @@ File Path: Engine/Base/OffScreen.cpp
 namespace MyEngine {
 
 	///=====================================================/// 
-	/// OffScreenのシングルトンインスタンスを取得
-	///=====================================================///
-	OffScreen* OffScreen::GetInstance() {
-		static OffScreen instance;
-		return &instance;
-	}
-
-	///=====================================================/// 
 	/// オフスクリーン描画用のリソースやパイプラインを初期化
 	///=====================================================///
-	void OffScreen::Initialize() {
+	void OffScreen::Initialize(WinApp* winAppPtr, DirectXCommon* dxCommonPtr, RTVManager* rtvPtr, DSVManager* dsvPtr, SRVManager* srvPtr) {
 
 		/// === インスタンスの取得 === ///
 
+		//ウィンドウクラスのインスタンスを取得
+		winApp_ = winAppPtr;
+
 		//DirectX基底のインスタンスを取得
-		dxCommon_ = DirectXCommon::GetInstance();
+		dxCommon_ = dxCommonPtr;
 
 		//RTVマネージャーのインスタンスを取得
-		rtvManager_ = RTVManager::GetInstance();
+		rtvManager_ = rtvPtr;
 
 		//DSVマネージャーのインスタンスを取得
-		dsvManager_ = DSVManager::GetInstance();
+		dsvManager_ = dsvPtr;
 
 		//SRVマネージャーのインスタンスを取得
-		srvManager_ = SrvManager::GetInstance();
+		srvManager_ = srvPtr;
 
 		//CopyImageシェーダーを初期値に設定
 		currentShaderName_ = L"CopyImage";
@@ -24392,8 +24583,8 @@ namespace MyEngine {
 		//レンダーテクスチャの生成
 		renderTextureResrouce_ = CreateRenderTexture(
 			dxCommon_->GetDevice(),
-			WinApp::kClientWidth,
-			WinApp::kClientHeight,
+			winApp_->GetWindowWidth(),
+			winApp_->GetWindowHeight(),
 			DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,
 			offScreenClearColor_
 		);
@@ -24401,8 +24592,8 @@ namespace MyEngine {
 		//深度テクスチャの生成
 		depthTextureResource_ = CreateDepthTexture(
 			dxCommon_->GetDevice(),
-			WinApp::kClientWidth,
-			WinApp::kClientHeight,
+			winApp_->GetWindowWidth(),
+			winApp_->GetWindowHeight(),
 			DXGI_FORMAT_D24_UNORM_S8_UINT
 		);
 
@@ -25119,7 +25310,7 @@ namespace MyEngine {
 	void OffScreen::SetDefaultCamera(Camera* ptr) {
 		camera_ = ptr;
 
-		materialData_->projectionInverse = Inverse4x4(camera_->GetProjectionMatrix());
+		materialData_->projectionInverse = Inverse4x4(camera_->Get3DProjectionMatrix());
 	}
 }
 
@@ -25128,19 +25319,21 @@ File Path: Engine/Base/OffScreen.h
 ============================================================
 #pragma once
 
-#include "d3d12.h"
+#include <d3d12.h>
 
 #include <Math/Vector/Vector4.h>
 #include <Math/Matrix/Matrix4x4.h>
 
-#include "wrl.h"
-#include "vector"
-#include "cstdint"
-#include "string"
+#include <wrl.h>
+#include <vector>
+#include <cstdint>
+#include <string>
 
 namespace MyEngine {
 
 	/// === 前方宣言 === ///
+
+	class WinApp;
 
 	class DirectXCommon;
 
@@ -25148,7 +25341,7 @@ namespace MyEngine {
 
 	class DSVManager;
 
-	class SrvManager;
+	class SRVManager;
 
 	class Camera;
 
@@ -25174,14 +25367,9 @@ namespace MyEngine {
 	public:
 
 		/// <summary>
-		/// OffScreenのシングルトンインスタンスを取得します。
-		/// </summary>
-		static OffScreen* GetInstance();
-
-		/// <summary>
 		/// オフスクリーン描画用のリソースやパイプラインを初期化します。
 		/// </summary>
-		void Initialize();
+		void Initialize(WinApp* winAppPtr, DirectXCommon* dxCommonPtr, RTVManager* rtvPtr, DSVManager* dsvPtr, SRVManager* srvPtr);
 
 		/// <summary>
 		/// オフスクリーン描画用のレンダーターゲットと深度バッファの描画準備を行います。
@@ -25264,6 +25452,9 @@ namespace MyEngine {
 		///-------------------------------------------///
 	private:
 
+		//ウィンドウクラス
+		WinApp* winApp_ = nullptr;
+
 		//DirectX基底
 		DirectXCommon* dxCommon_ = nullptr;
 
@@ -25274,7 +25465,7 @@ namespace MyEngine {
 		DSVManager* dsvManager_ = nullptr;
 
 		//SRVマネージャー
-		SrvManager* srvManager_ = nullptr;
+		SRVManager* srvManager_ = nullptr;
 
 		//カメラ
 		Camera* camera_ = nullptr;
@@ -25349,229 +25540,6 @@ namespace MyEngine {
 		/// </summary>
 		/// <returns>色反転係数</returns>
 		float GetColorReverseRatio() { return materialData_->colorReverseRatio; }
-
-	};
-}
-
-============================================================
-File Path: Engine/Base/RTVManager.cpp
-============================================================
-#include "RTVManager.h"
-
-#include "Base/DirectXCommon.h"
-
-#include "cassert"
-
-namespace MyEngine {
-
-	///=====================================================/// 
-	/// RTVManagerのシングルトンインスタンスを取得
-	///=====================================================///
-	RTVManager* RTVManager::GetInstance() {
-		static RTVManager instance;
-		return &instance;
-	}
-
-	///=====================================================/// 
-	/// RTV用のデスクリプタヒープを初期化
-	///=====================================================///
-	void RTVManager::Initialize() {
-
-		//DirectX基底のインスタンスを取得
-		directXCommon = DirectXCommon::GetInstance();
-
-		//RTVデスクリプタヒープの初期化
-		rtvDescriptorHeap_ = directXCommon->CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_RTV, kMaxRTVCount_, false);
-
-		//RTVデスクリプタヒープのサイズを取得
-		rtvDescriptorSize_ = directXCommon->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
-	}
-
-	///=====================================================/// 
-	/// 描画前処理
-	///=====================================================///
-	void RTVManager::PreDraw() {
-	}
-
-	///=====================================================/// 
-	/// RTVの番号を割り当て
-	///=====================================================///
-	uint32_t RTVManager::Allocate() {
-
-		//RTV番号が最大数を越えていないかの確認
-		assert(kMaxRTVCount_ > useIndex_);
-
-		//現在のRTV番号を返す
-		int index = useIndex_;
-
-		//1つずらした番号を確保する
-		useIndex_++;
-
-		return index;
-	}
-
-	///=====================================================/// 
-	/// RTVを割り当て可能かどうかを確認
-	///=====================================================///
-	bool RTVManager::AllocateCheck() {
-
-		//RTV番号が最大数を越えていないかの確認
-		if (kMaxRTVCount_ > useIndex_) {
-			return true;
-		}
-
-		return false;
-	}
-
-	///=====================================================/// 
-	/// 指定したリソースにRTVを作成
-	///=====================================================///
-	void RTVManager::CreateRenderTargetView(uint32_t rtvIndex, ID3D12Resource* pResource) {
-
-		//RTVの情報
-		D3D12_RENDER_TARGET_VIEW_DESC rtvDesc{};
-		//RTVの設定
-		rtvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;      //出力結果をSRGBに変換して書き込む
-		rtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D; //2dテクスチャとして書き込む
-
-		D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = GetCPUDescriptorHandle(rtvIndex);
-
-		//1つ目を作る
-		directXCommon->GetDevice()->CreateRenderTargetView(
-			pResource,
-			&rtvDesc,
-			rtvHandle
-		);
-	}
-
-	///=====================================================/// 
-	/// CPUデスクリプタハンドルを取得
-	///=====================================================///
-	D3D12_CPU_DESCRIPTOR_HANDLE RTVManager::GetCPUDescriptorHandle(uint32_t index) {
-
-		//デスクリプタの最初のメモリを取得
-		D3D12_CPU_DESCRIPTOR_HANDLE handleCPU = rtvDescriptorHeap_->GetCPUDescriptorHandleForHeapStart();
-
-		//メモリを番号分進ませる
-		handleCPU.ptr += (rtvDescriptorSize_ * index);
-
-		return handleCPU;
-	}
-
-	///=====================================================/// 
-	/// GPUデスクリプタハンドルを取得
-	///=====================================================///
-	D3D12_GPU_DESCRIPTOR_HANDLE RTVManager::GetGPUDescriptorHandle(uint32_t index) {
-
-		//デスクリプタの最初のメモリを取得
-		D3D12_GPU_DESCRIPTOR_HANDLE handleGPU = rtvDescriptorHeap_->GetGPUDescriptorHandleForHeapStart();
-
-		//メモリを番号分進ませる
-		handleGPU.ptr += (rtvDescriptorSize_ * index);
-
-		return handleGPU;
-	}
-}
-
-============================================================
-File Path: Engine/Base/RTVManager.h
-============================================================
-#pragma once
-
-#include "d3d12.h"
-#include "cstdint"
-#include "wrl.h"
-
-namespace MyEngine {
-
-	/// === 前方宣言 === ///
-	class DirectXCommon;
-
-	/// <summary>
-	/// 描画用レンダーターゲットビュー(RTV)の管理を行うクラスです。
-	/// </summary>
-	class RTVManager {
-
-		///-------------------------------------------/// 
-		/// 静的メンバ変数
-		///-------------------------------------------///
-	public:
-
-		//最大RTV数
-		static const uint32_t kMaxRTVCount_ = 3;
-
-		///-------------------------------------------/// 
-		/// メンバ関数
-		///-------------------------------------------///
-	public:
-
-		/// <summary>
-		/// RTVManagerのシングルトンインスタンスを取得します。
-		/// </summary>
-		static RTVManager* GetInstance();
-
-		/// <summary>
-		/// RTV用のデスクリプタヒープを初期化します。
-		/// </summary>
-		void Initialize();
-
-		/// <summary>
-		/// 描画前処理
-		/// </summary>
-		void PreDraw();
-
-		/// <summary>
-		/// RTVの番号を割り当てます。
-		/// </summary>
-		/// <returns>割り当てられたRTV番号</returns>
-		uint32_t Allocate();
-
-		/// <summary>
-		/// RTVを割り当て可能かどうかを確認します。
-		/// </summary>
-		/// <returns>true: 割り当て可能 / false: 割り当て不可</returns>
-		bool AllocateCheck();
-
-		/// <summary>
-		/// 指定したリソースにRTVを作成します。
-		/// </summary>
-		void CreateRenderTargetView(uint32_t rtvIndex, ID3D12Resource* pResource);
-
-		///-------------------------------------------/// 
-		/// メンバ変数
-		///-------------------------------------------///
-	private:
-
-		//DirectX基底
-		DirectXCommon* directXCommon = nullptr;
-
-		//現在のSRV番号
-		uint32_t useIndex_ = 0;
-
-		//RTV用のデスクリプタサイズ
-		uint32_t rtvDescriptorSize_;
-
-		//RTVデスクリプタヒープ
-		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> rtvDescriptorHeap_;
-
-		///-------------------------------------------/// 
-		/// ゲッター・セッター
-		///-------------------------------------------///
-	public:
-
-		/// <summary>
-		/// CPUデスクリプターを取得
-		/// </summary>
-		/// <param name="index">デスクリプタの番号</param>
-		/// <returns>CPUデスクリプタ</returns>
-		D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(uint32_t index);
-
-		/// <summary>
-		/// GPUデスクリプターを取得
-		/// </summary>
-		/// <param name="index">デスクリプタ番号</param>
-		/// <returns>GPUデスクリプタ</returns>
-		D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(uint32_t index);
 
 	};
 }
@@ -25806,102 +25774,291 @@ namespace MyEngine {
 }
 
 ============================================================
-File Path: Engine/Base/SrvManager.cpp
+File Path: Engine/Base/View/DSVManager.cpp
 ============================================================
-#include "SrvManager.h"
+#include "DSVManager.h"
 
-#include "Base/DirectXCommon.h"
+#include <Base/DirectXCommon.h>
 
-#include "cassert"
+#include <cassert>
 
 namespace MyEngine {
 
 	///=====================================================/// 
-	/// SrvManagerのシングルトンインスタンスを取得
+	/// DSV用のデスクリプタヒープを初期化
 	///=====================================================///
-	SrvManager* SrvManager::GetInstance() {
-		static SrvManager instance;
-		return &instance;
+	void DSVManager::Initialize(DirectXCommon* dxCommonPtr) {
+
+		//DirectX基底のインスタンスを取得
+		dxCommon_ = dxCommonPtr;
+
+		//DSVデスクリプタヒープの初期化
+		descriptorHeap_ = dxCommon_->CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_DSV, kMaxDSVCount_, false);
+
+		//DSVデスクリプタヒープのサイズを取得
+		descriptorSize_ = dxCommon_->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
 	}
+
+	///=====================================================/// 
+	/// 描画前処理
+	///=====================================================///
+	void DSVManager::PreDraw() {
+	}
+
+	///=====================================================/// 
+	/// 指定されたリソースに対してDSVを生成
+	///=====================================================///
+	void DSVManager::CreateDepthStencilView(uint32_t dsvIndex, ID3D12Resource* pResource) {
+
+		//DSVの情報
+		D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc{};
+
+		//DSVの設定
+		dsvDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;        //Format。基本的にはResourceに合わせる
+		dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D; //2DTexture
+
+		D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = GetCPUDescriptorHandle(dsvIndex);
+
+		//DSVHeapの先頭にDSVを作る
+		dxCommon_->GetDevice()->CreateDepthStencilView(
+			pResource,
+			&dsvDesc,
+			dsvHandle
+		);
+
+	}
+
+	///================================================================/// 
+	/// 指定されたリソースに対して32ビット浮動小数点形式の深度ステンシルビューを生成
+	///================================================================///
+	void DSVManager::CreateDepthTexture(uint32_t dsvIndex, ID3D12Resource* pResource) {
+
+		//DSVの情報
+		D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc{};
+
+		//DSVの設定
+		dsvDesc.Format = DXGI_FORMAT_D32_FLOAT;     //Format。基本的にはResourceに合わせる
+		dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D; //2DTexture
+
+		D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = GetCPUDescriptorHandle(dsvIndex);
+
+		//DSVHeapの先頭にDSVを作る
+		dxCommon_->GetDevice()->CreateDepthStencilView(
+			pResource,
+			&dsvDesc,
+			dsvHandle
+		);
+	}
+}
+
+============================================================
+File Path: Engine/Base/View/DSVManager.h
+============================================================
+#pragma once
+#include <Base/View/ViewManagerBase.h>
+
+namespace MyEngine {
+
+	/// <summary>
+	/// DirectX12 の深度ステンシルビュー (DSV) を管理するクラスです。
+	/// </summary>
+	class DSVManager : public ViewManagerBase {
+
+		///-------------------------------------------/// 
+		/// 静的メンバ変数
+		///-------------------------------------------///
+	public:
+
+		//最大DSV数
+		static const uint32_t kMaxDSVCount_ = 2;
+
+		///-------------------------------------------/// 
+		/// メンバ関数
+		///-------------------------------------------///
+	public:
+
+		/// <summary>
+		/// DSV用のデスクリプタヒープを初期化します。
+		/// </summary>
+		void Initialize(DirectXCommon* dxCommonPtr) override;
+
+		/// <summary>
+		/// 描画前処理
+		/// </summary>
+		void PreDraw() override;
+
+		/// <summary>
+		/// デスクリプタ番号の最大数を取得
+		/// </summary>
+		/// <returns>最大数のデスクリプタ番号</returns>
+		uint32_t GetMaxDescriptorCount() override { return kMaxDSVCount_; }
+
+	public:
+
+		/// <summary>
+		/// 指定されたリソースに対してDSVを生成します。
+		/// </summary>
+		/// <param name="dsvIndex">割り当て済みのDSV番号</param>
+		/// <param name="pResource">DSVを作成する対象のリソース</param>
+		void CreateDepthStencilView(uint32_t dsvIndex, ID3D12Resource* pResource);
+
+		/// <summary>
+		/// 指定されたリソースに対して32ビット浮動小数点形式の深度ステンシルビューを生成します。
+		/// </summary>
+		/// <param name="dsvIndex">割り当て済みのDSV番号</param>
+		/// <param name="pResource">DSVを作成する対象のリソース</param>
+		void CreateDepthTexture(uint32_t dsvIndex, ID3D12Resource* pResource);
+	};
+}
+
+============================================================
+File Path: Engine/Base/View/RTVManager.cpp
+============================================================
+#include "RTVManager.h"
+
+#include <Base/DirectXCommon.h>
+
+#include <cassert>
+
+namespace MyEngine {
+
+	///=====================================================/// 
+	/// RTV用のデスクリプタヒープを初期化
+	///=====================================================///
+	void RTVManager::Initialize(DirectXCommon* dxCommonPtr) {
+
+		//DirectX基底のインスタンスを取得
+		dxCommon_ = dxCommonPtr;
+
+		//RTVデスクリプタヒープの初期化
+		descriptorHeap_ = dxCommon_->CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_RTV, kMaxRTVCount_, false);
+
+		//RTVデスクリプタヒープのサイズを取得
+		descriptorSize_ = dxCommon_->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+	}
+
+	///=====================================================/// 
+	/// 描画前処理
+	///=====================================================///
+	void RTVManager::PreDraw() {
+	}
+
+	///=====================================================/// 
+	/// 指定したリソースにRTVを作成
+	///=====================================================///
+	void RTVManager::CreateRenderTargetView(uint32_t rtvIndex, ID3D12Resource* pResource) {
+
+		//RTVの情報
+		D3D12_RENDER_TARGET_VIEW_DESC rtvDesc{};
+
+		//RTVの設定
+		rtvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;      //出力結果をSRGBに変換して書き込む
+		rtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D; //2dテクスチャとして書き込む
+
+		D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = GetCPUDescriptorHandle(rtvIndex);
+
+		//1つ目を作る
+		dxCommon_->GetDevice()->CreateRenderTargetView(
+			pResource,
+			&rtvDesc,
+			rtvHandle
+		);
+	}
+}
+
+============================================================
+File Path: Engine/Base/View/RTVManager.h
+============================================================
+#pragma once
+#include <Base/View/ViewManagerBase.h>
+
+namespace MyEngine {
+
+	/// <summary>
+	/// 描画用レンダーターゲットビュー(RTV)の管理を行うクラスです。
+	/// </summary>
+	class RTVManager : public ViewManagerBase {
+
+		///-------------------------------------------/// 
+		/// 静的メンバ変数
+		///-------------------------------------------///
+	public:
+
+		//最大RTV数
+		static const uint32_t kMaxRTVCount_ = 3;
+
+		///-------------------------------------------/// 
+		/// メンバ関数
+		///-------------------------------------------///
+	public:
+
+		/// <summary>
+		/// DSV用のデスクリプタヒープを初期化します。
+		/// </summary>
+		void Initialize(DirectXCommon* dxCommonPtr) override;
+
+		/// <summary>
+		/// 描画前処理
+		/// </summary>
+		void PreDraw() override;
+
+		/// <summary>
+		/// デスクリプタ番号の最大数を取得
+		/// </summary>
+		/// <returns>最大数のデスクリプタ番号</returns>
+		uint32_t GetMaxDescriptorCount() override { return kMaxRTVCount_; }
+
+	public:
+
+		/// <summary>
+		/// 指定したリソースにRTVを作成します。
+		/// </summary>
+		void CreateRenderTargetView(uint32_t rtvIndex, ID3D12Resource* pResource);
+	};
+}
+
+============================================================
+File Path: Engine/Base/View/SRVManager.cpp
+============================================================
+#include "SRVManager.h"
+
+#include <Base/DirectXCommon.h>
+
+#include <cassert>
+
+namespace MyEngine {
 
 	///=====================================================/// 
 	/// SRV用のデスクリプタヒープを初期化
 	///=====================================================///
-	void SrvManager::Initialize() {
+	void SRVManager::Initialize(DirectXCommon* dxCommonPtr) {
 
 		//DirextX基底のインスタンスを取得
-		directXCommon = DirectXCommon::GetInstance();
+		dxCommon_ = dxCommonPtr;
 
 		//srvデスクリプタヒープの初期化
-		srvDescriptorHeap_ = directXCommon->CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, kMaxSRVCount_, true);
+		descriptorHeap_ = dxCommon_->CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, kMaxSRVCount_, true);
 
 		//srvデスクリプタヒープのサイズを取得
-		srvDescriptorSize_ = directXCommon->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+		descriptorSize_ = dxCommon_->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 	}
 
 	///=====================================================/// 
 	/// 描画前にSRV用のデスクリプタヒープをコマンドリストに設定
 	///=====================================================///
-	void SrvManager::PreDraw() {
+	void SRVManager::PreDraw() {
 
 		//描画前のDescriptorHeapの設定
-		ID3D12DescriptorHeap* descriptorHeaps[] = { srvDescriptorHeap_.Get() };
+		ID3D12DescriptorHeap* descriptorHeaps[] = { descriptorHeap_.Get() };
 
 		//コマンドリストにsrvデスクリプタヒープを設定する
-		directXCommon->GetCommandList()->SetDescriptorHeaps(1, descriptorHeaps);
-	}
-
-	///=====================================================/// 
-	/// SRV番号を割り当て
-	///=====================================================///
-	uint32_t SrvManager::Allocate() {
-
-		//NOTE:InstancingDataを使用するオブジェクトが増えると解放されるまでに最大数に達するかも
-
-		//SRV番号が最大数を越えていないかの確認
-		assert(kMaxSRVCount_ > currentIndex_);
-
-		//解放済みメモリがあれば
-		if (!freeIndices_.empty()) {
-
-			//メモリ番号を再利用
-			uint32_t index = freeIndices_.front();
-
-			freeIndices_.pop();
-
-			return index;
-		}
-
-		//新しくメモリ確保
-		return currentIndex_++;
-	}
-
-	///=====================================================/// 
-	/// SRVを割り当て可能かどうかを確認
-	///=====================================================///
-	bool SrvManager::AllocateCheck() {
-
-		//SRV番号が最大数を越えていないかの確認
-		if (kMaxSRVCount_ > currentIndex_) {
-			return true;
-		}
-
-		return false;
-	}
-
-	///=====================================================/// 
-	/// 解放されたメモリ番号を記録
-	///=====================================================///
-	void SrvManager::RecordFreeIndex(uint32_t index) {
-
-		//解放されたメモリ番号を記録
-		freeIndices_.push(index);
+		dxCommon_->GetCommandList()->SetDescriptorHeaps(1, descriptorHeaps);
 	}
 
 	///=====================================================/// 
 	/// 2Dテクスチャ用のシェーダーリソースビュー(SRV)を生成
 	///=====================================================///
-	void SrvManager::CreateSRVForTexture2D(uint32_t srvIndex, ID3D12Resource* pResource, DXGI_FORMAT Format, UINT MipLevels) {
+	void SRVManager::CreateSRVForTexture2D(uint32_t srvIndex, ID3D12Resource* pResource, DXGI_FORMAT Format, UINT MipLevels) {
 
 		//SRVの情報
 		D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
@@ -25913,13 +26070,13 @@ namespace MyEngine {
 		srvDesc.Texture2D.MipLevels = UINT(MipLevels);
 
 		//SRVの生成
-		directXCommon->GetDevice()->CreateShaderResourceView(pResource, &srvDesc, GetCPUDescriptorHandle(srvIndex));
+		dxCommon_->GetDevice()->CreateShaderResourceView(pResource, &srvDesc, GetCPUDescriptorHandle(srvIndex));
 	}
 
 	///=====================================================/// 
 	/// 構造化バッファ用のシェーダーリソースビュー(SRV)を生成
 	///=====================================================///
-	void SrvManager::CreateSRVForStructuredBuffer(uint32_t srvIndex, ID3D12Resource* pResource, UINT numElements, UINT structureByteStride) {
+	void SRVManager::CreateSRVForStructuredBuffer(uint32_t srvIndex, ID3D12Resource* pResource, UINT numElements, UINT structureByteStride) {
 
 		//SRVの情報
 		D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
@@ -25934,13 +26091,13 @@ namespace MyEngine {
 		srvDesc.Buffer.StructureByteStride = structureByteStride;
 
 		//SRVの生成
-		directXCommon->GetDevice()->CreateShaderResourceView(pResource, &srvDesc, GetCPUDescriptorHandle(srvIndex));
+		dxCommon_->GetDevice()->CreateShaderResourceView(pResource, &srvDesc, GetCPUDescriptorHandle(srvIndex));
 	}
 
 	///=====================================================/// 
 	/// レンダーターゲット用のシェーダーリソースビュー(SRV)を生成
 	///=====================================================///
-	void SrvManager::CreateRenderTargetSRV(uint32_t srvIndex, ID3D12Resource* pResource) {
+	void SRVManager::CreateRenderTargetSRV(uint32_t srvIndex, ID3D12Resource* pResource) {
 
 		//SRVの情報
 		D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
@@ -25952,13 +26109,13 @@ namespace MyEngine {
 		srvDesc.Texture2D.MipLevels = 1;
 
 		//SRVの生成
-		directXCommon->GetDevice()->CreateShaderResourceView(pResource, &srvDesc, GetCPUDescriptorHandle(srvIndex));
+		dxCommon_->GetDevice()->CreateShaderResourceView(pResource, &srvDesc, GetCPUDescriptorHandle(srvIndex));
 	}
 
 	///=====================================================/// 
 	/// 深度テクスチャ用のシェーダーリソースビュー(SRV)を生成
 	///=====================================================///
-	void SrvManager::CreateDepthTextureSRV(uint32_t srvIndex, ID3D12Resource* pResource) {
+	void SRVManager::CreateDepthTextureSRV(uint32_t srvIndex, ID3D12Resource* pResource) {
 
 		//SRVの情報
 		D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
@@ -25970,66 +26127,30 @@ namespace MyEngine {
 		srvDesc.Texture2D.MipLevels = 1;
 
 		//SRVの生成
-		directXCommon->GetDevice()->CreateShaderResourceView(pResource, &srvDesc, GetCPUDescriptorHandle(srvIndex));
-	}
-
-	///=====================================================/// 
-	/// CPUデスクリプターを取得
-	///=====================================================///
-	D3D12_CPU_DESCRIPTOR_HANDLE SrvManager::GetCPUDescriptorHandle(uint32_t index) {
-
-		//デスクリプタの最初のメモリを取得
-		D3D12_CPU_DESCRIPTOR_HANDLE handleCPU = srvDescriptorHeap_->GetCPUDescriptorHandleForHeapStart();
-
-		//メモリを番号分進ませる
-		handleCPU.ptr += (srvDescriptorSize_ * index);
-
-		return handleCPU;
-	}
-
-	///=====================================================/// 
-	/// GPUデスクリプターを取得
-	///=====================================================///
-	D3D12_GPU_DESCRIPTOR_HANDLE SrvManager::GetGPUDescriptorHandle(uint32_t index) {
-
-		//デスクリプタの最初のメモリを取得
-		D3D12_GPU_DESCRIPTOR_HANDLE handleGPU = srvDescriptorHeap_->GetGPUDescriptorHandleForHeapStart();
-
-		//メモリを番号分進ませる
-		handleGPU.ptr += (srvDescriptorSize_ * index);
-
-		return handleGPU;
+		dxCommon_->GetDevice()->CreateShaderResourceView(pResource, &srvDesc, GetCPUDescriptorHandle(srvIndex));
 	}
 
 	///=====================================================/// 
 	/// デスクリプタテーブルの設定
 	///=====================================================///
-	void SrvManager::SetGraphicsRootDescriptorTable(UINT RootParameterIndex, uint32_t srvIndex) {
+	void SRVManager::SetGraphicsRootDescriptorTable(UINT RootParameterIndex, uint32_t srvIndex) {
 
-		directXCommon->GetCommandList()->SetGraphicsRootDescriptorTable(RootParameterIndex, GetGPUDescriptorHandle(srvIndex));
+		dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(RootParameterIndex, GetGPUDescriptorHandle(srvIndex));
 	}
 }
 
 ============================================================
-File Path: Engine/Base/SrvManager.h
+File Path: Engine/Base/View/SRVManager.h
 ============================================================
 #pragma once
-
-#include "d3d12.h"
-
-#include "cstdint"
-#include "wrl.h"
-#include "queue"
+#include <Base/View/ViewManagerBase.h>
 
 namespace MyEngine {
-
-	/// === 前方宣言 === ///
-	class DirectXCommon;
 
 	/// <summary>
 	/// シェーダーリソースビューを管理する仕組みです。
 	/// </summary>
-	class SrvManager {
+	class SRVManager : public ViewManagerBase {
 
 		///-------------------------------------------/// 
 		/// 静的メンバ変数
@@ -26045,35 +26166,22 @@ namespace MyEngine {
 	public:
 
 		/// <summary>
-		/// SrvManagerのシングルトンインスタンスを取得します。
+		/// DSV用のデスクリプタヒープを初期化します。
 		/// </summary>
-		static SrvManager* GetInstance();
+		void Initialize(DirectXCommon* dxCommonPtr) override;
 
 		/// <summary>
-		/// SRV用のデスクリプタヒープを初期化します。
+		/// 描画前処理
 		/// </summary>
-		void Initialize();
+		void PreDraw() override;
 
 		/// <summary>
-		/// 描画前にSRV用のデスクリプタヒープをコマンドリストに設定します。
+		/// デスクリプタ番号の最大数を取得
 		/// </summary>
-		void PreDraw();
+		/// <returns>最大数のデスクリプタ番号</returns>
+		uint32_t GetMaxDescriptorCount() override { return kMaxSRVCount_; }
 
-		/// <summary>
-		/// SRV番号を割り当てます。
-		/// </summary>
-		uint32_t Allocate();
-
-		/// <summary>
-		/// SRVを割り当て可能かどうかを確認します。
-		/// </summary>
-		/// <returns>true: 割り当て可能 / false: 割り当て不可</returns>
-		bool AllocateCheck();
-
-		/// <summary>
-		/// 解放されたメモリ番号を記録します。
-		/// </summary>
-		void RecordFreeIndex(uint32_t index);
+	public:
 
 		/// <summary>
 		/// 2Dテクスチャ用のシェーダーリソースビュー(SRV)を生成します。
@@ -26095,29 +26203,172 @@ namespace MyEngine {
 		/// </summary>
 		void CreateDepthTextureSRV(uint32_t srvIndex, ID3D12Resource* pResource);
 
-		///-------------------------------------------/// 
-		/// メンバ変数
-		///-------------------------------------------///
-	private:
+	public:
+
+		/// <summary>
+		/// デスクリプタテーブルの設定
+		/// </summary>
+		/// <param name="RootParameterIndex">パラメータ番号</param>
+		/// <param name="srvIndex">SRV番号</param>
+		void SetGraphicsRootDescriptorTable(UINT RootParameterIndex, uint32_t srvIndex);
+	};
+}
+
+============================================================
+File Path: Engine/Base/View/ViewManagerBase.cpp
+============================================================
+#include "ViewManagerBase.h"
+
+#include <cassert>
+
+namespace MyEngine {
+
+	///=====================================================/// 
+	/// SRV番号を割り当て
+	///=====================================================///
+	uint32_t ViewManagerBase::Allocate() {
+
+		//SRV番号が最大数を越えていないかの確認
+		assert(GetMaxDescriptorCount() > currentIndex_);
+
+		//解放済みメモリがあれば
+		if (!freeIndices_.empty()) {
+
+			//メモリ番号を再利用
+			uint32_t index = freeIndices_.front();
+
+			freeIndices_.pop();
+
+			return index;
+		}
+
+		//新しくメモリ確保
+		return currentIndex_++;
+	}
+
+	///=====================================================/// 
+	/// SRVを割り当て可能かどうかを確認
+	///=====================================================///
+	bool ViewManagerBase::AllocateCheck() {
+
+		//SRV番号が最大数を越えていないかの確認
+		if (GetMaxDescriptorCount() > currentIndex_) {
+			return true;
+		}
+
+		return false;
+	}
+
+	///=====================================================/// 
+	/// 解放されたメモリ番号を記録
+	///=====================================================///
+	void ViewManagerBase::RecordFreeIndex(uint32_t index) {
+
+		//解放されたメモリ番号を記録
+		freeIndices_.push(index);
+	}
+
+	///=====================================================/// 
+	/// CPUデスクリプタハンドルを取得
+	///=====================================================///
+	D3D12_CPU_DESCRIPTOR_HANDLE ViewManagerBase::GetCPUDescriptorHandle(uint32_t index) {
+
+		//デスクリプタの最初のメモリを取得
+		D3D12_CPU_DESCRIPTOR_HANDLE handleCPU = descriptorHeap_->GetCPUDescriptorHandleForHeapStart();
+
+		//メモリを番号分進ませる
+		handleCPU.ptr += (descriptorSize_ * index);
+
+		return handleCPU;
+	}
+
+	///=====================================================/// 
+	/// GPUデスクリプタハンドルを取得
+	///=====================================================///
+	D3D12_GPU_DESCRIPTOR_HANDLE ViewManagerBase::GetGPUDescriptorHandle(uint32_t index) {
+
+		//デスクリプタの最初のメモリを取得
+		D3D12_GPU_DESCRIPTOR_HANDLE handleGPU = descriptorHeap_->GetGPUDescriptorHandleForHeapStart();
+
+		//メモリを番号分進ませる
+		handleGPU.ptr += (descriptorSize_ * index);
+
+		return handleGPU;
+	}
+}
+
+============================================================
+File Path: Engine/Base/View/ViewManagerBase.h
+============================================================
+#pragma once
+#include <d3d12.h>
+#include <cstdint>
+#include <wrl.h>
+#include <queue>
+
+namespace MyEngine {
+
+	/// === 前方宣言 === ///
+	class DirectXCommon;
+
+	class ViewManagerBase {
+
+	public:
+
+		/// <summary>
+		/// 初期化処理
+		/// </summary>
+		/// <param name="dxCommonPtr">DirectX基底のポインタ</param>
+		virtual void Initialize(DirectXCommon* dxCommonPtr) = 0;
+
+		/// <summary>
+		/// 描画前処理
+		/// </summary>
+		virtual void PreDraw() = 0;
+
+		/// <summary>
+		/// デスクリプタ番号の最大数を取得
+		/// </summary>
+		/// <returns>最大数のデスクリプタ番号</returns>
+		virtual uint32_t GetMaxDescriptorCount() = 0;
+
+	public:
+
+		/// <summary>
+		/// 使用可能な番号を割り当てます。
+		/// </summary>
+		/// <returns>割り当てられた番号</returns>
+		uint32_t Allocate();
+
+		/// <summary>
+		/// 使用可能な番号があるかを確認します。
+		/// </summary>
+		/// <returns>true: 割り当て可能 / false: 割り当て不可</returns>
+		bool AllocateCheck();
+
+		/// <summary>
+		/// 解放されたメモリ番号を記録します。
+		/// </summary>
+		/// <param name="index">解放した番号</param>
+		void RecordFreeIndex(uint32_t index);
+
+	protected:
 
 		//DirectX基底
-		DirectXCommon* directXCommon = nullptr;
+		DirectXCommon* dxCommon_ = nullptr;
 
-		//解放済みSRV番号
+		//デスクリプタヒープ
+		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> descriptorHeap_;
+
+		//解放済みView番号
 		std::queue<uint32_t> freeIndices_;
 
-		//現在のSRV番号
+		//デスクリプタサイズ
+		uint32_t descriptorSize_;
+
+		//現在のView番号
 		uint32_t currentIndex_ = 0;
 
-		//SRV用のデスクリプタサイズ
-		uint32_t srvDescriptorSize_;
-
-		//SRVデスクリプタヒープ
-		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> srvDescriptorHeap_;
-
-		///-------------------------------------------/// 
-		/// ゲッター・セッター
-		///-------------------------------------------///
 	public:
 
 		/// <summary>
@@ -26133,13 +26384,6 @@ namespace MyEngine {
 		/// <param name="index">デスクリプタ番号</param>
 		/// <returns>GPUデスクリプタ</returns>
 		D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(uint32_t index);
-
-		/// <summary>
-		/// デスクリプタテーブルの設定
-		/// </summary>
-		/// <param name="RootParameterIndex">パラメータ番号</param>
-		/// <param name="srvIndex">SRV番号</param>
-		void SetGraphicsRootDescriptorTable(UINT RootParameterIndex, uint32_t srvIndex);
 	};
 }
 
@@ -26161,14 +26405,6 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hwnd, UINT msg
 namespace MyEngine {
 
 	///=====================================================/// 
-	/// WinAppのシングルトンインスタンスを取得
-	///=====================================================///
-	WinApp* WinApp::GetInstance() {
-		static WinApp instance;
-		return &instance;
-	}
-
-	///=====================================================/// 
 	/// OSから送られてくるウィンドウメッセージを処理
 	///=====================================================///
 	LRESULT CALLBACK WinApp::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
@@ -26185,7 +26421,7 @@ namespace MyEngine {
 		//メッセージに応じてゲーム固有の処理を行う
 		switch (msg) {
 
-			//ウィンドウが破棄された
+		//ウィンドウが破棄された
 		case WM_DESTROY:
 
 			//OSに対して、アプリの終了を伝える
@@ -26229,15 +26465,15 @@ namespace MyEngine {
 		///-------------------------------------------///
 
 		//ウィンドウサイズを表す構造体にクライアント領域を入れる
-		RECT wrc = { 0,0,kClientWidth,kClientHeight };
+		RECT wrc = { 0,0,kWindowWidth_,kWindowHeight_ };
 
 		//クライアント領域を元に実際のサイズにwrcを変更してもらう
 		AdjustWindowRect(&wrc, WS_OVERLAPPEDWINDOW, false);
 
 		//ウィンドウの生成
 		hwnd_ = CreateWindow(
-			wc_.lpszClassName,           //利用するクラス名
-			L"LE3B_21_ナガイ_コハク_ロードフライト",      //タイトルバーの文字
+			wc_.lpszClassName,          //利用するクラス名
+			kWindowTitle_,              //タイトルバーの文字
 			WS_OVERLAPPEDWINDOW,        //よく見るウィンドウスタイル
 			CW_USEDEFAULT,              //表示X座標(Windowsに任せる)
 			CW_USEDEFAULT,              //表示Y座標(WindowsOSに任せる)
@@ -26245,7 +26481,7 @@ namespace MyEngine {
 			wrc.bottom - wrc.top,       //ウィンドウ縦幅
 			nullptr,                    //親ウィンドウハンドル
 			nullptr,                    //メニューハンドル
-			wc_.hInstance,               //インスタンスハンドル
+			wc_.hInstance,              //インスタンスハンドル
 			nullptr                     //オプション
 		);
 
@@ -26320,11 +26556,6 @@ namespace MyEngine {
 		static LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 
 		/// <summary>
-		/// WinAppのシングルトンインスタンスを取得します。
-		/// </summary>
-		static WinApp* GetInstance();
-
-		/// <summary>
 		/// ウィンドウを初期化して表示します。
 		/// </summary>
 		void Initialize();
@@ -26340,15 +26571,18 @@ namespace MyEngine {
 		bool ProcessMessage();
 
 		///-------------------------------------------/// 
-		/// 静的メンバ変数
+		/// メンバ定数
 		///-------------------------------------------///
 	public:
 
 		//ウィンドウの横幅
-		static const int32_t kClientWidth = 1280;
+		const int32_t kWindowWidth_ = 1280;
 
 		//ウィンドウの縦幅
-		static const int32_t kClientHeight = 720;
+		const int32_t kWindowHeight_ = 720;
+
+		//ウィンドウのタイトル
+		const wchar_t* kWindowTitle_ = L"LE3B_21_ナガイ_コハク_ロードフライト";
 
 		///-------------------------------------------/// 
 		/// メンバ変数
@@ -26377,6 +26611,18 @@ namespace MyEngine {
 		/// </summary>
 		/// <returns>ウィンドウハンドル</returns>
 		HWND GetHwnd() const { return hwnd_; }
+
+		/// <summary>
+		/// ウィンドウの横幅を取得
+		/// </summary>
+		/// <returns>ウィンドウの横幅</returns>
+		int32_t GetWindowWidth() const { return kWindowWidth_; }
+
+		/// <summary>
+		/// ウィンドウの縦幅を取得
+		/// </summary>
+		/// <returns>ウィンドウの縦幅</returns>
+		int32_t GetWindowHeight() const { return kWindowHeight_; }
 
 	};
 }
@@ -27817,10 +28063,10 @@ namespace MyEngine {
 	Vector3 Vector3ToScreenSpace(Camera* camera, Vector3 pos) {
 
 		//ビューポート行列
-		Matrix4x4 viewport = MakeViewportMatrix(0, 0, WinApp::kClientWidth, WinApp::kClientHeight, 0, 1);
+		Matrix4x4 viewport = camera->GetViewPortMatrix();
 
 		//カメラのビュープロジェクション行列とビューポート行列を掛ける
-		Matrix4x4 viewProjectionViewport = camera->GetViewProjectionMatrix() * viewport;
+		Matrix4x4 viewProjectionViewport = camera->Get3DViewProjectionMatrix() * viewport;
 
 		//3Dオブジェクトの座標をスクリーン座標に変換する
 		Vector3 screenPos = Transform(pos, viewProjectionViewport);
@@ -28823,7 +29069,9 @@ File Path: Engine/Scene/BaseScene.cpp
 
 namespace MyEngine {
 
-	void BaseScene::Initialize() {
+	void BaseScene::Initialize(EngineContext context) {
+
+		context_ = context;
 	}
 
 	void BaseScene::Finalize() {
@@ -28843,6 +29091,8 @@ namespace MyEngine {
 File Path: Engine/Scene/BaseScene.h
 ============================================================
 #pragma once
+
+#include <Scene/EngineContext.h>
 
 namespace MyEngine {
 
@@ -28864,7 +29114,7 @@ namespace MyEngine {
 		/// <summary>
 		/// 初期化
 		/// </summary>
-		virtual void Initialize();
+		virtual void Initialize(EngineContext context);
 
 		/// <summary>
 		/// 終了処理
@@ -28886,6 +29136,10 @@ namespace MyEngine {
 		/// </summary>
 		virtual void ImGui();
 
+	protected:
+
+		//エンジン総合参照
+		EngineContext context_;
 	};
 }
 
@@ -28895,126 +29149,132 @@ File Path: Engine/Scene/SceneManager.cpp
 #include "SceneManager.h"
 
 /// ===シーン=== ///
-#include "BaseScene.h"
+#include <Scene/BaseScene.h>
 
-#include "3d/Collider/ColliderManager.h"
+#include <3d/Collider/ColliderManager.h>
+#include <Scene/EngineContext.h>
 
-#include "Scene/GameScene/GameScene.h"
-#include "Scene/TitleScene.h"
-#include "Scene/ParticleEditorScene.h"
+#include <Scene/GameScene/GameScene.h>
+#include <Scene/TitleScene.h>
+#include <Scene/ParticleEditorScene.h>
 
-///=====================================================/// 
-/// SceneManagerのシングルトンインスタンスを取得
-///=====================================================///
-SceneManager* SceneManager::GetInstance() {
-	static SceneManager instance;
-	return &instance;
-}
+namespace MyEngine {
 
-///=====================================================/// 
-/// 現在設定されているシーンの初期化処理を実行
-///=====================================================///
-void SceneManager::Initialize() {
-
-	/// ===シーンの中身の確認=== ///
-
-	if (currentScene_) {
-
-		currentScene_->Initialize();
-	}
-}
-
-///=====================================================/// 
-/// 現在設定されているシーンの更新処理を実行
-///=====================================================///
-void SceneManager::Update() {
-
-	/// ===シーンの中身の確認=== ///
-
-	if (currentScene_) {
-
-		//現在のシーンの更新
-		currentScene_->Update();
-	}
-}
-
-///=====================================================/// 
-/// 現在設定されているシーンの描画処理を実行
-///=====================================================///
-void SceneManager::Draw() {
-
-	/// ===シーンの中身の確認=== ///
-
-	if (currentScene_) {
-
-		//現在シーンの描画
-		currentScene_->Draw();
-	}
-}
-
-///=====================================================/// 
-/// 現在設定されているシーンのImGui処理を実行
-///=====================================================///
-void SceneManager::ImGui() {
-
-	/// ===シーンの中身の確認=== ///
-
-	if (currentScene_) {
-
-		//現在のシーンのデバッグ
-		currentScene_->ImGui();
-	}
-}
-
-///=====================================================/// 
-/// 現在のシーンを指定された種類の新しいシーンに切り替える
-///=====================================================///
-void SceneManager::ChangeScene(SceneType sceneType) {
-
-	//コライダーをすべて破棄
-	MyEngine::ColliderManager::GetInstance()->ClearColliders();
-
-	//シーンがすでにある場合は終了処理を実行
-	if (currentScene_) {
-
-		MyEngine::BaseScene* preScene = currentScene_.get();
-
-		preScene->Finalize();
+	///=====================================================/// 
+	/// SceneManagerのシングルトンインスタンスを取得
+	///=====================================================///
+	SceneManager* SceneManager::GetInstance() {
+		static SceneManager instance;
+		return &instance;
 	}
 
-	// 新しいシーンを生成
-	currentScene_ = CreateScene(sceneType);
+	///=====================================================/// 
+	/// 現在設定されているシーンの初期化処理を実行
+	///=====================================================///
+	void SceneManager::Initialize(EngineContext context) {
 
-	// シーンの初期化
-	Initialize();
-}
+		context_ = context;
 
-///=====================================================/// 
-/// 指定された種類に応じたシーンオブジェクトを生成して返す
-///=====================================================///
-std::unique_ptr<MyEngine::BaseScene> SceneManager::CreateScene(SceneType sceneType) {
+		/// ===シーンの中身の確認=== ///
 
-	/// ===シーンの判断=== ///
+		if (currentScene_) {
 
-	switch (sceneType) {
+			currentScene_->Initialize(context_);
+		}
+	}
 
-		//タイトルシーン
-	case SceneType::kTitle:
+	///=====================================================/// 
+	/// 現在設定されているシーンの更新処理を実行
+	///=====================================================///
+	void SceneManager::Update() {
 
-		return std::make_unique<TitleScene>();
+		/// ===シーンの中身の確認=== ///
 
-		//ゲームシーン
-	case SceneType::kGame:
+		if (currentScene_) {
 
-		return std::make_unique<GameScene>();
+			//現在のシーンの更新
+			currentScene_->Update();
+		}
+	}
 
-	case SceneType::kParticleEditor:
+	///=====================================================/// 
+	/// 現在設定されているシーンの描画処理を実行
+	///=====================================================///
+	void SceneManager::Draw() {
 
-		//パーティクルエディターシーン
-		return std::make_unique<ParticleEditorScene>();
+		/// ===シーンの中身の確認=== ///
 
-	default:
-		return nullptr;
+		if (currentScene_) {
+
+			//現在シーンの描画
+			currentScene_->Draw();
+		}
+	}
+
+	///=====================================================/// 
+	/// 現在設定されているシーンのImGui処理を実行
+	///=====================================================///
+	void SceneManager::ImGui() {
+
+		/// ===シーンの中身の確認=== ///
+
+		if (currentScene_) {
+
+			//現在のシーンのデバッグ
+			currentScene_->ImGui();
+		}
+	}
+
+	///=====================================================/// 
+	/// 現在のシーンを指定された種類の新しいシーンに切り替える
+	///=====================================================///
+	void SceneManager::ChangeScene(SceneType sceneType) {
+
+		//コライダーをすべて破棄
+		MyEngine::ColliderManager::GetInstance()->ClearColliders();
+
+		//シーンがすでにある場合は終了処理を実行
+		if (currentScene_) {
+
+			MyEngine::BaseScene* preScene = currentScene_.get();
+
+			preScene->Finalize();
+		}
+
+		// 新しいシーンを生成
+		currentScene_ = CreateScene(sceneType);
+
+		// シーンの初期化
+		Initialize(context_);
+	}
+
+	///=====================================================/// 
+	/// 指定された種類に応じたシーンオブジェクトを生成して返す
+	///=====================================================///
+	std::unique_ptr<MyEngine::BaseScene> SceneManager::CreateScene(SceneType sceneType) {
+
+		/// ===シーンの判断=== ///
+
+		switch (sceneType) {
+
+			//タイトルシーン
+		case SceneType::kTitle:
+
+			return std::make_unique<TitleScene>();
+
+			//ゲームシーン
+		case SceneType::kGame:
+
+			return std::make_unique<GameScene>();
+
+		case SceneType::kParticleEditor:
+
+			//パーティクルエディターシーン
+			return std::make_unique<ParticleEditorScene>();
+
+		default:
+			return nullptr;
+		}
 	}
 }
 
@@ -29031,71 +29291,79 @@ File Path: Engine/Scene/SceneManager.h
 /// シーンの状態を管理するクラスです。
 /// </summary>
 
-class SceneManager {
+namespace MyEngine {
 
-	///-------------------------------------------/// 
-	/// メンバ構造体
-	///-------------------------------------------///
-public:
+	/// === 前方宣言 === ///
+	class BaseScene;
 
-	/// <summary>
-	/// シーンの種類
-	/// </summary>
-	enum class SceneType {
-		kTitle,
-		kGame,
-		kParticleEditor
+	class SceneManager {
+
+		///-------------------------------------------/// 
+		/// メンバ構造体
+		///-------------------------------------------///
+	public:
+
+		/// <summary>
+		/// シーンの種類
+		/// </summary>
+		enum class SceneType {
+			kTitle,
+			kGame,
+			kParticleEditor
+		};
+
+		///-------------------------------------------/// 
+		///メンバ関数
+		///-------------------------------------------///
+	public:
+
+		/// <summary>
+		/// SceneManagerのシングルトンインスタンスを取得します。
+		/// </summary>
+		static SceneManager* GetInstance();
+
+		/// <summary>
+		/// 現在設定されているシーンの初期化処理を実行します。
+		/// </summary>
+		void Initialize(EngineContext context);
+
+		/// <summary>
+		/// 現在設定されているシーンの更新処理を実行します。
+		/// </summary>
+		void Update();
+
+		/// <summary>
+		/// 現在設定されているシーンの描画処理を実行します。
+		/// </summary>
+		void Draw();
+
+		/// <summary>
+		/// 現在設定されているシーンのImGui処理を実行します。
+		/// </summary>
+		void ImGui();
+
+		/// <summary>
+		/// 現在のシーンを指定された種類の新しいシーンに切り替えます。
+		/// </summary>
+		void ChangeScene(SceneType sceneType);
+
+		/// <summary>
+		/// 指定された種類に応じたシーンオブジェクトを生成して返します。
+		/// </summary>
+		std::unique_ptr<BaseScene> CreateScene(SceneType sceneType);
+
+		///-------------------------------------------/// 
+		///メンバ変数
+		///-------------------------------------------///
+	private:
+
+		//現在のシーン
+		std::unique_ptr<MyEngine::BaseScene> currentScene_;
+
+		//エンジン総合参照
+		EngineContext context_;
 	};
-
-	///-------------------------------------------/// 
-	///メンバ関数
-	///-------------------------------------------///
-public:
-
-	/// <summary>
-	/// SceneManagerのシングルトンインスタンスを取得します。
-	/// </summary>
-	static SceneManager* GetInstance();
-
-	/// <summary>
-	/// 現在設定されているシーンの初期化処理を実行します。
-	/// </summary>
-	void Initialize();
-
-	/// <summary>
-	/// 現在設定されているシーンの更新処理を実行します。
-	/// </summary>
-	void Update();
-
-	/// <summary>
-	/// 現在設定されているシーンの描画処理を実行します。
-	/// </summary>
-	void Draw();
-
-	/// <summary>
-	/// 現在設定されているシーンのImGui処理を実行します。
-	/// </summary>
-	void ImGui();
-
-	/// <summary>
-	/// 現在のシーンを指定された種類の新しいシーンに切り替えます。
-	/// </summary>
-	void ChangeScene(SceneType sceneType);
-
-	/// <summary>
-	/// 指定された種類に応じたシーンオブジェクトを生成して返します。
-	/// </summary>
-	std::unique_ptr<MyEngine::BaseScene> CreateScene(SceneType sceneType);
-
-	///-------------------------------------------/// 
-	///メンバ変数
-	///-------------------------------------------///
-private:
-
-	//現在のシーン
-	std::unique_ptr<MyEngine::BaseScene> currentScene_;
-};
-
+}
 
 ============================================================
 File Path: Engine.vcxproj
@@ -29277,7 +29545,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Application\Object\Enemy\Enemy.cpp" />
     <ClCompile Include="Application\Object\Enemy\EnemyManager.cpp" />
     <ClCompile Include="Engine\3d\Object\DebugObject3D.cpp" />
-    <ClCompile Include="Engine\Base\DSVManager.cpp" />
+    <ClCompile Include="Engine\Base\View\DSVManager.cpp" />
     <ClCompile Include="Engine\3d\Mesh\CylinderMesh.cpp" />
     <ClCompile Include="Engine\3d\Particle\EmitterGroup.cpp" />
     <ClCompile Include="Application\Object\Bullet\Core\BulletBase.cpp" />
@@ -29291,10 +29559,12 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Base\Audio.cpp" />
     <ClCompile Include="Engine\3d\Camera\Camera.cpp" />
     <ClCompile Include="Engine\Base\DirectXCommon.cpp" />
+    <ClCompile Include="Engine\Base\Framework.cpp" />
+    <ClCompile Include="Engine\Base\Game.cpp" />
     <ClCompile Include="Engine\Base\ImGuiManager.cpp" />
     <ClCompile Include="Engine\Base\Input.cpp" />
     <ClCompile Include="Engine\3d\Model\ModelManager.cpp" />
-    <ClCompile Include="Engine\Base\SrvManager.cpp" />
+    <ClCompile Include="Engine\Base\View\SRVManager.cpp" />
     <ClCompile Include="Engine\2d\Sprite\TextureManager.cpp" />
     <ClCompile Include="Engine\Base\WinApp.cpp" />
     <ClCompile Include="Engine\3d\Light\DirectionalLight.cpp" />
@@ -29334,7 +29604,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\3d\Particle\ParticleCommon.cpp" />
     <ClCompile Include="Engine\Base\Renderer.cpp" />
     <ClCompile Include="Engine\Base\OffScreen.cpp" />
-    <ClCompile Include="Engine\Base\RTVManager.cpp" />
+    <ClCompile Include="Engine\Base\View\RTVManager.cpp" />
     <ClCompile Include="Engine\3d\Particle\ParticleEmitter.cpp" />
     <ClCompile Include="Engine\3d\Mesh\PlaneMesh.cpp" />
     <ClCompile Include="Engine\3d\Mesh\MeshBase.cpp" />
@@ -29364,6 +29634,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Application\Effect\Manager\UIManager.cpp" />
     <ClCompile Include="Application\Scene\GameScene\Event\StartEvent.cpp" />
     <ClCompile Include="Application\Scene\GameScene\Event\PauseEvent.cpp" />
+    <ClCompile Include="Engine\Base\View\ViewManagerBase.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application\LevelEditor\LevelDataLoader.h" />
@@ -29378,6 +29649,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Application\Object\Enemy\State\EnemyMoveState.h" />
     <ClInclude Include="Application\Effect\Manager\EmitterManager.h" />
     <ClInclude Include="Application\Scene\GameScene\Event\ClearEvent.h" />
+    <ClInclude Include="Application\Scene\EngineContext.h" />
     <ClInclude Include="Engine\3d\Mesh\CubeMesh.h" />
     <ClInclude Include="Engine\3d\Collider\AABBCollider.h" />
     <ClInclude Include="Engine\3d\Collider\Collider.h" />
@@ -29385,13 +29657,15 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Application\Object\Enemy\Enemy.h" />
     <ClInclude Include="Application\Object\Enemy\EnemyManager.h" />
     <ClInclude Include="Engine\3d\Object\DebugObject3D.h" />
-    <ClInclude Include="Engine\Base\DSVManager.h" />
+    <ClInclude Include="Engine\Base\View\DSVManager.h" />
     <ClInclude Include="Engine\3d\Mesh\CylinderMesh.h" />
     <ClInclude Include="Engine\3d\Particle\EmitterGroup.h" />
     <ClInclude Include="Application\Object\Bullet\Core\BulletBase.h" />
     <ClInclude Include="Application\Object\Bullet\Core\BulletManager.h" />
     <ClInclude Include="Engine\2d\Sprite\Sprite.h" />
     <ClInclude Include="Engine\2d\Sprite\SpriteCommon.h" />
+    <ClInclude Include="Engine\Base\Framework.h" />
+    <ClInclude Include="Engine\Base\Game.h" />
     <ClInclude Include="Engine\Base\LayerType.h" />
     <ClInclude Include="Engine\3d\Model\Model.h" />
     <ClInclude Include="Engine\3d\Model\ModelCommon.h" />
@@ -29403,7 +29677,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Base\ImGuiManager.h" />
     <ClInclude Include="Engine\Base\Input.h" />
     <ClInclude Include="Engine\3d\Model\ModelManager.h" />
-    <ClInclude Include="Engine\Base\SrvManager.h" />
+    <ClInclude Include="Engine\Base\View\SRVManager.h" />
     <ClInclude Include="Engine\2d\Sprite\TextureManager.h" />
     <ClInclude Include="Engine\Base\WinApp.h" />
     <ClInclude Include="Engine\3d\Light\DirectionalLight.h" />
@@ -29426,7 +29700,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\3d\Particle\ParticleCommon.h" />
     <ClInclude Include="Engine\Base\Renderer.h" />
     <ClInclude Include="Engine\Base\OffScreen.h" />
-    <ClInclude Include="Engine\Base\RTVManager.h" />
+    <ClInclude Include="Engine\Base\View\RTVManager.h" />
     <ClInclude Include="Engine\3d\Particle\ParticleEmitter.h" />
     <ClInclude Include="Engine\3d\Mesh\PlaneMesh.h" />
     <ClInclude Include="Engine\3d\Mesh\MeshBase.h" />
@@ -29473,6 +29747,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Application\Scene\GameScene\GameSceneProgress.h" />
     <ClInclude Include="Application\Scene\GameScene\Event\GameSceneEventBase.h" />
     <ClInclude Include="Application\Scene\GameScene\Event\GameSceneEventFactory.h" />
+    <ClInclude Include="Engine\Base\View\ViewManagerBase.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Application\LevelEditor\Python\add_collider.py">
@@ -29836,7 +30111,7 @@ File Path: Engine.vcxproj.filters
     <ClCompile Include="Engine\Base\DirectXCommon.cpp">
       <Filter>Engine\Base</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Base\DSVManager.cpp">
+    <ClCompile Include="Engine\Base\View\DSVManager.cpp">
       <Filter>Engine\Base</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Base\ImGuiManager.cpp">
@@ -29851,10 +30126,10 @@ File Path: Engine.vcxproj.filters
     <ClCompile Include="Engine\Base\Renderer.cpp">
       <Filter>Engine\Base</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Base\RTVManager.cpp">
+    <ClCompile Include="Engine\Base\View\RTVManager.cpp">
       <Filter>Engine\Base</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Base\SrvManager.cpp">
+    <ClCompile Include="Engine\Base\View\SRVManager.cpp">
       <Filter>Engine\Base</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Base\WinApp.cpp">
@@ -30025,6 +30300,9 @@ File Path: Engine.vcxproj.filters
     <ClCompile Include="Engine\Math\Transform\WorldTransform.cpp">
       <Filter>Engine\Math\Transform</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\Base\Framework.cpp" />
+    <ClCompile Include="Engine\Base\Game.cpp" />
+    <ClCompile Include="Engine\Base\View\ViewManagerBase.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application\Object\Camera\FollowCamera.h">
@@ -30138,7 +30416,7 @@ File Path: Engine.vcxproj.filters
     <ClInclude Include="Engine\Base\DirectXCommon.h">
       <Filter>Engine\Base</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Base\DSVManager.h">
+    <ClInclude Include="Engine\Base\View\DSVManager.h">
       <Filter>Engine\Base</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Base\ImGuiManager.h">
@@ -30156,10 +30434,10 @@ File Path: Engine.vcxproj.filters
     <ClInclude Include="Engine\Base\Renderer.h">
       <Filter>Engine\Base</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Base\RTVManager.h">
+    <ClInclude Include="Engine\Base\View\RTVManager.h">
       <Filter>Engine\Base</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Base\SrvManager.h">
+    <ClInclude Include="Engine\Base\View\SRVManager.h">
       <Filter>Engine\Base</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Base\WinApp.h">
@@ -30348,6 +30626,10 @@ File Path: Engine.vcxproj.filters
     <ClInclude Include="Engine\Math\Shape\AABB.h">
       <Filter>Engine\Math\Shape</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\Base\Framework.h" />
+    <ClInclude Include="Engine\Base\Game.h" />
+    <ClInclude Include="Engine\Base\View\ViewManagerBase.h" />
+    <ClInclude Include="Application\Scene\EngineContext.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resource\Shader\DebugObject.hlsli">
@@ -163002,304 +163284,16 @@ NLOHMANN_JSON_NAMESPACE_END
 ============================================================
 File Path: main.cpp
 ============================================================
-#include "Base/WinApp.h"
-#include "Base/DirectXCommon.h"
-#include "Base/OffScreen.h"
-#include "Base/RTVManager.h"
-#include "Base/DSVManager.h"
-#include "Base/SrvManager.h"
-#include "Base/Input.h"
-#include "Base/Audio.h"
-#include "Base/ImGuiManager.h"
-#include "Base/Renderer.h"
-#include "2d/Sprite/SpriteCommon.h"
-#include "2d/Sprite/SpriteManager.h"
-#include "2d/Object/Object2DCommon.h"
-#include "2d/Sprite/TextureManager.h"
-#include "3d/Object/Object3DCommon.h"
-#include "3d/Object/DebugObjectCommon.h"
-#include "3d/Object/SkyBoxCommon.h"
-#include "3d/Model/ModelCommon.h"
-#include "3d/Model/ModelManager.h"
-#include "3d/Particle/ParticleCommon.h"
-#include "3d/Collider/ColliderManager.h"
-#include <Object/Manager/ObjectManager.h>
-#include <Effect/Manager/UIManager.h>
-#include <Effect/Manager/EmitterManager.h>
-
-#include "Scene/SceneManager.h"
-#include "LevelEditor/LevelDataLoader.h"
-#include <Effect/Fade/Fade.h>
-#include <Effect/Shake/Shake.h>
-#include <Effect/Flash/Flash.h>
+#include <Base/Game.h>
 
 using namespace MyEngine;
 
 //Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
-	///-------------------------------------------/// 
-	/// エンジン初期化
-	///-------------------------------------------///
+	std::unique_ptr<Game> game = std::make_unique<Game>();
 
-	//ウィンドウ
-	WinApp* winApp = WinApp::GetInstance();
-	winApp->Initialize();
-
-	//DirectX基底
-	DirectXCommon* directXCommon = DirectXCommon::GetInstance();
-	directXCommon->Initialize();
-
-	//RTVマネージャー
-	RTVManager* rtvManager = RTVManager::GetInstance();
-	rtvManager->Initialize();
-
-	//DSVマネージャー
-	DSVManager* dsvManager = DSVManager::GetInstance();
-	dsvManager->Initialize();
-
-	//SRVマネージャー
-	SrvManager* srvManager = SrvManager::GetInstance();
-	srvManager->Initialize();
-
-	//描画系の初期化
-	directXCommon->InitializeRendering();
-
-	//ImGuiマネージャー
-	ImGuiManager* imGuiManager = ImGuiManager::GetInstance();
-	imGuiManager->Initialize();
-
-	//オフスクリーン
-	OffScreen* offScreen = OffScreen::GetInstance();
-	offScreen->Initialize();
-
-	//スプライト基底
-	SpriteCommon* spriteCommon = SpriteCommon::GetInstance();
-	spriteCommon->Initialize();
-
-	//モデル基底
-	ModelCommon* modelCommon = ModelCommon::GetInstance();
-	modelCommon->Initialize();
-
-	//テクスチャマネージャー
-	TextureManager::GetInstance()->Initialize();
-
-	//モデルマネージャー
-	ModelManager::GetInstance()->Initialize();
-
-	//2Dオブジェクト基底
-	Object2DCommon* object2dCommon = Object2DCommon::GetInstance();
-	object2dCommon->Initialize();
-
-	//3Dオブジェクト基底
-	Object3DCommon* object3DCommon = Object3DCommon::GetInstance();
-	object3DCommon->Initialize();
-
-	//デバッグオブジェクト基底
-	DebugObjectCommon* debugObjectCommon = DebugObjectCommon::GetInstance();
-	debugObjectCommon->Initialize();
-
-	//スカイボックス基底
-	SkyBoxCommon* skyBoxCommon = SkyBoxCommon::GetInstance();
-	skyBoxCommon->Initialize();
-
-	//パーティクル基底
-	ParticleCommon* particleCommon = ParticleCommon::GetInstance();
-	particleCommon->Initialize();
-
-	//入力
-	Input* input = Input::GetInstance();
-	input->Initialize();
-
-	//音声
-	Audio* audio = Audio::GetInstance();
-	audio->Initialize();
-
-	//レンダラー
-	Renderer* renderer = Renderer::GetInstance();
-	renderer->Initialize();
-
-	//オブジェクトマネージャー
-	ObjectManager* objectManager = ObjectManager::GetInstance();
-	objectManager->Initialize();
-
-	//スプライトマネージャー
-	SpriteManager* spriteManager = SpriteManager::GetInstance();
-	spriteManager->Initialize();
-
-	//UIマネージャー
-	UIManager* uiManager = UIManager::GetInstance();
-	uiManager->Initialize();
-
-	//エミッターマネージャー
-	EmitterManager* emitterManager = EmitterManager::GetInstance();
-	emitterManager->Initialize();
-
-	//コライダーマネージャー
-	ColliderManager* colliderManager = ColliderManager::GetInstance();
-	colliderManager->Initialize();
-
-	//レベルデータローダー
-	LevelDataLoader* levelDataLoder = LevelDataLoader::GetInstance();
-	levelDataLoder->Initialize();
-
-	//フェード
-	Fade* fade = Fade::GetInstance();
-	fade->Initialize();
-
-	//シェイク
-	Shake* shake = Shake::GetInstance();
-	shake->Initialize();
-
-	//フラッシュ
-	Flash* flash = Flash::GetInstance();
-	flash->Initialize();
-
-	//シーンマネージャー
-	SceneManager* sceneManager = SceneManager::GetInstance();
-	sceneManager->Initialize();
-
-	//シーンを設定
-	sceneManager->ChangeScene(SceneManager::SceneType::kTitle);
-
-	///-------------------------------------------/// 
-	/// メインループ
-	///-------------------------------------------///
-
-	while (true) {
-
-		//ウィンドウから終了メッセージが来たらループを抜ける
-		if (winApp->ProcessMessage()) {
-			break;
-		}
-
-		///-------------------------------------------/// 
-		/// 更新処理
-		///-------------------------------------------///
-
-		//ImGuiの受付開始
-		imGuiManager->Begin();
-
-		//入力の更新
-		input->Update();
-
-#ifdef _USE_IMGUI
-
-		//UIマネージャーのImGui
-		uiManager->ImGui();
-
-		//シーンのImGui
-		sceneManager->ImGui();
-
-		//オフスクリーンのImGui
-		offScreen->ImGui();
-
-#endif // _USE_IMGUI
-
-		//3dオブジェクト基底の更新
-		object3DCommon->Update();
-
-		//オブジェクトマネージャーの更新
-		objectManager->Update();
-
-		//UIマネージャーの更新
-		uiManager->Update();
-
-		//エミッターマネージャーの更新
-		emitterManager->Update();
-
-		//コライダーマネージャーの更新
-		colliderManager->Update();
-
-		//シーンの更新
-		sceneManager->Update();
-
-		//フェードの更新
-		fade->Update();
-
-		//フラッシュの更新
-		flash->Update();
-
-		//音声の更新
-		audio->Update();
-
-		//ImGuiの受付終了
-		imGuiManager->End();
-
-		///-------------------------------------------/// 
-		/// 描画処理
-		///-------------------------------------------///
-
-		/// === オフスクリーンの描画 === ///
-
-		//OffScreenの描画前処理
-		offScreen->PreDraw();
-
-		//SRVマネージャーの描画前処理
-		srvManager->PreDraw();
-
-		//オブジェクトマネージャーの描画
-		objectManager->Draw();
-
-		//エミッターマネージャーの描画
-		emitterManager->Draw();
-
-		//uiマネージャーの描画
-		uiManager->Draw();
-
-		//シーンの描画
-		sceneManager->Draw();
-
-		//フェードの描画
-		fade->Draw();
-
-		//フラッシュの描画
-		flash->Draw();
-
-		//OffScreen用のレンダラーの描画
-		renderer->OffScreenDraw();
-
-		//OffScreenの描画後処理
-		offScreen->PostDraw();
-
-		/// === SwapChainの描画 === ///
-
-		//DirectX基底の描画前処理
-		directXCommon->PreDraw();
-
-		//SRVマネージャーの描画前処理
-		srvManager->PreDraw();
-
-		//オフスクリーンの描画結果をSwapChainに転送
-		offScreen->DrawToSwapChain();
-
-		//レンダラーの描画
-		renderer->SwapChainDraw();
-
-#ifdef _USE_IMGUI
-
-		//ImGuiの描画
-		imGuiManager->Draw();
-
-#endif // _USE_IMGUI
-
-		//DirectX基底の描画後処理
-		directXCommon->PostDraw();
-
-	}
-
-	///-------------------------------------------/// 
-	/// 終了処理
-	///-------------------------------------------///
-
-	//音声の終了処理
-	audio->Finalize();
-
-	//ImGuiの終了処理
-	imGuiManager->Finalize();
-
-	//ウィンドウの終了処理
-	winApp->Finalize();
+	game->Run();
 
 	return 0;
 }
