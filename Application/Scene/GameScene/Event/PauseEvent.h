@@ -12,9 +12,16 @@ public:
 
 	void Update() override;
 
+	void Draw() override;
+
 	EventType RequestNextEvent() const override;
 
 private:
+
+	float timer_;
+
+	//アニメーションタイマーの進行方向
+	float timerDirection_;
 
 	bool delay_ = false;
 

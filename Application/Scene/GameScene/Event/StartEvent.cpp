@@ -32,6 +32,9 @@ void StartEvent::Update() {
 	UpdateEventMotion();
 }
 
+void StartEvent::Draw() {
+}
+
 GameSceneEventBase::EventType StartEvent::RequestNextEvent() const {
 
 	if (isFinished_) {

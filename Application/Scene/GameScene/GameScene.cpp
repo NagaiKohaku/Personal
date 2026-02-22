@@ -52,6 +52,7 @@ void GameScene::Initialize(MyEngine::EngineContext context) {
 	//シェイクにカメラをセット
 	Shake::GetInstance()->SetCamera(context_.camera);
 
+	//エミッターマネージャーにカメラをセット
 	EmitterManager::GetInstance()->SetCamera(context_.camera);
 
 	/// === エネミーマネージャーの生成 === ///
@@ -78,7 +79,8 @@ void GameScene::Initialize(MyEngine::EngineContext context) {
 
 	player_->Initialize(context_.camera, bulletManager_.get(), false);
 
-	//エネミーマネージャーの初期化
+	/// === 敵の生成 === ///
+
 	enemyManager_->Initialize(context_.camera, bulletManager_.get(), player_);
 
 	/// === 追尾カメラの生成 === ///
@@ -87,45 +89,21 @@ void GameScene::Initialize(MyEngine::EngineContext context) {
 
 	followCamera_->Initialize(context_.camera, player_);
 
-	//最初は無効化する
+	//最初は追従を無効化する
 	followCamera_->SetIsActive(false);
 
-	/// === ゲームオーバースプライトの生成 === ///
+	/// === UIの生成 === ///
 
+	//ゲームシーンのUIを生成する
 	UIManager::GetInstance()->LoadUI("GameScene");
 
-	spaceKeyPos_ = UIManager::GetInstance()->Get2DObject("GameOver", "Space")->GetTranslate();
-
-	spaceKeySize_ = UIManager::GetInstance()->Get2DObject("GameOver", "Space")->GetSize();
-
-	/// === エミッターの生成 === ///
-
-	//衝撃波エミッター(左)
-	shockWaveLeftEmitter_ = std::make_unique<EmitterGroup>();
-
-	shockWaveLeftEmitter_->Initialize(context_.camera);
-
-	shockWaveLeftEmitter_->LoadEmitter("ShockWaveLeft");
-
-	//衝撃波エミッター(右)
-
-	shockWaveRightEmitter_ = std::make_unique<EmitterGroup>();
-
-	shockWaveRightEmitter_->Initialize(context_.camera);
-
-	shockWaveRightEmitter_->LoadEmitter("ShockWaveRight");
+	/// === イベントの生成 === ///
 
 	sceneProgress_ = std::make_unique<GameSceneProgress>();
 
 	sceneProgress_->Initialize(context_, player_, followCamera_.get());
 
-	/// === 他変数の設定 === ///
-
-	arrowLength_ = 20.0f;
-
-	arrowTimer_ = 0.0f;
-
-	timerDirection_ = 1.0f;
+	/// === フェードの設定 === ///
 
 	Fade::GetInstance()->SetPlayer(player_);
 
@@ -192,81 +170,6 @@ void GameScene::Update() {
 		groundManager_->TransformUpdate();
 	}
 
-	arrowTimer_ += (1.0f / 60.0f) * timerDirection_;
-
-	if (arrowTimer_ >= 1.0f) {
-
-		arrowTimer_ = 1.0f;
-
-		timerDirection_ *= -1.0f;
-	}
-
-	if (arrowTimer_ <= 0.0f) {
-
-		arrowTimer_ = 0.0f;
-
-		timerDirection_ *= -1.0f;
-	}
-
-	float lerpNum = EaseOut(0.0f, arrowLength_, arrowTimer_ / 1.0f);
-
-	float alphaNum = EaseOut(0.0f, 1.0f, arrowTimer_ / 1.0f);
-
-	//3Dオブジェクトの座標をスクリーン座標に変換する
-	Vector3 playerScreenPos = Vector3ToScreenSpace(context_.camera, player_->GetWorldPos());
-
-	UIManager::GetInstance()->Get2DObject("GameOver", "LeftArrow")->SetTranslate({ spaceKeyPos_.x - spaceKeySize_.x / 2.0f - 64.0f - lerpNum,spaceKeyPos_.y });
-
-	UIManager::GetInstance()->Get2DObject("GameOver", "RightArrow")->SetTranslate({ spaceKeyPos_.x + spaceKeySize_.x / 2.0f + 64.0f + lerpNum,spaceKeyPos_.y });
-
-	UIManager::GetInstance()->Get2DObject("Clear", "LeftArrow")->SetTranslate({ spaceKeyPos_.x - spaceKeySize_.x / 2.0f - 64.0f - lerpNum,spaceKeyPos_.y });
-
-	UIManager::GetInstance()->Get2DObject("Clear", "RightArrow")->SetTranslate({ spaceKeyPos_.x + spaceKeySize_.x / 2.0f + 64.0f + lerpNum,spaceKeyPos_.y });
-
-	UIManager::GetInstance()->GetUIGroup("Reticle")->transform.translate_ = playerScreenPos;
-
-	UIManager::GetInstance()->Get2DObject("Pause", "Text")->GetSprite()->SetColor(Vector4(1.0f, 1.0f, 1.0f, alphaNum));
-
-	if (Input::GetInstance()->isPushKey(DIK_W)) {
-
-		UIManager::GetInstance()->Get2DObject("Reticle", "WButton")->GetSprite()->SetRatio(1.0f);
-	} else {
-
-		UIManager::GetInstance()->Get2DObject("Reticle", "WButton")->GetSprite()->SetRatio(0.0f);
-	}
-
-	if (Input::GetInstance()->isPushKey(DIK_A)) {
-
-		UIManager::GetInstance()->Get2DObject("Reticle", "AButton")->GetSprite()->SetRatio(1.0f);
-	} else {
-
-		UIManager::GetInstance()->Get2DObject("Reticle", "AButton")->GetSprite()->SetRatio(0.0f);
-	}
-
-	if (Input::GetInstance()->isPushKey(DIK_S)) {
-
-		UIManager::GetInstance()->Get2DObject("Reticle", "SButton")->GetSprite()->SetRatio(1.0f);
-	} else {
-
-		UIManager::GetInstance()->Get2DObject("Reticle", "SButton")->GetSprite()->SetRatio(0.0f);
-	}
-
-	if (Input::GetInstance()->isPushKey(DIK_D)) {
-
-		UIManager::GetInstance()->Get2DObject("Reticle", "DButton")->GetSprite()->SetRatio(1.0f);
-	} else {
-
-		UIManager::GetInstance()->Get2DObject("Reticle", "DButton")->GetSprite()->SetRatio(0.0f);
-	}
-
-	UIManager::GetInstance()->Get2DObject("Reticle", "SpaceButton")->GetSprite()->SetRatio(player_->GetAttackTimeRatio());
-
-	//右衝撃波エミッターの更新
-	shockWaveRightEmitter_->Update();
-
-	//左衝撃波エミッターの更新
-	shockWaveLeftEmitter_->Update();
-
 	//フェードアウトが終わったら
 	if (Fade::GetInstance()->GetState() == Fade::FadeState::FADE_OUT_END) {
 
@@ -295,11 +198,8 @@ void GameScene::Draw() {
 	//グラウンドマネージャーの描画
 	groundManager_->Draw();
 
-	//右衝撃波エミッターの描画
-	shockWaveRightEmitter_->Draw();
-
-	//左衝撃波エミッターの描画
-	shockWaveLeftEmitter_->Draw();
+	//イベントの描画
+	sceneProgress_->Draw();
 
 }
 

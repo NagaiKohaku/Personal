@@ -38,6 +38,7 @@ public:
 	virtual void Start(MyEngine::EngineContext context, Player* player, FollowCamera* followCamera) = 0;   // 開始時1回
 	virtual void Exit() = 0;    // 終了処理
 	virtual void Update() = 0;  // 毎フレーム
+	virtual void Draw() = 0;
 
 	virtual EventType RequestNextEvent() const { return EventType::NONE; }
 

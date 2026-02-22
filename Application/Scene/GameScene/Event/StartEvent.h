@@ -14,6 +14,8 @@ public:
 
 	void Update() override;
 
+	void Draw() override;
+
 	EventType RequestNextEvent() const override;
 
 };

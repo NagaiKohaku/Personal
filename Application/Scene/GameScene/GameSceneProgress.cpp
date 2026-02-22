@@ -29,6 +29,11 @@ void GameSceneProgress::Update() {
 	}
 }
 
+void GameSceneProgress::Draw() {
+
+	event_->Draw();
+}
+
 void GameSceneProgress::ChangeEvent(GameSceneEventBase::EventType type) {
 
 	event_->Exit();

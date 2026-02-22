@@ -16,6 +16,8 @@ public:
 
 	void Update();
 
+	void Draw();
+
 private:
 
 	void ChangeEvent(GameSceneEventBase::EventType type);

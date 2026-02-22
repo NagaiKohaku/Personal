@@ -21,6 +21,10 @@ void PauseEvent::Start(MyEngine::EngineContext context, Player* player, FollowCa
 	EmitterManager::GetInstance()->SetIsUpdate(false);
 
 	player_->SetIsMoveActive(false);
+
+	timer_ = 0.0f;
+
+	timerDirection_ = 1.0f;
 }
 
 void PauseEvent::Exit() {
@@ -36,6 +40,26 @@ void PauseEvent::Exit() {
 
 void PauseEvent::Update() {
 
+	timer_ += (1.0f / 60.0f) * timerDirection_;
+
+	if (timer_ >= 1.0f) {
+
+		timer_ = 1.0f;
+
+		timerDirection_ *= -1.0f;
+	}
+
+	if (timer_ <= 0.0f) {
+
+		timer_ = 0.0f;
+
+		timerDirection_ *= -1.0f;
+	}
+
+	float alphaNum = EaseOut(0.0f, 1.0f, timer_ / 1.0f);
+
+	UIManager::GetInstance()->Get2DObject("Pause", "Text")->GetSprite()->SetColor(Vector4(1.0f, 1.0f, 1.0f, alphaNum));
+
 	if (delay_) {
 
 		if (context_.input->IsTriggerPushKey(DIK_ESCAPE)) {
@@ -50,6 +74,9 @@ void PauseEvent::Update() {
 	}
 
 	delay_ = true;
+}
+
+void PauseEvent::Draw() {
 }
 
 GameSceneEventBase::EventType PauseEvent::RequestNextEvent() const {
