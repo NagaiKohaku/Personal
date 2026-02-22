@@ -11,64 +11,78 @@
 ///=====================================================///
 class BulletBase {
 
-	///-------------------------------------------/// 
-	/// メンバ関数
-	///-------------------------------------------///
 public:
 
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
-	virtual ~BulletBase() = default;
+	virtual ~BulletBase();
 
 	/// <summary>
 	/// 初期化
 	/// </summary>
 	/// <param name="pos">初期座標</param>
 	/// <param name="direction">発射方向</param>
-	virtual void Initialize(MyEngine::Vector3 pos, MyEngine::Vector3 direction);
+	void Initialize(MyEngine::Vector3 pos, MyEngine::Vector3 direction);
 
 	/// <summary>
 	/// 更新
 	/// </summary>
-	virtual void Update();
+	void Update();
 
 	/// <summary>
 	/// 座標のみ更新
 	/// </summary>
-	virtual void TransformUpdate();
+	void TransformUpdate();
 
 	/// <summary>
 	/// 描画
 	/// </summary>
-	virtual void Draw();
+	void Draw();
 
 protected:
 
 	/// <summary>
 	/// 弾の移動処理を行います
-	virtual void Move();
+	void Move();
 
 	/// <summary>
 	/// 他オブジェクトと接触している場合の処理を行います
 	/// </summary>
-	virtual void IsCollision();
+	virtual void IsCollision() = 0;
 
 protected:
 
+	/// <summary>
+	/// 派生クラスのオブジェクトのサイズ情報を取得
+	/// </summary>
+	/// <returns>オブジェクトのサイズ</returns>
 	virtual MyEngine::Vector3 GetObjectSize() const = 0;
 
+	/// <summary>
+	/// 派生クラスのコライダーのサイズ情報を取得
+	/// </summary>
+	/// <returns>コライダーのサイズ</returns>
 	virtual float GetColliderSize() const = 0;
 
+	/// <summary>
+	/// 派生クラスの移動速度情報を取得
+	/// </summary>
+	/// <returns>移動速度</returns>
 	virtual float GetSpeed() const = 0;
 
+	/// <summary>
+	/// 派生クラスの生存時間情報を取得
+	/// </summary>
+	/// <returns>生存時間</returns>
 	virtual float GetLifeTime() const = 0;
 
+	/// <summary>
+	/// 派生クラスのコライダーのタグ情報を取得
+	/// </summary>
+	/// <returns>コライダーのタグ</returns>
 	virtual MyEngine::Collider::Tag GetColliderTag() const = 0;
 
-	///-------------------------------------------/// 
-	/// メンバ変数
-	///-------------------------------------------///
 protected:
 
 	//オブジェクト
@@ -92,9 +106,6 @@ protected:
 	//消滅フラグ
 	bool isDead_;
 
-	///-------------------------------------------/// 
-	/// ゲッター・セッター
-	///-------------------------------------------///
 public:
 
 	/// <summary>
