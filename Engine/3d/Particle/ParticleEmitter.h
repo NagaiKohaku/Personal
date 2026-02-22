@@ -25,7 +25,7 @@ namespace MyEngine {
 
 	class TextureManager;
 
-	class SrvManager;
+	class SRVManager;
 
 	class Camera;
 
@@ -288,7 +288,7 @@ namespace MyEngine {
 		TextureManager* textureManager_;
 
 		//SRVマネージャー
-		SrvManager* srvManager_;
+		SRVManager* srvManager_;
 
 		//パーティクルマネージャー
 		ParticleManager* particleManager_;

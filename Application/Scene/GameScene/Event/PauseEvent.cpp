@@ -7,8 +7,9 @@
 
 using namespace MyEngine;
 
-void PauseEvent::Start(Player* player, Camera* camera, FollowCamera* followCamera) {
+void PauseEvent::Start(MyEngine::EngineContext context, Player* player, FollowCamera* followCamera) {
 
+	context_ = context;
 	player_ = player;
 
 	canMove_ = false;
@@ -20,6 +21,10 @@ void PauseEvent::Start(Player* player, Camera* camera, FollowCamera* followCamer
 	EmitterManager::GetInstance()->SetIsUpdate(false);
 
 	player_->SetIsMoveActive(false);
+
+	timer_ = 0.0f;
+
+	timerDirection_ = 1.0f;
 }
 
 void PauseEvent::Exit() {
@@ -35,20 +40,43 @@ void PauseEvent::Exit() {
 
 void PauseEvent::Update() {
 
+	timer_ += (1.0f / 60.0f) * timerDirection_;
+
+	if (timer_ >= 1.0f) {
+
+		timer_ = 1.0f;
+
+		timerDirection_ *= -1.0f;
+	}
+
+	if (timer_ <= 0.0f) {
+
+		timer_ = 0.0f;
+
+		timerDirection_ *= -1.0f;
+	}
+
+	float alphaNum = EaseOut(0.0f, 1.0f, timer_ / 1.0f);
+
+	UIManager::GetInstance()->Get2DObject("Pause", "Text")->GetSprite()->SetColor(Vector4(1.0f, 1.0f, 1.0f, alphaNum));
+
 	if (delay_) {
 
-		if (Input::GetInstance()->IsTriggerPushKey(DIK_ESCAPE)) {
+		if (context_.input->IsTriggerPushKey(DIK_ESCAPE)) {
 
 			isFinished_ = true;
 		}
 
-		if (Input::GetInstance()->IsTriggerPushKey(DIK_SPACE)) {
+		if (context_.input->IsTriggerPushKey(DIK_SPACE)) {
 
 			Fade::GetInstance()->StartFadeOut();
 		}
 	}
 
 	delay_ = true;
+}
+
+void PauseEvent::Draw() {
 }
 
 GameSceneEventBase::EventType PauseEvent::RequestNextEvent() const {

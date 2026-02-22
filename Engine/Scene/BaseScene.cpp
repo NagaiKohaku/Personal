@@ -2,7 +2,9 @@
 
 namespace MyEngine {
 
-	void BaseScene::Initialize() {
+	void BaseScene::Initialize(EngineContext context) {
+
+		context_ = context;
 	}
 
 	void BaseScene::Finalize() {

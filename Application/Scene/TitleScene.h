@@ -25,7 +25,7 @@ public:
 	/// <summary>
 	/// タイトルシーンの各種オブジェクトを初期化する関数です
 	/// </summary>
-	void Initialize() override;
+	void Initialize(MyEngine::EngineContext context) override;
 
 	/// <summary>
 	/// タイトルシーン終了時に各種オブジェクトを解放する関数です
@@ -61,9 +61,6 @@ private:
 	/// メンバ変数
 	///-------------------------------------------///
 private:
-
-	//カメラ
-	std::unique_ptr<MyEngine::Camera> camera_;
 
 	//プレイヤー
 	Player* player_;

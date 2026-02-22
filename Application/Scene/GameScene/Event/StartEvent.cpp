@@ -4,10 +4,10 @@
 
 using namespace MyEngine;
 
-void StartEvent::Start(Player* player, Camera* camera, FollowCamera* followCamera) {
+void StartEvent::Start(MyEngine::EngineContext context, Player* player, FollowCamera* followCamera) {
 
+	context_ = context;
 	player_ = player;
-	camera_ = camera;
 	followCamera_ = followCamera;
 
 	motionNum_ = 1;
@@ -30,6 +30,9 @@ void StartEvent::Exit() {
 void StartEvent::Update() {
 
 	UpdateEventMotion();
+}
+
+void StartEvent::Draw() {
 }
 
 GameSceneEventBase::EventType StartEvent::RequestNextEvent() const {

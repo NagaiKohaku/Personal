@@ -320,10 +320,10 @@ namespace MyEngine {
 	Vector3 Vector3ToScreenSpace(Camera* camera, Vector3 pos) {
 
 		//ビューポート行列
-		Matrix4x4 viewport = MakeViewportMatrix(0, 0, WinApp::kClientWidth, WinApp::kClientHeight, 0, 1);
+		Matrix4x4 viewport = camera->GetViewPortMatrix();
 
 		//カメラのビュープロジェクション行列とビューポート行列を掛ける
-		Matrix4x4 viewProjectionViewport = camera->GetViewProjectionMatrix() * viewport;
+		Matrix4x4 viewProjectionViewport = camera->Get3DViewProjectionMatrix() * viewport;
 
 		//3Dオブジェクトの座標をスクリーン座標に変換する
 		Vector3 screenPos = Transform(pos, viewProjectionViewport);

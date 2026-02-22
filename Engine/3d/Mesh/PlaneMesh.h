@@ -17,7 +17,7 @@ namespace MyEngine {
 		/// <summary>
 		/// PlaneMeshの初期化を行います。
 		/// </summary>
-		void Initialize() override;
+		void Initialize(DirectXCommon* dxCommonPtr) override;
 
 		///-------------------------------------------/// 
 		/// メンバ変数

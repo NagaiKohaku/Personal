@@ -1,7 +1,7 @@
 #include "ParticleEmitter.h"
 
 #include "Base/DirectXCommon.h"
-#include "Base/SrvManager.h"
+#include "Base/View/SRVManager.h"
 #include "Base/Renderer.h"
 #include "Base/Input.h"
 #include "2d/Sprite/TextureManager.h"
@@ -45,13 +45,13 @@ namespace MyEngine {
 		/// === シングルトンインスタンスの取得 === ///
 
 		//DirectX基底のインスタンスを取得
-		directXCommon_ = DirectXCommon::GetInstance();
+		directXCommon_ = ParticleCommon::GetInstance()->GetDxCommon();
 
 		//テクスチャマネージャーのインスタンスを取得
 		textureManager_ = TextureManager::GetInstance();
 
 		//SRVマネージャーのインスタンスを取得
-		srvManager_ = SrvManager::GetInstance();
+		srvManager_ = ParticleCommon::GetInstance()->GetSRVManager();
 
 		//カメラ情報の設定
 		defaultCamera_ = camera;
@@ -198,7 +198,7 @@ namespace MyEngine {
 		/// === パーティクルの更新 === ///
 
 		//カメラからビュープロジェクション行列を取得
-		Matrix4x4 viewProjectionMatrix = defaultCamera_->GetViewProjectionMatrix();
+		Matrix4x4 viewProjectionMatrix = defaultCamera_->Get3DViewProjectionMatrix();
 
 		//カメラからビュー行列を取得
 		Matrix4x4 viewMatrix = defaultCamera_->GetViewMatrix();

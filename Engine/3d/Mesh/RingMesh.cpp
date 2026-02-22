@@ -5,14 +5,14 @@ namespace MyEngine {
 	///=====================================================/// 
 	/// RingMeshの初期化
 	///=====================================================///
-	void RingMesh::Initialize() {
+	void RingMesh::Initialize(DirectXCommon* dxCommonPtr) {
 
-		directXCommon_ = DirectXCommon::GetInstance();
+		dxCommon_ = dxCommonPtr;
 
 		/// === 頂点リソースの生成 === ///
 
 		//頂点リソースの生成
-		vertexResource_ = directXCommon_->CreateBufferResource(sizeof(VertexData) * 4 * kRingDivide);
+		vertexResource_ = dxCommon_->CreateBufferResource(sizeof(VertexData) * 4 * kRingDivide);
 
 		//頂点バッファビューの作成
 		vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
@@ -59,7 +59,7 @@ namespace MyEngine {
 		indexCount_ = 6 * kRingDivide;
 
 		//頂点インデックスリソースの生成
-		indexResource_ = directXCommon_->CreateBufferResource(sizeof(uint32_t) * indexCount_);
+		indexResource_ = dxCommon_->CreateBufferResource(sizeof(uint32_t) * indexCount_);
 
 		//リソースの場所を取得
 		indexBufferView_.BufferLocation = indexResource_->GetGPUVirtualAddress();

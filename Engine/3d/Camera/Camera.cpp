@@ -20,7 +20,9 @@ namespace MyEngine {
 	///=====================================================/// 
 	/// カメラの各種パラメータを初期化
 	///=====================================================///
-	void Camera::Initialize() {
+	void Camera::Initialize(float windowWidth, float windowHeight, OffScreen* offScreenPtr) {
+
+		offScreen_ = offScreenPtr;
 
 		//カメラの座標の設定
 		transform_.Initialize();
@@ -36,7 +38,7 @@ namespace MyEngine {
 		fovY_ = 0.45f;
 
 		//アスペクト比の設定
-		aspectRatio_ = static_cast<float>(WinApp::kClientWidth) / static_cast<float>(WinApp::kClientHeight);
+		aspectRatio_ = windowWidth / windowHeight;
 
 		//NearClipの設定
 		nearClip_ = 0.1f;
@@ -47,11 +49,14 @@ namespace MyEngine {
 		//ビュー行列の生成
 		viewMatrix_ = Inverse4x4(transform_.GetWorldMatrix());
 
-		//プロジェクション行列の生成
-		projectionMatrix_ = MakePerspectiveFovMatrix(fovY_, aspectRatio_, nearClip_, farClip_);
+		//ビューポート行列の生成
+		viewportMatrix_ = MakeViewportMatrix(0, 0, windowWidth, windowHeight, 0, 1);
 
-		//ビュープロジェクション行列の生成
-		viewProjectionMatrix_ = viewMatrix_ * projectionMatrix_;
+		//透視投影行列の生成
+		perspectiveProjectionMatrix_ = MakePerspectiveFovMatrix(fovY_, aspectRatio_, nearClip_, farClip_);
+
+		//直交投影行列の生成
+		orthographicProjectionMatrix_ = MakeOrthographicMatrix(0.0f, 0.0f, windowWidth, windowHeight, 0.0f, 100.0f);
 
 		//Z軸のオフセットの設定
 		offsetZ_ = 0.0f;
@@ -62,7 +67,7 @@ namespace MyEngine {
 		//デバッグカメラフラグの設定
 		isDebugCamera_ = false;
 
-		OffScreen::GetInstance()->SetDefaultCamera(this);
+		offScreen_->SetDefaultCamera(this);
 
 		Object3DCommon::GetInstance()->SetDefaultCamera(this);
 
@@ -150,12 +155,6 @@ namespace MyEngine {
 			//ビュー行列の計算
 			viewMatrix_ = Inverse4x4(debugTransform_.GetWorldMatrix());
 
-			//プロジェクション行列の計算
-			projectionMatrix_ = MakePerspectiveFovMatrix(fovY_, aspectRatio_, nearClip_, farClip_);
-
-			//ビュープロジェクション行列の計算
-			viewProjectionMatrix_ = viewMatrix_ * projectionMatrix_;
-
 		} else {
 
 			/// === 通常カメラの場合 === ///
@@ -191,12 +190,6 @@ namespace MyEngine {
 			//ビュー行列の計算
 			viewMatrix_ = Inverse4x4(transform_.GetWorldMatrix());
 
-			//プロジェクション行列の計算
-			projectionMatrix_ = MakePerspectiveFovMatrix(fovY_, aspectRatio_, nearClip_, farClip_);
-
-			//ビュープロジェクション行列の計算
-			viewProjectionMatrix_ = viewMatrix_ * projectionMatrix_;
-
 			Shake::GetInstance()->Update();
 		}
 	}
@@ -224,6 +217,19 @@ namespace MyEngine {
 		}
 
 #endif // _USE_IMGUI
+	}
+	Matrix4x4 Camera::Get3DViewProjectionMatrix() const {
 
+		Matrix4x4 viewProjectionMatrix = viewMatrix_ * perspectiveProjectionMatrix_;
+
+		return viewProjectionMatrix;
+	}
+	Matrix4x4 Camera::Get2DViewProjectionMatrix() const {
+
+		Matrix4x4 viewMatrix = MakeIdentity4x4();
+
+		Matrix4x4 viewProjectionMatrix = viewMatrix * orthographicProjectionMatrix_;
+
+		return viewProjectionMatrix;
 	}
 }

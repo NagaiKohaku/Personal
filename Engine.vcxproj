@@ -175,7 +175,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Application\Object\Enemy\Enemy.cpp" />
     <ClCompile Include="Application\Object\Enemy\EnemyManager.cpp" />
     <ClCompile Include="Engine\3d\Object\DebugObject3D.cpp" />
-    <ClCompile Include="Engine\Base\DSVManager.cpp" />
+    <ClCompile Include="Engine\Base\View\DSVManager.cpp" />
     <ClCompile Include="Engine\3d\Mesh\CylinderMesh.cpp" />
     <ClCompile Include="Engine\3d\Particle\EmitterGroup.cpp" />
     <ClCompile Include="Application\Object\Bullet\Core\BulletBase.cpp" />
@@ -189,10 +189,12 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Base\Audio.cpp" />
     <ClCompile Include="Engine\3d\Camera\Camera.cpp" />
     <ClCompile Include="Engine\Base\DirectXCommon.cpp" />
+    <ClCompile Include="Engine\Base\Framework.cpp" />
+    <ClCompile Include="Engine\Base\Game.cpp" />
     <ClCompile Include="Engine\Base\ImGuiManager.cpp" />
     <ClCompile Include="Engine\Base\Input.cpp" />
     <ClCompile Include="Engine\3d\Model\ModelManager.cpp" />
-    <ClCompile Include="Engine\Base\SrvManager.cpp" />
+    <ClCompile Include="Engine\Base\View\SRVManager.cpp" />
     <ClCompile Include="Engine\2d\Sprite\TextureManager.cpp" />
     <ClCompile Include="Engine\Base\WinApp.cpp" />
     <ClCompile Include="Engine\3d\Light\DirectionalLight.cpp" />
@@ -232,7 +234,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\3d\Particle\ParticleCommon.cpp" />
     <ClCompile Include="Engine\Base\Renderer.cpp" />
     <ClCompile Include="Engine\Base\OffScreen.cpp" />
-    <ClCompile Include="Engine\Base\RTVManager.cpp" />
+    <ClCompile Include="Engine\Base\View\RTVManager.cpp" />
     <ClCompile Include="Engine\3d\Particle\ParticleEmitter.cpp" />
     <ClCompile Include="Engine\3d\Mesh\PlaneMesh.cpp" />
     <ClCompile Include="Engine\3d\Mesh\MeshBase.cpp" />
@@ -262,6 +264,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Application\Effect\Manager\UIManager.cpp" />
     <ClCompile Include="Application\Scene\GameScene\Event\StartEvent.cpp" />
     <ClCompile Include="Application\Scene\GameScene\Event\PauseEvent.cpp" />
+    <ClCompile Include="Engine\Base\View\ViewManagerBase.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application\LevelEditor\LevelDataLoader.h" />
@@ -276,6 +279,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Application\Object\Enemy\State\EnemyMoveState.h" />
     <ClInclude Include="Application\Effect\Manager\EmitterManager.h" />
     <ClInclude Include="Application\Scene\GameScene\Event\ClearEvent.h" />
+    <ClInclude Include="Application\Scene\EngineContext.h" />
     <ClInclude Include="Engine\3d\Mesh\CubeMesh.h" />
     <ClInclude Include="Engine\3d\Collider\AABBCollider.h" />
     <ClInclude Include="Engine\3d\Collider\Collider.h" />
@@ -283,13 +287,15 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Application\Object\Enemy\Enemy.h" />
     <ClInclude Include="Application\Object\Enemy\EnemyManager.h" />
     <ClInclude Include="Engine\3d\Object\DebugObject3D.h" />
-    <ClInclude Include="Engine\Base\DSVManager.h" />
+    <ClInclude Include="Engine\Base\View\DSVManager.h" />
     <ClInclude Include="Engine\3d\Mesh\CylinderMesh.h" />
     <ClInclude Include="Engine\3d\Particle\EmitterGroup.h" />
     <ClInclude Include="Application\Object\Bullet\Core\BulletBase.h" />
     <ClInclude Include="Application\Object\Bullet\Core\BulletManager.h" />
     <ClInclude Include="Engine\2d\Sprite\Sprite.h" />
     <ClInclude Include="Engine\2d\Sprite\SpriteCommon.h" />
+    <ClInclude Include="Engine\Base\Framework.h" />
+    <ClInclude Include="Engine\Base\Game.h" />
     <ClInclude Include="Engine\Base\LayerType.h" />
     <ClInclude Include="Engine\3d\Model\Model.h" />
     <ClInclude Include="Engine\3d\Model\ModelCommon.h" />
@@ -301,7 +307,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Base\ImGuiManager.h" />
     <ClInclude Include="Engine\Base\Input.h" />
     <ClInclude Include="Engine\3d\Model\ModelManager.h" />
-    <ClInclude Include="Engine\Base\SrvManager.h" />
+    <ClInclude Include="Engine\Base\View\SRVManager.h" />
     <ClInclude Include="Engine\2d\Sprite\TextureManager.h" />
     <ClInclude Include="Engine\Base\WinApp.h" />
     <ClInclude Include="Engine\3d\Light\DirectionalLight.h" />
@@ -324,7 +330,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\3d\Particle\ParticleCommon.h" />
     <ClInclude Include="Engine\Base\Renderer.h" />
     <ClInclude Include="Engine\Base\OffScreen.h" />
-    <ClInclude Include="Engine\Base\RTVManager.h" />
+    <ClInclude Include="Engine\Base\View\RTVManager.h" />
     <ClInclude Include="Engine\3d\Particle\ParticleEmitter.h" />
     <ClInclude Include="Engine\3d\Mesh\PlaneMesh.h" />
     <ClInclude Include="Engine\3d\Mesh\MeshBase.h" />
@@ -371,6 +377,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Application\Scene\GameScene\GameSceneProgress.h" />
     <ClInclude Include="Application\Scene\GameScene\Event\GameSceneEventBase.h" />
     <ClInclude Include="Application\Scene\GameScene\Event\GameSceneEventFactory.h" />
+    <ClInclude Include="Engine\Base\View\ViewManagerBase.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Application\LevelEditor\Python\add_collider.py">

@@ -8,7 +8,6 @@
 #include "3d/Object/DebugLine.h"
 #include "3d/Particle/ParticleEmitter.h"
 #include "3d/Particle/EmitterGroup.h"
-#include "3d/Object/DebugLine.h"
 
 #include "memory"
 
@@ -22,7 +21,7 @@ public:
 	/// <summary>
 	/// パーティクルエディタ用シーンの初期化を行います。
 	/// </summary>
-	void Initialize() override;
+	void Initialize(MyEngine::EngineContext context) override;
 
 	/// <summary>
 	/// パーティクルエディタシーンの毎フレーム更新処理を行います。
@@ -59,9 +58,6 @@ private:
 	/// メンバ変数
 	///-------------------------------------------///
 private:
-
-	//カメラ
-	std::unique_ptr<MyEngine::Camera> camera_;
 
 	std::list<std::unique_ptr<MyEngine::EmitterGroup>> emitterGroups_;
 

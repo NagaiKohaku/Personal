@@ -1,20 +1,21 @@
 #pragma once
 
-#include "DirectXTex.h"
-#include "d3d12.h"
+#include <DirectXTex.h>
+#include <d3d12.h>
 
-#include "Base/LayerType.h"
+#include <Base/LayerType.h>
 
-#include "2d/Object/Object2DCommon.h"
-#include "2d/Sprite/Sprite.h"
+#include <2d/Object/Object2DCommon.h>
+#include <2d/Sprite/Sprite.h>
+#include <3d/Camera/Camera.h>
 
 #include <Math/Vector/Vector2.h>
 #include <Math/Vector/Vector3.h>
 #include <Math/Matrix/Matrix4x4.h>
 #include <Math/Transform/WorldTransform.h>
 
-#include "string"
-#include "wrl.h"
+#include <string>
+#include <wrl.h>
 
 namespace MyEngine {
 
@@ -50,7 +51,7 @@ namespace MyEngine {
 		/// <summary>
 		/// Object2Dの初期化を行います。
 		/// </summary>
-		void Initialize();
+		void Initialize(Camera* cameraPtr);
 
 		/// <summary>
 		/// Object2Dのスプライトおよび座標変換行列(WVP)を更新します。
@@ -73,9 +74,13 @@ namespace MyEngine {
 		///-------------------------------------------///
 	private:
 
+		//カメラ
+		Camera* camera_;
+
 		//2Dオブジェクト基底
 		Object2DCommon* object2DCommon_;
 
+		//トランスフォーム
 		WorldTransform transform_;
 
 		//座標変換行列リソース

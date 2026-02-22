@@ -2,16 +2,20 @@
 
 #include <Base/Input.h>
 #include <Object/Manager/ObjectManager.h>
+#include <Effect/Manager/UIManager.h>
+#include <Math/Utility/MakeMatrixMath.h>
 
 using namespace MyEngine;
 
-void GameEvent::Start(Player* player, Camera* camera, FollowCamera* followCamera) {
+void GameEvent::Start(MyEngine::EngineContext context, Player* player, FollowCamera* followCamera) {
 
+	context_ = context;
 	player_ = player;
-	camera_ = camera;
 	followCamera_ = followCamera;
 
 	canMove_ = true;
+
+	UIManager::GetInstance()->GetUIGroup("Reticle")->isActive = true;
 
 	followCamera_->SetIsActive(true);
 
@@ -22,11 +26,53 @@ void GameEvent::Exit() {
 }
 
 void GameEvent::Update() {
+
+	//3Dオブジェクトの座標をスクリーン座標に変換する
+	Vector3 playerScreenPos = Vector3ToScreenSpace(context_.camera, player_->GetWorldPos());
+
+	UIManager::GetInstance()->GetUIGroup("Reticle")->transform.translate_ = playerScreenPos;
+
+	if (Input::GetInstance()->isPushKey(DIK_W)) {
+
+		UIManager::GetInstance()->Get2DObject("Reticle", "WButton")->GetSprite()->SetRatio(1.0f);
+	} else {
+
+		UIManager::GetInstance()->Get2DObject("Reticle", "WButton")->GetSprite()->SetRatio(0.0f);
+	}
+
+	if (Input::GetInstance()->isPushKey(DIK_A)) {
+
+		UIManager::GetInstance()->Get2DObject("Reticle", "AButton")->GetSprite()->SetRatio(1.0f);
+	} else {
+
+		UIManager::GetInstance()->Get2DObject("Reticle", "AButton")->GetSprite()->SetRatio(0.0f);
+	}
+
+	if (Input::GetInstance()->isPushKey(DIK_S)) {
+
+		UIManager::GetInstance()->Get2DObject("Reticle", "SButton")->GetSprite()->SetRatio(1.0f);
+	} else {
+
+		UIManager::GetInstance()->Get2DObject("Reticle", "SButton")->GetSprite()->SetRatio(0.0f);
+	}
+
+	if (Input::GetInstance()->isPushKey(DIK_D)) {
+
+		UIManager::GetInstance()->Get2DObject("Reticle", "DButton")->GetSprite()->SetRatio(1.0f);
+	} else {
+
+		UIManager::GetInstance()->Get2DObject("Reticle", "DButton")->GetSprite()->SetRatio(0.0f);
+	}
+
+	UIManager::GetInstance()->Get2DObject("Reticle", "SpaceButton")->GetSprite()->SetRatio(player_->GetAttackTimeRatio());
+}
+
+void GameEvent::Draw() {
 }
 
 GameSceneEventBase::EventType GameEvent::RequestNextEvent() const {
 
-	if (Input::GetInstance()->IsTriggerPushKey(DIK_ESCAPE)) {
+	if (context_.input->IsTriggerPushKey(DIK_ESCAPE)) {
 
 		return EventType::PAUSE;
 	}

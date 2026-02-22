@@ -44,7 +44,7 @@ namespace MyEngine {
 		/// <summary>
 		/// メッシュを初期化する純粋仮想関数。
 		/// </summary>
-		virtual void Initialize() = 0;
+		virtual void Initialize(DirectXCommon* dxCommonPtr) = 0;
 
 		/// <summary>
 		/// GPUにメッシュのデータを送信します。
@@ -105,7 +105,7 @@ namespace MyEngine {
 	protected:
 
 		//DirectX基底
-		DirectXCommon* directXCommon_ = nullptr;
+		DirectXCommon* dxCommon_ = nullptr;
 
 		//頂点数
 		uint32_t vertexCount_ = 0;

@@ -1,31 +1,23 @@
 #include "DirectXCommon.h"
 
-#include "Base/WinApp.h"
-#include "Base/RTVManager.h"
-#include "Base/DSVManager.h"
+#include <Base/WinApp.h>
+#include <Base/View/RTVManager.h>
+#include <Base/View/DSVManager.h>
 
-#include "Other/Log.h"
+#include <Other/Log.h>
 
-#include "cassert"
-#include "format"
+#include <cassert>
+#include <format>
 
 namespace MyEngine {
 
 	///=====================================================/// 
-	/// DirectXCommonのシングルトンインスタンスを取得
-	///=====================================================///
-	DirectXCommon* DirectXCommon::GetInstance() {
-		static DirectXCommon instance;
-		return &instance;
-	}
-
-	///=====================================================/// 
 	/// DirectX12 の動作に必要な基本コンポーネントを初期化
 	///=====================================================///
-	void DirectXCommon::Initialize() {
+	void DirectXCommon::Initialize(WinApp* winAppPtr) {
 
 		//WinAppクラスを借りる
-		winApp = WinApp::GetInstance();
+		winApp_ = winAppPtr;
 
 		//FPS固定初期化
 		InitializeFixFPS();
@@ -41,13 +33,13 @@ namespace MyEngine {
 	///=================================================================///
 	/// DirectX12 による描画処理を行うための各種レンダリング関連リソースを初期化
 	///=================================================================///
-	void DirectXCommon::InitializeRendering() {
+	void DirectXCommon::InitializeRendering(RTVManager* rtvPtr, DSVManager* dsvPtr) {
 
 		//RTVマネージャーの取得
-		rtvManager_ = RTVManager::GetInstance();
+		rtvManager_ = rtvPtr;
 
 		//DSVマネージャーの取得
-		dsvManager_ = DSVManager::GetInstance();
+		dsvManager_ = dsvPtr;
 
 		//スワップチェーンの初期化
 		InitializeSwapChain();
@@ -271,8 +263,8 @@ namespace MyEngine {
 		DXGI_SWAP_CHAIN_DESC1 swapChainDesc{};
 
 		//スワップチェーンの設定
-		swapChainDesc.Width = WinApp::kClientWidth;                  //画面の幅。ウィンドウのクライアント領域と同じものにしておく
-		swapChainDesc.Height = WinApp::kClientHeight;                //画面の高さ。ウィンドウのクライアント領域と同じものにしておく
+		swapChainDesc.Width = winApp_->GetWindowWidth();             //画面の幅。ウィンドウのクライアント領域と同じものにしておく
+		swapChainDesc.Height = winApp_->GetWindowHeight();           //画面の高さ。ウィンドウのクライアント領域と同じものにしておく
 		swapChainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;           //色の形式
 		swapChainDesc.SampleDesc.Count = 1;                          //マルチサンプルしない
 		swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT; //描画のターゲットとして利用する
@@ -280,7 +272,7 @@ namespace MyEngine {
 		swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;    //モニタにうつしたら、中身を破棄
 
 		//スワップチェーンを初期化
-		hr = dxgiFactory_->CreateSwapChainForHwnd(commandQueue_.Get(), winApp->GetHwnd(), &swapChainDesc, nullptr, nullptr, reinterpret_cast<IDXGISwapChain1**>(swapChain_.GetAddressOf()));
+		hr = dxgiFactory_->CreateSwapChainForHwnd(commandQueue_.Get(), winApp_->GetHwnd(), &swapChainDesc, nullptr, nullptr, reinterpret_cast<IDXGISwapChain1**>(swapChain_.GetAddressOf()));
 
 		//正常に生成できているか確認
 		assert(SUCCEEDED(hr));
@@ -298,8 +290,8 @@ namespace MyEngine {
 		D3D12_RESOURCE_DESC resourceDesc{};
 
 		//リソースの設定
-		resourceDesc.Width = WinApp::kClientWidth;                    //ウィンドウの幅
-		resourceDesc.Height = WinApp::kClientHeight;                  //ウィンドウの高さ
+		resourceDesc.Width = winApp_->GetWindowWidth();               //ウィンドウの幅
+		resourceDesc.Height = winApp_->GetWindowHeight();             //ウィンドウの高さ
 		resourceDesc.MipLevels = 1;                                   //mipmapの数
 		resourceDesc.DepthOrArraySize = 1;                            //奥行き or 配列Textureの配列数
 		resourceDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;          //DepthSthncilとして利用可能なフォーマット
@@ -432,8 +424,8 @@ namespace MyEngine {
 	void DirectXCommon::InitializeViewportRect() {
 
 		//クライアント領域のサイズと一緒にして画面全体に表示
-		viewport_.Width = static_cast<FLOAT>(WinApp::kClientWidth);
-		viewport_.Height = static_cast<FLOAT>(WinApp::kClientHeight);
+		viewport_.Width = static_cast<FLOAT>(winApp_->GetWindowWidth());
+		viewport_.Height = static_cast<FLOAT>(winApp_->GetWindowHeight());
 		viewport_.TopLeftX = 0;
 		viewport_.TopLeftY = 0;
 		viewport_.MinDepth = 0.0f;
@@ -450,9 +442,9 @@ namespace MyEngine {
 
 		//基本的にビューポートと同じく矩形が編成されるようにする
 		scissorRect_.left = 0;
-		scissorRect_.right = WinApp::kClientWidth;
+		scissorRect_.right = winApp_->GetWindowWidth();
 		scissorRect_.top = 0;
-		scissorRect_.bottom = WinApp::kClientHeight;
+		scissorRect_.bottom = winApp_->GetWindowHeight();
 
 		//初期化完了のログを出す
 		OutPutLog("Complete Initialize ScissorRect\n");

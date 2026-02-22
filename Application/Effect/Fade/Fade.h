@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Base/WinApp.h>
 #include <2d/Object/Object2D.h>
 #include <Math/Transform/WorldTransform.h>
 
@@ -50,7 +51,7 @@ public:
 	/// <summary>
 	/// フェード処理に必要なスプライトやリソースを初期化する関数です。
 	/// </summary>
-	void Initialize();
+	void Initialize(MyEngine::WinApp* winAppPtr, MyEngine::Camera* cameraPtr);
 
 	/// <summary>
 	/// フェード処理の状態を毎フレーム更新する関数です。
@@ -102,6 +103,9 @@ private:
 	///=====================================================///
 private:
 
+	//ウィンドウクラス
+	MyEngine::WinApp* winApp_;
+
 	//フェード状態
 	FadeState state_ = FadeState::NONE;
 
@@ -140,24 +144,9 @@ public:
 	FadeState GetState() const { return state_; }
 
 	/// <summary>
-	/// カメラの取得
-	/// </summary>
-	MyEngine::Camera* GetCamera() { return camera_; }
-
-	/// <summary>
-	/// プレイヤーの取得
-	/// </summary>
-	Player* GetPlayer() { return player_; }
-
-	/// <summary>
 	/// フェード状態の設定
 	/// </summary>
 	void SetState(FadeState state) { state_ = state; }
-
-	/// <summary>
-	/// カメラの設定
-	/// </summary>
-	void SetCamera(MyEngine::Camera* ptr) { camera_ = ptr; }
 
 	/// <summary>
 	/// プレイヤーの設定

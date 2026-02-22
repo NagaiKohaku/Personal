@@ -23,10 +23,10 @@ namespace MyEngine {
 	///=====================================================/// 
 	/// Object3DCommonの初期化
 	///=====================================================///
-	void Object3DCommon::Initialize() {
+	void Object3DCommon::Initialize(DirectXCommon* dxCommonPtr) {
 
 		//DirectX基底のインスタンスを取得
-		dxCommon_ = DirectXCommon::GetInstance();
+		dxCommon_ = dxCommonPtr;
 
 		//グラフィックパイプラインの生成
 		CreateGraphicsPipeline();
@@ -35,7 +35,7 @@ namespace MyEngine {
 		directionalLight_ = std::make_unique<DirectionalLight>();
 
 		//平行光源ライトの初期化
-		directionalLight_->Initialize();
+		directionalLight_->Initialize(dxCommon_);
 
 		directionalLight_->SetIntensity(1.0f);
 
@@ -43,7 +43,7 @@ namespace MyEngine {
 		pointLight_ = std::make_unique<PointLight>();
 
 		//点光源ライトの初期化
-		pointLight_->Initialize();
+		pointLight_->Initialize(dxCommon_);
 
 		pointLight_->SetIntensity(0.0f);
 
@@ -51,7 +51,7 @@ namespace MyEngine {
 		spotLight_ = std::make_unique<SpotLight>();
 
 		//スポットライトの初期化
-		spotLight_->Initialize();
+		spotLight_->Initialize(dxCommon_);
 
 		spotLight_->SetIntensity(0.0f);
 

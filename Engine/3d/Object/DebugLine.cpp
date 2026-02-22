@@ -195,7 +195,7 @@ namespace MyEngine {
 		if (camera_) {
 
 			//ビュープロジェクション行列
-			const Matrix4x4& viewProjectionMatrix = camera_->GetViewProjectionMatrix();
+			const Matrix4x4& viewProjectionMatrix = camera_->Get3DViewProjectionMatrix();
 
 			//ワールド行列にビュープロジェクション行列を乗算
 			worldViewProjectionMatrix *= viewProjectionMatrix;

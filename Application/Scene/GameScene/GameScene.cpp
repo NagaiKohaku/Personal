@@ -33,26 +33,28 @@
 
 #include "numbers"
 
+#include <Scene/EngineContext.h>
+
 using namespace MyEngine;
 
 ///=====================================================/// 
 /// 初期化
 ///=====================================================///
-void GameScene::Initialize() {
+void GameScene::Initialize(MyEngine::EngineContext context) {
+
+	//シーンの初期化
+	BaseScene::Initialize(context);
 
 	/// === カメラの設定 === ///
 
-	camera_ = std::make_unique<Camera>();
-
-	camera_->Initialize();
-
 	//デバッグカメラを使用しない
-	camera_->SetDebugCameraFlag(false);
+	context_.camera->SetDebugCameraFlag(false);
 
 	//シェイクにカメラをセット
-	Shake::GetInstance()->SetCamera(camera_.get());
+	Shake::GetInstance()->SetCamera(context_.camera);
 
-	EmitterManager::GetInstance()->SetCamera(camera_.get());
+	//エミッターマネージャーにカメラをセット
+	EmitterManager::GetInstance()->SetCamera(context_.camera);
 
 	/// === エネミーマネージャーの生成 === ///
 
@@ -76,61 +78,37 @@ void GameScene::Initialize() {
 
 	player_ = ObjectManager::GetInstance()->GetPlayer();
 
-	player_->Initialize(camera_.get(), bulletManager_.get(), false);
+	player_->Initialize(context_.camera, bulletManager_.get(), false);
 
-	//エネミーマネージャーの初期化
-	enemyManager_->Initialize(camera_.get(), bulletManager_.get(), player_);
+	/// === 敵の生成 === ///
+
+	enemyManager_->Initialize(context_.camera, bulletManager_.get(), player_);
 
 	/// === 追尾カメラの生成 === ///
 
 	followCamera_ = std::make_unique<FollowCamera>();
 
-	followCamera_->Initialize(camera_.get(), player_);
+	followCamera_->Initialize(context_.camera, player_);
 
-	//最初は無効化する
+	//最初は追従を無効化する
 	followCamera_->SetIsActive(false);
 
-	/// === ゲームオーバースプライトの生成 === ///
+	/// === UIの生成 === ///
 
+	//ゲームシーンのUIを生成する
 	UIManager::GetInstance()->LoadUI("GameScene");
 
-	spaceKeyPos_ = UIManager::GetInstance()->Get2DObject("GameOver", "Space")->GetTranslate();
-
-	spaceKeySize_ = UIManager::GetInstance()->Get2DObject("GameOver", "Space")->GetSize();
-
-	/// === エミッターの生成 === ///
-
-	//衝撃波エミッター(左)
-	shockWaveLeftEmitter_ = std::make_unique<EmitterGroup>();
-
-	shockWaveLeftEmitter_->Initialize(camera_.get());
-
-	shockWaveLeftEmitter_->LoadEmitter("ShockWaveLeft");
-
-	//衝撃波エミッター(右)
-
-	shockWaveRightEmitter_ = std::make_unique<EmitterGroup>();
-
-	shockWaveRightEmitter_->Initialize(camera_.get());
-
-	shockWaveRightEmitter_->LoadEmitter("ShockWaveRight");
+	/// === イベントの生成 === ///
 
 	sceneProgress_ = std::make_unique<GameSceneProgress>();
 
-	sceneProgress_->Initialize(player_,camera_.get(),followCamera_.get());
+	sceneProgress_->Initialize(context_, player_, followCamera_.get());
 
-	/// === 他変数の設定 === ///
-
-	arrowLength_ = 20.0f;
-
-	arrowTimer_ = 0.0f;
-
-	timerDirection_ = 1.0f;
-
-	Fade::GetInstance()->SetCamera(camera_.get());
+	/// === フェードの設定 === ///
 
 	Fade::GetInstance()->SetPlayer(player_);
 
+	//フェードイン開始
 	Fade::GetInstance()->StartFadeIn();
 
 }
@@ -143,9 +121,6 @@ void GameScene::Finalize() {
 	ObjectManager::GetInstance()->ClearAll();
 
 	UIManager::GetInstance()->DeleteAllUI();
-
-	//演出系の参照リセット
-	Fade::GetInstance()->SetCamera(nullptr);
 
 	Fade::GetInstance()->SetPlayer(nullptr);
 
@@ -168,7 +143,7 @@ void GameScene::Update() {
 	followCamera_->Update();
 
 	//カメラをデバッグ状態で更新
-	camera_->Update();
+	context_.camera->Update();
 
 	sceneProgress_->Update();
 
@@ -195,81 +170,6 @@ void GameScene::Update() {
 
 		groundManager_->TransformUpdate();
 	}
-
-	arrowTimer_ += (1.0f / 60.0f) * timerDirection_;
-
-	if (arrowTimer_ >= 1.0f) {
-
-		arrowTimer_ = 1.0f;
-
-		timerDirection_ *= -1.0f;
-	}
-
-	if (arrowTimer_ <= 0.0f) {
-
-		arrowTimer_ = 0.0f;
-
-		timerDirection_ *= -1.0f;
-	}
-
-	float lerpNum = EaseOut(0.0f, arrowLength_, arrowTimer_ / 1.0f);
-
-	float alphaNum = EaseOut(0.0f, 1.0f, arrowTimer_ / 1.0f);
-
-	//3Dオブジェクトの座標をスクリーン座標に変換する
-	Vector3 playerScreenPos = Vector3ToScreenSpace(camera_.get(), player_->GetWorldPos());
-
-	UIManager::GetInstance()->Get2DObject("GameOver", "LeftArrow")->SetTranslate({ spaceKeyPos_.x - spaceKeySize_.x / 2.0f - 64.0f - lerpNum,spaceKeyPos_.y });
-
-	UIManager::GetInstance()->Get2DObject("GameOver", "RightArrow")->SetTranslate({ spaceKeyPos_.x + spaceKeySize_.x / 2.0f + 64.0f + lerpNum,spaceKeyPos_.y });
-
-	UIManager::GetInstance()->Get2DObject("Clear", "LeftArrow")->SetTranslate({ spaceKeyPos_.x - spaceKeySize_.x / 2.0f - 64.0f - lerpNum,spaceKeyPos_.y });
-
-	UIManager::GetInstance()->Get2DObject("Clear", "RightArrow")->SetTranslate({ spaceKeyPos_.x + spaceKeySize_.x / 2.0f + 64.0f + lerpNum,spaceKeyPos_.y });
-
-	UIManager::GetInstance()->GetUIGroup("Reticle")->transform.translate_ = playerScreenPos;
-
-	UIManager::GetInstance()->Get2DObject("Pause", "Text")->GetSprite()->SetColor(Vector4(1.0f, 1.0f, 1.0f, alphaNum));
-
-	if (Input::GetInstance()->isPushKey(DIK_W)) {
-
-		UIManager::GetInstance()->Get2DObject("Reticle", "WButton")->GetSprite()->SetRatio(1.0f);
-	} else {
-
-		UIManager::GetInstance()->Get2DObject("Reticle", "WButton")->GetSprite()->SetRatio(0.0f);
-	}
-
-	if (Input::GetInstance()->isPushKey(DIK_A)) {
-
-		UIManager::GetInstance()->Get2DObject("Reticle", "AButton")->GetSprite()->SetRatio(1.0f);
-	} else {
-
-		UIManager::GetInstance()->Get2DObject("Reticle", "AButton")->GetSprite()->SetRatio(0.0f);
-	}
-
-	if (Input::GetInstance()->isPushKey(DIK_S)) {
-
-		UIManager::GetInstance()->Get2DObject("Reticle", "SButton")->GetSprite()->SetRatio(1.0f);
-	} else {
-
-		UIManager::GetInstance()->Get2DObject("Reticle", "SButton")->GetSprite()->SetRatio(0.0f);
-	}
-
-	if (Input::GetInstance()->isPushKey(DIK_D)) {
-
-		UIManager::GetInstance()->Get2DObject("Reticle", "DButton")->GetSprite()->SetRatio(1.0f);
-	} else {
-
-		UIManager::GetInstance()->Get2DObject("Reticle", "DButton")->GetSprite()->SetRatio(0.0f);
-	}
-
-	UIManager::GetInstance()->Get2DObject("Reticle", "SpaceButton")->GetSprite()->SetRatio(player_->GetAttackTimeRatio());
-
-	//右衝撃波エミッターの更新
-	shockWaveRightEmitter_->Update();
-
-	//左衝撃波エミッターの更新
-	shockWaveLeftEmitter_->Update();
 
 	//フェードアウトが終わったら
 	if (Fade::GetInstance()->GetState() == Fade::FadeState::FADE_OUT_END) {
@@ -299,11 +199,8 @@ void GameScene::Draw() {
 	//グラウンドマネージャーの描画
 	groundManager_->Draw();
 
-	//右衝撃波エミッターの描画
-	shockWaveRightEmitter_->Draw();
-
-	//左衝撃波エミッターの描画
-	shockWaveLeftEmitter_->Draw();
+	//イベントの描画
+	sceneProgress_->Draw();
 
 }
 
@@ -319,7 +216,7 @@ void GameScene::ImGui() {
 
 	if (ImGui::TreeNode("Camera")) {
 
-		camera_->DisplayImGui();
+		context_.camera->DisplayImGui();
 
 		ImGui::TreePop();
 	}

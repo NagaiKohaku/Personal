@@ -8,11 +8,13 @@ class StartEvent : public GameSceneEventBase {
 
 public:
 
-	void Start(Player* player, MyEngine::Camera* camera, FollowCamera* followCamera) override;
+	void Start(MyEngine::EngineContext context, Player* player, FollowCamera* followCamera) override;
 
 	void Exit() override;
 
 	void Update() override;
+
+	void Draw() override;
 
 	EventType RequestNextEvent() const override;
 

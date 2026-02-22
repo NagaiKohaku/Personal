@@ -1,10 +1,11 @@
 #include "ParticleCommon.h"
 
-#include "Base/DirectXCommon.h"
+#include <Base/DirectXCommon.h>
+#include <Base/View/SRVManager.h>
 
-#include "Other/Log.h"
+#include <Other/Log.h>
 
-#include "cassert"
+#include <cassert>
 
 namespace MyEngine {
 
@@ -19,10 +20,13 @@ namespace MyEngine {
 	///=====================================================/// 
 	/// ParticleCommonの初期化
 	///=====================================================///
-	void ParticleCommon::Initialize() {
+	void ParticleCommon::Initialize(DirectXCommon* dxCommonPtr, SRVManager* srvPtr) {
 
 		//DirectX基底のインスタンスを取得
-		dxCommon_ = DirectXCommon::GetInstance();
+		dxCommon_ = dxCommonPtr;
+
+		//SRVマネージャーのインスタンスを取得
+		srvManager_ = srvPtr;
 
 		//グラフィックパイプラインの生成
 		CreateGraphicsPipeline();

@@ -1,5 +1,6 @@
 #pragma once
-#include "3d/Object/Object3D.h"
+#include <Base/OffScreen.h>
+#include <3d/Object/Object3D.h>
 #include <Math/Vector/Vector3.h>
 #include <Math/Matrix/Matrix4x4.h>
 #include <Math/Transform/WorldTransform.h>
@@ -19,7 +20,7 @@ namespace MyEngine {
 		/// <summary>
 		/// カメラの各種パラメータを初期化します。
 		/// </summary>
-		void Initialize();
+		void Initialize(float windowWidth, float windowHeight, OffScreen* offScreenPtr);
 
 		/// <summary>
 		/// カメラの状態を更新します。
@@ -41,6 +42,8 @@ namespace MyEngine {
 		///-------------------------------------------///
 	private:
 
+		OffScreen* offScreen_;
+
 		//追従対象
 		Object3D* trackingObject_;
 
@@ -53,11 +56,14 @@ namespace MyEngine {
 		//ビュー行列
 		Matrix4x4 viewMatrix_;
 
-		//プロジェクション行列
-		Matrix4x4 projectionMatrix_;
+		//ビューポート行列
+		Matrix4x4 viewportMatrix_;
 
-		//ビュープロジェクション行列
-		Matrix4x4 viewProjectionMatrix_;
+		//直交投影行列
+		Matrix4x4 orthographicProjectionMatrix_;
+
+		//透視投影行列
+		Matrix4x4 perspectiveProjectionMatrix_;
 
 		//視野角
 		float fovY_;
@@ -98,16 +104,34 @@ namespace MyEngine {
 		const Matrix4x4& GetViewMatrix() const { return viewMatrix_; }
 
 		/// <summary>
-		/// プロジェクション行列を取得
+		/// ビューポート行列を取得
 		/// </summary>
-		/// <returns>プロジェクション行列</returns>
-		const Matrix4x4& GetProjectionMatrix() const { return projectionMatrix_; }
+		/// <returns>ビューポート行列</returns>
+		const Matrix4x4& GetViewPortMatrix() const { return viewportMatrix_; }
 
 		/// <summary>
-		/// ビュープロジェクション行列を取得
+		/// 透視投影行列を取得
 		/// </summary>
-		/// <returns>ビュープロジェクション行列</returns>
-		const Matrix4x4& GetViewProjectionMatrix() const { return viewProjectionMatrix_; }
+		/// <returns>透視投影行列</returns>
+		const Matrix4x4& Get3DProjectionMatrix() const { return perspectiveProjectionMatrix_; }
+
+		/// <summary>
+		/// 直交投影行列を取得
+		/// </summary>
+		/// <returns>直交投影行列</returns>
+		const Matrix4x4& Get2DProjectionMatrix() const { return orthographicProjectionMatrix_; }
+
+		/// <summary>
+		/// ビュー透視投影行列を取得
+		/// </summary>
+		/// <returns>ビュー透視投影行列</returns>
+		Matrix4x4 Get3DViewProjectionMatrix() const;
+
+		/// <summary>
+		/// ビュー直交投影行列を取得
+		/// </summary>
+		/// <returns>ビュー直交投影行列</returns>
+		Matrix4x4 Get2DViewProjectionMatrix() const;
 
 		/// <summary>
 		/// デバッグカメラフラグを取得
@@ -115,11 +139,11 @@ namespace MyEngine {
 		/// <returns>フラグ</returns>
 		bool IsDebugCamera() const { return isDebugCamera_; }
 
+		/// <summary>
+		/// ビュー行列の設定
+		/// </summary>
+		/// <param name="matrix">ビュー行列</param>
 		void SetViewMatrix(Matrix4x4 matrix) { viewMatrix_ = matrix; }
-
-		void SetProjectionMatrix(Matrix4x4 matrix) { projectionMatrix_ = matrix; }
-
-		void SetViewProjectionMatrix(Matrix4x4 matrix) { viewProjectionMatrix_ = matrix; }
 
 		/// <summary>
 		/// fovYの設定

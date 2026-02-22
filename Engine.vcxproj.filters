@@ -163,7 +163,7 @@
     <ClCompile Include="Engine\Base\DirectXCommon.cpp">
       <Filter>Engine\Base</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Base\DSVManager.cpp">
+    <ClCompile Include="Engine\Base\View\DSVManager.cpp">
       <Filter>Engine\Base</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Base\ImGuiManager.cpp">
@@ -178,10 +178,10 @@
     <ClCompile Include="Engine\Base\Renderer.cpp">
       <Filter>Engine\Base</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Base\RTVManager.cpp">
+    <ClCompile Include="Engine\Base\View\RTVManager.cpp">
       <Filter>Engine\Base</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Base\SrvManager.cpp">
+    <ClCompile Include="Engine\Base\View\SRVManager.cpp">
       <Filter>Engine\Base</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Base\WinApp.cpp">
@@ -352,6 +352,9 @@
     <ClCompile Include="Engine\Math\Transform\WorldTransform.cpp">
       <Filter>Engine\Math\Transform</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\Base\Framework.cpp" />
+    <ClCompile Include="Engine\Base\Game.cpp" />
+    <ClCompile Include="Engine\Base\View\ViewManagerBase.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application\Object\Camera\FollowCamera.h">
@@ -465,7 +468,7 @@
     <ClInclude Include="Engine\Base\DirectXCommon.h">
       <Filter>Engine\Base</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Base\DSVManager.h">
+    <ClInclude Include="Engine\Base\View\DSVManager.h">
       <Filter>Engine\Base</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Base\ImGuiManager.h">
@@ -483,10 +486,10 @@
     <ClInclude Include="Engine\Base\Renderer.h">
       <Filter>Engine\Base</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Base\RTVManager.h">
+    <ClInclude Include="Engine\Base\View\RTVManager.h">
       <Filter>Engine\Base</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Base\SrvManager.h">
+    <ClInclude Include="Engine\Base\View\SRVManager.h">
       <Filter>Engine\Base</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Base\WinApp.h">
@@ -675,6 +678,10 @@
     <ClInclude Include="Engine\Math\Shape\AABB.h">
       <Filter>Engine\Math\Shape</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\Base\Framework.h" />
+    <ClInclude Include="Engine\Base\Game.h" />
+    <ClInclude Include="Engine\Base\View\ViewManagerBase.h" />
+    <ClInclude Include="Application\Scene\EngineContext.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resource\Shader\DebugObject.hlsli">

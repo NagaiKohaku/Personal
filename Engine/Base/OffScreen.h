@@ -1,18 +1,20 @@
 #pragma once
 
-#include "d3d12.h"
+#include <d3d12.h>
 
 #include <Math/Vector/Vector4.h>
 #include <Math/Matrix/Matrix4x4.h>
 
-#include "wrl.h"
-#include "vector"
-#include "cstdint"
-#include "string"
+#include <wrl.h>
+#include <vector>
+#include <cstdint>
+#include <string>
 
 namespace MyEngine {
 
 	/// === 前方宣言 === ///
+
+	class WinApp;
 
 	class DirectXCommon;
 
@@ -20,7 +22,7 @@ namespace MyEngine {
 
 	class DSVManager;
 
-	class SrvManager;
+	class SRVManager;
 
 	class Camera;
 
@@ -46,14 +48,9 @@ namespace MyEngine {
 	public:
 
 		/// <summary>
-		/// OffScreenのシングルトンインスタンスを取得します。
-		/// </summary>
-		static OffScreen* GetInstance();
-
-		/// <summary>
 		/// オフスクリーン描画用のリソースやパイプラインを初期化します。
 		/// </summary>
-		void Initialize();
+		void Initialize(WinApp* winAppPtr, DirectXCommon* dxCommonPtr, RTVManager* rtvPtr, DSVManager* dsvPtr, SRVManager* srvPtr);
 
 		/// <summary>
 		/// オフスクリーン描画用のレンダーターゲットと深度バッファの描画準備を行います。
@@ -136,6 +133,9 @@ namespace MyEngine {
 		///-------------------------------------------///
 	private:
 
+		//ウィンドウクラス
+		WinApp* winApp_ = nullptr;
+
 		//DirectX基底
 		DirectXCommon* dxCommon_ = nullptr;
 
@@ -146,7 +146,7 @@ namespace MyEngine {
 		DSVManager* dsvManager_ = nullptr;
 
 		//SRVマネージャー
-		SrvManager* srvManager_ = nullptr;
+		SRVManager* srvManager_ = nullptr;
 
 		//カメラ
 		Camera* camera_ = nullptr;

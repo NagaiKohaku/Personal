@@ -7,11 +7,11 @@ namespace MyEngine {
 	///=====================================================/// 
 	/// SphereMeshの初期化
 	///=====================================================///
-	void SphereMesh::Initialize() {
+	void SphereMesh::Initialize(DirectXCommon* dxCommonPtr) {
 
 		/// === シングルトンインスタンスの取得 === ///
 
-		directXCommon_ = DirectXCommon::GetInstance();
+		dxCommon_ = dxCommonPtr;
 
 		/// === 頂点リソースの生成 === ///
 
@@ -19,7 +19,7 @@ namespace MyEngine {
 		vertexCount_ = (kLatitudeCount + 1) * (kLongitudeCount + 1);
 
 		//リソースの生成
-		vertexResource_ = directXCommon_->CreateBufferResource(sizeof(VertexData) * 4 * vertexCount_);
+		vertexResource_ = dxCommon_->CreateBufferResource(sizeof(VertexData) * 4 * vertexCount_);
 
 		//バッファビューの作成
 		vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
@@ -131,7 +131,7 @@ namespace MyEngine {
 		indexCount_ = 6 * kLatitudeCount * kLongitudeCount;
 
 		//リソースの生成
-		indexResource_ = directXCommon_->CreateBufferResource(sizeof(uint32_t) * indexCount_);
+		indexResource_ = dxCommon_->CreateBufferResource(sizeof(uint32_t) * indexCount_);
 
 		//リソースの場所を取得
 		indexBufferView_.BufferLocation = indexResource_->GetGPUVirtualAddress();

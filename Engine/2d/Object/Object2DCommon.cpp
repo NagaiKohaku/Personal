@@ -21,10 +21,10 @@ namespace MyEngine {
 	///=====================================================/// 
 	/// Object2DCommonの初期化
 	///=====================================================///
-	void Object2DCommon::Initialize() {
+	void Object2DCommon::Initialize(DirectXCommon* dxCommonPtr) {
 
 		//DirectX基底のインスタンスを取得
-		dxCommon_ = DirectXCommon::GetInstance();
+		dxCommon_ = dxCommonPtr;
 
 		//グラフィックパイプラインの生成
 		CreateGraphicsPipeline();

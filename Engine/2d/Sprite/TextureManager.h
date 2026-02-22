@@ -2,7 +2,7 @@
 
 #include "Base/DirectXCommon.h"
 
-#include "Base/SrvManager.h"
+#include "Base/View/SRVManager.h"
 
 #include "DirectXTex.h"
 #include "d3d12.h"
@@ -57,7 +57,7 @@ namespace MyEngine {
 		/// <summary>
 		/// TextureManagerを初期化します。
 		/// </summary>
-		void Initialize();
+		void Initialize(DirectXCommon* dxCommonPtr, SRVManager* srvPtr);
 
 		/// <summary>
 		/// 指定されたファイルパスのテクスチャを読み込み、GPU上に展開します。
@@ -120,10 +120,10 @@ namespace MyEngine {
 	private:
 
 		//DirectX基底
-		DirectXCommon* directXCommon_ = nullptr;
+		DirectXCommon* dxCommon_ = nullptr;
 
 		//SRVマネージャー
-		SrvManager* srvManager_ = nullptr;
+		SRVManager* srvManager_ = nullptr;
 
 		//テクスチャデータリスト
 		std::unordered_map<std::string, TextureData> textureData_;

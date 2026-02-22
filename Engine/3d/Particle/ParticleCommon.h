@@ -11,6 +11,8 @@ namespace MyEngine {
 
 	class DirectXCommon;
 
+	class SRVManager;
+
 	/// <summary>
 	/// パーティクル描画用の共通機能を提供するクラスです。
 	/// </summary>
@@ -43,7 +45,7 @@ namespace MyEngine {
 		/// <summary>
 		/// ParticleCommonの初期化を行います。
 		/// </summary>
-		void Initialize();
+		void Initialize(DirectXCommon* dxCommonPtr, SRVManager* srvPtr);
 
 		/// <summary>
 		/// パーティクルの描画に必要な共通設定を行います。
@@ -73,6 +75,9 @@ namespace MyEngine {
 		//DirectX基底
 		DirectXCommon* dxCommon_ = nullptr;
 
+		//
+		SRVManager* srvManager_ = nullptr;
+
 		//ブレンドモード
 		BlendTypeParticle blendMode_;
 
@@ -92,6 +97,12 @@ namespace MyEngine {
 		/// </summary>
 		/// <returns>DirectX基底</returns>
 		DirectXCommon* GetDxCommon() const { return dxCommon_; }
+
+		/// <summary>
+		/// SRVマネージャーを取得
+		/// </summary>
+		/// <returns>SRVマネージャー</returns>
+		SRVManager* GetSRVManager() const { return srvManager_; }
 
 		/// <summary>
 		/// ブレンドモードの設定

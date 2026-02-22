@@ -1,5 +1,7 @@
 #pragma once
 
+#include <Scene/EngineContext.h>
+
 namespace MyEngine {
 
 	///=====================================================/// 
@@ -20,7 +22,7 @@ namespace MyEngine {
 		/// <summary>
 		/// 初期化
 		/// </summary>
-		virtual void Initialize();
+		virtual void Initialize(EngineContext context);
 
 		/// <summary>
 		/// 終了処理
@@ -42,5 +44,9 @@ namespace MyEngine {
 		/// </summary>
 		virtual void ImGui();
 
+	protected:
+
+		//エンジン総合参照
+		EngineContext context_;
 	};
 }

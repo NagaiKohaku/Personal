@@ -2,9 +2,9 @@
 
 #include "Base/WinApp.h"
 #include "Base/DirectXCommon.h"
-#include "Base/RTVManager.h"
-#include "Base/DSVManager.h"
-#include "Base/SrvManager.h"
+#include "Base/View/RTVManager.h"
+#include "Base/View/DSVManager.h"
+#include "Base/View/SRVManager.h"
 #include "3d/Camera/Camera.h"
 #include <Math/Utility/MakeMatrixMath.h>
 #include "Other/Log.h"
@@ -16,31 +16,26 @@
 namespace MyEngine {
 
 	///=====================================================/// 
-	/// OffScreenのシングルトンインスタンスを取得
-	///=====================================================///
-	OffScreen* OffScreen::GetInstance() {
-		static OffScreen instance;
-		return &instance;
-	}
-
-	///=====================================================/// 
 	/// オフスクリーン描画用のリソースやパイプラインを初期化
 	///=====================================================///
-	void OffScreen::Initialize() {
+	void OffScreen::Initialize(WinApp* winAppPtr, DirectXCommon* dxCommonPtr, RTVManager* rtvPtr, DSVManager* dsvPtr, SRVManager* srvPtr) {
 
 		/// === インスタンスの取得 === ///
 
+		//ウィンドウクラスのインスタンスを取得
+		winApp_ = winAppPtr;
+
 		//DirectX基底のインスタンスを取得
-		dxCommon_ = DirectXCommon::GetInstance();
+		dxCommon_ = dxCommonPtr;
 
 		//RTVマネージャーのインスタンスを取得
-		rtvManager_ = RTVManager::GetInstance();
+		rtvManager_ = rtvPtr;
 
 		//DSVマネージャーのインスタンスを取得
-		dsvManager_ = DSVManager::GetInstance();
+		dsvManager_ = dsvPtr;
 
 		//SRVマネージャーのインスタンスを取得
-		srvManager_ = SrvManager::GetInstance();
+		srvManager_ = srvPtr;
 
 		//CopyImageシェーダーを初期値に設定
 		currentShaderName_ = L"CopyImage";
@@ -50,8 +45,8 @@ namespace MyEngine {
 		//レンダーテクスチャの生成
 		renderTextureResrouce_ = CreateRenderTexture(
 			dxCommon_->GetDevice(),
-			WinApp::kClientWidth,
-			WinApp::kClientHeight,
+			winApp_->GetWindowWidth(),
+			winApp_->GetWindowHeight(),
 			DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,
 			offScreenClearColor_
 		);
@@ -59,8 +54,8 @@ namespace MyEngine {
 		//深度テクスチャの生成
 		depthTextureResource_ = CreateDepthTexture(
 			dxCommon_->GetDevice(),
-			WinApp::kClientWidth,
-			WinApp::kClientHeight,
+			winApp_->GetWindowWidth(),
+			winApp_->GetWindowHeight(),
 			DXGI_FORMAT_D24_UNORM_S8_UINT
 		);
 
@@ -777,6 +772,6 @@ namespace MyEngine {
 	void OffScreen::SetDefaultCamera(Camera* ptr) {
 		camera_ = ptr;
 
-		materialData_->projectionInverse = Inverse4x4(camera_->GetProjectionMatrix());
+		materialData_->projectionInverse = Inverse4x4(camera_->Get3DProjectionMatrix());
 	}
 }

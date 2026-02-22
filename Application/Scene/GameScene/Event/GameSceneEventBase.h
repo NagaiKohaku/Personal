@@ -1,7 +1,6 @@
 #pragma once
 
-#include <3d/Camera/Camera.h>
-
+#include <Scene/EngineContext.h>
 #include <Object/Player/Player.h>
 #include <Object/Camera/FollowCamera.h>
 
@@ -36,9 +35,10 @@ protected:
 public:
 	virtual ~GameSceneEventBase() = default;
 
-	virtual void Start(Player* player, MyEngine::Camera* camera, FollowCamera* followCamera) = 0;   // 開始時1回
+	virtual void Start(MyEngine::EngineContext context, Player* player, FollowCamera* followCamera) = 0;   // 開始時1回
 	virtual void Exit() = 0;    // 終了処理
 	virtual void Update() = 0;  // 毎フレーム
+	virtual void Draw() = 0;
 
 	virtual EventType RequestNextEvent() const { return EventType::NONE; }
 
@@ -48,9 +48,9 @@ protected:
 
 protected:
 
-	Player* player_ = nullptr;
+	MyEngine::EngineContext context_;
 
-	MyEngine::Camera* camera_ = nullptr;
+	Player* player_ = nullptr;
 
 	FollowCamera* followCamera_ = nullptr;
 

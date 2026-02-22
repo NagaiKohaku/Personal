@@ -33,7 +33,7 @@ namespace MyEngine {
 		/// <summary>
 		/// DebugObjectCommonの初期化を行います。
 		/// </summary>
-		void Initialize();
+		void Initialize(DirectXCommon* dxCommonPtr);
 
 		/// <summary>
 		/// デバッグオブジェクトの描画に必要な共通設定を行います。
