@@ -25,11 +25,6 @@ namespace MyEngine {
 	public:
 
 		/// <summary>
-		/// ImGuiManagerのシングルトンインスタンスを取得します。
-		/// </summary>
-		static ImGuiManager* GetInstance();
-
-		/// <summary>
 		/// ImGuiを初期化します。
 		/// </summary>
 		void Initialize(WinApp* winAppPtr, DirectXCommon* dxCommonPtr);

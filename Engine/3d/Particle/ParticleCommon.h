@@ -38,11 +38,6 @@ namespace MyEngine {
 	public:
 
 		/// <summary>
-		/// ParticleCommonのシングルトンインスタンスを取得します。
-		/// </summary>
-		static ParticleCommon* GetInstance();
-
-		/// <summary>
 		/// ParticleCommonの初期化を行います。
 		/// </summary>
 		void Initialize(DirectXCommon* dxCommonPtr, SRVManager* srvPtr);

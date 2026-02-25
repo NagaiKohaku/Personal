@@ -64,13 +64,13 @@ void GameScene::Initialize(MyEngine::EngineContext context) {
 
 	bulletManager_ = std::make_unique<BulletManager>();
 
-	bulletManager_->Initialize(context_.object3DCommon);
+	bulletManager_->Initialize(context_.object3DCommon, context_.debugObjectCommon);
 
 	/// === グラウンドマネージャーの生成 === ///
 
 	groundManager_ = std::make_unique<GroundManager>();
 
-	groundManager_->Initialize(context_.object3DCommon);
+	groundManager_->Initialize(context_.object3DCommon, context_.debugObjectCommon);
 
 	/// === プレイヤーの生成 === ///
 
@@ -82,7 +82,7 @@ void GameScene::Initialize(MyEngine::EngineContext context) {
 
 	/// === 敵の生成 === ///
 
-	enemyManager_->Initialize(context_.object3DCommon, context_.debugObjectCommon, context_.camera, bulletManager_.get(), player_);
+	enemyManager_->Initialize(context_.object3DCommon, context_.particleCommon, context_.debugObjectCommon, context_.camera, bulletManager_.get(), player_);
 
 	/// === 追尾カメラの生成 === ///
 

@@ -21,7 +21,7 @@ public:
 
 	static EmitterManager* GetInstance();
 
-	void Initialize();
+	void Initialize(MyEngine::ParticleCommon* particleCommonPtr);
 
 	void Update();
 
@@ -32,6 +32,8 @@ public:
 	void DeleteEmitter(MyEngine::EmitterGroup* emitterPtr);
 
 private:
+
+	MyEngine::ParticleCommon* particleCommon_;
 
 	MyEngine::Camera* camera_;
 

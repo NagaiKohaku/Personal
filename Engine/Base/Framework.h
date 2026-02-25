@@ -72,11 +72,11 @@ namespace MyEngine {
 
 		std::unique_ptr<DebugObjectCommon> debugObjectCommon_;
 
-		SkyBoxCommon* skyBoxCommon_;
+		std::unique_ptr<SkyBoxCommon> skyBoxCommon_;
 
-		ParticleCommon* particleCommon_;
+		std::unique_ptr<ParticleCommon> particleCommon_;
 
-		ImGuiManager* imGuiManager_;
+		std::unique_ptr<ImGuiManager> imGuiManager_;
 
 		Renderer* renderer_;
 

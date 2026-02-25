@@ -40,18 +40,20 @@ namespace MyEngine {
 	///=====================================================/// 
 	/// パーティクルエミッターを初期化
 	///=====================================================///
-	void ParticleEmitter::Initialize(const std::string& groupName, const std::string& fileName, Camera* camera) {
+	void ParticleEmitter::Initialize(const std::string& groupName, const std::string& fileName, ParticleCommon* particleCommonPtr, Camera* camera) {
 
 		/// === シングルトンインスタンスの取得 === ///
 
+		particleCommon_ = particleCommonPtr;
+
 		//DirectX基底のインスタンスを取得
-		directXCommon_ = ParticleCommon::GetInstance()->GetDxCommon();
+		directXCommon_ = particleCommon_->GetDxCommon();
 
 		//テクスチャマネージャーのインスタンスを取得
 		textureManager_ = TextureManager::GetInstance();
 
 		//SRVマネージャーのインスタンスを取得
-		srvManager_ = ParticleCommon::GetInstance()->GetSRVManager();
+		srvManager_ = particleCommon_->GetSRVManager();
 
 		//カメラ情報の設定
 		defaultCamera_ = camera;
@@ -412,7 +414,7 @@ namespace MyEngine {
 		command = [this]() {
 
 			//パーティクルの描画前処理
-			ParticleCommon::GetInstance()->CommonDrawSetting();
+			particleCommon_->CommonDrawSetting();
 
 			model_->SendMeshDataForGPU();
 

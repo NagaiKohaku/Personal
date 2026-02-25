@@ -60,7 +60,7 @@ namespace MyEngine {
 		/// <summary>
 		/// スカイボックスを初期化します。
 		/// </summary>
-		void Initialize(std::string filePath, Object3DCommon* object3DCommonPtr);
+		void Initialize(std::string filePath, Object3DCommon* object3DCommonPtr, SkyBoxCommon* skyBoxCommonPtr);
 
 		/// <summary>
 		/// スカイボックスの更新処理を行います。

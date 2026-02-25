@@ -6,14 +6,6 @@
 namespace MyEngine {
 
 	///=====================================================/// 
-	/// ImGuiManagerのシングルトンインスタンスを取得
-	///=====================================================///
-	ImGuiManager* ImGuiManager::GetInstance() {
-		static ImGuiManager instance;
-		return &instance;
-	}
-
-	///=====================================================/// 
 	/// ImGuiを初期化
 	///=====================================================///
 	void ImGuiManager::Initialize(WinApp* winAppPtr, DirectXCommon* dxCommonPtr) {

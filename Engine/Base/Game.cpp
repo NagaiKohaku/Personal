@@ -16,10 +16,17 @@ namespace MyEngine {
 		objectManager_->Initialize();
 
 		camera_ = std::make_unique<Camera>();
-		camera_->Initialize(static_cast<float>(winApp_->GetWindowWidth()), static_cast<float>(winApp_->GetWindowHeight()), offScreen_.get(), object3DCommon_.get(), debugObjectCommon_.get());
+		camera_->Initialize(
+			static_cast<float>(winApp_->GetWindowWidth()),
+			static_cast<float>(winApp_->GetWindowHeight()),
+			offScreen_.get(),
+			object3DCommon_.get(),
+			debugObjectCommon_.get(),
+			skyBoxCommon_.get()
+		);
 
 		emitterManager_ = EmitterManager::GetInstance();
-		emitterManager_->Initialize();
+		emitterManager_->Initialize(particleCommon_.get());
 
 		uiManager_ = UIManager::GetInstance();
 		uiManager_->Initialize(object2DCommon_.get(), camera_.get());
@@ -30,6 +37,8 @@ namespace MyEngine {
 		engineContext_.offScreen = offScreen_.get();
 		engineContext_.object2DCommon = object2DCommon_.get();
 		engineContext_.object3DCommon = object3DCommon_.get();
+		engineContext_.particleCommon = particleCommon_.get();
+		engineContext_.debugObjectCommon = debugObjectCommon_.get();
 		engineContext_.camera = camera_.get();
 		engineContext_.audio = audio_;
 		engineContext_.input = input_;

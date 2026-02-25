@@ -10,14 +10,6 @@
 namespace MyEngine {
 
 	///=====================================================/// 
-	/// ParticleCommonのシングルトンインスタンスを取得
-	///=====================================================///
-	ParticleCommon* ParticleCommon::GetInstance() {
-		static ParticleCommon instance;
-		return &instance;
-	}
-
-	///=====================================================/// 
 	/// ParticleCommonの初期化
 	///=====================================================///
 	void ParticleCommon::Initialize(DirectXCommon* dxCommonPtr, SRVManager* srvPtr) {

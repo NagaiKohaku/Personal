@@ -13,7 +13,9 @@ namespace MyEngine {
 	///=====================================================/// 
 	/// パーティクルエミッターグループの初期化
 	///=====================================================///
-	void EmitterGroup::Initialize(Camera* ptr) {
+	void EmitterGroup::Initialize(ParticleCommon* particleCommonPtr, Camera* ptr) {
+
+		particleCommon_ = particleCommonPtr;
 
 		//カメラのポインタを設定
 		camera_ = ptr;
@@ -184,7 +186,7 @@ namespace MyEngine {
 				newEmitter->SetTextureList(textureList_);
 
 				//エミッターの初期化
-				newEmitter->Initialize(name_, fileName, camera_);
+				newEmitter->Initialize(name_, fileName, particleCommon_, camera_);
 
 				//リストに登録
 				particleEmitters_.push_back(std::move(newEmitter));
@@ -289,7 +291,7 @@ namespace MyEngine {
 		newEmitter->SetTextureList(textureList_);
 
 		//エミッターの初期化
-		newEmitter->Initialize("defaultGroup", "default", camera_);
+		newEmitter->Initialize("defaultGroup", "default", particleCommon_, camera_);
 
 		//リストに登録
 		particleEmitters_.push_back(std::move(newEmitter));

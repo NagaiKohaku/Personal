@@ -84,15 +84,15 @@ namespace MyEngine {
 		debugObjectCommon_->Initialize(dxCommon_.get());
 
 		//スカイボックス基底
-		skyBoxCommon_ = SkyBoxCommon::GetInstance();
+		skyBoxCommon_ = std::make_unique<SkyBoxCommon>();
 		skyBoxCommon_->Initialize(dxCommon_.get());
 
 		//パーティクル基底
-		particleCommon_ = ParticleCommon::GetInstance();
+		particleCommon_ = std::make_unique<ParticleCommon>();
 		particleCommon_->Initialize(dxCommon_.get(), srvManager_.get());
 
 		//ImGuiマネージャー
-		imGuiManager_ = ImGuiManager::GetInstance();
+		imGuiManager_ = std::make_unique<ImGuiManager>();
 		imGuiManager_->Initialize(winApp_.get(), dxCommon_.get());
 
 		//入力

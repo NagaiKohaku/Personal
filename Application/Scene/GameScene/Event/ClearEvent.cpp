@@ -30,7 +30,7 @@ void ClearEvent::Start(MyEngine::EngineContext context, Player* player, FollowCa
 	//衝撃波エミッター(左)
 	shockWaveLeftEmitter_ = std::make_unique<EmitterGroup>();
 
-	shockWaveLeftEmitter_->Initialize(context_.camera);
+	shockWaveLeftEmitter_->Initialize(context_.particleCommon, context_.camera);
 
 	shockWaveLeftEmitter_->LoadEmitter("ShockWaveLeft");
 
@@ -38,7 +38,7 @@ void ClearEvent::Start(MyEngine::EngineContext context, Player* player, FollowCa
 
 	shockWaveRightEmitter_ = std::make_unique<EmitterGroup>();
 
-	shockWaveRightEmitter_->Initialize(context_.camera);
+	shockWaveRightEmitter_->Initialize(context_.particleCommon, context_.camera);
 
 	shockWaveRightEmitter_->LoadEmitter("ShockWaveRight");
 

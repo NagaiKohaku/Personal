@@ -21,7 +21,7 @@ namespace MyEngine {
 		/// <summary>
 		/// パーティクルエミッターグループの初期化を行います。
 		/// </summary>
-		void Initialize(Camera* ptr);
+		void Initialize(ParticleCommon* particleCommonPtr, Camera* ptr);
 
 		/// <summary>
 		/// パーティクルエミッターグループの更新処理を行います。
@@ -102,6 +102,8 @@ namespace MyEngine {
 		/// メンバ変数
 		///-------------------------------------------///
 	private:
+
+		ParticleCommon* particleCommon_;
 
 		//カメラ
 		Camera* camera_;

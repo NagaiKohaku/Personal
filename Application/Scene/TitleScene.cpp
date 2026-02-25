@@ -51,7 +51,7 @@ void TitleScene::Initialize(MyEngine::EngineContext context) {
 	//グラウンドマネージャーの生成
 	groundManager_ = std::make_unique<GroundManager>();
 
-	groundManager_->Initialize(context_.object3DCommon);
+	groundManager_->Initialize(context_.object3DCommon, context_.debugObjectCommon);
 
 	//プレイヤーの生成
 	ObjectManager::GetInstance()->SpawnPlayer();
@@ -75,14 +75,14 @@ void TitleScene::Initialize(MyEngine::EngineContext context) {
 	//衝撃波エミッター(左)
 	shockWaveLeftEmitter_ = std::make_unique<EmitterGroup>();
 
-	shockWaveLeftEmitter_->Initialize(context_.camera);
+	shockWaveLeftEmitter_->Initialize(context_.particleCommon, context_.camera);
 
 	shockWaveLeftEmitter_->LoadEmitter("ShockWaveLeft");
 
 	//衝撃波エミッター(右)
 	shockWaveRightEmitter_ = std::make_unique<EmitterGroup>();
 
-	shockWaveRightEmitter_->Initialize(context_.camera);
+	shockWaveRightEmitter_->Initialize(context_.particleCommon, context_.camera);
 
 	shockWaveRightEmitter_->LoadEmitter("ShockWaveRight");
 

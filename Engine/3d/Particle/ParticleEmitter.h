@@ -163,7 +163,7 @@ namespace MyEngine {
 		/// <summary>
 		/// パーティクルエミッターを初期化します。
 		/// </summary>
-		void Initialize(const std::string& groupName, const std::string& fileName, Camera* camera);
+		void Initialize(const std::string& groupName, const std::string& fileName, ParticleCommon* particleCommonPtr, Camera* camera);
 
 		/// <summary>
 		/// パーティクルエミッターの更新処理を行います。
@@ -280,6 +280,8 @@ namespace MyEngine {
 	private:
 
 		/// === 他クラスからの借り物 === ///
+
+		ParticleCommon* particleCommon_;
 
 		//DirectX基底
 		DirectXCommon* directXCommon_;

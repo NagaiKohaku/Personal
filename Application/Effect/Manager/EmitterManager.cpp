@@ -10,8 +10,8 @@ EmitterManager* EmitterManager::GetInstance() {
 	return &instance;
 }
 
-void EmitterManager::Initialize() {
-
+void EmitterManager::Initialize(ParticleCommon* particleCommonPtr) {
+	particleCommon_ = particleCommonPtr;
 }
 
 void EmitterManager::Update() {
@@ -41,7 +41,7 @@ EmitterGroup* EmitterManager::CreateEmitter(const std::string& emitterName, cons
 
 	newObject->name = emitterName;
 	newObject->object = std::make_unique<EmitterGroup>();
-	newObject->object->Initialize(camera_);
+	newObject->object->Initialize(particleCommon_, camera_);
 	newObject->object->LoadEmitter(fileName);
 
 	if (parent != nullptr) {

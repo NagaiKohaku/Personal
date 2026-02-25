@@ -31,7 +31,7 @@ public:
 	/// <param name="cameraPtr">追従や位置参照に使用するカメラのポインタ。</param>
 	/// <param name="bulletPtr">敵が発射する弾を管理するバレットマネージャのポインタ。</param>
 	/// <param name="playerPtr">敵が追跡・攻撃対象とするプレイヤーのポインタ。</param>
-	void Initialize(MyEngine::Object3DCommon* object3DCommonPtr, MyEngine::DebugObjectCommon* debugObjectCommonPtr, MyEngine::Camera* cameraPtr, BulletManager* bulletPtr, Player* playerPtr);
+	void Initialize(MyEngine::Object3DCommon* object3DCommonPtr, MyEngine::ParticleCommon* particleCommonPtr, MyEngine::DebugObjectCommon* debugObjectCommonPtr, MyEngine::Camera* cameraPtr, BulletManager* bulletPtr, Player* playerPtr);
 
 	/// <summary>
 	/// 敵の生成処理および各敵オブジェクトの更新処理を行います。
@@ -82,6 +82,8 @@ private:
 private:
 
 	MyEngine::Object3DCommon* object3DCommon_;
+
+	MyEngine::ParticleCommon* particleCommon_;
 
 	MyEngine::DebugObjectCommon* debugObjectCommon_;
 
