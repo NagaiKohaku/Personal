@@ -34,7 +34,7 @@ public:
 
 	static UIManager* GetInstance();
 
-	void Initialize(MyEngine::Camera* cameraPtr);
+	void Initialize(MyEngine::Object2DCommon* object2DCommonPtr, MyEngine::Camera* cameraPtr);
 
 	void Update();
 
@@ -69,6 +69,8 @@ private:
 	void SaveUIState(const std::string& fileName);
 
 private:
+
+	MyEngine::Object2DCommon* object2DCommon_;
 
 	//カメラ
 	MyEngine::Camera* camera_;

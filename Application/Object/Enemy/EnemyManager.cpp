@@ -17,10 +17,14 @@ using namespace MyEngine;
 ///=====================================================/// 
 /// 敵の生成管理に必要な各種パラメータや参照ポインタを初期化
 ///=====================================================///
-void EnemyManager::Initialize(Camera* cameraPtr, BulletManager* bulletPtr, Player* playerPtr) {
+void EnemyManager::Initialize(Object3DCommon* object3DCommonPtr, DebugObjectCommon* debugObjectCommonPtr, Camera* cameraPtr, BulletManager* bulletPtr, Player* playerPtr) {
 
 	//レベルデータローダーのインスタンスを取得
 	levelDataLoader_ = LevelDataLoader::GetInstance();
+
+	object3DCommon_ = object3DCommonPtr;
+
+	debugObjectCommon_ = debugObjectCommonPtr;
 
 	//カメラポインタを取得
 	camera_ = cameraPtr;
@@ -182,7 +186,7 @@ void EnemyManager::Spawn(Vector3 entryPos, Vector3 standbyPos, ObjectData object
 	enemies_.push_back(ObjectManager::GetInstance()->GetEnemies().back());
 
 	//初期化
-	enemies_.back()->Initialize(camera_, bulletManager_, player_, objectData);
+	enemies_.back()->Initialize(object3DCommon_, debugObjectCommon_, camera_, bulletManager_, player_, objectData);
 
 	//初期座標を設定
 	enemies_.back()->SetPosition(entryPos);

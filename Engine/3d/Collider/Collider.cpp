@@ -9,7 +9,7 @@ namespace MyEngine {
 	///=====================================================/// 
 	/// Collider を初期化
 	///=====================================================///
-	void Collider::Initialize(WorldTransform* parent) {
+	void Collider::Initialize(DebugObjectCommon* debugObjectCommonPtr, WorldTransform* parent) {
 
 		//ワールドトランスフォームの初期化
 		worldTransform_.Initialize();
@@ -48,7 +48,7 @@ namespace MyEngine {
 		debugObject_ = std::make_unique<DebugObject3D>();
 
 		//デバッグオブジェクトの初期化
-		debugObject_->Initialize();
+		debugObject_->Initialize(debugObjectCommonPtr);
 
 	}
 

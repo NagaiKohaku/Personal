@@ -3,14 +3,6 @@
 namespace MyEngine {
 
 	///=====================================================/// 
-	/// ModelCommonのシングルトンインスタンスを取得
-	///=====================================================///
-	ModelCommon* ModelCommon::GetInstance() {
-		static ModelCommon instance;
-		return &instance;
-	}
-
-	///=====================================================/// 
 	/// ModelCommonの初期化
 	///=====================================================///
 	void ModelCommon::Initialize(DirectXCommon* dxCommonPtr) {

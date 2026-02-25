@@ -22,7 +22,7 @@ public:
 	/// </summary>
 	/// <param name="pos">建物の配置位置を指定します。</param>
 	/// <param name="scale">建物のスケール（大きさ）を指定します。</param>
-	void Initialize(MyEngine::Vector3 pos, MyEngine::Vector3 scale);
+	void Initialize(MyEngine::Object3DCommon* object3DCommonPtr, MyEngine::DebugObjectCommon* debugObjectCommonPtr, MyEngine::Vector3 pos, MyEngine::Vector3 scale);
 
 	/// <summary>
 	/// 建物オブジェクトの更新処理を行います。

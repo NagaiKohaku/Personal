@@ -13,10 +13,10 @@ namespace MyEngine {
 	///=====================================================/// 
 	/// モデルマネージャを初期化し、基本的なプリミティブモデルを生成
 	///=====================================================///
-	void ModelManager::Initialize() {
+	void ModelManager::Initialize(ModelCommon* modelCommonPtr) {
 
 		//モデル基底のインスタンスを取得
-		modelCommon_ = ModelCommon::GetInstance();
+		modelCommon_ = modelCommonPtr;
 
 		/// === 初期モデルの生成 === ///
 
@@ -53,7 +53,7 @@ namespace MyEngine {
 		std::unique_ptr<Model> model = std::make_unique<Model>();
 
 		//モデルの読み込み
-		model->Initialize("Resource/Model/" + modelFileName, modelFileName + ".obj");
+		model->Initialize("Resource/Model/" + modelFileName, modelFileName + ".obj", modelCommon_);
 
 		//モデル名とモデルデータをコンテナに登録
 		models_.insert(std::make_pair(modelName, std::move(model)));
@@ -75,7 +75,7 @@ namespace MyEngine {
 		std::unique_ptr<Model> model = std::make_unique<Model>();
 
 		//モデルの読み込み
-		model->Initialize("Resource/Model/" + modelDirectory, modelFileName + ".obj");
+		model->Initialize("Resource/Model/" + modelDirectory, modelFileName + ".obj", modelCommon_);
 
 		//モデル名とモデルデータをコンテナに登録
 		models_.insert(std::make_pair(modelName, std::move(model)));
@@ -96,7 +96,7 @@ namespace MyEngine {
 		std::unique_ptr<Model> model = std::make_unique<Model>();
 
 		//メッシュモデルの初期化
-		model->Initialize(type, textureFilePath);
+		model->Initialize(type, textureFilePath, modelCommon_);
 
 		//モデル名とモデルデータをコンテナに登録
 		models_.insert(std::make_pair(modelName, std::move(model)));
@@ -120,7 +120,7 @@ namespace MyEngine {
 			std::unique_ptr<Model> newModel = std::make_unique<Model>();
 
 			//初期化
-			newModel->Initialize(meshType, model);
+			newModel->Initialize(meshType, model, modelCommon_);
 
 			//読み込みモデルを戻り値としてreturn
 			return std::move(newModel);

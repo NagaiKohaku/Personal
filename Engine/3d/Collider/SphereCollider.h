@@ -22,7 +22,7 @@ namespace MyEngine {
 		/// SphereCollider を初期化します。
 		/// </summary>
 		/// <param name="parent">コライダーの親ワールドトランスフォーム</param>
-		void Initialize(WorldTransform* parent) override;
+		void Initialize(DebugObjectCommon* debugObjectCommonPtr, WorldTransform* parent) override;
 
 		/// <summary>
 		/// SphereCollider を毎フレーム更新します。

@@ -17,7 +17,9 @@ UIManager* UIManager::GetInstance() {
 	return &instance;
 }
 
-void UIManager::Initialize(Camera* cameraPtr) {
+void UIManager::Initialize(Object2DCommon* object2DCommonPtr, Camera* cameraPtr) {
+
+	object2DCommon_ = object2DCommonPtr;
 
 	camera_ = cameraPtr;
 
@@ -259,7 +261,7 @@ void UIManager::CreateUI(const std::string& groupName, const std::string uiName,
 
 	newUIObject.object = std::make_unique<Object2D>();
 
-	newUIObject.object->Initialize(camera_);
+	newUIObject.object->Initialize(object2DCommon_, camera_);
 
 	newUIObject.object->SetSprite(spriteName);
 

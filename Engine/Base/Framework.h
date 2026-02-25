@@ -48,7 +48,7 @@ namespace MyEngine {
 
 		virtual bool IsEndRequest() { return endRequest_; }
 
-	private:
+	protected:
 
 		std::unique_ptr<WinApp> winApp_;
 
@@ -62,15 +62,15 @@ namespace MyEngine {
 
 		std::unique_ptr<OffScreen> offScreen_;
 
-		SpriteCommon* spriteCommon_;
+		std::unique_ptr<SpriteCommon> spriteCommon_;
 
-		ModelCommon* modelCommon_;
+		std::unique_ptr<ModelCommon> modelCommon_;
 
-		Object2DCommon* object2DCommon_;
+		std::unique_ptr<Object2DCommon> object2DCommon_;
 
-		Object3DCommon* object3DCommon_;
+		std::unique_ptr<Object3DCommon> object3DCommon_;
 
-		DebugObjectCommon* debugObjectCommon_;
+		std::unique_ptr<DebugObjectCommon> debugObjectCommon_;
 
 		SkyBoxCommon* skyBoxCommon_;
 
@@ -87,15 +87,5 @@ namespace MyEngine {
 	private:
 
 		bool endRequest_ = false;
-
-	public:
-
-		WinApp* GetWinApp() const { return winApp_.get(); }
-
-		OffScreen* GetOffScreen() const { return offScreen_.get(); }
-
-		Audio* GetAudio() const { return audio_; }
-
-		Input* GetInput() const { return input_; }
 	};
 }

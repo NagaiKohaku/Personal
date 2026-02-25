@@ -14,7 +14,7 @@ using namespace MyEngine;
 ///=====================================================/// 
 /// ロックオンシステムを初期化
 ///=====================================================///
-void LockOn::Initialize(Camera* cameraPtr, Player* playerPtr) {
+void LockOn::Initialize(Object2DCommon* object2DCommonPtr, Object3DCommon* object3DCommonPtr, DebugObjectCommon* debugObjectCommonPtr, Camera* cameraPtr, Player* playerPtr) {
 
 	//引数の取得
 	camera_ = cameraPtr;
@@ -24,7 +24,7 @@ void LockOn::Initialize(Camera* cameraPtr, Player* playerPtr) {
 	//メインレティクルの生成
 	mainReticle_ = std::make_unique<Reticle>();
 
-	mainReticle_->Initialize(camera_);
+	mainReticle_->Initialize(object2DCommonPtr, object3DCommonPtr, debugObjectCommonPtr, camera_);
 
 	//プレイヤーからのオフセットを設定
 	offset_ = { 0.0f,0.0f,30.0f };
@@ -49,7 +49,7 @@ void LockOn::Initialize(Camera* cameraPtr, Player* playerPtr) {
 		//レティクルの生成
 		lockOnReticle->reticle = std::make_unique<Reticle>();
 
-		lockOnReticle->reticle->Initialize(camera_);
+		lockOnReticle->reticle->Initialize(object2DCommonPtr, object3DCommonPtr, debugObjectCommonPtr, camera_);
 
 		//ターゲットの初期化
 		lockOnReticle->targetEnemy = nullptr;

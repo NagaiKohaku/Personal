@@ -16,7 +16,7 @@ namespace MyEngine {
 	///=====================================================/// 
 	/// スカイボックスを初期化
 	///=====================================================///
-	void SkyBox::Initialize(std::string filePath) {
+	void SkyBox::Initialize(std::string filePath, Object3DCommon* object3DCommonPtr) {
 
 		/// === シングルトンインスタンスの取得 === ///
 
@@ -198,7 +198,7 @@ namespace MyEngine {
 		//テクスチャの読み込み
 		TextureManager::GetInstance()->LoadCubeTexture(textureFilePath_);
 
-		Object3DCommon::GetInstance()->SetTextureCubeFilePath(textureFilePath_);
+		object3DCommonPtr->SetTextureCubeFilePath(textureFilePath_);
 
 		/// === 座標変換行列リソースの生成 === ///
 

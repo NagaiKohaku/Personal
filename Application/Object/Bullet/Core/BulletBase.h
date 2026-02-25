@@ -23,7 +23,7 @@ public:
 	/// </summary>
 	/// <param name="pos">初期座標</param>
 	/// <param name="direction">発射方向</param>
-	void Initialize(MyEngine::Vector3 pos, MyEngine::Vector3 direction);
+	void Initialize(MyEngine::Object3DCommon* object3DCommonPtr, MyEngine::DebugObjectCommon* debugObjectCommonPtr, MyEngine::Vector3 pos, MyEngine::Vector3 direction);
 
 	/// <summary>
 	/// 更新

@@ -14,10 +14,10 @@ namespace MyEngine {
 	///=====================================================///
 	/// 3Dデバッグオブジェクトを初期化
 	///=====================================================///
-	void DebugObject3D::Initialize() {
+	void DebugObject3D::Initialize(DebugObjectCommon* debugObjectCommonPtr) {
 
 		//3Dオブジェクト基底のインスタンスを取得
-		debugCommon_ = DebugObjectCommon::GetInstance();
+		debugCommon_ = debugObjectCommonPtr;
 
 		/// === 座標変換行列リソースを作成 === ///
 

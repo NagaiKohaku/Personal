@@ -24,7 +24,7 @@ namespace MyEngine {
 		/// <summary>
 		/// SpriteManagerを初期化します。
 		/// </summary>
-		void Initialize();
+		void Initialize(SpriteCommon* spriteCommonPtr);
 
 		/// <summary>
 		/// 指定した名前のスプライトを検索し、未登録であれば読み込みます。

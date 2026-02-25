@@ -26,7 +26,7 @@ namespace MyEngine {
 		/// <summary>
 		/// モデルマネージャを初期化し、基本的なプリミティブモデルを生成します。
 		/// </summary>
-		void Initialize();
+		void Initialize(ModelCommon* modelCommonPtr);
 
 		/// <summary>
 		/// 指定されたモデル名とファイル名からモデルを読み込み、管理コンテナに登録します。

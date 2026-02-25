@@ -14,10 +14,10 @@ namespace MyEngine {
 	///=====================================================/// 
 	/// 指定した方向にデバッグラインを初期化
 	///=====================================================///
-	void DebugLine::Initialize(Vector3 direction, Vector4 color) {
+	void DebugLine::Initialize(DebugObjectCommon* debugObjectCommonPtr, Vector3 direction, Vector4 color) {
 
 		//デバッグオブジェクト基底のインスタンスを取得
-		debugCommon_ = DebugObjectCommon::GetInstance();
+		debugCommon_ = debugObjectCommonPtr;
 
 		//カメラ情報を取得
 		camera_ = debugCommon_->GetCamera();
@@ -95,10 +95,10 @@ namespace MyEngine {
 	///=====================================================/// 
 	/// 指定した始点と終点の位置にデバッグラインを初期化
 	///=====================================================///
-	void DebugLine::Initialize(Vector3 start, Vector3 end, Vector4 color) {
+	void DebugLine::Initialize(DebugObjectCommon* debugObjectCommonPtr, Vector3 start, Vector3 end, Vector4 color) {
 
 		//デバッグオブジェクト基底のインスタンスを取得
-		debugCommon_ = DebugObjectCommon::GetInstance();
+		debugCommon_ = debugObjectCommonPtr;
 
 		//カメラ情報を取得
 		camera_ = debugCommon_->GetCamera();

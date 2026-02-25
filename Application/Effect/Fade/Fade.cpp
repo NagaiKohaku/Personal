@@ -19,7 +19,7 @@ Fade* Fade::GetInstance() {
 ///=====================================================/// 
 /// フェード処理に必要なスプライトやリソースを初期化
 ///=====================================================///
-void Fade::Initialize(WinApp* winAppPtr, MyEngine::Camera* cameraPtr) {
+void Fade::Initialize(WinApp* winAppPtr, Object2DCommon* object2DCommonPtr, Camera* cameraPtr) {
 
 	winApp_ = winAppPtr;
 	camera_ = cameraPtr;
@@ -29,11 +29,11 @@ void Fade::Initialize(WinApp* winAppPtr, MyEngine::Camera* cameraPtr) {
 	//リングスプライトの生成
 	for (int i = 0; i < 3; i++) {
 
-		CreateRingSprite();
+		CreateRingSprite(object2DCommonPtr);
 	}
 
 	//円形スプライトの生成
-	CreateCircleSprite();
+	CreateCircleSprite(object2DCommonPtr);
 }
 
 ///=====================================================/// 
@@ -224,7 +224,7 @@ void Fade::FadeOutUpdate() {
 ///=====================================================/// 
 /// リング形状のスプライトを生成し、フェード用の管理リストに追加
 ///=====================================================///
-void Fade::CreateRingSprite() {
+void Fade::CreateRingSprite(Object2DCommon* object2DCommonPtr) {
 
 	//新しいオブジェクトを生成
 	std::unique_ptr<Object2D> newObject;
@@ -232,7 +232,7 @@ void Fade::CreateRingSprite() {
 	//オブジェクトを生成してパラメータの初期化をする
 	newObject = std::make_unique<Object2D>();
 
-	newObject->Initialize(camera_);
+	newObject->Initialize(object2DCommonPtr, camera_);
 
 	//リングスプライトをセット
 	newObject->SetSprite("BigRing");
@@ -272,7 +272,7 @@ void Fade::CreateRingSprite() {
 ///=====================================================/// 
 /// 円形のスプライトを生成し、フェード用の管理リストに追加
 ///=====================================================///
-void Fade::CreateCircleSprite() {
+void Fade::CreateCircleSprite(Object2DCommon* object2DCommonPtr) {
 
 	//新しいオブジェクトを生成
 	std::unique_ptr<Object2D> newObject;
@@ -280,7 +280,7 @@ void Fade::CreateCircleSprite() {
 	//オブジェクトを生成してパラメータの初期化をする
 	newObject = std::make_unique<Object2D>();
 
-	newObject->Initialize(camera_);
+	newObject->Initialize(object2DCommonPtr, camera_);
 
 	//円形スプライトをセット
 	newObject->SetSprite("BigCircle");

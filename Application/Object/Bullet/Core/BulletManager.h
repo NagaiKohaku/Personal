@@ -31,7 +31,7 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize();
+	void Initialize(MyEngine::Object3DCommon* object3DCommonPtr, MyEngine::DebugObjectCommon* debugObjectCommonPtr);
 
 	/// <summary>
 	/// 登録されているすべての弾を更新します。
@@ -72,6 +72,10 @@ private:
 	/// メンバ変数
 	///-------------------------------------------///
 private:
+
+	MyEngine::Object3DCommon* object3DCommon_;
+
+	MyEngine::DebugObjectCommon* debugObjectCommon_;
 
 	//弾リスト
 	std::list<std::unique_ptr<BulletBase>> bullets_;

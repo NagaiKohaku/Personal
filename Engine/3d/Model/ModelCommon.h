@@ -15,11 +15,6 @@ namespace MyEngine {
 	public:
 
 		/// <summary>
-		/// ModelCommonのシングルトンインスタンスを取得します。
-		/// </summary>
-		static ModelCommon* GetInstance();
-
-		/// <summary>
 		/// ModelCommonの初期化を行います。
 		/// </summary>
 		void Initialize(DirectXCommon* dxCommonPtr);

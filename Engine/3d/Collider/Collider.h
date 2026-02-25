@@ -46,7 +46,7 @@ namespace MyEngine {
 		/// Collider を初期化します。
 		/// </summary>
 		/// <param name="parent">このコライダーの親となるワールドトランスフォーム</param>
-		virtual void Initialize(WorldTransform* parent);
+		virtual void Initialize(DebugObjectCommon* debugObjectCommonPtr, WorldTransform* parent);
 
 		/// <summary>
 		/// Collider の状態を毎フレーム更新します。

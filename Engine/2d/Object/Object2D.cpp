@@ -16,14 +16,14 @@ namespace MyEngine {
 	///=====================================================/// 
 	/// Object2Dの初期化
 	///=====================================================///
-	void Object2D::Initialize(Camera* cameraPtr) {
+	void Object2D::Initialize(Object2DCommon* object2DCommonPtr, Camera* cameraPtr) {
 
 		/// === インスタンスの取得 === ///
 
 		camera_ = cameraPtr;
 
 		//2Dオブジェクト基底のインスタンスを取得
-		object2DCommon_ = Object2DCommon::GetInstance();
+		object2DCommon_ = object2DCommonPtr;
 
 		/// === 座標変換行列リソースを作成 === ///
 
@@ -100,7 +100,7 @@ namespace MyEngine {
 		func = [this]() {
 
 			//2Dオブジェクトの描画前処理
-			Object2DCommon::GetInstance()->CommonDrawSetting();
+			object2DCommon_->CommonDrawSetting();
 
 			//座標変換行列データの設定
 			object2DCommon_->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(1, WVPResource_.Get()->GetGPUVirtualAddress());

@@ -56,7 +56,7 @@ public:
 	/// <summary>
 	/// プレイヤーを初期化します。
 	/// </summary>
-	void Initialize(MyEngine::Camera* cameraPtr, BulletManager* bulletPtr, bool isMoveActive);
+	void Initialize(MyEngine::Object2DCommon* object2DCommonPtr, MyEngine::Object3DCommon* object3DCommonPtr, MyEngine::DebugObjectCommon* debugObjectCommonPtr, MyEngine::Camera* cameraPtr, BulletManager* bulletPtr, bool isMoveActive);
 
 	/// <summary>
 	/// プレイヤーの状態を更新します。

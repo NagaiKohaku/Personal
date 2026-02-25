@@ -36,7 +36,7 @@ Player::~Player() {
 ///=====================================================/// 
 /// プレイヤーを初期化
 ///=====================================================///
-void Player::Initialize(Camera* cameraPtr, BulletManager* bulletPtr, bool isMoveActive) {
+void Player::Initialize(Object2DCommon* object2DCommonPtr, Object3DCommon* object3DCommonPtr, DebugObjectCommon* debugObjectCommonPtr, Camera* cameraPtr, BulletManager* bulletPtr, bool isMoveActive) {
 
 	//カメラポインタを取得
 	camera_ = cameraPtr;
@@ -55,19 +55,19 @@ void Player::Initialize(Camera* cameraPtr, BulletManager* bulletPtr, bool isMove
 	//コアオブジェクトの生成
 	core_ = std::make_unique<Object3D>();
 
-	core_->Initialize(objectData_[0]);
+	core_->Initialize(object3DCommonPtr, debugObjectCommonPtr, objectData_[0]);
 
 	//右ウィングオブジェクトの生成
 	rightWing_ = std::make_unique<Object3D>();
 
-	rightWing_->Initialize(objectData_[1]);
+	rightWing_->Initialize(object3DCommonPtr, debugObjectCommonPtr, objectData_[1]);
 
 	rightWing_->GetWorldTransform().SetParent(&core_->GetWorldTransform());
 
 	//左ウィングオブジェクトの生成
 	leftWing_ = std::make_unique<Object3D>();
 
-	leftWing_->Initialize(objectData_[2]);
+	leftWing_->Initialize(object3DCommonPtr, debugObjectCommonPtr, objectData_[2]);
 
 	leftWing_->GetWorldTransform().SetParent(&core_->GetWorldTransform());
 
@@ -88,7 +88,7 @@ void Player::Initialize(Camera* cameraPtr, BulletManager* bulletPtr, bool isMove
 	//影オブジェクトの生成
 	shadow_ = std::make_unique<Shadow>();
 
-	shadow_->Initialize();
+	shadow_->Initialize(object3DCommonPtr, debugObjectCommonPtr);
 
 	/// === コライダーの生成 === ///
 
@@ -96,7 +96,7 @@ void Player::Initialize(Camera* cameraPtr, BulletManager* bulletPtr, bool isMove
 	collider_ = std::make_unique<SphereCollider>();
 
 	//初期化
-	collider_->Initialize(&core_->GetWorldTransform());
+	collider_->Initialize(debugObjectCommonPtr, &core_->GetWorldTransform());
 
 	//タグの設定
 	collider_->SetTag(Collider::Tag::PLAYER);
@@ -110,7 +110,7 @@ void Player::Initialize(Camera* cameraPtr, BulletManager* bulletPtr, bool isMove
 	lockOn_ = std::make_unique<LockOn>();
 
 	//初期化
-	lockOn_->Initialize(camera_, this);
+	lockOn_->Initialize(object2DCommonPtr, object3DCommonPtr, debugObjectCommonPtr, camera_, this);
 
 	/// === 移動ステートの初期化 === ///
 

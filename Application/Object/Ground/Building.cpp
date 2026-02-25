@@ -7,12 +7,12 @@ using namespace MyEngine;
 ///=====================================================/// 
 /// 建物オブジェクトを初期化
 ///=====================================================///
-void Building::Initialize(Vector3 pos, Vector3 scale) {
+void Building::Initialize(Object3DCommon* object3DCommonPtr, DebugObjectCommon* debugObjectCommonPtr, Vector3 pos, Vector3 scale) {
 
 	//建物オブジェクト生成
 	object_ = std::make_unique<Object3D>();
 
-	object_->Initialize();
+	object_->Initialize(object3DCommonPtr, debugObjectCommonPtr);
 
 	object_->SetModel("Cube");
 

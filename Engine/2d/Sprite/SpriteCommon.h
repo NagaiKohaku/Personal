@@ -19,11 +19,6 @@ namespace MyEngine {
 	public:
 
 		/// <summary>
-		/// SpriteCommonのシングルトンインスタンスを取得します。
-		/// </summary>
-		static SpriteCommon* GetInstance();
-
-		/// <summary>
 		/// SpriteCommonを初期化します。
 		/// </summary>
 		void Initialize(DirectXCommon* dxCommonPtr);

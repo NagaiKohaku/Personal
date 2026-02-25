@@ -5,6 +5,9 @@
 #include <Math/Matrix/Matrix4x4.h>
 #include <Math/Transform/WorldTransform.h>
 
+#include <3d/Object/Object3DCommon.h>
+#include <3d/Object/DebugObjectCommon.h>
+
 namespace MyEngine {
 
 	/// <summary>
@@ -20,7 +23,7 @@ namespace MyEngine {
 		/// <summary>
 		/// カメラの各種パラメータを初期化します。
 		/// </summary>
-		void Initialize(float windowWidth, float windowHeight, OffScreen* offScreenPtr);
+		void Initialize(float windowWidth, float windowHeight, OffScreen* offScreenPtr, Object3DCommon* object3DCommonPtr, DebugObjectCommon* debugObjectCommonPtr);
 
 		/// <summary>
 		/// カメラの状態を更新します。

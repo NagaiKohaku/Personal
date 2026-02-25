@@ -51,7 +51,7 @@ public:
 	/// <summary>
 	/// フェード処理に必要なスプライトやリソースを初期化する関数です。
 	/// </summary>
-	void Initialize(MyEngine::WinApp* winAppPtr, MyEngine::Camera* cameraPtr);
+	void Initialize(MyEngine::WinApp* winAppPtr, MyEngine::Object2DCommon* object2DCommonPtr, MyEngine::Camera* cameraPtr);
 
 	/// <summary>
 	/// フェード処理の状態を毎フレーム更新する関数です。
@@ -91,12 +91,12 @@ private:
 	/// <summary>
 	/// リング形状のスプライトを生成し、フェード用の管理リストに追加します。
 	/// </summary>
-	void CreateRingSprite();
+	void CreateRingSprite(MyEngine::Object2DCommon* object2DCommonPtr);
 
 	/// <summary>
 	/// 円形のスプライトを生成し、フェード用の管理リストに追加します。
 	/// </summary>
-	void CreateCircleSprite();
+	void CreateCircleSprite(MyEngine::Object2DCommon* object2DCommonPtr);
 
 	///=====================================================/// 
 	/// メンバ変数

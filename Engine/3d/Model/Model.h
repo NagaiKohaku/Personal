@@ -53,21 +53,21 @@ namespace MyEngine {
 		/// </summary>
 		/// <param name="directoryPath">モデルファイルのディレクトリパス</param>
 		/// <param name="filename">モデルファイル名（OBJ 形式を想定）</param>
-		void Initialize(const std::string& directoryPath, const std::string& filename);
+		void Initialize(const std::string& directoryPath, const std::string& filename, ModelCommon* modelCommonPtr);
 
 		/// <summary>
 		/// モデルを初期化します。(メッシュクラスから生成)
 		/// </summary>
 		/// <param name="type">生成するメッシュの種類（PLANE, CUBE, SPHERE 等）</param>
 		/// <param name="textureFilePath">テクスチャファイルのパス</param>
-		void Initialize(MeshType type, const std::string& textureFilePath);
+		void Initialize(MeshType type, const std::string& textureFilePath, ModelCommon* modelCommonPtr);
 
 		/// <summary>
 		/// モデルを初期化します。(既存モデルからコピー)
 		/// </summary>
 		/// <param name="type">生成するメッシュの種類（PLANE, CUBE, SPHERE 等）</param>
 		/// <param name="model">コピー元のモデルインスタンス</param>
-		void Initialize(MeshType type, Model* model);
+		void Initialize(MeshType type, Model* model, ModelCommon* modelCommonPtr);
 
 		/// <summary>
 		/// モデルを描画します。

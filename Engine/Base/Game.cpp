@@ -7,7 +7,7 @@ namespace MyEngine {
 		Framework::Initialize();
 
 		spriteManager_ = SpriteManager::GetInstance();
-		spriteManager_->Initialize();
+		spriteManager_->Initialize(spriteCommon_.get());
 
 		colliderManager_ = ColliderManager::GetInstance();
 		colliderManager_->Initialize();
@@ -16,30 +16,32 @@ namespace MyEngine {
 		objectManager_->Initialize();
 
 		camera_ = std::make_unique<Camera>();
-		camera_->Initialize(static_cast<float>(Framework::GetWinApp()->GetWindowWidth()), static_cast<float>(Framework::GetWinApp()->GetWindowHeight()), Framework::GetOffScreen());
+		camera_->Initialize(static_cast<float>(winApp_->GetWindowWidth()), static_cast<float>(winApp_->GetWindowHeight()), offScreen_.get(), object3DCommon_.get(), debugObjectCommon_.get());
 
 		emitterManager_ = EmitterManager::GetInstance();
 		emitterManager_->Initialize();
 
 		uiManager_ = UIManager::GetInstance();
-		uiManager_->Initialize(camera_.get());
+		uiManager_->Initialize(object2DCommon_.get(), camera_.get());
 
 		levelDataLoder_ = LevelDataLoader::GetInstance();
 		levelDataLoder_->Initialize();
 
-		engineContext_.offScreen = Framework::GetOffScreen();
+		engineContext_.offScreen = offScreen_.get();
+		engineContext_.object2DCommon = object2DCommon_.get();
+		engineContext_.object3DCommon = object3DCommon_.get();
 		engineContext_.camera = camera_.get();
-		engineContext_.audio = Framework::GetAudio();
-		engineContext_.input = Framework::GetInput();
+		engineContext_.audio = audio_;
+		engineContext_.input = input_;
 
 		sceneManager_ = SceneManager::GetInstance();
 		sceneManager_->Initialize(engineContext_);
 
 		fade_ = Fade::GetInstance();
-		fade_->Initialize(Framework::GetWinApp(), camera_.get());
+		fade_->Initialize(winApp_.get(), object2DCommon_.get(), camera_.get());
 
 		flash_ = Flash::GetInstance();
-		flash_->Initialize(camera_.get());
+		flash_->Initialize(object2DCommon_.get(), camera_.get());
 
 		sceneManager_->ChangeScene(SceneManager::SceneType::kTitle);
 

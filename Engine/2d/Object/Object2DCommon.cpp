@@ -7,18 +7,6 @@
 namespace MyEngine {
 
 	///=====================================================/// 
-	/// Object2DCommonのシングルトンインスタンスを取得
-	///=====================================================///
-	Object2DCommon* Object2DCommon::GetInstance() {
-
-		//静的インスタンス
-		static Object2DCommon instance;
-
-		//インスタンスを返す
-		return &instance;
-	}
-
-	///=====================================================/// 
 	/// Object2DCommonの初期化
 	///=====================================================///
 	void Object2DCommon::Initialize(DirectXCommon* dxCommonPtr) {

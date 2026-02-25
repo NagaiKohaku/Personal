@@ -23,7 +23,7 @@ public:
 	/// レティクルを初期化します。
 	/// </summary>
 	/// <param name="cameraPtr">描画やスクリーン座標変換に使用するカメラのポインタです。</param>
-	void Initialize(MyEngine::Camera* cameraPtr);
+	void Initialize(MyEngine::Object2DCommon* object2DCommonPtr, MyEngine::Object3DCommon* object3DCommonPtr, MyEngine::DebugObjectCommon* debugObjectCommonPtr, MyEngine::Camera* cameraPtr);
 
 	/// <summary>
 	/// レティクルの更新処理を行います。

@@ -17,6 +17,8 @@ namespace MyEngine {
 
 	class SkyBoxCommon;
 
+	class Object3DCommon;
+
 	class Camera;
 
 	/// <summary>
@@ -58,7 +60,7 @@ namespace MyEngine {
 		/// <summary>
 		/// スカイボックスを初期化します。
 		/// </summary>
-		void Initialize(std::string filePath);
+		void Initialize(std::string filePath, Object3DCommon* object3DCommonPtr);
 
 		/// <summary>
 		/// スカイボックスの更新処理を行います。

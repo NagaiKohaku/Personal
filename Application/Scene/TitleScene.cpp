@@ -51,14 +51,14 @@ void TitleScene::Initialize(MyEngine::EngineContext context) {
 	//グラウンドマネージャーの生成
 	groundManager_ = std::make_unique<GroundManager>();
 
-	groundManager_->Initialize();
+	groundManager_->Initialize(context_.object3DCommon);
 
 	//プレイヤーの生成
 	ObjectManager::GetInstance()->SpawnPlayer();
 
 	player_ = ObjectManager::GetInstance()->GetPlayer();
 
-	player_->Initialize(context_.camera,nullptr,false);
+	player_->Initialize(context_.object2DCommon, context_.object3DCommon, context_.debugObjectCommon, context_.camera, nullptr, false);
 
 	player_->SetPosition({ 0.0f,1.0f,0.0f });
 

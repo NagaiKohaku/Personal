@@ -18,7 +18,7 @@ public:
 	/// <summary>
 	/// フラッシュエフェクトの初期化を行います。
 	/// </summary>
-	void Initialize(MyEngine::Camera* cameraPtr);
+	void Initialize(MyEngine::Object2DCommon* object2DCommonPtr, MyEngine::Camera* cameraPtr);
 
 	/// <summary>
 	/// フラッシュエフェクトの更新処理を行います。

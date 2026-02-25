@@ -16,10 +16,10 @@ namespace MyEngine {
 	///=====================================================/// 
 	/// モデルを初期化 (モデルデータ読み込み)
 	///=====================================================///
-	void Model::Initialize(const std::string& directoryPath, const std::string& filename) {
+	void Model::Initialize(const std::string& directoryPath, const std::string& filename, ModelCommon* modelCommonPtr) {
 
 		//モデル基底のインスタンスを取得
-		modelCommon_ = ModelCommon::GetInstance();
+		modelCommon_ = modelCommonPtr;
 
 		//モデルデータの読み込み
 		LoadObjFile(directoryPath, filename);
@@ -63,10 +63,10 @@ namespace MyEngine {
 	///=====================================================///
 	/// モデルを初期化 (メッシュクラスから生成)
 	/// =====================================================///
-	void Model::Initialize(MeshType type, const std::string& textureFilePath) {
+	void Model::Initialize(MeshType type, const std::string& textureFilePath, ModelCommon* modelCommonPtr) {
 
 		//モデル基底のインスタンスを取得
-		modelCommon_ = ModelCommon::GetInstance();
+		modelCommon_ = modelCommonPtr;
 
 		/// === メッシュの生成 === ///
 
@@ -113,10 +113,10 @@ namespace MyEngine {
 	///=====================================================/// 
 	/// モデルを初期化 (既存モデルからコピー)
 	///=====================================================///
-	void Model::Initialize(MeshType type, Model* model) {
+	void Model::Initialize(MeshType type, Model* model, ModelCommon* modelCommonPtr) {
 
 		//モデル基底のインスタンスを取得
-		modelCommon_ = ModelCommon::GetInstance();
+		modelCommon_ = modelCommonPtr;
 
 		/// === モデルデータのコピー === ///
 

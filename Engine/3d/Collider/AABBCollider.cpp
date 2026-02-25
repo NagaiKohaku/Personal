@@ -9,10 +9,10 @@ namespace MyEngine {
 	///=====================================================/// 
 	/// AABBCollider を初期化
 	///=====================================================///
-	void AABBCollider::Initialize(WorldTransform* parent) {
+	void AABBCollider::Initialize(DebugObjectCommon* debugObjectCommonPtr, WorldTransform* parent) {
 
 		//コライダーの初期化
-		Collider::Initialize(parent);
+		Collider::Initialize(debugObjectCommonPtr, parent);
 
 		// AABBの初期化
 		aabb_.min = { -1.0f, -1.0f, -1.0f };

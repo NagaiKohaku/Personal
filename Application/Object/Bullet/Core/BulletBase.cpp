@@ -14,7 +14,7 @@ BulletBase::~BulletBase() {
 ///=====================================================/// 
 /// 弾を初期化し、パラメータを設定
 ///=====================================================///
-void BulletBase::Initialize(Vector3 pos, Vector3 direction) {
+void BulletBase::Initialize(Object3DCommon* object3DCommonPtr, DebugObjectCommon* debugObjectCommonPtr, Vector3 pos, Vector3 direction) {
 
 	/// === オブジェクトの生成 === ///
 
@@ -22,7 +22,7 @@ void BulletBase::Initialize(Vector3 pos, Vector3 direction) {
 	object_ = std::make_unique<Object3D>();
 
 	//初期化
-	object_->Initialize();
+	object_->Initialize(object3DCommonPtr, debugObjectCommonPtr);
 
 	//座標の設定
 	object_->GetWorldTransform().translate_ = pos;
@@ -39,7 +39,7 @@ void BulletBase::Initialize(Vector3 pos, Vector3 direction) {
 	collider_ = std::make_unique<SphereCollider>();
 
 	//初期化
-	collider_->Initialize(&object_->GetWorldTransform());
+	collider_->Initialize(debugObjectCommonPtr, &object_->GetWorldTransform());
 
 	//タグの設定
 	collider_->SetTag(GetColliderTag());

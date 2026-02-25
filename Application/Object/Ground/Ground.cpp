@@ -8,13 +8,13 @@
 
 using namespace MyEngine;
 
-void Ground::Initialize() {
+void Ground::Initialize(Object3DCommon* object3DCommonPtr, MyEngine::DebugObjectCommon* debugObjectCommonPtr) {
 
 	// オブジェクトの生成
 	object_ = std::make_unique<Object3D>();
 
 	// オブジェクトの初期化
-	object_->Initialize();
+	object_->Initialize(object3DCommonPtr, debugObjectCommonPtr);
 
 	object_->SetModel("Plane");
 

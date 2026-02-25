@@ -19,10 +19,10 @@ namespace MyEngine {
 	///=====================================================/// 
 	/// 3Dオブジェクトの初期化
 	///=====================================================///
-	void Object3D::Initialize() {
+	void Object3D::Initialize(Object3DCommon* object3DCommonPtr, DebugObjectCommon* debugObjectCommonPtr) {
 
 		//3Dオブジェクト基底のインスタンスを取得
-		object3DCommon_ = Object3DCommon::GetInstance();
+		object3DCommon_ = object3DCommonPtr;
 
 		/// === 座標変換行列リソースを作成 === ///
 
@@ -48,6 +48,7 @@ namespace MyEngine {
 		//X軸ラインの初期化
 		axisLines_[0] = std::make_unique<DebugLine>();
 		axisLines_[0]->Initialize(
+			debugObjectCommonPtr,
 			{ 0.0f,0.0f,0.0f },
 			transform_.GetRight(),
 			{ 1.0f,0.0f,0.0f,1.0f }
@@ -57,6 +58,7 @@ namespace MyEngine {
 		//Y軸ラインの初期化
 		axisLines_[1] = std::make_unique<DebugLine>();
 		axisLines_[1]->Initialize(
+			debugObjectCommonPtr,
 			{ 0.0f,0.0f,0.0f },
 			transform_.GetUp(),
 			{ 0.0f,1.0f,0.0f,1.0f });
@@ -65,6 +67,7 @@ namespace MyEngine {
 		//Z軸ラインの初期化
 		axisLines_[2] = std::make_unique<DebugLine>();
 		axisLines_[2]->Initialize(
+			debugObjectCommonPtr,
 			{ 0.0f,0.0f,0.0f },
 			transform_.GetForward(),
 			{ 0.0f,0.0f,1.0f,1.0f }
@@ -86,10 +89,10 @@ namespace MyEngine {
 	///=====================================================/// 
 	/// オブジェクトデータを基に3Dオブジェクトの初期化
 	///=====================================================///
-	void Object3D::Initialize(ObjectData objectData) {
+	void Object3D::Initialize(Object3DCommon* object3DCommonPtr, DebugObjectCommon* debugObjectCommonPtr, ObjectData objectData) {
 
 		//3Dオブジェクト基底のインスタンスを取得
-		object3DCommon_ = Object3DCommon::GetInstance();
+		object3DCommon_ = object3DCommonPtr;
 
 		/// === 座標変換行列リソースを作成 === ///
 
@@ -115,6 +118,7 @@ namespace MyEngine {
 		//X軸ラインの初期化
 		axisLines_[0] = std::make_unique<DebugLine>();
 		axisLines_[0]->Initialize(
+			debugObjectCommonPtr,
 			{ 0.0f,0.0f,0.0f },
 			transform_.GetRight(),
 			{ 1.0f,0.0f,0.0f,1.0f }
@@ -124,6 +128,7 @@ namespace MyEngine {
 		//Y軸ラインの初期化
 		axisLines_[1] = std::make_unique<DebugLine>();
 		axisLines_[1]->Initialize(
+			debugObjectCommonPtr,
 			{ 0.0f,0.0f,0.0f },
 			transform_.GetUp(),
 			{ 0.0f,1.0f,0.0f,1.0f });
@@ -132,6 +137,7 @@ namespace MyEngine {
 		//Z軸ラインの初期化
 		axisLines_[2] = std::make_unique<DebugLine>();
 		axisLines_[2]->Initialize(
+			debugObjectCommonPtr,
 			{ 0.0f,0.0f,0.0f },
 			transform_.GetForward(),
 			{ 0.0f,0.0f,1.0f,1.0f }

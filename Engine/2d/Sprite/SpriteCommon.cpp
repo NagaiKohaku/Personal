@@ -3,14 +3,6 @@
 namespace MyEngine {
 
 	///=====================================================/// 
-	/// SpriteCommonのシングルトンインスタンスを取得
-	///=====================================================///
-	SpriteCommon* SpriteCommon::GetInstance() {
-		static SpriteCommon instance;
-		return &instance;
-	}
-
-	///=====================================================/// 
 	/// SpriteCommonを初期化
 	///=====================================================///
 	void SpriteCommon::Initialize(DirectXCommon* dxCommonPtr) {

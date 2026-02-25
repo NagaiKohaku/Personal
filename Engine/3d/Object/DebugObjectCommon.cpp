@@ -9,14 +9,6 @@
 namespace MyEngine {
 
 	///=====================================================/// 
-	/// DebugObjectCommonのシングルトンインスタンスを取得
-	///=====================================================///
-	DebugObjectCommon* DebugObjectCommon::GetInstance() {
-		static DebugObjectCommon instance;
-		return &instance;
-	}
-
-	///=====================================================/// 
 	/// DebugObjectCommonの初期化
 	///=====================================================///
 	void DebugObjectCommon::Initialize(DirectXCommon* dxCommonPtr) {

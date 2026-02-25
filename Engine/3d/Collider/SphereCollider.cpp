@@ -10,10 +10,10 @@ namespace MyEngine {
 	///=====================================================/// 
 	/// SphereCollider を初期化
 	///=====================================================///
-	void SphereCollider::Initialize(WorldTransform* parent) {
+	void SphereCollider::Initialize(DebugObjectCommon* debugObjectCommonPtr, WorldTransform* parent) {
 
 		//コライダーの初期化
-		Collider::Initialize(parent);
+		Collider::Initialize(debugObjectCommonPtr, parent);
 
 		//球の初期化
 		sphere_.center = { 0.0f, 0.0f, 0.0f };

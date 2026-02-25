@@ -40,7 +40,7 @@ namespace MyEngine {
 		/// <summary>
 		/// 3Dデバッグオブジェクトを初期化します。
 		/// </summary>
-		void Initialize();
+		void Initialize(DebugObjectCommon* debugObjectCommonPtr);
 
 		/// <summary>
 		/// 3Dデバッグオブジェクトのトランスフォームを更新します。

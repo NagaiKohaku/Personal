@@ -17,7 +17,7 @@ public:
 	/// <summary>
 	/// 地面オブジェクトを初期化します。
 	/// </summary>
-	void Initialize();
+	void Initialize(MyEngine::Object3DCommon* object3DCommonPtr, MyEngine::DebugObjectCommon* debugObjectCommonPtr);
 
 	/// <summary>
 	/// 地面オブジェクトの更新処理を行います。

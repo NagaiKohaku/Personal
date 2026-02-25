@@ -9,13 +9,13 @@ using namespace MyEngine;
 ///=====================================================/// 
 /// 影用オブジェクトを生成し初期設定を行う
 ///=====================================================///
-void Shadow::Initialize() {
+void Shadow::Initialize(Object3DCommon* object3DCommonPtr, DebugObjectCommon* debugObjectCommonPtr) {
 
 	/// === オブジェクトの生成 === ///
 
 	shadow_ = std::make_unique<Object3D>();
 
-	shadow_->Initialize();
+	shadow_->Initialize(object3DCommonPtr, debugObjectCommonPtr);
 
 	shadow_->SetModel("Sphere");
 

@@ -58,29 +58,29 @@ namespace MyEngine {
 		offScreen_->Initialize(winApp_.get(), dxCommon_.get(), rtvManager_.get(), dsvManager_.get(), srvManager_.get());
 
 		//スプライト基底
-		spriteCommon_ = SpriteCommon::GetInstance();
+		spriteCommon_ = std::make_unique<SpriteCommon>();
 		spriteCommon_->Initialize(dxCommon_.get());
 
 		//モデル基底
-		modelCommon_ = ModelCommon::GetInstance();
+		modelCommon_ = std::make_unique<ModelCommon>();
 		modelCommon_->Initialize(dxCommon_.get());
 
 		//テクスチャマネージャー
 		TextureManager::GetInstance()->Initialize(dxCommon_.get(), srvManager_.get());
 
 		//モデルマネージャー
-		ModelManager::GetInstance()->Initialize();
+		ModelManager::GetInstance()->Initialize(modelCommon_.get());
 
 		//2Dオブジェクト基底
-		object2DCommon_ = Object2DCommon::GetInstance();
+		object2DCommon_ = std::make_unique<Object2DCommon>();
 		object2DCommon_->Initialize(dxCommon_.get());
 
 		//3Dオブジェクト基底
-		object3DCommon_ = Object3DCommon::GetInstance();
+		object3DCommon_ = std::make_unique<Object3DCommon>();
 		object3DCommon_->Initialize(dxCommon_.get());
 
 		//デバッグオブジェクト基底
-		debugObjectCommon_ = DebugObjectCommon::GetInstance();
+		debugObjectCommon_ = std::make_unique<DebugObjectCommon>();
 		debugObjectCommon_->Initialize(dxCommon_.get());
 
 		//スカイボックス基底

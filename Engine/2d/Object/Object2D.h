@@ -51,7 +51,7 @@ namespace MyEngine {
 		/// <summary>
 		/// Object2Dの初期化を行います。
 		/// </summary>
-		void Initialize(Camera* cameraPtr);
+		void Initialize(Object2DCommon* object2DCommonPtr, Camera* cameraPtr);
 
 		/// <summary>
 		/// Object2Dのスプライトおよび座標変換行列(WVP)を更新します。

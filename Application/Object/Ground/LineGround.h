@@ -18,7 +18,7 @@ public:
 	/// <summary>
 	/// ライン状の床オブジェクトを初期化します。
 	/// </summary>
-	void Initialize();
+	void Initialize(MyEngine::DebugObjectCommon* debugObjectCommonPtr);
 
 	/// <summary>
 	/// ライン状の床オブジェクトの更新処理を行います。

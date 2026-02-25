@@ -19,7 +19,7 @@ public:
 	/// <summary>
 	/// 影用オブジェクトを生成し初期設定を行う
 	/// </summary>
-	void Initialize();
+	void Initialize(MyEngine::Object3DCommon* object3DCommonPtr, MyEngine::DebugObjectCommon* debugObjectCommonPtr);
 
 	/// <summary>
 	/// 指定座標に応じて影の位置とサイズを更新する

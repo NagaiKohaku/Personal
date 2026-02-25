@@ -17,7 +17,7 @@ using namespace MyEngine;
 ///=====================================================/// 
 /// 敵オブジェクトを初期化し、必要なパラメータや関連リソースを設定
 ///=====================================================///
-void Enemy::Initialize(Camera* cameraPtr, BulletManager* bulletPtr, Player* playerPtr, ObjectData objectData) {
+void Enemy::Initialize(Object3DCommon* object3DCommonPtr, DebugObjectCommon* debugObjectCommonPtr, Camera* cameraPtr, BulletManager* bulletPtr, Player* playerPtr, ObjectData objectData) {
 
 	//カメラのポインタを取得
 	camera_ = cameraPtr;
@@ -32,11 +32,11 @@ void Enemy::Initialize(Camera* cameraPtr, BulletManager* bulletPtr, Player* play
 
 	//敵オブジェクトの生成と初期化
 	object_ = std::make_unique<Object3D>();
-	object_->Initialize(objectData);
+	object_->Initialize(object3DCommonPtr, debugObjectCommonPtr, objectData);
 
 	//影オブジェクトの生成と初期化
 	shadow_ = std::make_unique<Shadow>();
-	shadow_->Initialize();
+	shadow_->Initialize(object3DCommonPtr, debugObjectCommonPtr);
 
 	/// === コライダーの生成 === ///
 
@@ -44,7 +44,7 @@ void Enemy::Initialize(Camera* cameraPtr, BulletManager* bulletPtr, Player* play
 	collider_ = std::make_unique<SphereCollider>();
 
 	//初期化
-	collider_->Initialize(&object_->GetWorldTransform());
+	collider_->Initialize(debugObjectCommonPtr, &object_->GetWorldTransform());
 
 	//タグの設定
 	collider_->SetTag(Collider::Tag::ENEMY);

@@ -9,7 +9,11 @@ using namespace MyEngine;
 ///=====================================================/// 
 /// 初期化
 ///=====================================================///
-void BulletManager::Initialize() {
+void BulletManager::Initialize(Object3DCommon* object3DCommonPtr, MyEngine::DebugObjectCommon* debugObjectCommonPtr) {
+
+	object3DCommon_ = object3DCommonPtr;
+
+	debugObjectCommon_ = debugObjectCommonPtr;
 }
 
 ///=====================================================/// 
@@ -60,7 +64,7 @@ void BulletManager::AddBullet(Vector3 pos, Vector3 direction, BulletType type) {
 	std::unique_ptr<BulletBase> bullet = CreateBullet(type);
 
 	//弾の初期化
-	bullet->Initialize(pos,direction);
+	bullet->Initialize(object3DCommon_, debugObjectCommon_, pos, direction);
 
 	//弾を管理リストに追加
 	bullets_.push_back(std::move(bullet));

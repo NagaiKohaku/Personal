@@ -55,11 +55,6 @@ namespace MyEngine {
 	public:
 
 		/// <summary>
-		/// Object3DCommonのシングルトンインスタンスを取得します。
-		/// </summary>
-		static Object3DCommon* GetInstance();
-
-		/// <summary>
 		/// Object3DCommonの初期化を行います。
 		/// </summary>
 		void Initialize(DirectXCommon* dxCommonPtr);

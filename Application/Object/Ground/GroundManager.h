@@ -16,7 +16,7 @@ public:
 	/// <summary>
 	/// 地面と建物群を初期化します。
 	/// </summary>
-	void Initialize();
+	void Initialize(MyEngine::Object3DCommon* object3DCommonPtr, MyEngine::DebugObjectCommon* debugObjectCommonPtr);
 
 	/// <summary>
 	/// 地面と建物群の後片付けを行います。

@@ -17,12 +17,12 @@ namespace MyEngine {
 	///=====================================================/// 
 	/// 初期化
 	///=====================================================///
-	void Sprite::Initialize(const std::string& fileName) {
+	void Sprite::Initialize(const std::string& fileName, SpriteCommon* spriteCommonPtr) {
 
 		/// === インスタンスの取得 === ///
 
 		//スプライト基底のインスタンスを取得
-		spriteCommon_ = SpriteCommon::GetInstance();
+		spriteCommon_ = spriteCommonPtr;
 
 		/// === 頂点リソースの作成 === ///
 

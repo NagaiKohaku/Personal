@@ -53,13 +53,13 @@ namespace MyEngine {
 		/// <summary>
 		/// 3Dオブジェクトの初期化を行います。
 		/// </summary>
-		void Initialize();
+		void Initialize(Object3DCommon* object3DCommonPtr, DebugObjectCommon* debugObjectCommonPtr);
 
 		/// <summary>
 		/// オブジェクトデータを基に3Dオブジェクトの初期化を行います。
 		/// </summary>
 		/// <param name="objectData">オブジェクトデータ</param>
-		void Initialize(ObjectData objectData);
+		void Initialize(Object3DCommon* object3DCommonPtr, DebugObjectCommon* debugObjectCommonPtr, ObjectData objectData);
 
 		/// <summary>
 		/// 3Dオブジェクトの状態を更新します。

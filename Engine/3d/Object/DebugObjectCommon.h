@@ -26,11 +26,6 @@ namespace MyEngine {
 	public:
 
 		/// <summary>
-		/// DebugObjectCommonのシングルトンインスタンスを取得します。
-		/// </summary>
-		static DebugObjectCommon* GetInstance();
-
-		/// <summary>
 		/// DebugObjectCommonの初期化を行います。
 		/// </summary>
 		void Initialize(DirectXCommon* dxCommonPtr);

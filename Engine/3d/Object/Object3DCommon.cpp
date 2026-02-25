@@ -13,14 +13,6 @@
 namespace MyEngine {
 
 	///=====================================================/// 
-	/// Object3DCommonのシングルトンインスタンスを取得
-	///=====================================================///
-	Object3DCommon* Object3DCommon::GetInstance() {
-		static Object3DCommon instance;
-		return &instance;
-	}
-
-	///=====================================================/// 
 	/// Object3DCommonの初期化
 	///=====================================================///
 	void Object3DCommon::Initialize(DirectXCommon* dxCommonPtr) {

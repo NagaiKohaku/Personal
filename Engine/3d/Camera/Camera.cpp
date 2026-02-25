@@ -20,7 +20,7 @@ namespace MyEngine {
 	///=====================================================/// 
 	/// カメラの各種パラメータを初期化
 	///=====================================================///
-	void Camera::Initialize(float windowWidth, float windowHeight, OffScreen* offScreenPtr) {
+	void Camera::Initialize(float windowWidth, float windowHeight, OffScreen* offScreenPtr, Object3DCommon* object3DCommonPtr, DebugObjectCommon* debugObjectCommonPtr) {
 
 		offScreen_ = offScreenPtr;
 
@@ -69,9 +69,9 @@ namespace MyEngine {
 
 		offScreen_->SetDefaultCamera(this);
 
-		Object3DCommon::GetInstance()->SetDefaultCamera(this);
+		object3DCommonPtr->SetDefaultCamera(this);
 
-		DebugObjectCommon::GetInstance()->SetDefaultCamera(this);
+		debugObjectCommonPtr->SetDefaultCamera(this);
 
 		SkyBoxCommon::GetInstance()->SetDefaultCamera(this);
 	}

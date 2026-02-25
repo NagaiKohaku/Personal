@@ -31,9 +31,9 @@ void ParticleEditorScene::Initialize(EngineContext context) {
 	context_.camera->SetRotate({ 0.6f,-0.3f,0.0f });
 
 	//デフォルトカメラを設定
-	Object3DCommon::GetInstance()->SetDefaultCamera(context_.camera);
+	context_.object3DCommon->SetDefaultCamera(context_.camera);
 
-	DebugObjectCommon::GetInstance()->SetDefaultCamera(context_.camera);
+	context_.debugObjectCommon->SetDefaultCamera(context_.camera);
 
 	/// === テクスチャの読み込み === ///
 
@@ -75,6 +75,7 @@ void ParticleEditorScene::Initialize(EngineContext context) {
 		std::unique_ptr<DebugLine> newLine = std::make_unique<DebugLine>();
 
 		newLine->Initialize(
+			context_.debugObjectCommon,
 			{ i - lineDivide_ / 2.0f,0.0f,-lineDivide_ / 2.0f },
 			{ i - lineDivide_ / 2.0f,0.0f,lineDivide_ / 2.0f },
 			{ 1.0f,1.0f,1.0f,1.0f }
@@ -93,6 +94,7 @@ void ParticleEditorScene::Initialize(EngineContext context) {
 		std::unique_ptr<DebugLine> newLine = std::make_unique<DebugLine>();
 
 		newLine->Initialize(
+			context_.debugObjectCommon,
 			{ -lineDivide_ / 2.0f,0.0f,i - lineDivide_ / 2.0f },
 			{ lineDivide_ / 2.0f,0.0f,i - lineDivide_ / 2.0f },
 			{ 1.0f,1.0f,1.0f,1.0f }

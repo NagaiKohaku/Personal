@@ -13,7 +13,7 @@ using namespace MyEngine;
 ///=====================================================/// 
 /// レティクルを初期化
 ///=====================================================///
-void Reticle::Initialize(Camera* cameraPtr) {
+void Reticle::Initialize(Object2DCommon* object2DCommonPtr, Object3DCommon* object3DCommonPtr, DebugObjectCommon* debugObjectCommonPtr, Camera* cameraPtr) {
 
 	//カメラポインタを取得
 	camera_ = cameraPtr;
@@ -24,7 +24,7 @@ void Reticle::Initialize(Camera* cameraPtr) {
 	object2D_ = std::make_unique<Object2D>();
 
 	//初期化
-	object2D_->Initialize(camera_);
+	object2D_->Initialize(object2DCommonPtr, camera_);
 
 	//スプライトをセット
 	object2D_->SetSprite("Reticle");
@@ -41,7 +41,7 @@ void Reticle::Initialize(Camera* cameraPtr) {
 	object3D_ = std::make_unique<Object3D>();
 
 	//初期化
-	object3D_->Initialize();
+	object3D_->Initialize(object3DCommonPtr, debugObjectCommonPtr);
 
 	//モデルを設定
 	object3D_->SetModel("Cube");

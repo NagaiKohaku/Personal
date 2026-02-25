@@ -18,10 +18,10 @@ namespace MyEngine {
 	///=====================================================/// 
 	/// SpriteManagerを初期化
 	///=====================================================///
-	void SpriteManager::Initialize() {
+	void SpriteManager::Initialize(SpriteCommon* spriteCommonPtr) {
 
 		//スプライト基底のインスタンスを取得
-		spriteCommon_ = SpriteCommon::GetInstance();
+		spriteCommon_ = spriteCommonPtr;
 
 		//スプライトデータを読み込む
 		for (const auto& entry : std::filesystem::directory_iterator("Resource/Sprite")) {
@@ -49,7 +49,7 @@ namespace MyEngine {
 		std::unique_ptr<Sprite> newSprite = std::make_unique<Sprite>();
 
 		//スプライトを読み込む
-		newSprite->Initialize(spriteName);
+		newSprite->Initialize(spriteName, spriteCommon_);
 
 		//リストに登録
 		sprites_.insert(std::make_pair(spriteName, std::move(newSprite)));
@@ -70,7 +70,7 @@ namespace MyEngine {
 			std::unique_ptr<Sprite> newSprite = std::make_unique<Sprite>();
 
 			//初期化
-			newSprite->Initialize(texturePath);
+			newSprite->Initialize(texturePath, spriteCommon_);
 
 			//新しく生成したスプライトを返す
 			return std::move(newSprite);

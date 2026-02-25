@@ -54,7 +54,7 @@ namespace MyEngine {
 		/// スプライトの描画に必要なリソースを初期化します。
 		/// </summary>
 		/// <param name="fileName">ファイル名(.png切り捨て)</param>
-		void Initialize(const std::string& fileName);
+		void Initialize(const std::string& fileName, SpriteCommon* spriteCommonPtr);
 
 		/// <summary>
 		/// スプライトの頂点データを更新します。
