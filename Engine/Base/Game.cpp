@@ -42,7 +42,7 @@ namespace MyEngine {
 		engineContext_.objectCommon.debugObjectCommon = debugObjectCommon_.get();
 		engineContext_.camera = camera_.get();
 		engineContext_.input = input_.get();
-		engineContext_.audio = audio_;
+		engineContext_.audio = audio_.get();
 
 		sceneManager_ = SceneManager::GetInstance();
 		sceneManager_->Initialize(engineContext_);

@@ -73,11 +73,6 @@ namespace MyEngine {
 	public:
 
 		/// <summary>
-		/// Audioのシングルトンインスタンスを取得します。
-		/// </summary>
-		static Audio* GetInstance();
-
-		/// <summary>
 		/// XAudio2の初期化を行います。
 		/// </summary>
 		void Initialize();

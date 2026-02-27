@@ -121,7 +121,7 @@ namespace MyEngine {
 		input_->Initialize(winApp_.get());
 
 		//音声
-		audio_ = Audio::GetInstance();
+		audio_ = std::make_unique<Audio>();
 		audio_->Initialize();
 
 		//レンダラー

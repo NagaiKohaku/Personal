@@ -84,7 +84,7 @@ namespace MyEngine {
 
 		std::unique_ptr<Input> input_;
 
-		Audio* audio_;
+		std::unique_ptr<Audio> audio_;
 
 		Renderer* renderer_;
 
