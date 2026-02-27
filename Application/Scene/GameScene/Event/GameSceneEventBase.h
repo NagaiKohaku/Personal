@@ -35,7 +35,7 @@ protected:
 public:
 	virtual ~GameSceneEventBase() = default;
 
-	virtual void Start(MyEngine::EngineContext context, Player* player, FollowCamera* followCamera) = 0;   // 開始時1回
+	virtual void Start(EngineContext context, Player* player, FollowCamera* followCamera) = 0;   // 開始時1回
 	virtual void Exit() = 0;    // 終了処理
 	virtual void Update() = 0;  // 毎フレーム
 	virtual void Draw() = 0;
@@ -48,7 +48,7 @@ protected:
 
 protected:
 
-	MyEngine::EngineContext context_;
+	EngineContext context_;
 
 	Player* player_ = nullptr;
 

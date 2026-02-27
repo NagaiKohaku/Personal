@@ -35,10 +35,10 @@ namespace MyEngine {
 		levelDataLoder_->Initialize();
 
 		engineContext_.offScreen = offScreen_.get();
-		engineContext_.object2DCommon = object2DCommon_.get();
-		engineContext_.object3DCommon = object3DCommon_.get();
-		engineContext_.particleCommon = particleCommon_.get();
-		engineContext_.debugObjectCommon = debugObjectCommon_.get();
+		engineContext_.objectCommon.object2DCommon = object2DCommon_.get();
+		engineContext_.objectCommon.object3DCommon = object3DCommon_.get();
+		engineContext_.objectCommon.particleCommon = particleCommon_.get();
+		engineContext_.objectCommon.debugObjectCommon = debugObjectCommon_.get();
 		engineContext_.camera = camera_.get();
 		engineContext_.audio = audio_;
 		engineContext_.input = input_;

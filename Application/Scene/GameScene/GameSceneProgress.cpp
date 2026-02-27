@@ -4,7 +4,7 @@
 
 using namespace MyEngine;
 
-void GameSceneProgress::Initialize(MyEngine::EngineContext context, Player* player, FollowCamera* followCamera) {
+void GameSceneProgress::Initialize(EngineContext context, Player* player, FollowCamera* followCamera) {
 
 	context_ = context;
 

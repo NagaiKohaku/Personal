@@ -17,10 +17,10 @@ using namespace MyEngine;
 ///=====================================================/// 
 /// 敵オブジェクトを初期化し、必要なパラメータや関連リソースを設定
 ///=====================================================///
-void Enemy::Initialize(Object3DCommon* object3DCommonPtr, ParticleCommon* particleCommonPtr, DebugObjectCommon* debugObjectCommonPtr, Camera* cameraPtr, BulletManager* bulletPtr, Player* playerPtr, ObjectData objectData) {
+void Enemy::Initialize(EngineContext context, BulletManager* bulletPtr, Player* playerPtr, ObjectData objectData) {
 
 	//カメラのポインタを取得
-	camera_ = cameraPtr;
+	camera_ = context.camera;
 
 	//バレットマネージャーのポインタを取得
 	bulletManager_ = bulletPtr;
@@ -32,11 +32,11 @@ void Enemy::Initialize(Object3DCommon* object3DCommonPtr, ParticleCommon* partic
 
 	//敵オブジェクトの生成と初期化
 	object_ = std::make_unique<Object3D>();
-	object_->Initialize(object3DCommonPtr, debugObjectCommonPtr, objectData);
+	object_->Initialize(context.objectCommon.object3DCommon, context.objectCommon.debugObjectCommon, objectData);
 
 	//影オブジェクトの生成と初期化
 	shadow_ = std::make_unique<Shadow>();
-	shadow_->Initialize(object3DCommonPtr, debugObjectCommonPtr);
+	shadow_->Initialize(context);
 
 	/// === コライダーの生成 === ///
 
@@ -44,7 +44,7 @@ void Enemy::Initialize(Object3DCommon* object3DCommonPtr, ParticleCommon* partic
 	collider_ = std::make_unique<SphereCollider>();
 
 	//初期化
-	collider_->Initialize(debugObjectCommonPtr, &object_->GetWorldTransform());
+	collider_->Initialize(context.objectCommon.debugObjectCommon, &object_->GetWorldTransform());
 
 	//タグの設定
 	collider_->SetTag(Collider::Tag::ENEMY);
@@ -56,22 +56,22 @@ void Enemy::Initialize(Object3DCommon* object3DCommonPtr, ParticleCommon* partic
 
 	//死亡時エミッターの生成とエミッター情報読み込み
 	explosiveEmitter_ = std::make_unique<EmitterGroup>();
-	explosiveEmitter_->Initialize(particleCommonPtr, camera_);
+	explosiveEmitter_->Initialize(context.objectCommon.particleCommon, camera_);
 	explosiveEmitter_->LoadEmitter("BlockExplosive");
 
 	//クリア時爆発エミッターの生成とエミッター情報読み込み
 	clearExplosiveEmitter_ = std::make_unique<EmitterGroup>();
-	clearExplosiveEmitter_->Initialize(particleCommonPtr, camera_);
+	clearExplosiveEmitter_->Initialize(context.objectCommon.particleCommon, camera_);
 	clearExplosiveEmitter_->LoadEmitter("ClearExplosive");
 
 	//破壊時エミッターの生成とエミッター情報読み込み
 	destroyEmitter_ = std::make_unique<EmitterGroup>();
-	destroyEmitter_->Initialize(particleCommonPtr, camera_);
+	destroyEmitter_->Initialize(context.objectCommon.particleCommon, camera_);
 	destroyEmitter_->LoadEmitter("Destroy");
 
 	//ダメージ時エミッターの生成とエミッター情報読み込み
 	damageEmitter_ = std::make_unique<EmitterGroup>();
-	damageEmitter_->Initialize(particleCommonPtr, camera_);
+	damageEmitter_->Initialize(context.objectCommon.particleCommon, camera_);
 	damageEmitter_->LoadEmitter("Damage");
 
 	/// === 他変数の初期化 === ///

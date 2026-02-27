@@ -7,7 +7,7 @@
 
 using namespace MyEngine;
 
-void PauseEvent::Start(MyEngine::EngineContext context, Player* player, FollowCamera* followCamera) {
+void PauseEvent::Start(EngineContext context, Player* player, FollowCamera* followCamera) {
 
 	context_ = context;
 	player_ = player;

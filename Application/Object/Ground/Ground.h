@@ -1,6 +1,7 @@
 #pragma once
 
 #include <3d/Object/Object3D.h>
+#include <Scene/EngineContext.h>
 
 #include "memory"
 
@@ -17,7 +18,7 @@ public:
 	/// <summary>
 	/// 地面オブジェクトを初期化します。
 	/// </summary>
-	void Initialize(MyEngine::Object3DCommon* object3DCommonPtr, MyEngine::DebugObjectCommon* debugObjectCommonPtr);
+	void Initialize(EngineContext context);
 
 	/// <summary>
 	/// 地面オブジェクトの更新処理を行います。

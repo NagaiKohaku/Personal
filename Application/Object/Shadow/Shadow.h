@@ -1,10 +1,11 @@
 #pragma once
 
-#include "memory"
-
-#include "3d/Object/Object3D.h"
+#include <3d/Object/Object3D.h>
+#include <Scene/EngineContext.h>
 
 #include <Math/Vector/Vector3.h>
+
+#include <memory>
 
 /// <summary>
 /// キャラクターや物体の位置に応じて影を生成・管理するクラス
@@ -19,7 +20,7 @@ public:
 	/// <summary>
 	/// 影用オブジェクトを生成し初期設定を行う
 	/// </summary>
-	void Initialize(MyEngine::Object3DCommon* object3DCommonPtr, MyEngine::DebugObjectCommon* debugObjectCommonPtr);
+	void Initialize(EngineContext context);
 
 	/// <summary>
 	/// 指定座標に応じて影の位置とサイズを更新する

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Reticle.h"
+#include <Scene/EngineContext.h>
 
 #include "memory"
 #include "vector"
@@ -44,7 +45,7 @@ public:
 	/// </summary>
 	/// <param name="cameraPtr">使用するカメラへのポインタ</param>
 	/// <param name="playerPtr">対象となるプレイヤーへのポインタ</param>
-	void Initialize(MyEngine::Object2DCommon* object2DCommonPtr, MyEngine::Object3DCommon* object3DCommonPtr, MyEngine::DebugObjectCommon* debugObjectCommonPtr, MyEngine::Camera* cameraPtr, Player* playerPtr);
+	void Initialize(EngineContext context, Player* playerPtr);
 
 	/// <summary>
 	/// ロックオンシステムを更新します。

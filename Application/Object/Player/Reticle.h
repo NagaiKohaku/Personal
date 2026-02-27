@@ -2,6 +2,7 @@
 
 #include "2d/Object/Object2D.h"
 #include "3d/Object/Object3D.h"
+#include <Scene/EngineContext.h>
 
 #include "memory"
 
@@ -23,7 +24,7 @@ public:
 	/// レティクルを初期化します。
 	/// </summary>
 	/// <param name="cameraPtr">描画やスクリーン座標変換に使用するカメラのポインタです。</param>
-	void Initialize(MyEngine::Object2DCommon* object2DCommonPtr, MyEngine::Object3DCommon* object3DCommonPtr, MyEngine::DebugObjectCommon* debugObjectCommonPtr, MyEngine::Camera* cameraPtr);
+	void Initialize(EngineContext context);
 
 	/// <summary>
 	/// レティクルの更新処理を行います。

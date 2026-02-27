@@ -7,7 +7,7 @@
 
 using namespace MyEngine;
 
-void GameEvent::Start(MyEngine::EngineContext context, Player* player, FollowCamera* followCamera) {
+void GameEvent::Start(EngineContext context, Player* player, FollowCamera* followCamera) {
 
 	context_ = context;
 	player_ = player;

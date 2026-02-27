@@ -1,26 +1,15 @@
 #pragma once
 
 #include <Base/OffScreen.h>
-#include <2d/Object/Object2DCommon.h>
-#include <3d/Object/Object3DCommon.h>
-#include <3d/Particle/ParticleCommon.h>
-#include <3d/Object/DebugObjectCommon.h>
+#include <Base/ObjectCommon.h>
 #include <3d/Camera/Camera.h>
 #include <Base/Audio.h>
 #include <Base/Input.h>
 
-namespace MyEngine {
-
-	struct EngineContext final {
-
-		OffScreen* offScreen;
-		Object2DCommon* object2DCommon;
-		Object3DCommon* object3DCommon;
-		ParticleCommon* particleCommon;
-		DebugObjectCommon* debugObjectCommon;
-		Camera* camera;
-		Audio* audio;
-		Input* input;
-
-	};
-}
+struct EngineContext final {
+	MyEngine::OffScreen* offScreen;
+	MyEngine::ObjectCommon objectCommon;
+	MyEngine::Camera* camera;
+	MyEngine::Audio* audio;
+	MyEngine::Input* input;
+};

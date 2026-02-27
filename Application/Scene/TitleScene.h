@@ -25,7 +25,7 @@ public:
 	/// <summary>
 	/// タイトルシーンの各種オブジェクトを初期化する関数です
 	/// </summary>
-	void Initialize(MyEngine::EngineContext context) override;
+	void Initialize(EngineContext context) override;
 
 	/// <summary>
 	/// タイトルシーン終了時に各種オブジェクトを解放する関数です

@@ -682,6 +682,7 @@
     <ClInclude Include="Engine\Base\Game.h" />
     <ClInclude Include="Engine\Base\View\ViewManagerBase.h" />
     <ClInclude Include="Application\Scene\EngineContext.h" />
+    <ClInclude Include="Engine\Base\ObjectCommon.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resource\Shader\DebugObject.hlsli">

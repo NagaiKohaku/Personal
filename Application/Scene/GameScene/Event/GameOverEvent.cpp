@@ -8,7 +8,7 @@
 
 using namespace MyEngine;
 
-void GameOverEvent::Start(MyEngine::EngineContext context, Player* player, FollowCamera* followCamera) {
+void GameOverEvent::Start(EngineContext context, Player* player, FollowCamera* followCamera) {
 
 	context_ = context;
 

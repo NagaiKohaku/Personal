@@ -12,7 +12,7 @@ class GameSceneProgress {
 
 public:
 
-	void Initialize(MyEngine::EngineContext context, Player* player, FollowCamera* followCamera);
+	void Initialize(EngineContext context, Player* player, FollowCamera* followCamera);
 
 	void Update();
 
@@ -26,7 +26,7 @@ private:
 
 	std::unique_ptr<GameSceneEventBase> event_;
 
-	MyEngine::EngineContext context_;
+	EngineContext context_;
 
 	Player* player_;
 

@@ -2,6 +2,8 @@
 
 #include <Object/Bullet/Core/BulletBase.h>
 
+#include <Scene/EngineContext.h>
+
 #include "list"
 
 /// <summary>
@@ -31,7 +33,7 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize(MyEngine::Object3DCommon* object3DCommonPtr, MyEngine::DebugObjectCommon* debugObjectCommonPtr);
+	void Initialize(EngineContext context);
 
 	/// <summary>
 	/// 登録されているすべての弾を更新します。
@@ -73,9 +75,7 @@ private:
 	///-------------------------------------------///
 private:
 
-	MyEngine::Object3DCommon* object3DCommon_;
-
-	MyEngine::DebugObjectCommon* debugObjectCommon_;
+	EngineContext context_;
 
 	//弾リスト
 	std::list<std::unique_ptr<BulletBase>> bullets_;

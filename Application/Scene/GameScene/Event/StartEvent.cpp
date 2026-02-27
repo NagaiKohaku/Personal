@@ -4,7 +4,7 @@
 
 using namespace MyEngine;
 
-void StartEvent::Start(MyEngine::EngineContext context, Player* player, FollowCamera* followCamera) {
+void StartEvent::Start(EngineContext context, Player* player, FollowCamera* followCamera) {
 
 	context_ = context;
 	player_ = player;

@@ -14,7 +14,7 @@ using namespace MyEngine;
 ///=====================================================/// 
 /// 地面と建物群を初期化
 ///=====================================================///
-void GroundManager::Initialize(Object3DCommon* object3DCommonPtr, DebugObjectCommon* debugObjectCommonPtr) {
+void GroundManager::Initialize(EngineContext context) {
 
 	//建物のパラメータ設定
 	buildingWidth_ = 8.0f;
@@ -34,7 +34,7 @@ void GroundManager::Initialize(Object3DCommon* object3DCommonPtr, DebugObjectCom
 	//地面の生成
 	ground_ = std::make_unique<Ground>();
 
-	ground_->Initialize(object3DCommonPtr, debugObjectCommonPtr);
+	ground_->Initialize(context);
 
 	//1列あたりの建物の数
 	int buildingNumOfLine = maxBuildingNum_ / 2;
@@ -61,7 +61,7 @@ void GroundManager::Initialize(Object3DCommon* object3DCommonPtr, DebugObjectCom
 			}
 
 			//建物の初期化
-			building->Initialize(object3DCommonPtr, debugObjectCommonPtr, pos, scale);
+			building->Initialize(context, pos, scale);
 
 			//建物をコンテナに追加
 			building_.push_back(std::move(building));

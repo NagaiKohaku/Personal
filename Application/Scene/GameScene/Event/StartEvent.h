@@ -8,7 +8,7 @@ class StartEvent : public GameSceneEventBase {
 
 public:
 
-	void Start(MyEngine::EngineContext context, Player* player, FollowCamera* followCamera) override;
+	void Start(EngineContext context, Player* player, FollowCamera* followCamera) override;
 
 	void Exit() override;
 

@@ -280,6 +280,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Application\Effect\Manager\EmitterManager.h" />
     <ClInclude Include="Application\Scene\GameScene\Event\ClearEvent.h" />
     <ClInclude Include="Application\Scene\EngineContext.h" />
+    <ClInclude Include="Engine\Base\ObjectCommon.h" />
     <ClInclude Include="Engine\3d\Mesh\CubeMesh.h" />
     <ClInclude Include="Engine\3d\Collider\AABBCollider.h" />
     <ClInclude Include="Engine\3d\Collider\Collider.h" />

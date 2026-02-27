@@ -31,9 +31,9 @@ void ParticleEditorScene::Initialize(EngineContext context) {
 	context_.camera->SetRotate({ 0.6f,-0.3f,0.0f });
 
 	//デフォルトカメラを設定
-	context_.object3DCommon->SetDefaultCamera(context_.camera);
+	context_.objectCommon.object3DCommon->SetDefaultCamera(context_.camera);
 
-	context_.debugObjectCommon->SetDefaultCamera(context_.camera);
+	context_.objectCommon.debugObjectCommon->SetDefaultCamera(context_.camera);
 
 	/// === テクスチャの読み込み === ///
 
@@ -75,7 +75,7 @@ void ParticleEditorScene::Initialize(EngineContext context) {
 		std::unique_ptr<DebugLine> newLine = std::make_unique<DebugLine>();
 
 		newLine->Initialize(
-			context_.debugObjectCommon,
+			context_.objectCommon.debugObjectCommon,
 			{ i - lineDivide_ / 2.0f,0.0f,-lineDivide_ / 2.0f },
 			{ i - lineDivide_ / 2.0f,0.0f,lineDivide_ / 2.0f },
 			{ 1.0f,1.0f,1.0f,1.0f }
@@ -94,7 +94,7 @@ void ParticleEditorScene::Initialize(EngineContext context) {
 		std::unique_ptr<DebugLine> newLine = std::make_unique<DebugLine>();
 
 		newLine->Initialize(
-			context_.debugObjectCommon,
+			context_.objectCommon.debugObjectCommon,
 			{ -lineDivide_ / 2.0f,0.0f,i - lineDivide_ / 2.0f },
 			{ lineDivide_ / 2.0f,0.0f,i - lineDivide_ / 2.0f },
 			{ 1.0f,1.0f,1.0f,1.0f }
@@ -215,7 +215,7 @@ void ParticleEditorScene::CreateGroup() {
 	//デフォルトグループの生成
 	std::unique_ptr<EmitterGroup> newGroup = std::make_unique<EmitterGroup>();
 
-	newGroup->Initialize(context_.particleCommon, context_.camera);
+	newGroup->Initialize(context_.objectCommon.particleCommon, context_.camera);
 
 	newGroup->SetTextureList(textureList_);
 
@@ -233,7 +233,7 @@ void ParticleEditorScene::LoadGroup(const std::string& groupName) {
 	std::unique_ptr<EmitterGroup> newGroup = std::make_unique<EmitterGroup>();
 
 	//グループの初期化
-	newGroup->Initialize(context_.particleCommon, context_.camera);
+	newGroup->Initialize(context_.objectCommon.particleCommon, context_.camera);
 
 	//テクスチャリストの設定
 	newGroup->SetTextureList(textureList_);

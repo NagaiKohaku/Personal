@@ -3,6 +3,7 @@
 #include "3d/Object/Object3D.h"
 #include "3d/Particle/EmitterGroup.h"
 #include "3d/Camera/Camera.h"
+#include <Scene/EngineContext.h>
 
 #include <Object/Shadow/Shadow.h>
 
@@ -40,7 +41,7 @@ public:
 	/// <param name="bulletPtr">弾管理クラスのポインタを指定します。</param>
 	/// <param name="playerPtr">プレイヤーオブジェクトのポインタを指定します。</param>
 	/// <param name="objectData">敵オブジェクト生成に必要なデータを指定します。</param>
-	void Initialize(MyEngine::Object3DCommon* object3DCommonPtr, MyEngine::ParticleCommon* particleCommonPtr, MyEngine::DebugObjectCommon* debugObjectCommonPtr, MyEngine::Camera* cameraPtr, BulletManager* bulletPtr, Player* playerPtr, ObjectData objectData);
+	void Initialize(EngineContext context, BulletManager* bulletPtr, Player* playerPtr, ObjectData objectData);
 
 	/// <summary>
 	/// 敵オブジェクトの状態を毎フレーム更新します。

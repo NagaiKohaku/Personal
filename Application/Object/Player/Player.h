@@ -3,6 +3,7 @@
 #include "3d/Object/Object3D.h"
 #include "3d/Particle/EmitterGroup.h"
 #include "3d/Camera/Camera.h"
+#include "Scene/EngineContext.h"
 
 #include <Object/Shadow/Shadow.h>
 
@@ -56,7 +57,7 @@ public:
 	/// <summary>
 	/// プレイヤーを初期化します。
 	/// </summary>
-	void Initialize(MyEngine::Object2DCommon* object2DCommonPtr, MyEngine::Object3DCommon* object3DCommonPtr, MyEngine::DebugObjectCommon* debugObjectCommonPtr, MyEngine::Camera* cameraPtr, BulletManager* bulletPtr, bool isMoveActive);
+	void Initialize(EngineContext context, BulletManager* bulletPtr, bool isMoveActive);
 
 	/// <summary>
 	/// プレイヤーの状態を更新します。

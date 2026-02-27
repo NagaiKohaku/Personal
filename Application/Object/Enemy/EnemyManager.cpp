@@ -17,19 +17,12 @@ using namespace MyEngine;
 ///=====================================================/// 
 /// 敵の生成管理に必要な各種パラメータや参照ポインタを初期化
 ///=====================================================///
-void EnemyManager::Initialize(Object3DCommon* object3DCommonPtr, ParticleCommon* particleCommonPtr, DebugObjectCommon* debugObjectCommonPtr, Camera* cameraPtr, BulletManager* bulletPtr, Player* playerPtr) {
+void EnemyManager::Initialize(EngineContext context, BulletManager* bulletPtr, Player* playerPtr) {
 
 	//レベルデータローダーのインスタンスを取得
 	levelDataLoader_ = LevelDataLoader::GetInstance();
 
-	object3DCommon_ = object3DCommonPtr;
-
-	particleCommon_ = particleCommonPtr;
-
-	debugObjectCommon_ = debugObjectCommonPtr;
-
-	//カメラポインタを取得
-	camera_ = cameraPtr;
+	context_ = context;
 
 	//バレットマネージャーポインタを取得
 	bulletManager_ = bulletPtr;
@@ -188,7 +181,7 @@ void EnemyManager::Spawn(Vector3 entryPos, Vector3 standbyPos, ObjectData object
 	enemies_.push_back(ObjectManager::GetInstance()->GetEnemies().back());
 
 	//初期化
-	enemies_.back()->Initialize(object3DCommon_, particleCommon_, debugObjectCommon_, camera_, bulletManager_, player_, objectData);
+	enemies_.back()->Initialize(context_, bulletManager_, player_, objectData);
 
 	//初期座標を設定
 	enemies_.back()->SetPosition(entryPos);

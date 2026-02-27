@@ -26,7 +26,7 @@ using namespace MyEngine;
 ///=====================================================/// 
 /// タイトルシーンの各種オブジェクトを初期化
 ///=====================================================///
-void TitleScene::Initialize(MyEngine::EngineContext context) {
+void TitleScene::Initialize(EngineContext context) {
 
 	/// === カメラの設定 === ///
 
@@ -51,14 +51,14 @@ void TitleScene::Initialize(MyEngine::EngineContext context) {
 	//グラウンドマネージャーの生成
 	groundManager_ = std::make_unique<GroundManager>();
 
-	groundManager_->Initialize(context_.object3DCommon, context_.debugObjectCommon);
+	groundManager_->Initialize(context_);
 
 	//プレイヤーの生成
 	ObjectManager::GetInstance()->SpawnPlayer();
 
 	player_ = ObjectManager::GetInstance()->GetPlayer();
 
-	player_->Initialize(context_.object2DCommon, context_.object3DCommon, context_.debugObjectCommon, context_.camera, nullptr, false);
+	player_->Initialize(context_, nullptr, false);
 
 	player_->SetPosition({ 0.0f,1.0f,0.0f });
 
@@ -75,14 +75,14 @@ void TitleScene::Initialize(MyEngine::EngineContext context) {
 	//衝撃波エミッター(左)
 	shockWaveLeftEmitter_ = std::make_unique<EmitterGroup>();
 
-	shockWaveLeftEmitter_->Initialize(context_.particleCommon, context_.camera);
+	shockWaveLeftEmitter_->Initialize(context_.objectCommon.particleCommon, context_.camera);
 
 	shockWaveLeftEmitter_->LoadEmitter("ShockWaveLeft");
 
 	//衝撃波エミッター(右)
 	shockWaveRightEmitter_ = std::make_unique<EmitterGroup>();
 
-	shockWaveRightEmitter_->Initialize(context_.particleCommon, context_.camera);
+	shockWaveRightEmitter_->Initialize(context_.objectCommon.particleCommon, context_.camera);
 
 	shockWaveRightEmitter_->LoadEmitter("ShockWaveRight");
 

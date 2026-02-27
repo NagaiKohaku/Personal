@@ -21,7 +21,7 @@ public:
 	/// <summary>
 	/// パーティクルエディタ用シーンの初期化を行います。
 	/// </summary>
-	void Initialize(MyEngine::EngineContext context) override;
+	void Initialize(EngineContext context) override;
 
 	/// <summary>
 	/// パーティクルエディタシーンの毎フレーム更新処理を行います。
