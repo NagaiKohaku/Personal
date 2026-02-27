@@ -5,7 +5,7 @@ using namespace MyEngine;
 ///=====================================================/// 
 /// ライン状の床オブジェクトを初期化
 ///=====================================================///
-void LineGround::Initialize(DebugObjectCommon* debugObjectCommonPtr) {
+void LineGround::Initialize(DebugObjectCommon* debugObjectCommonPtr, Renderer* rendererPtr) {
 
 	/// === 床のラインを生成 === ///
 
@@ -23,6 +23,7 @@ void LineGround::Initialize(DebugObjectCommon* debugObjectCommonPtr) {
 
 		newLine->Initialize(
 			debugObjectCommonPtr,
+			rendererPtr,
 			{ (i - lineDivide_ / 2.0f) * lineDistance_, 0.0f, (-lineDivide_ / 2.0f) * lineDistance_ },
 			{ (i - lineDivide_ / 2.0f) * lineDistance_, 0.0f, (lineDivide_ / 2.0f) * lineDistance_ },
 			{ 1.0f,1.0f,1.0f,1.0f }
@@ -43,6 +44,7 @@ void LineGround::Initialize(DebugObjectCommon* debugObjectCommonPtr) {
 
 		newLine->Initialize(
 			debugObjectCommonPtr,
+			rendererPtr,
 			{ (-lineDivide_ / 2.0f) * lineDistance_, 0.0f, (i - lineDivide_ / 2.0f) * lineDistance_ },
 			{ (lineDivide_ / 2.0f) * lineDistance_, 0.0f, (i - lineDivide_ / 2.0f) * lineDistance_ },
 			{ 1.0f,1.0f,1.0f,1.0f }

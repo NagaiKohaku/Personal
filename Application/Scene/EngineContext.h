@@ -5,6 +5,7 @@
 #include <3d/Camera/Camera.h>
 #include <Base/Audio.h>
 #include <Base/Input.h>
+#include <Base/Renderer.h>
 
 struct EngineContext final {
 	MyEngine::OffScreen* offScreen;
@@ -12,4 +13,5 @@ struct EngineContext final {
 	MyEngine::Camera* camera;
 	MyEngine::Audio* audio;
 	MyEngine::Input* input;
+	MyEngine::Renderer* renderer;
 };

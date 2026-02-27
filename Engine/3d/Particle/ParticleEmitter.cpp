@@ -40,7 +40,7 @@ namespace MyEngine {
 	///=====================================================/// 
 	/// パーティクルエミッターを初期化
 	///=====================================================///
-	void ParticleEmitter::Initialize(const std::string& groupName, const std::string& fileName, ParticleCommon* particleCommonPtr, Camera* cameraPtr, Input* inputPtr) {
+	void ParticleEmitter::Initialize(const std::string& groupName, const std::string& fileName, ParticleCommon* particleCommonPtr, Camera* cameraPtr, Input* inputPtr, Renderer* rendererPtr) {
 
 		/// === シングルトンインスタンスの取得 === ///
 
@@ -59,6 +59,8 @@ namespace MyEngine {
 		defaultCamera_ = cameraPtr;
 
 		input_ = inputPtr;
+
+		renderer_ = rendererPtr;
 
 		/// === マテリアルリソースの生成 === ///
 
@@ -430,7 +432,7 @@ namespace MyEngine {
 			};
 
 		//レンダラーにコマンドを登録
-		Renderer::GetInstance()->AddDraw(layer, true, command);
+		renderer_->AddDraw(layer, true, command);
 	}
 
 	///=====================================================/// 

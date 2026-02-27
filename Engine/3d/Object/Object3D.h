@@ -53,13 +53,13 @@ namespace MyEngine {
 		/// <summary>
 		/// 3Dオブジェクトの初期化を行います。
 		/// </summary>
-		void Initialize(Object3DCommon* object3DCommonPtr, DebugObjectCommon* debugObjectCommonPtr);
+		void Initialize(Object3DCommon* object3DCommonPtr, DebugObjectCommon* debugObjectCommonPtr, Renderer* rendererPtr);
 
 		/// <summary>
 		/// オブジェクトデータを基に3Dオブジェクトの初期化を行います。
 		/// </summary>
 		/// <param name="objectData">オブジェクトデータ</param>
-		void Initialize(Object3DCommon* object3DCommonPtr, DebugObjectCommon* debugObjectCommonPtr, ObjectData objectData);
+		void Initialize(Object3DCommon* object3DCommonPtr, DebugObjectCommon* debugObjectCommonPtr, Renderer* rendererPtr, ObjectData objectData);
 
 		/// <summary>
 		/// 3Dオブジェクトの状態を更新します。
@@ -89,6 +89,8 @@ namespace MyEngine {
 
 		//カメラ
 		Camera* camera_;
+
+		Renderer* renderer_;
 
 		//座標データ
 		WorldTransform transform_;

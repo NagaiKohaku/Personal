@@ -86,7 +86,7 @@ namespace MyEngine {
 
 		std::unique_ptr<Audio> audio_;
 
-		Renderer* renderer_;
+		std::unique_ptr<Renderer> renderer_;
 
 	private:
 

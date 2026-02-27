@@ -8,6 +8,7 @@
 #include <2d/Object/Object2DCommon.h>
 #include <2d/Sprite/Sprite.h>
 #include <3d/Camera/Camera.h>
+#include <Base/Renderer.h>
 
 #include <Math/Vector/Vector2.h>
 #include <Math/Vector/Vector3.h>
@@ -51,7 +52,7 @@ namespace MyEngine {
 		/// <summary>
 		/// Object2Dの初期化を行います。
 		/// </summary>
-		void Initialize(Object2DCommon* object2DCommonPtr, Camera* cameraPtr);
+		void Initialize(Object2DCommon* object2DCommonPtr, Camera* cameraPtr, Renderer* rendererPtr);
 
 		/// <summary>
 		/// Object2Dのスプライトおよび座標変換行列(WVP)を更新します。
@@ -76,6 +77,8 @@ namespace MyEngine {
 
 		//カメラ
 		Camera* camera_;
+
+		Renderer* renderer_;
 
 		//2Dオブジェクト基底
 		Object2DCommon* object2DCommon_;

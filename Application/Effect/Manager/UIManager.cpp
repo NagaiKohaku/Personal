@@ -17,13 +17,15 @@ UIManager* UIManager::GetInstance() {
 	return &instance;
 }
 
-void UIManager::Initialize(Object2DCommon* object2DCommonPtr, Camera* cameraPtr, MyEngine::Input* inputPtr) {
+void UIManager::Initialize(Object2DCommon* object2DCommonPtr, Camera* cameraPtr, Input* inputPtr, Renderer* rendererPtr) {
 
 	object2DCommon_ = object2DCommonPtr;
 
 	camera_ = cameraPtr;
 
 	input_ = inputPtr;
+
+	renderer_ = rendererPtr;
 
 	spriteNameList_ = SpriteManager::GetInstance()->GetSpriteNameList();
 
@@ -263,7 +265,7 @@ void UIManager::CreateUI(const std::string& groupName, const std::string uiName,
 
 	newUIObject.object = std::make_unique<Object2D>();
 
-	newUIObject.object->Initialize(object2DCommon_, camera_);
+	newUIObject.object->Initialize(object2DCommon_, camera_, renderer_);
 
 	newUIObject.object->SetSprite(spriteName);
 

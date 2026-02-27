@@ -75,14 +75,14 @@ void TitleScene::Initialize(EngineContext context) {
 	//衝撃波エミッター(左)
 	shockWaveLeftEmitter_ = std::make_unique<EmitterGroup>();
 
-	shockWaveLeftEmitter_->Initialize(context_.objectCommon.particleCommon, context_.camera, context_.input);
+	shockWaveLeftEmitter_->Initialize(context_.objectCommon.particleCommon, context_.camera, context_.input, context_.renderer);
 
 	shockWaveLeftEmitter_->LoadEmitter("ShockWaveLeft");
 
 	//衝撃波エミッター(右)
 	shockWaveRightEmitter_ = std::make_unique<EmitterGroup>();
 
-	shockWaveRightEmitter_->Initialize(context_.objectCommon.particleCommon, context_.camera, context_.input);
+	shockWaveRightEmitter_->Initialize(context_.objectCommon.particleCommon, context_.camera, context_.input, context_.renderer);
 
 	shockWaveRightEmitter_->LoadEmitter("ShockWaveRight");
 

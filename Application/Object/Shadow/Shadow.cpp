@@ -15,7 +15,7 @@ void Shadow::Initialize(EngineContext context) {
 
 	shadow_ = std::make_unique<Object3D>();
 
-	shadow_->Initialize(context.objectCommon.object3DCommon, context.objectCommon.debugObjectCommon);
+	shadow_->Initialize(context.objectCommon.object3DCommon, context.objectCommon.debugObjectCommon, context.renderer);
 
 	shadow_->SetModel("Sphere");
 

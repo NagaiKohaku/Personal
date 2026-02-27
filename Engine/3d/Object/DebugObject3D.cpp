@@ -14,10 +14,12 @@ namespace MyEngine {
 	///=====================================================///
 	/// 3Dデバッグオブジェクトを初期化
 	///=====================================================///
-	void DebugObject3D::Initialize(DebugObjectCommon* debugObjectCommonPtr) {
+	void DebugObject3D::Initialize(DebugObjectCommon* debugObjectCommonPtr, Renderer* rendererPtr) {
 
 		//3Dオブジェクト基底のインスタンスを取得
 		debugCommon_ = debugObjectCommonPtr;
+
+		renderer_ = rendererPtr;
 
 		/// === 座標変換行列リソースを作成 === ///
 
@@ -89,7 +91,7 @@ namespace MyEngine {
 			};
 
 		//レンダラーに描画コマンドを追加
-		Renderer::GetInstance()->AddDraw(LayerType::DEBUG, true, command);
+		renderer_->AddDraw(LayerType::DEBUG, true, command);
 	}
 
 	///=====================================================/// 

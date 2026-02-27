@@ -5,6 +5,7 @@
 #include <Math/Transform/WorldTransform.h>
 
 #include <3d/Camera/Camera.h>
+#include <Base/Renderer.h>
 #include <Object/Player/Player.h>
 
 #include <memory>
@@ -51,7 +52,7 @@ public:
 	/// <summary>
 	/// フェード処理に必要なスプライトやリソースを初期化する関数です。
 	/// </summary>
-	void Initialize(MyEngine::WinApp* winAppPtr, MyEngine::Object2DCommon* object2DCommonPtr, MyEngine::Camera* cameraPtr);
+	void Initialize(MyEngine::WinApp* winAppPtr, MyEngine::Object2DCommon* object2DCommonPtr, MyEngine::Camera* cameraPtr, MyEngine::Renderer* rendererPtr);
 
 	/// <summary>
 	/// フェード処理の状態を毎フレーム更新する関数です。
@@ -114,6 +115,8 @@ private:
 
 	//カメラ
 	MyEngine::Camera* camera_;
+
+	MyEngine::Renderer* renderer_;
 
 	//プレイヤー
 	Player* player_;

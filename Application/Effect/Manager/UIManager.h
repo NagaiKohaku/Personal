@@ -3,6 +3,7 @@
 #include <2d/Object/Object2D.h>
 #include <3d/Camera/Camera.h>
 #include <Base/Input.h>
+#include <Base/Renderer.h>
 #include <Math/Transform/WorldTransform.h>
 
 #include <vector>
@@ -35,7 +36,7 @@ public:
 
 	static UIManager* GetInstance();
 
-	void Initialize(MyEngine::Object2DCommon* object2DCommonPtr, MyEngine::Camera* cameraPtr, MyEngine::Input* inputPtr);
+	void Initialize(MyEngine::Object2DCommon* object2DCommonPtr, MyEngine::Camera* cameraPtr, MyEngine::Input* inputPtr, MyEngine::Renderer* rendererPtr);
 
 	void Update();
 
@@ -77,6 +78,8 @@ private:
 	MyEngine::Camera* camera_;
 
 	MyEngine::Input* input_;
+
+	MyEngine::Renderer* renderer_;
 
 	std::string directoryPath_;
 

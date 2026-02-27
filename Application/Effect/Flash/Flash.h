@@ -2,6 +2,7 @@
 
 #include <2d/Object/Object2D.h>
 #include <3d/Camera/Camera.h>
+#include <Base/Renderer.h>
 
 /// <summary>
 /// 画面全体にフラッシュエフェクトを表示する管理クラスです。
@@ -18,7 +19,7 @@ public:
 	/// <summary>
 	/// フラッシュエフェクトの初期化を行います。
 	/// </summary>
-	void Initialize(MyEngine::Object2DCommon* object2DCommonPtr, MyEngine::Camera* cameraPtr);
+	void Initialize(MyEngine::Object2DCommon* object2DCommonPtr, MyEngine::Camera* cameraPtr, MyEngine::Renderer* rendererPtr);
 
 	/// <summary>
 	/// フラッシュエフェクトの更新処理を行います。
@@ -41,6 +42,8 @@ private:
 
 	//カメラ
 	MyEngine::Camera* camera_;
+
+	MyEngine::Renderer* renderer_;
 
 	//フラッシュ用オブジェクト
 	std::unique_ptr<MyEngine::Object2D> flashObject_;

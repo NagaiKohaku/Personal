@@ -76,6 +76,7 @@ void ParticleEditorScene::Initialize(EngineContext context) {
 
 		newLine->Initialize(
 			context_.objectCommon.debugObjectCommon,
+			context_.renderer,
 			{ i - lineDivide_ / 2.0f,0.0f,-lineDivide_ / 2.0f },
 			{ i - lineDivide_ / 2.0f,0.0f,lineDivide_ / 2.0f },
 			{ 1.0f,1.0f,1.0f,1.0f }
@@ -95,6 +96,7 @@ void ParticleEditorScene::Initialize(EngineContext context) {
 
 		newLine->Initialize(
 			context_.objectCommon.debugObjectCommon,
+			context_.renderer,
 			{ -lineDivide_ / 2.0f,0.0f,i - lineDivide_ / 2.0f },
 			{ lineDivide_ / 2.0f,0.0f,i - lineDivide_ / 2.0f },
 			{ 1.0f,1.0f,1.0f,1.0f }
@@ -215,7 +217,7 @@ void ParticleEditorScene::CreateGroup() {
 	//デフォルトグループの生成
 	std::unique_ptr<EmitterGroup> newGroup = std::make_unique<EmitterGroup>();
 
-	newGroup->Initialize(context_.objectCommon.particleCommon, context_.camera, context_.input);
+	newGroup->Initialize(context_.objectCommon.particleCommon, context_.camera, context_.input, context_.renderer);
 
 	newGroup->SetTextureList(textureList_);
 
@@ -233,7 +235,7 @@ void ParticleEditorScene::LoadGroup(const std::string& groupName) {
 	std::unique_ptr<EmitterGroup> newGroup = std::make_unique<EmitterGroup>();
 
 	//グループの初期化
-	newGroup->Initialize(context_.objectCommon.particleCommon, context_.camera, context_.input);
+	newGroup->Initialize(context_.objectCommon.particleCommon, context_.camera, context_.input, context_.renderer);
 
 	//テクスチャリストの設定
 	newGroup->SetTextureList(textureList_);

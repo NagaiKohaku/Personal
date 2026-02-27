@@ -16,11 +16,13 @@ namespace MyEngine {
 	///=====================================================/// 
 	/// スカイボックスを初期化
 	///=====================================================///
-	void SkyBox::Initialize(std::string filePath, Object3DCommon* object3DCommonPtr, SkyBoxCommon* skyBoxCommonPtr) {
+	void SkyBox::Initialize(std::string filePath, Object3DCommon* object3DCommonPtr, SkyBoxCommon* skyBoxCommonPtr, Renderer* rendererPtr) {
 
 		/// === シングルトンインスタンスの取得 === ///
 
 		skyBoxCommon_ = skyBoxCommonPtr;
+
+		renderer_ = rendererPtr;
 
 		surfaceCount_ = 6; //スカイボックスは6面体なので、面数は6
 
@@ -278,6 +280,6 @@ namespace MyEngine {
 			};
 
 		//コマンドをレンダラーに登録
-		Renderer::GetInstance()->AddDraw(LayerType::BACKGROUND, true, command);
+		renderer_->AddDraw(LayerType::BACKGROUND, true, command);
 	}
 }

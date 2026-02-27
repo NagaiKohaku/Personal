@@ -1,6 +1,7 @@
 #pragma once
 
 #include "3d/Model/Model.h"
+#include <Base/Renderer.h>
 
 #include <Math/Matrix/Matrix4x4.h>
 #include <Math/Transform/WorldTransform.h>
@@ -40,7 +41,7 @@ namespace MyEngine {
 		/// <summary>
 		/// 3Dデバッグオブジェクトを初期化します。
 		/// </summary>
-		void Initialize(DebugObjectCommon* debugObjectCommonPtr);
+		void Initialize(DebugObjectCommon* debugObjectCommonPtr, Renderer* rendererPtr);
 
 		/// <summary>
 		/// 3Dデバッグオブジェクトのトランスフォームを更新します。
@@ -62,6 +63,8 @@ namespace MyEngine {
 
 		//カメラ
 		Camera* camera_;
+
+		Renderer* renderer_;
 
 		//座標データ
 		WorldTransform transform_;

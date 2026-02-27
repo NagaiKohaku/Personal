@@ -32,7 +32,7 @@ void Enemy::Initialize(EngineContext context, BulletManager* bulletPtr, Player* 
 
 	//敵オブジェクトの生成と初期化
 	object_ = std::make_unique<Object3D>();
-	object_->Initialize(context.objectCommon.object3DCommon, context.objectCommon.debugObjectCommon, objectData);
+	object_->Initialize(context.objectCommon.object3DCommon, context.objectCommon.debugObjectCommon, context.renderer, objectData);
 
 	//影オブジェクトの生成と初期化
 	shadow_ = std::make_unique<Shadow>();
@@ -44,7 +44,7 @@ void Enemy::Initialize(EngineContext context, BulletManager* bulletPtr, Player* 
 	collider_ = std::make_unique<SphereCollider>();
 
 	//初期化
-	collider_->Initialize(context.objectCommon.debugObjectCommon, &object_->GetWorldTransform());
+	collider_->Initialize(context.objectCommon.debugObjectCommon, context.renderer, &object_->GetWorldTransform());
 
 	//タグの設定
 	collider_->SetTag(Collider::Tag::ENEMY);
@@ -56,22 +56,22 @@ void Enemy::Initialize(EngineContext context, BulletManager* bulletPtr, Player* 
 
 	//死亡時エミッターの生成とエミッター情報読み込み
 	explosiveEmitter_ = std::make_unique<EmitterGroup>();
-	explosiveEmitter_->Initialize(context.objectCommon.particleCommon, camera_, context.input);
+	explosiveEmitter_->Initialize(context.objectCommon.particleCommon, camera_, context.input, context.renderer);
 	explosiveEmitter_->LoadEmitter("BlockExplosive");
 
 	//クリア時爆発エミッターの生成とエミッター情報読み込み
 	clearExplosiveEmitter_ = std::make_unique<EmitterGroup>();
-	clearExplosiveEmitter_->Initialize(context.objectCommon.particleCommon, camera_, context.input);
+	clearExplosiveEmitter_->Initialize(context.objectCommon.particleCommon, camera_, context.input, context.renderer);
 	clearExplosiveEmitter_->LoadEmitter("ClearExplosive");
 
 	//破壊時エミッターの生成とエミッター情報読み込み
 	destroyEmitter_ = std::make_unique<EmitterGroup>();
-	destroyEmitter_->Initialize(context.objectCommon.particleCommon, camera_, context.input);
+	destroyEmitter_->Initialize(context.objectCommon.particleCommon, camera_, context.input, context.renderer);
 	destroyEmitter_->LoadEmitter("Destroy");
 
 	//ダメージ時エミッターの生成とエミッター情報読み込み
 	damageEmitter_ = std::make_unique<EmitterGroup>();
-	damageEmitter_->Initialize(context.objectCommon.particleCommon, camera_, context.input);
+	damageEmitter_->Initialize(context.objectCommon.particleCommon, camera_, context.input, context.renderer);
 	damageEmitter_->LoadEmitter("Damage");
 
 	/// === 他変数の初期化 === ///

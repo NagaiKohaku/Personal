@@ -19,10 +19,11 @@ Fade* Fade::GetInstance() {
 ///=====================================================/// 
 /// フェード処理に必要なスプライトやリソースを初期化
 ///=====================================================///
-void Fade::Initialize(WinApp* winAppPtr, Object2DCommon* object2DCommonPtr, Camera* cameraPtr) {
+void Fade::Initialize(WinApp* winAppPtr, Object2DCommon* object2DCommonPtr, Camera* cameraPtr, Renderer* rendererPtr) {
 
 	winApp_ = winAppPtr;
 	camera_ = cameraPtr;
+	renderer_ = rendererPtr;
 
 	/// === フェードに使うスプライトの生成 === ///
 
@@ -232,7 +233,7 @@ void Fade::CreateRingSprite(Object2DCommon* object2DCommonPtr) {
 	//オブジェクトを生成してパラメータの初期化をする
 	newObject = std::make_unique<Object2D>();
 
-	newObject->Initialize(object2DCommonPtr, camera_);
+	newObject->Initialize(object2DCommonPtr, camera_, renderer_);
 
 	//リングスプライトをセット
 	newObject->SetSprite("BigRing");
@@ -280,7 +281,7 @@ void Fade::CreateCircleSprite(Object2DCommon* object2DCommonPtr) {
 	//オブジェクトを生成してパラメータの初期化をする
 	newObject = std::make_unique<Object2D>();
 
-	newObject->Initialize(object2DCommonPtr, camera_);
+	newObject->Initialize(object2DCommonPtr, camera_, renderer_);
 
 	//円形スプライトをセット
 	newObject->SetSprite("BigCircle");

@@ -14,7 +14,7 @@ void Ground::Initialize(EngineContext context) {
 	object_ = std::make_unique<Object3D>();
 
 	// オブジェクトの初期化
-	object_->Initialize(context.objectCommon.object3DCommon, context.objectCommon.debugObjectCommon);
+	object_->Initialize(context.objectCommon.object3DCommon, context.objectCommon.debugObjectCommon, context.renderer);
 
 	object_->SetModel("Plane");
 

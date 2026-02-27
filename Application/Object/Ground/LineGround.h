@@ -1,6 +1,7 @@
 #pragma once
 
 #include "3d/Object/DebugLine.h"
+#include <Base/Renderer.h>
 
 #include "memory"
 #include "list"
@@ -18,7 +19,7 @@ public:
 	/// <summary>
 	/// ライン状の床オブジェクトを初期化します。
 	/// </summary>
-	void Initialize(MyEngine::DebugObjectCommon* debugObjectCommonPtr);
+	void Initialize(MyEngine::DebugObjectCommon* debugObjectCommonPtr, MyEngine::Renderer* rendererPtr);
 
 	/// <summary>
 	/// ライン状の床オブジェクトの更新処理を行います。

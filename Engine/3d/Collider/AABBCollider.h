@@ -20,7 +20,7 @@ namespace MyEngine {
 		/// AABBCollider を初期化します。
 		/// </summary>
 		/// <param name="parent"> コライダーの親ワールドトランスフォーム </param>
-		void Initialize(DebugObjectCommon* debugObjectCommonPtr, WorldTransform* parent) override;
+		void Initialize(DebugObjectCommon* debugObjectCommonPtr, Renderer* rendererPtr, WorldTransform* parent) override;
 
 		/// <summary>
 		/// AABBCollider を更新します。

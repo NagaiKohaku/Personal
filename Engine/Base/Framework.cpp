@@ -125,7 +125,7 @@ namespace MyEngine {
 		audio_->Initialize();
 
 		//レンダラー
-		renderer_ = Renderer::GetInstance();
+		renderer_ = std::make_unique<Renderer>();
 		renderer_->Initialize();
 
 	}

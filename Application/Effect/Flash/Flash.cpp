@@ -15,14 +15,16 @@ Flash* Flash::GetInstance() {
 ///=====================================================/// 
 /// フラッシュエフェクトの初期化
 ///=====================================================///
-void Flash::Initialize(Object2DCommon* object2DCommonPtr, Camera* cameraPtr) {
+void Flash::Initialize(Object2DCommon* object2DCommonPtr, Camera* cameraPtr, Renderer* rendererPtr) {
 
 	camera_ = cameraPtr;
+
+	renderer_ = rendererPtr;
 
 	//フラッシュ用オブジェクトの生成
 	flashObject_ = std::make_unique<Object2D>();
 
-	flashObject_->Initialize(object2DCommonPtr, camera_);
+	flashObject_->Initialize(object2DCommonPtr, camera_, renderer_);
 
 	flashObject_->SetSprite("white_128x128");
 

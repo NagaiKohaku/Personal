@@ -27,10 +27,10 @@ namespace MyEngine {
 		);
 
 		emitterManager_ = EmitterManager::GetInstance();
-		emitterManager_->Initialize(particleCommon_.get(), input_.get());
+		emitterManager_->Initialize(particleCommon_.get(), input_.get(), renderer_.get());
 
 		uiManager_ = UIManager::GetInstance();
-		uiManager_->Initialize(object2DCommon_.get(), camera_.get(), input_.get());
+		uiManager_->Initialize(object2DCommon_.get(), camera_.get(), input_.get(), renderer_.get());
 
 		levelDataLoder_ = LevelDataLoader::GetInstance();
 		levelDataLoder_->Initialize();
@@ -43,15 +43,16 @@ namespace MyEngine {
 		engineContext_.camera = camera_.get();
 		engineContext_.input = input_.get();
 		engineContext_.audio = audio_.get();
+		engineContext_.renderer = renderer_.get();
 
 		sceneManager_ = SceneManager::GetInstance();
 		sceneManager_->Initialize(engineContext_);
 
 		fade_ = Fade::GetInstance();
-		fade_->Initialize(winApp_.get(), object2DCommon_.get(), camera_.get());
+		fade_->Initialize(winApp_.get(), object2DCommon_.get(), camera_.get(), renderer_.get());
 
 		flash_ = Flash::GetInstance();
-		flash_->Initialize(object2DCommon_.get(), camera_.get());
+		flash_->Initialize(object2DCommon_.get(), camera_.get(), renderer_.get());
 
 		sceneManager_->ChangeScene(SceneManager::SceneType::kTitle);
 

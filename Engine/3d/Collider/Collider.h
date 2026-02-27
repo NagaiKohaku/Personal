@@ -3,6 +3,7 @@
 #include "3d/Object/Object3D.h"
 #include "3d/Object/DebugObject3D.h"
 #include "3d/Object/DebugLine.h"
+#include <Base/Renderer.h>
 
 #include <Math/Transform/WorldTransform.h>
 #include <Math/Shape/AABB.h>
@@ -46,7 +47,7 @@ namespace MyEngine {
 		/// Collider を初期化します。
 		/// </summary>
 		/// <param name="parent">このコライダーの親となるワールドトランスフォーム</param>
-		virtual void Initialize(DebugObjectCommon* debugObjectCommonPtr, WorldTransform* parent);
+		virtual void Initialize(DebugObjectCommon* debugObjectCommonPtr, Renderer* rendererPtr, WorldTransform* parent);
 
 		/// <summary>
 		/// Collider の状態を毎フレーム更新します。
@@ -62,6 +63,8 @@ namespace MyEngine {
 		/// メンバ変数
 		///-------------------------------------------///
 	protected:
+
+		Renderer* renderer_;
 
 		//識別タグ
 		Tag tag_;

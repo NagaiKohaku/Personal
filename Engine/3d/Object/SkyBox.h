@@ -5,6 +5,7 @@
 #include <Math/Vector/Vector4.h>
 #include <Math/Matrix/Matrix4x4.h>
 #include <Math/Transform/WorldTransform.h>
+#include <Base/Renderer.h>
 
 #include "d3d12.h"
 #include "wrl.h"
@@ -60,7 +61,7 @@ namespace MyEngine {
 		/// <summary>
 		/// スカイボックスを初期化します。
 		/// </summary>
-		void Initialize(std::string filePath, Object3DCommon* object3DCommonPtr, SkyBoxCommon* skyBoxCommonPtr);
+		void Initialize(std::string filePath, Object3DCommon* object3DCommonPtr, SkyBoxCommon* skyBoxCommonPtr, Renderer* rendererPtr);
 
 		/// <summary>
 		/// スカイボックスの更新処理を行います。
@@ -82,6 +83,8 @@ namespace MyEngine {
 
 		//カメラ
 		Camera* camera_;
+
+		Renderer* renderer_;
 
 		//座標データ
 		WorldTransform transform_;

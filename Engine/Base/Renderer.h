@@ -25,11 +25,6 @@ namespace MyEngine {
 	public:
 
 		/// <summary>
-		/// Rendererのシングルトンインスタンスを取得します。
-		/// </summary>
-		static Renderer* GetInstance();
-
-		/// <summary>
 		/// レンダラーを初期化します。
 		/// </summary>
 		void Initialize();

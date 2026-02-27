@@ -4,6 +4,7 @@
 #include <3d/Particle/ParticleCommon.h>
 #include <3d/Camera/Camera.h>
 #include <Base/Input.h>
+#include <Base/Renderer.h>
 #include <Math/Transform/WorldTransform.h>
 
 #include <memory>
@@ -23,7 +24,7 @@ public:
 
 	static EmitterManager* GetInstance();
 
-	void Initialize(MyEngine::ParticleCommon* particleCommonPtr, MyEngine::Input* inputPtr);
+	void Initialize(MyEngine::ParticleCommon* particleCommonPtr, MyEngine::Input* inputPtr, MyEngine::Renderer* rendererPtr);
 
 	void Update();
 
@@ -40,6 +41,8 @@ private:
 	MyEngine::Camera* camera_;
 
 	MyEngine::Input* input_;
+
+	MyEngine::Renderer* renderer_;
 
 	std::vector<std::unique_ptr<EmitterObject>> emitters_;
 

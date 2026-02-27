@@ -13,7 +13,7 @@ namespace MyEngine {
 	///=====================================================/// 
 	/// パーティクルエミッターグループの初期化
 	///=====================================================///
-	void EmitterGroup::Initialize(ParticleCommon* particleCommonPtr, Camera* cameraPtr, Input* inputPtr) {
+	void EmitterGroup::Initialize(ParticleCommon* particleCommonPtr, Camera* cameraPtr, Input* inputPtr, Renderer* rendererPtr) {
 
 		particleCommon_ = particleCommonPtr;
 
@@ -21,6 +21,8 @@ namespace MyEngine {
 		camera_ = cameraPtr;
 
 		input_ = inputPtr;
+
+		renderer_ = rendererPtr;
 
 		//ディレクトリパスを設定
 		directoryPath_ = "Resource/Json/Particle/Group/";
@@ -188,7 +190,7 @@ namespace MyEngine {
 				newEmitter->SetTextureList(textureList_);
 
 				//エミッターの初期化
-				newEmitter->Initialize(name_, fileName, particleCommon_, camera_, input_);
+				newEmitter->Initialize(name_, fileName, particleCommon_, camera_, input_, renderer_);
 
 				//リストに登録
 				particleEmitters_.push_back(std::move(newEmitter));
@@ -293,7 +295,7 @@ namespace MyEngine {
 		newEmitter->SetTextureList(textureList_);
 
 		//エミッターの初期化
-		newEmitter->Initialize("defaultGroup", "default", particleCommon_, camera_, input_);
+		newEmitter->Initialize("defaultGroup", "default", particleCommon_, camera_, input_, renderer_);
 
 		//リストに登録
 		particleEmitters_.push_back(std::move(newEmitter));

@@ -16,11 +16,13 @@ namespace MyEngine {
 	///=====================================================/// 
 	/// Object2Dの初期化
 	///=====================================================///
-	void Object2D::Initialize(Object2DCommon* object2DCommonPtr, Camera* cameraPtr) {
+	void Object2D::Initialize(Object2DCommon* object2DCommonPtr, Camera* cameraPtr, Renderer* rendererPtr) {
 
 		/// === インスタンスの取得 === ///
 
 		camera_ = cameraPtr;
+
+		renderer_ = rendererPtr;
 
 		//2Dオブジェクト基底のインスタンスを取得
 		object2DCommon_ = object2DCommonPtr;
@@ -112,7 +114,7 @@ namespace MyEngine {
 			};
 
 		//レンダラーに描画関数を登録
-		Renderer::GetInstance()->AddDraw(layer, true, func);
+		renderer_->AddDraw(layer, true, func);
 	}
 
 	///=====================================================/// 

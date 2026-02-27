@@ -19,10 +19,12 @@ namespace MyEngine {
 	///=====================================================/// 
 	/// 3Dオブジェクトの初期化
 	///=====================================================///
-	void Object3D::Initialize(Object3DCommon* object3DCommonPtr, DebugObjectCommon* debugObjectCommonPtr) {
+	void Object3D::Initialize(Object3DCommon* object3DCommonPtr, DebugObjectCommon* debugObjectCommonPtr, Renderer* rendererPtr) {
 
 		//3Dオブジェクト基底のインスタンスを取得
 		object3DCommon_ = object3DCommonPtr;
+
+		renderer_ = rendererPtr;
 
 		/// === 座標変換行列リソースを作成 === ///
 
@@ -49,6 +51,7 @@ namespace MyEngine {
 		axisLines_[0] = std::make_unique<DebugLine>();
 		axisLines_[0]->Initialize(
 			debugObjectCommonPtr,
+			renderer_,
 			{ 0.0f,0.0f,0.0f },
 			transform_.GetRight(),
 			{ 1.0f,0.0f,0.0f,1.0f }
@@ -59,6 +62,7 @@ namespace MyEngine {
 		axisLines_[1] = std::make_unique<DebugLine>();
 		axisLines_[1]->Initialize(
 			debugObjectCommonPtr,
+			renderer_,
 			{ 0.0f,0.0f,0.0f },
 			transform_.GetUp(),
 			{ 0.0f,1.0f,0.0f,1.0f });
@@ -68,6 +72,7 @@ namespace MyEngine {
 		axisLines_[2] = std::make_unique<DebugLine>();
 		axisLines_[2]->Initialize(
 			debugObjectCommonPtr,
+			renderer_,
 			{ 0.0f,0.0f,0.0f },
 			transform_.GetForward(),
 			{ 0.0f,0.0f,1.0f,1.0f }
@@ -89,10 +94,11 @@ namespace MyEngine {
 	///=====================================================/// 
 	/// オブジェクトデータを基に3Dオブジェクトの初期化
 	///=====================================================///
-	void Object3D::Initialize(Object3DCommon* object3DCommonPtr, DebugObjectCommon* debugObjectCommonPtr, ObjectData objectData) {
+	void Object3D::Initialize(Object3DCommon* object3DCommonPtr, DebugObjectCommon* debugObjectCommonPtr, Renderer* rendererPtr, ObjectData objectData) {
 
 		//3Dオブジェクト基底のインスタンスを取得
 		object3DCommon_ = object3DCommonPtr;
+		renderer_ = rendererPtr;
 
 		/// === 座標変換行列リソースを作成 === ///
 
@@ -119,6 +125,7 @@ namespace MyEngine {
 		axisLines_[0] = std::make_unique<DebugLine>();
 		axisLines_[0]->Initialize(
 			debugObjectCommonPtr,
+			renderer_,
 			{ 0.0f,0.0f,0.0f },
 			transform_.GetRight(),
 			{ 1.0f,0.0f,0.0f,1.0f }
@@ -129,6 +136,7 @@ namespace MyEngine {
 		axisLines_[1] = std::make_unique<DebugLine>();
 		axisLines_[1]->Initialize(
 			debugObjectCommonPtr,
+			renderer_,
 			{ 0.0f,0.0f,0.0f },
 			transform_.GetUp(),
 			{ 0.0f,1.0f,0.0f,1.0f });
@@ -138,6 +146,7 @@ namespace MyEngine {
 		axisLines_[2] = std::make_unique<DebugLine>();
 		axisLines_[2]->Initialize(
 			debugObjectCommonPtr,
+			renderer_,
 			{ 0.0f,0.0f,0.0f },
 			transform_.GetForward(),
 			{ 0.0f,0.0f,1.0f,1.0f }
@@ -241,7 +250,7 @@ namespace MyEngine {
 			};
 
 		//レンダラーに描画コマンドを登録
-		Renderer::GetInstance()->AddDraw(layer, true, command);
+		renderer_->AddDraw(layer, true, command);
 
 		if (isDebug_) {
 

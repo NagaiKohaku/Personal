@@ -6,6 +6,7 @@
 #include <Math/Matrix/Matrix4x4.h>
 #include <Math/Transform/WorldTransform.h>
 #include "Base/LayerType.h"
+#include <Base/Renderer.h>
 
 #include "d3d12.h"
 
@@ -60,7 +61,7 @@ namespace MyEngine {
 		/// </summary>
 		/// <param name="direction">ラインの方向ベクトル</param>
 		/// <param name="color">ラインの描画色</param>
-		void Initialize(DebugObjectCommon* debugObjectCommonPtr, Vector3 direction, Vector4 color);
+		void Initialize(DebugObjectCommon* debugObjectCommonPtr, Renderer* rendererPtr, Vector3 direction, Vector4 color);
 
 		/// <summary>
 		/// 指定した始点と終点の位置にデバッグラインを初期化します。
@@ -68,7 +69,7 @@ namespace MyEngine {
 		/// <param name="start">ラインの始点</param>
 		/// <param name="end">ラインの終点</param>
 		/// <param name="color">ラインの描画色</param>
-		void Initialize(DebugObjectCommon* debugObjectCommonPtr, Vector3 start, Vector3 end, Vector4 color);
+		void Initialize(DebugObjectCommon* debugObjectCommonPtr, Renderer* rendererPtr, Vector3 start, Vector3 end, Vector4 color);
 
 		/// <summary>
 		/// デバッグラインのワールド変換および座標変換行列を更新します。
@@ -91,6 +92,8 @@ namespace MyEngine {
 
 		//カメラ
 		Camera* camera_;
+
+		Renderer* renderer_;
 
 		//ワールドトランスフォーム
 		WorldTransform transform_;

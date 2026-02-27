@@ -24,7 +24,7 @@ void Reticle::Initialize(EngineContext context) {
 	object2D_ = std::make_unique<Object2D>();
 
 	//初期化
-	object2D_->Initialize(context.objectCommon.object2DCommon, camera_);
+	object2D_->Initialize(context.objectCommon.object2DCommon, camera_, context.renderer);
 
 	//スプライトをセット
 	object2D_->SetSprite("Reticle");
@@ -41,7 +41,7 @@ void Reticle::Initialize(EngineContext context) {
 	object3D_ = std::make_unique<Object3D>();
 
 	//初期化
-	object3D_->Initialize(context.objectCommon.object3DCommon, context.objectCommon.debugObjectCommon);
+	object3D_->Initialize(context.objectCommon.object3DCommon, context.objectCommon.debugObjectCommon, context.renderer);
 
 	//モデルを設定
 	object3D_->SetModel("Cube");
