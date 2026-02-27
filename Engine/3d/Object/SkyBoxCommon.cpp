@@ -8,6 +8,10 @@
 
 namespace MyEngine {
 
+	SkyBoxCommon::SkyBoxCommon() = default;
+
+	SkyBoxCommon::~SkyBoxCommon() = default;
+
 	///=====================================================/// 
 	/// SkyBoxCommonのシングルトンインスタンスを取得
 	///=====================================================///

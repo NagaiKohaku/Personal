@@ -12,6 +12,10 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hwnd, UINT msg
 
 namespace MyEngine {
 
+	WinApp::WinApp() = default;
+
+	WinApp::~WinApp() = default;
+
 	///=====================================================/// 
 	/// OSから送られてくるウィンドウメッセージを処理
 	///=====================================================///

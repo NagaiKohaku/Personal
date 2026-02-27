@@ -12,6 +12,10 @@
 
 namespace MyEngine {
 
+	Object3DCommon::Object3DCommon() = default;
+
+	Object3DCommon::~Object3DCommon() = default;
+
 	///=====================================================/// 
 	/// Object3DCommonの初期化
 	///=====================================================///

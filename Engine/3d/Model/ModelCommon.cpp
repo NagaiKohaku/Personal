@@ -2,6 +2,10 @@
 
 namespace MyEngine {
 
+	ModelCommon::ModelCommon() = default;
+
+	ModelCommon::~ModelCommon() = default;
+
 	///=====================================================/// 
 	/// ModelCommonの初期化
 	///=====================================================///

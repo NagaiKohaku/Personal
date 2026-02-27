@@ -9,6 +9,10 @@
 
 namespace MyEngine {
 
+	ParticleCommon::ParticleCommon() = default;
+
+	ParticleCommon::~ParticleCommon() = default;
+
 	///=====================================================/// 
 	/// ParticleCommonの初期化
 	///=====================================================///

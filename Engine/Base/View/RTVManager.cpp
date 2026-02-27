@@ -6,6 +6,10 @@
 
 namespace MyEngine {
 
+	RTVManager::RTVManager() = default;
+
+	RTVManager::~RTVManager() = default;
+
 	///=====================================================/// 
 	/// RTV用のデスクリプタヒープを初期化
 	///=====================================================///

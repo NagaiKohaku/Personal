@@ -11,6 +11,10 @@
 
 namespace MyEngine {
 
+	DirectXCommon::DirectXCommon() = default;
+
+	DirectXCommon::~DirectXCommon() = default;
+
 	///=====================================================/// 
 	/// DirectX12 の動作に必要な基本コンポーネントを初期化
 	///=====================================================///

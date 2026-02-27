@@ -8,6 +8,10 @@
 
 namespace MyEngine {
 
+	DebugObjectCommon::DebugObjectCommon() = default;
+
+	DebugObjectCommon::~DebugObjectCommon() = default;
+
 	///=====================================================/// 
 	/// DebugObjectCommonの初期化
 	///=====================================================///

@@ -55,6 +55,12 @@ namespace MyEngine {
 	/// </summary>
 	class DirectXCommon {
 
+	public:
+
+		DirectXCommon();
+
+		~DirectXCommon();
+
 		///-------------------------------------------/// 
 		/// メンバ関数
 		///-------------------------------------------///

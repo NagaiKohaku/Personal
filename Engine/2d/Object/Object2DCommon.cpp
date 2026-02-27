@@ -6,6 +6,10 @@
 
 namespace MyEngine {
 
+	Object2DCommon::Object2DCommon() = default;
+
+	Object2DCommon::~Object2DCommon() = default;
+
 	///=====================================================/// 
 	/// Object2DCommonの初期化
 	///=====================================================///

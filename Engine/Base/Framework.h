@@ -1,24 +1,26 @@
 #pragma once
 
-#include <Base/WinApp.h>
-#include <Base/DirectXCommon.h>
-#include <Base/View/RTVManager.h>
-#include <Base/View/DSVManager.h>
-#include <Base/View/SRVManager.h>
-#include <Base/OffScreen.h>
-#include <2d/Sprite/SpriteCommon.h>
-#include <3d/Model/ModelCommon.h>
-#include <2d/Object/Object2DCommon.h>
-#include <3d/Object/Object3DCommon.h>
-#include <3d/Object/DebugObjectCommon.h>
-#include <3d/Object/SkyBoxCommon.h>
-#include <3d/Particle/ParticleCommon.h>
-#include <Base/ImGuiManager.h>
-#include <Base/Renderer.h>
-#include <Base/Input.h>
-#include <Base/Audio.h>
+#include <memory>
 
 namespace MyEngine {
+
+	class WinApp;
+	class DirectXCommon;
+	class RTVManager;
+	class DSVManager;
+	class SRVManager;
+	class OffScreen;
+	class SpriteCommon;
+	class ModelCommon;
+	class Object2DCommon;
+	class Object3DCommon;
+	class DebugObjectCommon;
+	class SkyBoxCommon;
+	class ParticleCommon;
+	class ImGuiManager;
+	class Renderer;
+	class Audio;
+	class Input;
 
 	class Framework {
 
@@ -36,7 +38,9 @@ namespace MyEngine {
 
 	public:
 
-		virtual ~Framework() = default;
+		Framework();
+
+		virtual ~Framework();
 
 		virtual void Initialize();
 

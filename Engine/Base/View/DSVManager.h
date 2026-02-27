@@ -8,6 +8,12 @@ namespace MyEngine {
 	/// </summary>
 	class DSVManager : public ViewManagerBase {
 
+	public:
+
+		DSVManager();
+
+		~DSVManager();
+
 		///-------------------------------------------/// 
 		/// 静的メンバ変数
 		///-------------------------------------------///

@@ -15,6 +15,12 @@ namespace MyEngine {
 	/// </summary>
 	class Object2DCommon {
 
+	public:
+
+		Object2DCommon();
+
+		~Object2DCommon();
+
 		///-------------------------------------------/// 
 		/// 列挙型
 		///-------------------------------------------///

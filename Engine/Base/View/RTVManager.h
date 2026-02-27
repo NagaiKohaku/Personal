@@ -8,6 +8,12 @@ namespace MyEngine {
 	/// </summary>
 	class RTVManager : public ViewManagerBase {
 
+	public:
+
+		RTVManager();
+
+		~RTVManager();
+
 		///-------------------------------------------/// 
 		/// 静的メンバ変数
 		///-------------------------------------------///

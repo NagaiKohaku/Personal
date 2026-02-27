@@ -18,6 +18,12 @@ namespace MyEngine {
 	/// </summary>
 	class SkyBoxCommon {
 
+	public:
+
+		SkyBoxCommon();
+
+		~SkyBoxCommon();
+
 		///-------------------------------------------/// 
 		/// メンバ関数
 		///-------------------------------------------///

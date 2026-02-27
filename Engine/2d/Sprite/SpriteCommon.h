@@ -13,6 +13,12 @@ namespace MyEngine {
 	/// </summary>
 	class SpriteCommon {
 
+	public:
+
+		SpriteCommon();
+
+		~SpriteCommon();
+
 		///-------------------------------------------/// 
 		/// メンバ関数
 		///-------------------------------------------///

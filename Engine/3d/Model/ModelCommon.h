@@ -9,6 +9,12 @@ namespace MyEngine {
 	/// </summary>
 	class ModelCommon {
 
+	public:
+
+		ModelCommon();
+
+		~ModelCommon();
+
 		///-------------------------------------------/// 
 		/// メンバ関数
 		///-------------------------------------------///

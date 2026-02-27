@@ -26,6 +26,12 @@ namespace MyEngine {
 	/// </summary>
 	class Object3DCommon {
 
+	public:
+
+		Object3DCommon();
+
+		~Object3DCommon();
+
 		///-------------------------------------------/// 
 		/// 列挙型
 		///-------------------------------------------///

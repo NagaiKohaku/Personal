@@ -18,6 +18,12 @@ namespace MyEngine {
 	/// </summary>
 	class ParticleCommon {
 
+	public:
+
+		ParticleCommon();
+
+		~ParticleCommon();
+
 		///-------------------------------------------/// 
 		/// 列挙型
 		///-------------------------------------------///

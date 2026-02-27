@@ -19,6 +19,12 @@ namespace MyEngine {
 	/// </summary>
 	class ImGuiManager {
 
+	public:
+
+		ImGuiManager();
+
+		~ImGuiManager();
+
 		///-------------------------------------------/// 
 		/// メンバ関数
 		///-------------------------------------------///

@@ -6,6 +6,10 @@
 
 namespace MyEngine {
 
+	DSVManager::DSVManager() = default;
+
+	DSVManager::~DSVManager() = default;
+
 	///=====================================================/// 
 	/// DSV用のデスクリプタヒープを初期化
 	///=====================================================///

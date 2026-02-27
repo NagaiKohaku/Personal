@@ -2,6 +2,10 @@
 
 namespace MyEngine {
 
+	SpriteCommon::SpriteCommon() = default;
+
+	SpriteCommon::~SpriteCommon() = default;
+
 	///=====================================================/// 
 	/// SpriteCommonを初期化
 	///=====================================================///

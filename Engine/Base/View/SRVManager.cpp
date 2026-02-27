@@ -6,6 +6,10 @@
 
 namespace MyEngine {
 
+	SRVManager::SRVManager() = default;
+
+	SRVManager::~SRVManager() = default;
+
 	///=====================================================/// 
 	/// SRV用のデスクリプタヒープを初期化
 	///=====================================================///

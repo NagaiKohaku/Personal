@@ -8,6 +8,12 @@ namespace MyEngine {
 	/// </summary>
 	class SRVManager : public ViewManagerBase {
 
+	public:
+
+		SRVManager();
+
+		~SRVManager();
+
 		///-------------------------------------------/// 
 		/// 静的メンバ変数
 		///-------------------------------------------///

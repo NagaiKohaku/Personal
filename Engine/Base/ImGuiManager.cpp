@@ -5,6 +5,10 @@
 
 namespace MyEngine {
 
+	ImGuiManager::ImGuiManager() = default;
+
+	ImGuiManager::~ImGuiManager() = default;
+
 	///=====================================================/// 
 	/// ImGuiを初期化
 	///=====================================================///

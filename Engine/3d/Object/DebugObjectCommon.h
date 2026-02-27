@@ -20,6 +20,12 @@ namespace MyEngine {
 	/// </summary>
 	class DebugObjectCommon {
 
+	public:
+
+		DebugObjectCommon();
+
+		~DebugObjectCommon();
+
 		///-------------------------------------------/// 
 		/// メンバ関数
 		///-------------------------------------------///
