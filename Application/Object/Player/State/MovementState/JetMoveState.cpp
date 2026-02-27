@@ -8,7 +8,9 @@
 
 using namespace MyEngine;
 
-void JetMoveState::Enter() {
+void JetMoveState::Enter(Input* inputPtr) {
+
+	MovementState::Enter(inputPtr);
 
 	initialPos_ = { 0.0f,2.0f,0.0f };
 

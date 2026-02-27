@@ -13,12 +13,14 @@ namespace MyEngine {
 	///=====================================================/// 
 	/// パーティクルエミッターグループの初期化
 	///=====================================================///
-	void EmitterGroup::Initialize(ParticleCommon* particleCommonPtr, Camera* ptr) {
+	void EmitterGroup::Initialize(ParticleCommon* particleCommonPtr, Camera* cameraPtr, Input* inputPtr) {
 
 		particleCommon_ = particleCommonPtr;
 
 		//カメラのポインタを設定
-		camera_ = ptr;
+		camera_ = cameraPtr;
+
+		input_ = inputPtr;
 
 		//ディレクトリパスを設定
 		directoryPath_ = "Resource/Json/Particle/Group/";
@@ -98,7 +100,7 @@ namespace MyEngine {
 
 		if (ImGui::BeginTabBar("EmitterGroup")) {
 
-			if (Input::GetInstance()->IsTriggerPushKey(DIK_SPACE)) {
+			if (input_->IsTriggerPushKey(DIK_SPACE)) {
 
 				Emit();
 			}
@@ -107,7 +109,7 @@ namespace MyEngine {
 
 				ImGui::Text("名前");
 				if (ImGui::InputText("##Name", currentName.data(), 256)) {
-					if (Input::GetInstance()->IsTriggerPushKey(DIK_RETURN)) {
+					if (input_->IsTriggerPushKey(DIK_RETURN)) {
 						name_ = currentName.c_str();
 					}
 				}
@@ -186,7 +188,7 @@ namespace MyEngine {
 				newEmitter->SetTextureList(textureList_);
 
 				//エミッターの初期化
-				newEmitter->Initialize(name_, fileName, particleCommon_, camera_);
+				newEmitter->Initialize(name_, fileName, particleCommon_, camera_, input_);
 
 				//リストに登録
 				particleEmitters_.push_back(std::move(newEmitter));
@@ -291,7 +293,7 @@ namespace MyEngine {
 		newEmitter->SetTextureList(textureList_);
 
 		//エミッターの初期化
-		newEmitter->Initialize("defaultGroup", "default", particleCommon_, camera_);
+		newEmitter->Initialize("defaultGroup", "default", particleCommon_, camera_, input_);
 
 		//リストに登録
 		particleEmitters_.push_back(std::move(newEmitter));

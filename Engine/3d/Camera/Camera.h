@@ -8,6 +8,7 @@
 #include <3d/Object/Object3DCommon.h>
 #include <3d/Object/DebugObjectCommon.h>
 #include <3d/Object/SkyBoxCommon.h>
+#include <Base/Input.h>
 
 namespace MyEngine {
 
@@ -24,7 +25,7 @@ namespace MyEngine {
 		/// <summary>
 		/// カメラの各種パラメータを初期化します。
 		/// </summary>
-		void Initialize(float windowWidth, float windowHeight, OffScreen* offScreenPtr, Object3DCommon* object3DCommonPtr, DebugObjectCommon* debugObjectCommonPtr, SkyBoxCommon* skyBoxCommonPtr);
+		void Initialize(float windowWidth, float windowHeight, OffScreen* offScreenPtr, Object3DCommon* object3DCommonPtr, DebugObjectCommon* debugObjectCommonPtr, SkyBoxCommon* skyBoxCommonPtr, Input* inputPtr);
 
 		/// <summary>
 		/// カメラの状態を更新します。
@@ -47,6 +48,8 @@ namespace MyEngine {
 	private:
 
 		OffScreen* offScreen_;
+
+		Input* input_;
 
 		//追従対象
 		Object3D* trackingObject_;

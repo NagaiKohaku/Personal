@@ -167,6 +167,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Application\Object\Enemy\State\EnemyExitState.cpp" />
     <ClCompile Include="Application\Object\Enemy\State\EnemyMoveState.cpp" />
     <ClCompile Include="Application\Effect\Manager\EmitterManager.cpp" />
+    <ClCompile Include="Application\Object\Player\State\AttackState\AttackState.cpp" />
+    <ClCompile Include="Application\Object\Player\State\MovementState\MovementState.cpp" />
     <ClCompile Include="Application\Scene\GameScene\Event\ClearEvent.cpp" />
     <ClCompile Include="Engine\3d\Mesh\CubeMesh.cpp" />
     <ClCompile Include="Engine\3d\Collider\AABBCollider.cpp" />

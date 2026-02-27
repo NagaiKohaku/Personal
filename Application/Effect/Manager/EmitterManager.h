@@ -1,7 +1,9 @@
 #pragma once
 
 #include <3d/Particle/EmitterGroup.h>
+#include <3d/Particle/ParticleCommon.h>
 #include <3d/Camera/Camera.h>
+#include <Base/Input.h>
 #include <Math/Transform/WorldTransform.h>
 
 #include <memory>
@@ -21,7 +23,7 @@ public:
 
 	static EmitterManager* GetInstance();
 
-	void Initialize(MyEngine::ParticleCommon* particleCommonPtr);
+	void Initialize(MyEngine::ParticleCommon* particleCommonPtr, MyEngine::Input* inputPtr);
 
 	void Update();
 
@@ -36,6 +38,8 @@ private:
 	MyEngine::ParticleCommon* particleCommon_;
 
 	MyEngine::Camera* camera_;
+
+	MyEngine::Input* input_;
 
 	std::vector<std::unique_ptr<EmitterObject>> emitters_;
 

@@ -22,14 +22,15 @@ namespace MyEngine {
 			offScreen_.get(),
 			object3DCommon_.get(),
 			debugObjectCommon_.get(),
-			skyBoxCommon_.get()
+			skyBoxCommon_.get(),
+			input_.get()
 		);
 
 		emitterManager_ = EmitterManager::GetInstance();
-		emitterManager_->Initialize(particleCommon_.get());
+		emitterManager_->Initialize(particleCommon_.get(), input_.get());
 
 		uiManager_ = UIManager::GetInstance();
-		uiManager_->Initialize(object2DCommon_.get(), camera_.get());
+		uiManager_->Initialize(object2DCommon_.get(), camera_.get(), input_.get());
 
 		levelDataLoder_ = LevelDataLoader::GetInstance();
 		levelDataLoder_->Initialize();
@@ -40,8 +41,8 @@ namespace MyEngine {
 		engineContext_.objectCommon.particleCommon = particleCommon_.get();
 		engineContext_.objectCommon.debugObjectCommon = debugObjectCommon_.get();
 		engineContext_.camera = camera_.get();
+		engineContext_.input = input_.get();
 		engineContext_.audio = audio_;
-		engineContext_.input = input_;
 
 		sceneManager_ = SceneManager::GetInstance();
 		sceneManager_->Initialize(engineContext_);

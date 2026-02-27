@@ -18,9 +18,9 @@ namespace MyEngine {
 	class SkyBoxCommon;
 	class ParticleCommon;
 	class ImGuiManager;
-	class Renderer;
-	class Audio;
 	class Input;
+	class Audio;
+	class Renderer;
 
 	class Framework {
 
@@ -82,11 +82,11 @@ namespace MyEngine {
 
 		std::unique_ptr<ImGuiManager> imGuiManager_;
 
-		Renderer* renderer_;
+		std::unique_ptr<Input> input_;
 
 		Audio* audio_;
 
-		Input* input_;
+		Renderer* renderer_;
 
 	private:
 

@@ -6,7 +6,9 @@
 
 using namespace MyEngine;
 
-void JetAttackState::Enter() {
+void JetAttackState::Enter(Input* inputPtr) {
+
+	AttackState::Enter(inputPtr);
 
 	//攻撃間隔を設定
 	attackInterval_ = 0.1f;
@@ -23,7 +25,7 @@ void JetAttackState::Update(Player& player) {
 	if (attackTimer_ >= attackInterval_) {
 
 		//スペースキーが押されていたら
-		if (Input::GetInstance()->isPushKey(DIK_SPACE)) {
+		if (input_->isPushKey(DIK_SPACE)) {
 
 			//攻撃実行
 			player.JetAttack();

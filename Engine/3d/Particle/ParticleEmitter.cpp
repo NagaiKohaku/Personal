@@ -40,7 +40,7 @@ namespace MyEngine {
 	///=====================================================/// 
 	/// パーティクルエミッターを初期化
 	///=====================================================///
-	void ParticleEmitter::Initialize(const std::string& groupName, const std::string& fileName, ParticleCommon* particleCommonPtr, Camera* camera) {
+	void ParticleEmitter::Initialize(const std::string& groupName, const std::string& fileName, ParticleCommon* particleCommonPtr, Camera* cameraPtr, Input* inputPtr) {
 
 		/// === シングルトンインスタンスの取得 === ///
 
@@ -56,7 +56,9 @@ namespace MyEngine {
 		srvManager_ = particleCommon_->GetSRVManager();
 
 		//カメラ情報の設定
-		defaultCamera_ = camera;
+		defaultCamera_ = cameraPtr;
+
+		input_ = inputPtr;
 
 		/// === マテリアルリソースの生成 === ///
 
@@ -447,7 +449,7 @@ namespace MyEngine {
 
 				ImGui::Text("名前");
 				if (ImGui::InputText("##Name", currentName.data(), 256)) {
-					if (Input::GetInstance()->IsTriggerPushKey(DIK_RETURN)) {
+					if (input_->IsTriggerPushKey(DIK_RETURN)) {
 						name_ = currentName.c_str();
 					}
 				}

@@ -35,11 +35,6 @@ namespace MyEngine {
 	public:
 
 		/// <summary>
-		/// Inputのシングルトンインスタンスを取得します。
-		/// </summary>
-		static Input* GetInstance();
-
-		/// <summary>
 		/// DirectInputを使用してキーボードとマウスの入力デバイスを初期化します。
 		/// </summary>
 		void Initialize(WinApp* winAppPtr);

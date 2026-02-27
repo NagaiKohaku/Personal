@@ -75,14 +75,14 @@ void TitleScene::Initialize(EngineContext context) {
 	//衝撃波エミッター(左)
 	shockWaveLeftEmitter_ = std::make_unique<EmitterGroup>();
 
-	shockWaveLeftEmitter_->Initialize(context_.objectCommon.particleCommon, context_.camera);
+	shockWaveLeftEmitter_->Initialize(context_.objectCommon.particleCommon, context_.camera, context_.input);
 
 	shockWaveLeftEmitter_->LoadEmitter("ShockWaveLeft");
 
 	//衝撃波エミッター(右)
 	shockWaveRightEmitter_ = std::make_unique<EmitterGroup>();
 
-	shockWaveRightEmitter_->Initialize(context_.objectCommon.particleCommon, context_.camera);
+	shockWaveRightEmitter_->Initialize(context_.objectCommon.particleCommon, context_.camera, context_.input);
 
 	shockWaveRightEmitter_->LoadEmitter("ShockWaveRight");
 
@@ -151,7 +151,7 @@ void TitleScene::Finalize() {
 void TitleScene::Update() {
 
 	//スペースキーが押されたらスタート処理開始
-	if (Input::GetInstance()->IsTriggerPushKey(DIK_SPACE)) {
+	if (context_.input->IsTriggerPushKey(DIK_SPACE)) {
 
 		if (!isStart_) {
 

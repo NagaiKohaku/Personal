@@ -9,7 +9,9 @@
 
 using namespace MyEngine;
 
-void TankMoveState::Enter() {
+void TankMoveState::Enter(MyEngine::Input* inputPtr) {
+
+	MovementState::Enter(inputPtr);
 
 	initialPos_ = { 0.0f,2.0f,0.0f };
 

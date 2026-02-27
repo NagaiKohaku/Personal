@@ -17,11 +17,13 @@ UIManager* UIManager::GetInstance() {
 	return &instance;
 }
 
-void UIManager::Initialize(Object2DCommon* object2DCommonPtr, Camera* cameraPtr) {
+void UIManager::Initialize(Object2DCommon* object2DCommonPtr, Camera* cameraPtr, MyEngine::Input* inputPtr) {
 
 	object2DCommon_ = object2DCommonPtr;
 
 	camera_ = cameraPtr;
+
+	input_ = inputPtr;
 
 	spriteNameList_ = SpriteManager::GetInstance()->GetSpriteNameList();
 
@@ -108,7 +110,7 @@ void UIManager::ImGui() {
 			ImGui::Text("UIグループ名");
 			if (ImGui::InputText("##UIGroupName", inputUIGroupName.data(), stringBufSize_)) {
 
-				if (Input::GetInstance()->IsTriggerPushKey(DIK_RETURN)) {
+				if (input_->IsTriggerPushKey(DIK_RETURN)) {
 
 					uiGroup->name = inputUIGroupName.c_str();
 				}
@@ -171,7 +173,7 @@ void UIManager::ImGui() {
 					ImGui::Text("名前");
 					if (ImGui::InputText("##UIName", inputUIName.data(), stringBufSize_)) {
 
-						if (Input::GetInstance()->IsTriggerPushKey(DIK_RETURN)) {
+						if (input_->IsTriggerPushKey(DIK_RETURN)) {
 
 							ui.name = inputUIName.c_str();
 						}
@@ -229,7 +231,7 @@ void UIManager::ImGui() {
 
 		if (ImGui::InputText("##InputFileName", inputFileName.data(), stringBufSize_)) {
 
-			if (Input::GetInstance()->IsTriggerPushKey(DIK_RETURN)) {
+			if (input_->IsTriggerPushKey(DIK_RETURN)) {
 
 				saveFileName = inputFileName;
 
@@ -321,7 +323,7 @@ void UIManager::Edit() {
 				Vector2 uiMin = { ui.object->GetTranslate().x - ui.object->GetSize().x / 2.0f, ui.object->GetTranslate().y - ui.object->GetSize().y / 2.0f };
 				Vector2 uiMax = { ui.object->GetTranslate().x + ui.object->GetSize().x / 2.0f, ui.object->GetTranslate().y + ui.object->GetSize().y / 2.0f };
 
-				Vector2 mousePos = Input::GetInstance()->GetMousePos();
+				Vector2 mousePos = input_->GetMousePos();
 
 				EditUIPosition(&ui, uiMin, uiMax, mousePos);
 
@@ -334,7 +336,7 @@ void UIManager::Edit() {
 void UIManager::EditUIPosition(UIObject* uiObject, Vector2 uiMin, Vector2 uiMax, Vector2 mousePos) {
 
 	// 左クリックの押下状態を取得
-	bool isLeftDown = Input::GetInstance()->IsPushMouseButton(0);
+	bool isLeftDown = input_->IsPushMouseButton(0);
 
 	if (!isLeftDown) {
 
@@ -368,7 +370,7 @@ void UIManager::EditUIPosition(UIObject* uiObject, Vector2 uiMin, Vector2 uiMax,
 void UIManager::EditUISize(UIObject* uiObject, Vector2 uiMin, Vector2 uiMax, Vector2 mousePos) {
 
 	// 右クリックの押下状態（押されている間 true とする既存仕様を仮定）
-	bool isRightDown = Input::GetInstance()->IsPushMouseButton(1);
+	bool isRightDown = input_->IsPushMouseButton(1);
 
 	if (!isRightDown) {
 

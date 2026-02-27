@@ -117,7 +117,7 @@ namespace MyEngine {
 		imGuiManager_->Initialize(winApp_.get(), dxCommon_.get());
 
 		//入力
-		input_ = Input::GetInstance();
+		input_ = std::make_unique<Input>();
 		input_->Initialize(winApp_.get());
 
 		//音声

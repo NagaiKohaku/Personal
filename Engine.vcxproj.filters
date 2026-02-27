@@ -355,6 +355,8 @@
     <ClCompile Include="Engine\Base\Framework.cpp" />
     <ClCompile Include="Engine\Base\Game.cpp" />
     <ClCompile Include="Engine\Base\View\ViewManagerBase.cpp" />
+    <ClCompile Include="Application\Object\Player\State\AttackState\AttackState.cpp" />
+    <ClCompile Include="Application\Object\Player\State\MovementState\MovementState.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application\Object\Camera\FollowCamera.h">

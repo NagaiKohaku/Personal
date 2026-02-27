@@ -41,6 +41,8 @@ void Player::Initialize(EngineContext context, BulletManager* bulletPtr, bool is
 	//カメラポインタを取得
 	camera_ = context.camera;
 
+	input_ = context.input;
+
 	//バレットマネージャーを取得
 	bulletManager_ = bulletPtr;
 
@@ -116,13 +118,13 @@ void Player::Initialize(EngineContext context, BulletManager* bulletPtr, bool is
 
 	movementState_ = std::make_unique<TankMoveState>();
 
-	movementState_->Enter();
+	movementState_->Enter(input_);
 
 	/// === 攻撃ステートの初期化 === ///
 
 	attackState_ = std::make_unique<TankAttackState>();
 
-	attackState_->Enter();
+	attackState_->Enter(input_);
 
 	/// === 他変数の設定 === ///
 
@@ -308,19 +310,19 @@ void Player::TankAttack() {
 void Player::ChangeJetState() {
 
 	movementState_ = std::make_unique<JetMoveState>();
-	movementState_->Enter();
+	movementState_->Enter(input_);
 
 	attackState_ = std::make_unique<JetAttackState>();
-	attackState_->Enter();
+	attackState_->Enter(input_);
 }
 
 void Player::ChangeTankState() {
 
 	movementState_ = std::make_unique<TankMoveState>();
-	movementState_->Enter();
+	movementState_->Enter(input_);
 
 	attackState_ = std::make_unique<TankAttackState>();
-	attackState_->Enter();
+	attackState_->Enter(input_);
 }
 
 ///=====================================================/// 
@@ -334,25 +336,25 @@ void Player::Move() {
 	if (isMoveActive_) {
 
 		//Wキーが押されたら上方向に移動
-		if (Input::GetInstance()->isPushKey(DIK_W)) {
+		if (input_->isPushKey(DIK_W)) {
 
 			inputDirection_.y += 1.0f;
 		}
 
 		//Sキーが押されたら下方向に移動
-		if (Input::GetInstance()->isPushKey(DIK_S)) {
+		if (input_->isPushKey(DIK_S)) {
 
 			inputDirection_.y -= 1.0f;
 		}
 
 		//Aキーが押されたら左方向に移動
-		if (Input::GetInstance()->isPushKey(DIK_A)) {
+		if (input_->isPushKey(DIK_A)) {
 
 			inputDirection_.x -= 1.0f;
 		}
 
 		//Dキーが押されたら右方向に移動
-		if (Input::GetInstance()->isPushKey(DIK_D)) {
+		if (input_->isPushKey(DIK_D)) {
 
 			inputDirection_.x += 1.0f;
 		}

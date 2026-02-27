@@ -1,5 +1,7 @@
 #pragma once
 
+#include <Base/Input.h>
+
 class Player;
 class LockOn;
 class BulletManager;
@@ -10,11 +12,13 @@ public:
 
 	virtual ~AttackState() = default;
 
-	virtual void Enter() = 0;
+	virtual void Enter(MyEngine::Input* inputPtr);
 
 	virtual void Update(Player& player) = 0;
 
 protected:
+
+	MyEngine::Input* input_;
 
 	float attackTimer_;
 

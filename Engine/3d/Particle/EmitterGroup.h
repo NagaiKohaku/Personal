@@ -1,6 +1,7 @@
 #pragma once
 
 #include "3d/Camera/Camera.h"
+#include <Base/Input.h>
 #include <Math/Transform/WorldTransform.h>
 #include "ParticleEmitter.h"
 
@@ -21,7 +22,7 @@ namespace MyEngine {
 		/// <summary>
 		/// パーティクルエミッターグループの初期化を行います。
 		/// </summary>
-		void Initialize(ParticleCommon* particleCommonPtr, Camera* ptr);
+		void Initialize(ParticleCommon* particleCommonPtr, Camera* cameraPtr, Input* inputPtr);
 
 		/// <summary>
 		/// パーティクルエミッターグループの更新処理を行います。
@@ -107,6 +108,8 @@ namespace MyEngine {
 
 		//カメラ
 		Camera* camera_;
+
+		Input* input_;
 
 		//エミッターのリスト
 		std::list<std::unique_ptr<ParticleEmitter>> particleEmitters_;

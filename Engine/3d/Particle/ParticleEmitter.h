@@ -9,6 +9,7 @@
 #include <Math/Shape/AABB.h>
 #include "3d/Mesh/MeshBase.h"
 #include "3d/Model/Model.h"
+#include <Base/Input.h>
 
 
 #include "d3d12.h"
@@ -163,7 +164,7 @@ namespace MyEngine {
 		/// <summary>
 		/// パーティクルエミッターを初期化します。
 		/// </summary>
-		void Initialize(const std::string& groupName, const std::string& fileName, ParticleCommon* particleCommonPtr, Camera* camera);
+		void Initialize(const std::string& groupName, const std::string& fileName, ParticleCommon* particleCommonPtr, Camera* cameraPtr, Input* inputPtr);
 
 		/// <summary>
 		/// パーティクルエミッターの更新処理を行います。
@@ -297,6 +298,8 @@ namespace MyEngine {
 
 		//デフォルトカメラ
 		Camera* defaultCamera_;
+
+		Input* input_;
 
 		/// === バッファリソース === ///
 

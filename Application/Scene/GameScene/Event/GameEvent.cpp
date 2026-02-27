@@ -32,7 +32,7 @@ void GameEvent::Update() {
 
 	UIManager::GetInstance()->GetUIGroup("Reticle")->transform.translate_ = playerScreenPos;
 
-	if (Input::GetInstance()->isPushKey(DIK_W)) {
+	if (context_.input->isPushKey(DIK_W)) {
 
 		UIManager::GetInstance()->Get2DObject("Reticle", "WButton")->GetSprite()->SetRatio(1.0f);
 	} else {
@@ -40,7 +40,7 @@ void GameEvent::Update() {
 		UIManager::GetInstance()->Get2DObject("Reticle", "WButton")->GetSprite()->SetRatio(0.0f);
 	}
 
-	if (Input::GetInstance()->isPushKey(DIK_A)) {
+	if (context_.input->isPushKey(DIK_A)) {
 
 		UIManager::GetInstance()->Get2DObject("Reticle", "AButton")->GetSprite()->SetRatio(1.0f);
 	} else {
@@ -48,7 +48,7 @@ void GameEvent::Update() {
 		UIManager::GetInstance()->Get2DObject("Reticle", "AButton")->GetSprite()->SetRatio(0.0f);
 	}
 
-	if (Input::GetInstance()->isPushKey(DIK_S)) {
+	if (context_.input->isPushKey(DIK_S)) {
 
 		UIManager::GetInstance()->Get2DObject("Reticle", "SButton")->GetSprite()->SetRatio(1.0f);
 	} else {
@@ -56,7 +56,7 @@ void GameEvent::Update() {
 		UIManager::GetInstance()->Get2DObject("Reticle", "SButton")->GetSprite()->SetRatio(0.0f);
 	}
 
-	if (Input::GetInstance()->isPushKey(DIK_D)) {
+	if (context_.input->isPushKey(DIK_D)) {
 
 		UIManager::GetInstance()->Get2DObject("Reticle", "DButton")->GetSprite()->SetRatio(1.0f);
 	} else {

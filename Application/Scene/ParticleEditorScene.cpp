@@ -215,7 +215,7 @@ void ParticleEditorScene::CreateGroup() {
 	//デフォルトグループの生成
 	std::unique_ptr<EmitterGroup> newGroup = std::make_unique<EmitterGroup>();
 
-	newGroup->Initialize(context_.objectCommon.particleCommon, context_.camera);
+	newGroup->Initialize(context_.objectCommon.particleCommon, context_.camera, context_.input);
 
 	newGroup->SetTextureList(textureList_);
 
@@ -233,7 +233,7 @@ void ParticleEditorScene::LoadGroup(const std::string& groupName) {
 	std::unique_ptr<EmitterGroup> newGroup = std::make_unique<EmitterGroup>();
 
 	//グループの初期化
-	newGroup->Initialize(context_.objectCommon.particleCommon, context_.camera);
+	newGroup->Initialize(context_.objectCommon.particleCommon, context_.camera, context_.input);
 
 	//テクスチャリストの設定
 	newGroup->SetTextureList(textureList_);

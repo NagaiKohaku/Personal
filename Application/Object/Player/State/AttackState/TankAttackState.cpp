@@ -6,7 +6,9 @@
 
 using namespace MyEngine;
 
-void TankAttackState::Enter() {
+void TankAttackState::Enter(Input* inputPtr) {
+
+	AttackState::Enter(inputPtr);
 
 	//攻撃間隔を設定
 	attackInterval_ = 1.0f;
@@ -29,7 +31,7 @@ void TankAttackState::Update(Player& player) {
 		player.UpdateLockOn(lockOnRange_);
 
 		//スペースキーが押されていたら
-		if (Input::GetInstance()->isPushKey(DIK_SPACE)) {
+		if (input_->isPushKey(DIK_SPACE)) {
 
 			//攻撃実行
 			player.TankAttack();

@@ -3,6 +3,7 @@
 #include "3d/Object/Object3D.h"
 #include "3d/Particle/EmitterGroup.h"
 #include "3d/Camera/Camera.h"
+#include <Base/Input.h>
 #include "Scene/EngineContext.h"
 
 #include <Object/Shadow/Shadow.h>
@@ -116,6 +117,8 @@ private:
 
 	//カメラ
 	MyEngine::Camera* camera_;
+
+	MyEngine::Input* input_;
 
 	//バレットマネージャー
 	BulletManager* bulletManager_ = nullptr;

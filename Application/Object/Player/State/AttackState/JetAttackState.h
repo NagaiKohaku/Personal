@@ -6,7 +6,7 @@ class JetAttackState : public AttackState {
 
 public:
 
-	void Enter() override;
+	void Enter(MyEngine::Input* inputPtr) override;
 
 	void Update(Player& player) override;
 

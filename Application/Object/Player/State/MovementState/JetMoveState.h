@@ -8,7 +8,7 @@ class JetMoveState : public MovementState {
 
 public:
 
-	void Enter() override;
+	void Enter(MyEngine::Input* inputPtr) override;
 
 	void Update(Player& player) override;
 

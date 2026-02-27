@@ -56,22 +56,22 @@ void Enemy::Initialize(EngineContext context, BulletManager* bulletPtr, Player* 
 
 	//死亡時エミッターの生成とエミッター情報読み込み
 	explosiveEmitter_ = std::make_unique<EmitterGroup>();
-	explosiveEmitter_->Initialize(context.objectCommon.particleCommon, camera_);
+	explosiveEmitter_->Initialize(context.objectCommon.particleCommon, camera_, context.input);
 	explosiveEmitter_->LoadEmitter("BlockExplosive");
 
 	//クリア時爆発エミッターの生成とエミッター情報読み込み
 	clearExplosiveEmitter_ = std::make_unique<EmitterGroup>();
-	clearExplosiveEmitter_->Initialize(context.objectCommon.particleCommon, camera_);
+	clearExplosiveEmitter_->Initialize(context.objectCommon.particleCommon, camera_, context.input);
 	clearExplosiveEmitter_->LoadEmitter("ClearExplosive");
 
 	//破壊時エミッターの生成とエミッター情報読み込み
 	destroyEmitter_ = std::make_unique<EmitterGroup>();
-	destroyEmitter_->Initialize(context.objectCommon.particleCommon, camera_);
+	destroyEmitter_->Initialize(context.objectCommon.particleCommon, camera_, context.input);
 	destroyEmitter_->LoadEmitter("Destroy");
 
 	//ダメージ時エミッターの生成とエミッター情報読み込み
 	damageEmitter_ = std::make_unique<EmitterGroup>();
-	damageEmitter_->Initialize(context.objectCommon.particleCommon, camera_);
+	damageEmitter_->Initialize(context.objectCommon.particleCommon, camera_, context.input);
 	damageEmitter_->LoadEmitter("Damage");
 
 	/// === 他変数の初期化 === ///
