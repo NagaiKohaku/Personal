@@ -1,7 +1,7 @@
 #pragma once
 
-#include "2d/Object/Object2D.h"
-#include "3d/Object/Object3D.h"
+#include <Object/2D/Object2D.h>
+#include <Object/3D/Object3D.h>
 #include <Scene/EngineContext.h>
 
 #include "memory"

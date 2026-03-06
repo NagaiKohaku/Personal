@@ -1,6 +1,6 @@
 #pragma once
 
-#include "3d/Object/Object3D.h"
+#include <Object/3D/Object3D.h>
 #include "3d/Particle/EmitterGroup.h"
 #include "3d/Camera/Camera.h"
 #include <Scene/EngineContext.h>

@@ -1,6 +1,7 @@
 #include "GameEvent.h"
 
 #include <Base/Input.h>
+#include <2d/Sprite/Sprite.h>
 #include <Object/Manager/ObjectManager.h>
 #include <Effect/Manager/UIManager.h>
 #include <Math/Utility/MakeMatrixMath.h>

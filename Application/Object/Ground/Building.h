@@ -2,7 +2,7 @@
 
 #include "memory"
 
-#include <3d/Object/Object3D.h>
+#include <Object/3D/Object3D.h>
 #include <Scene/EngineContext.h>
 
 #include <Math/Vector/Vector3.h>

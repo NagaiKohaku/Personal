@@ -57,19 +57,25 @@ void Player::Initialize(EngineContext context, BulletManager* bulletPtr, bool is
 	//コアオブジェクトの生成
 	core_ = std::make_unique<Object3D>();
 
-	core_->Initialize(context.objectCommon.object3DCommon, context.objectCommon.debugObjectCommon, context.renderer, objectData_[0]);
+	core_->Initialize(context.objectCommon.object3DCommon, context.camera, context.renderer);
+
+	core_->SetObjectData(objectData_[0]);
 
 	//右ウィングオブジェクトの生成
 	rightWing_ = std::make_unique<Object3D>();
 
-	rightWing_->Initialize(context.objectCommon.object3DCommon, context.objectCommon.debugObjectCommon, context.renderer, objectData_[1]);
+	rightWing_->Initialize(context.objectCommon.object3DCommon, context.camera, context.renderer);
+
+	rightWing_->SetObjectData(objectData_[1]);
 
 	rightWing_->GetWorldTransform().SetParent(&core_->GetWorldTransform());
 
 	//左ウィングオブジェクトの生成
 	leftWing_ = std::make_unique<Object3D>();
 
-	leftWing_->Initialize(context.objectCommon.object3DCommon, context.objectCommon.debugObjectCommon, context.renderer, objectData_[2]);
+	leftWing_->Initialize(context.objectCommon.object3DCommon, context.camera, context.renderer);
+
+	leftWing_->SetObjectData(objectData_[2]);
 
 	leftWing_->GetWorldTransform().SetParent(&core_->GetWorldTransform());
 

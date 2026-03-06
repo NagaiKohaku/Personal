@@ -3,7 +3,7 @@
 #include "Base/DirectXCommon.h"
 #include "Base/Renderer.h"
 #include "3d/Object/SkyBoxCommon.h"
-#include "3d/Object/Object3DCommon.h"
+#include <Object/3D/Object3DCommon.h>
 #include "3d/Camera/Camera.h"
 #include "2d/Sprite/TextureManager.h"
 

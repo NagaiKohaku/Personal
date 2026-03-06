@@ -41,7 +41,7 @@ void Reticle::Initialize(EngineContext context) {
 	object3D_ = std::make_unique<Object3D>();
 
 	//初期化
-	object3D_->Initialize(context.objectCommon.object3DCommon, context.objectCommon.debugObjectCommon, context.renderer);
+	object3D_->Initialize(context.objectCommon.object3DCommon, context.camera, context.renderer);
 
 	//モデルを設定
 	object3D_->SetModel("Cube");

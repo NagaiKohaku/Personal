@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Base/WinApp.h>
-#include <2d/Object/Object2D.h>
+#include <Object/2D/Object2D.h>
 #include <Math/Transform/WorldTransform.h>
 
 #include <3d/Camera/Camera.h>

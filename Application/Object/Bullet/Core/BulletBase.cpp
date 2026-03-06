@@ -22,7 +22,7 @@ void BulletBase::Initialize(EngineContext context, Vector3 pos, Vector3 directio
 	object_ = std::make_unique<Object3D>();
 
 	//初期化
-	object_->Initialize(context.objectCommon.object3DCommon, context.objectCommon.debugObjectCommon, context.renderer);
+	object_->Initialize(context.objectCommon.object3DCommon, context.camera, context.renderer);
 
 	//座標の設定
 	object_->GetWorldTransform().translate_ = pos;

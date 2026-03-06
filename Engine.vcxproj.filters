@@ -79,12 +79,6 @@
     <ClCompile Include="Application\Object\Player\Player.cpp">
       <Filter>Application\Object\Player</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\2d\Object\Object2D.cpp">
-      <Filter>Engine\2d\Object</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\2d\Object\Object2DCommon.cpp">
-      <Filter>Engine\2d\Object</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\2d\Sprite\Sprite.cpp">
       <Filter>Engine\2d\Sprite</Filter>
     </ClCompile>
@@ -149,12 +143,6 @@
       <Filter>Engine\3d\Object</Filter>
     </ClCompile>
     <ClCompile Include="Engine\3d\Object\DebugLine.cpp">
-      <Filter>Engine\3d\Object</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\3d\Object\Object3D.cpp">
-      <Filter>Engine\3d\Object</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\3d\Object\Object3DCommon.cpp">
       <Filter>Engine\3d\Object</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Base\Audio.cpp">
@@ -357,6 +345,12 @@
     <ClCompile Include="Engine\Base\View\ViewManagerBase.cpp" />
     <ClCompile Include="Application\Object\Player\State\AttackState\AttackState.cpp" />
     <ClCompile Include="Application\Object\Player\State\MovementState\MovementState.cpp" />
+    <ClCompile Include="Engine\Object\Base\ObjectBase.cpp" />
+    <ClCompile Include="Engine\Object\Base\ObjectCommonBase.cpp" />
+    <ClCompile Include="Engine\Object\2D\Object2DCommon.cpp" />
+    <ClCompile Include="Engine\Object\2D\Object2D.cpp" />
+    <ClCompile Include="Engine\Object\3D\Object3DCommon.cpp" />
+    <ClCompile Include="Engine\Object\3D\Object3D.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application\Object\Camera\FollowCamera.h">
@@ -385,12 +379,6 @@
     </ClInclude>
     <ClInclude Include="Application\Object\Player\Player.h">
       <Filter>Application\Object\Player</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\2d\Object\Object2D.h">
-      <Filter>Engine\2d\Object</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\2d\Object\Object2DCommon.h">
-      <Filter>Engine\2d\Object</Filter>
     </ClInclude>
     <ClInclude Include="Engine\2d\Sprite\SpriteManager.h">
       <Filter>Engine\2d\Sprite</Filter>
@@ -456,12 +444,6 @@
       <Filter>Engine\3d\Object</Filter>
     </ClInclude>
     <ClInclude Include="Engine\3d\Object\DebugLine.h">
-      <Filter>Engine\3d\Object</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\3d\Object\Object3D.h">
-      <Filter>Engine\3d\Object</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\3d\Object\Object3DCommon.h">
       <Filter>Engine\3d\Object</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Base\Audio.h">
@@ -685,6 +667,13 @@
     <ClInclude Include="Engine\Base\View\ViewManagerBase.h" />
     <ClInclude Include="Application\Scene\EngineContext.h" />
     <ClInclude Include="Engine\Base\ObjectCommon.h" />
+    <ClInclude Include="Engine\Object\Base\ObjectBase.h" />
+    <ClInclude Include="Engine\Math\Matrix\TransformationMatrix.h" />
+    <ClInclude Include="Engine\Object\Base\ObjectCommonBase.h" />
+    <ClInclude Include="Engine\Object\2D\Object2DCommon.h" />
+    <ClInclude Include="Engine\Object\2D\Object2D.h" />
+    <ClInclude Include="Engine\Object\3D\Object3DCommon.h" />
+    <ClInclude Include="Engine\Object\3D\Object3D.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resource\Shader\DebugObject.hlsli">

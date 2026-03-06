@@ -4,6 +4,7 @@
 #include <Effect/Manager/EmitterManager.h>
 #include <Effect/Fade/Fade.h>
 #include <Base/Input.h>
+#include <2d/Sprite/Sprite.h>
 
 using namespace MyEngine;
 

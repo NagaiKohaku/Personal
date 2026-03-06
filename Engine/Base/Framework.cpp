@@ -10,8 +10,8 @@
 #include <3d/Model/ModelCommon.h>
 #include <2d/Sprite/TextureManager.h>
 #include <3d/Model/ModelManager.h>
-#include <2d/Object/Object2DCommon.h>
-#include <3d/Object/Object3DCommon.h>
+#include <Object/2D/Object2DCommon.h>
+#include <Object/3D/Object3DCommon.h>
 #include <3d/Object/DebugObjectCommon.h>
 #include <3d/Object/SkyBoxCommon.h>
 #include <3d/Particle/ParticleCommon.h>
@@ -148,8 +148,6 @@ namespace MyEngine {
 		audio_->Update();
 
 		input_->Update();
-
-		object3DCommon_->Update();
 
 #ifdef _USE_IMGUI
 

@@ -32,7 +32,8 @@ void Enemy::Initialize(EngineContext context, BulletManager* bulletPtr, Player* 
 
 	//敵オブジェクトの生成と初期化
 	object_ = std::make_unique<Object3D>();
-	object_->Initialize(context.objectCommon.object3DCommon, context.objectCommon.debugObjectCommon, context.renderer, objectData);
+	object_->Initialize(context.objectCommon.object3DCommon, context.camera, context.renderer);
+	object_->SetObjectData(objectData);
 
 	//影オブジェクトの生成と初期化
 	shadow_ = std::make_unique<Shadow>();
@@ -371,9 +372,6 @@ void Enemy::Shake() {
 
 	//座標変換データのみシェイク後の座標に変更
 	object_->GetWorldTransform().SetWorldMatrix(worldTransform.GetWorldMatrix());
-
-	//オブジェクトの座標データのみを更新
-	object_->TransformUpdate();
 }
 
 ///=====================================================/// 

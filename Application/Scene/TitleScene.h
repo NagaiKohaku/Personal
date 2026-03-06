@@ -3,8 +3,8 @@
 #include <Scene/BaseScene.h>
 
 #include "3d/Camera/Camera.h"
-#include "3d/Object/Object3D.h"
-#include "2d/Object/Object2D.h"
+#include <Object/3D/Object3D.h>
+#include <Object/2D/Object2D.h>
 #include "3d/Particle/EmitterGroup.h"
 #include <Object/Player/Player.h>
 #include <Object/Ground/GroundManager.h>

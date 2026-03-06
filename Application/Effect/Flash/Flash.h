@@ -1,6 +1,7 @@
 #pragma once
 
-#include <2d/Object/Object2D.h>
+#include <Object/2D/Object2D.h>
+#include <Object/2D/Object2DCommon.h>
 #include <3d/Camera/Camera.h>
 #include <Base/Renderer.h>
 

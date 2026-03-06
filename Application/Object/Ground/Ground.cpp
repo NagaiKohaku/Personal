@@ -1,6 +1,6 @@
 #include "Ground.h"
 
-#include "3d/Object/Object3D.h"
+#include <Object/3D/Object3D.h>
 #include "2d/Sprite/TextureManager.h"
 #include "3d/Model/Model.h"
 
@@ -14,7 +14,7 @@ void Ground::Initialize(EngineContext context) {
 	object_ = std::make_unique<Object3D>();
 
 	// オブジェクトの初期化
-	object_->Initialize(context.objectCommon.object3DCommon, context.objectCommon.debugObjectCommon, context.renderer);
+	object_->Initialize(context.objectCommon.object3DCommon, context.camera, context.renderer);
 
 	object_->SetModel("Plane");
 

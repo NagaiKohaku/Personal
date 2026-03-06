@@ -1,6 +1,6 @@
 #pragma once
 
-#include "3d/Object/Object3D.h"
+#include <Object/3D/Object3D.h>
 #include "3d/Object/DebugObject3D.h"
 #include "3d/Object/DebugLine.h"
 #include <Base/Renderer.h>

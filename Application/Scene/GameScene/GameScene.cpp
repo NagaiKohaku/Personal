@@ -17,7 +17,7 @@
 #include "3d/Model/ModelManager.h"
 #include "2d/Sprite/TextureManager.h"
 
-#include "3d/Object/Object3DCommon.h"
+#include <Object/3D/Object3DCommon.h>
 #include "3d/Object/DebugObjectCommon.h"
 #include "3d/Object/SkyBoxCommon.h"
 

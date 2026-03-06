@@ -1,11 +1,11 @@
 #pragma once
 #include <Base/OffScreen.h>
-#include <3d/Object/Object3D.h>
+#include <Object/3D/Object3D.h>
 #include <Math/Vector/Vector3.h>
 #include <Math/Matrix/Matrix4x4.h>
 #include <Math/Transform/WorldTransform.h>
 
-#include <3d/Object/Object3DCommon.h>
+#include <Object/3D/Object3DCommon.h>
 #include <3d/Object/DebugObjectCommon.h>
 #include <3d/Object/SkyBoxCommon.h>
 #include <Base/Input.h>
