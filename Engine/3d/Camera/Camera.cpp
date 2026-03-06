@@ -5,7 +5,6 @@
 #include "Base/OffScreen.h"
 #include <Object/3D/Object3DCommon.h>
 #include "3d/Object/DebugObjectCommon.h"
-#include "3d/Object/SkyBoxCommon.h"
 
 #include <Math/Utility/MakeMatrixMath.h>
 
@@ -20,7 +19,7 @@ namespace MyEngine {
 	///=====================================================/// 
 	/// カメラの各種パラメータを初期化
 	///=====================================================///
-	void Camera::Initialize(float windowWidth, float windowHeight, OffScreen* offScreenPtr, Object3DCommon* object3DCommonPtr, DebugObjectCommon* debugObjectCommonPtr, SkyBoxCommon* skyBoxCommonPtr, Input* inputPtr) {
+	void Camera::Initialize(float windowWidth, float windowHeight, OffScreen* offScreenPtr, Object3DCommon* object3DCommonPtr, DebugObjectCommon* debugObjectCommonPtr, Input* inputPtr) {
 
 		offScreen_ = offScreenPtr;
 
@@ -74,8 +73,6 @@ namespace MyEngine {
 		object3DCommonPtr->SetDefaultCamera(this);
 
 		debugObjectCommonPtr->SetDefaultCamera(this);
-
-		skyBoxCommonPtr->SetDefaultCamera(this);
 	}
 
 	///=====================================================/// 

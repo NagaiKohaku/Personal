@@ -75,12 +75,7 @@ namespace MyEngine {
 		materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));
 
 		//マテリアルデータの設定
-		materialData_->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-		materialData_->enableLighting = false;
-		materialData_->enableEdit = false;
 		materialData_->uvTransform = MakeIdentity4x4();
-		materialData_->ratio = 1.0f;
-		materialData_->brightness = 0.1f;
 
 		/// === テクスチャの読み込み === ///
 
@@ -102,21 +97,6 @@ namespace MyEngine {
 
 		/// === その他変数の初期化 === ///
 
-		//座標の初期化
-		translation_ = Vector2(0.0f, 0.0f);
-
-		//角度の初期化
-		rotation_ = 0.0f;
-
-		//アンカーポイントの初期化
-		anchorPoint_ = Vector2(0.5f, 0.5f);
-
-		//X軸の反転フラグの初期化
-		isFlipX_ = false;
-
-		//Y軸の反転フラグの初期化
-		isFlipY_ = false;
-
 		//テクスチャの左上座標の初期化
 		textureLeftTop_ = Vector2(0.0f, 0.0f);
 
@@ -130,21 +110,21 @@ namespace MyEngine {
 		/// === アンカーポイントに基づいて四隅の頂点位置を計算 === ///
 
 		//アンカーポイントから四点を計算
-		float left = 0.0f - anchorPoint_.x;
-		float right = 1.0f - anchorPoint_.x;
-		float top = 0.0f - anchorPoint_.y;
-		float bottom = 1.0f - anchorPoint_.y;
+		float left = 0.0f - config_.anchorPoint.x;
+		float right = 1.0f - config_.anchorPoint.x;
+		float top = 0.0f - config_.anchorPoint.y;
+		float bottom = 1.0f - config_.anchorPoint.y;
 
 		/// === X軸・Y軸反転フラグを反映 === ///
 
 		//X軸の反転
-		if (isFlipX_) {
+		if (config_.isFlipX) {
 			left = -left;
 			right = -right;
 		}
 
 		//Y軸の反転
-		if (isFlipY_) {
+		if (config_.isFlipY) {
 			top = -top;
 			bottom = -bottom;
 		}
@@ -179,6 +159,12 @@ namespace MyEngine {
 		//右上
 		vertexData_[3].position = { right,top,0.0f,1.0f };
 		vertexData_[3].texcoord = { texRight,texTop };
+
+		materialData_->color          = config_.color;
+		materialData_->enableLighting = config_.enableLighting;
+		materialData_->enableEdit     = config_.enableEdit;
+		materialData_->ratio          = config_.ratio;
+		materialData_->brightness     = config_.brightness;
 	}
 
 	///=====================================================/// 
@@ -225,13 +211,10 @@ namespace MyEngine {
 
 #ifdef _USE_IMGUI
 
-		ImGui::DragFloat2("Position", &translation_.x, 1.0f);
-		ImGui::SliderAngle("Rotation", &rotation_);
-		ImGui::DragFloat2("Size", &size_.x, 0.1f);
 		ImGui::ColorEdit4("Color", &materialData_->color.x);
-		ImGui::DragFloat2("AnchorPoint", &anchorPoint_.x, 0.01f, 0.0f, 1.0f);
-		ImGui::Checkbox("IsFlipX", &isFlipX_);
-		ImGui::Checkbox("IsFlipY", &isFlipY_);
+		ImGui::DragFloat2("AnchorPoint", &config_.anchorPoint.x, 0.01f, 0.0f, 1.0f);
+		ImGui::Checkbox("IsFlipX", &config_.isFlipX);
+		ImGui::Checkbox("IsFlipY", &config_.isFlipY);
 		ImGui::DragFloat2("TexLeftTop", &textureLeftTop_.x, 0.1f);
 		ImGui::DragFloat2("TexSize", &textureSize_.x, 0.1f);
 
@@ -252,8 +235,45 @@ namespace MyEngine {
 		//テクスチャのサイズを取得
 		textureSize_.x = static_cast<float>(metadata.width);
 		textureSize_.y = static_cast<float>(metadata.height);
+	}
 
-		//スプライトのサイズをテクスチャのサイズに設定
-		size_ = textureSize_;
+	Sprite& Sprite::SetColor(const Vector4& color) {
+		config_.color = color;
+		return *this;
+	}
+
+	Sprite& Sprite::SetAnchorPoint(const Vector2& anchorPoint) {
+		config_.anchorPoint = anchorPoint;
+		return *this;
+	}
+
+	Sprite& Sprite::SetRatio(const float& ratio) {
+		config_.ratio = ratio;
+		return *this;
+	}
+
+	Sprite& Sprite::SetBrightness(const float& brightness) {
+		config_.brightness = brightness;
+		return *this;
+	}
+
+	Sprite& Sprite::SetEnableLighting(bool enableLighting) {
+		config_.enableLighting = enableLighting;
+		return *this;
+	}
+
+	Sprite& Sprite::SetEnableEdit(bool enableEdit) {
+		config_.enableEdit = enableEdit;
+		return *this;
+	}
+
+	Sprite& Sprite::SetIsFlipX(bool isFlipX) {
+		config_.isFlipX = isFlipX;
+		return *this;
+	}
+
+	Sprite& Sprite::SetIsFlipY(bool isFlipY) {
+		config_.isFlipY = isFlipY;
+		return *this;
 	}
 }

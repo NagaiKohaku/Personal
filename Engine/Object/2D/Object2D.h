@@ -24,31 +24,23 @@ namespace MyEngine {
 
 		std::unique_ptr<Sprite> sprite_;
 
-		Vector2 translate_;
-
-		Vector2 size_;
-
-		float rotate_;
-
 	public:
-
-		WorldTransform& GetWorldTransform() { return transform_; }
-
-		Vector2 GetTranslate() const { return translate_; }
-
-		Vector2 GetSize() const { return size_; }
-
-		float GetRotate() const { return rotate_; }
 
 		Sprite* GetSprite() const { return sprite_.get(); }
 
-		void SetTranslate(const Vector2& translate) { translate_ = translate; }
+		Vector2 GetTranslate() const { return { transform_.translate_.x, transform_.translate_.y }; }
 
-		void SetSize(const Vector2& size) { size_ = size; }
+		Vector2 GetSize() const { return { transform_.scale_.x, transform_.scale_.y }; }
 
-		void SetRotate(const float& rotate) { rotate_ = rotate; }
+		float GetRotate() const { return transform_.rotate_.z; }
 
 		void SetSprite(const std::string& spriteName);
+
+		void SetTranslate(const Vector2& translate) { transform_.translate_ = { translate.x, translate.y, 0.0f }; }
+
+		void SetSize(const Vector2& size) { transform_.scale_ = { size.x, size.y, 1.0f }; }
+
+		void SetRotate(const float& rotate) { transform_.rotate_ = { 0.0f, 0.0f, rotate }; }
 
 	};
 }

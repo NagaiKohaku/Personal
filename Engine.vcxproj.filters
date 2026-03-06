@@ -178,12 +178,6 @@
     <ClCompile Include="Engine\Other\Log.cpp">
       <Filter>Engine\Other</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\3d\Object\SkyBox.cpp">
-      <Filter>Engine\3d\Object</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\3d\Object\SkyBoxCommon.cpp">
-      <Filter>Engine\3d\Object</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\Scene\BaseScene.cpp">
       <Filter>Engine\Scene</Filter>
     </ClCompile>
@@ -481,12 +475,6 @@
     </ClInclude>
     <ClInclude Include="Engine\Other\Log.h">
       <Filter>Engine\Other</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\3d\Object\SkyBoxCommon.h">
-      <Filter>Engine\3d\Object</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\3d\Object\SkyBox.h">
-      <Filter>Engine\3d\Object</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Scene\BaseScene.h">
       <Filter>Engine\Scene</Filter>

@@ -250,8 +250,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\3d\Light\SpotLight.cpp" />
     <ClCompile Include="Engine\3d\Collider\SphereCollider.cpp" />
     <ClCompile Include="Application\Object\Bullet\Player\TankBullet.cpp" />
-    <ClCompile Include="Engine\3d\Object\SkyBox.cpp" />
-    <ClCompile Include="Engine\3d\Object\SkyBoxCommon.cpp" />
     <ClCompile Include="Engine\3d\Mesh\SphereMesh.cpp" />
     <ClCompile Include="Application\Object\Shadow\Shadow.cpp" />
     <ClCompile Include="Application\Scene\TitleScene.cpp" />
@@ -352,8 +350,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\3d\Light\SpotLight.h" />
     <ClInclude Include="Engine\3d\Collider\SphereCollider.h" />
     <ClInclude Include="Application\Object\Bullet\Player\TankBullet.h" />
-    <ClInclude Include="Engine\3d\Object\SkyBox.h" />
-    <ClInclude Include="Engine\3d\Object\SkyBoxCommon.h" />
     <ClInclude Include="Engine\3d\Mesh\SphereMesh.h" />
     <ClInclude Include="Application\LevelEditor\ObjectData.h" />
     <ClInclude Include="Application\Object\Ground\LineGround.h" />

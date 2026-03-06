@@ -15,7 +15,6 @@ namespace MyEngine {
 	class Object2DCommon;
 	class Object3DCommon;
 	class DebugObjectCommon;
-	class SkyBoxCommon;
 	class ParticleCommon;
 	class ImGuiManager;
 	class Input;
@@ -75,8 +74,6 @@ namespace MyEngine {
 		std::unique_ptr<Object3DCommon> object3DCommon_;
 
 		std::unique_ptr<DebugObjectCommon> debugObjectCommon_;
-
-		std::unique_ptr<SkyBoxCommon> skyBoxCommon_;
 
 		std::unique_ptr<ParticleCommon> particleCommon_;
 

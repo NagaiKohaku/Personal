@@ -24,10 +24,6 @@ void Object2D::Update() {
 		sprite_->Update();
 	}
 
-	transform_.translate_ = { translate_.x,translate_.y,0.0f };
-	transform_.rotate_ = { 0.0f,0.0f,rotate_ };
-	transform_.scale_ = { size_.x,size_.y,1.0f };
-
 	transform_.UpdateMatrix();
 
 	ObjectBase::Update();
@@ -59,5 +55,5 @@ void Object2D::SetSprite(const std::string& spriteName) {
 
 	sprite_ = SpriteManager::GetInstance()->FindSprite(spriteName);
 
-	size_ = sprite_->GetSize();
+	transform_.scale_ = { sprite_->GetTextureSize().x,sprite_->GetTextureSize().y,1.0f };
 }

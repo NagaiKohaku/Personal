@@ -28,6 +28,5 @@ namespace MyEngine {
 			Microsoft::WRL::ComPtr<IDxcBlob>& vs,
 			Microsoft::WRL::ComPtr<IDxcBlob>& ps
 		) override;
-
 	};
 }

@@ -22,7 +22,6 @@ namespace MyEngine {
 			offScreen_.get(),
 			object3DCommon_.get(),
 			debugObjectCommon_.get(),
-			skyBoxCommon_.get(),
 			input_.get()
 		);
 

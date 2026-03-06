@@ -13,7 +13,6 @@
 #include <Object/2D/Object2DCommon.h>
 #include <Object/3D/Object3DCommon.h>
 #include <3d/Object/DebugObjectCommon.h>
-#include <3d/Object/SkyBoxCommon.h>
 #include <3d/Particle/ParticleCommon.h>
 #include <Base/ImGuiManager.h>
 #include <Base/Renderer.h>
@@ -103,10 +102,6 @@ namespace MyEngine {
 		//デバッグオブジェクト基底
 		debugObjectCommon_ = std::make_unique<DebugObjectCommon>();
 		debugObjectCommon_->Initialize(dxCommon_.get());
-
-		//スカイボックス基底
-		skyBoxCommon_ = std::make_unique<SkyBoxCommon>();
-		skyBoxCommon_->Initialize(dxCommon_.get());
 
 		//パーティクル基底
 		particleCommon_ = std::make_unique<ParticleCommon>();
