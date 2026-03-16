@@ -10,7 +10,6 @@ namespace MyEngine {
 	class DSVManager;
 	class SRVManager;
 	class OffScreen;
-	class SpriteCommon;
 	class ModelCommon;
 	class Object2DCommon;
 	class Object3DCommon;
@@ -64,8 +63,6 @@ namespace MyEngine {
 		std::unique_ptr<SRVManager> srvManager_;
 
 		std::unique_ptr<OffScreen> offScreen_;
-
-		std::unique_ptr<SpriteCommon> spriteCommon_;
 
 		std::unique_ptr<ModelCommon> modelCommon_;
 

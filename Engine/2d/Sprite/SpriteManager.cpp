@@ -1,9 +1,9 @@
 #include "SpriteManager.h"
 
-#include "2d/Sprite/SpriteCommon.h"
+#include <Object/2D/Object2DCommon.h>
 
-#include "fstream"
-#include "filesystem"
+#include <fstream>
+#include <filesystem>
 
 namespace MyEngine {
 
@@ -18,10 +18,10 @@ namespace MyEngine {
 	///=====================================================/// 
 	/// SpriteManagerを初期化
 	///=====================================================///
-	void SpriteManager::Initialize(SpriteCommon* spriteCommonPtr) {
+	void SpriteManager::Initialize(Object2DCommon* object2DCommonPtr) {
 
 		//スプライト基底のインスタンスを取得
-		spriteCommon_ = spriteCommonPtr;
+		object2DCommon_ = object2DCommonPtr;
 
 		//スプライトデータを読み込む
 		for (const auto& entry : std::filesystem::directory_iterator("Resource/Sprite")) {
@@ -49,7 +49,7 @@ namespace MyEngine {
 		std::unique_ptr<Sprite> newSprite = std::make_unique<Sprite>();
 
 		//スプライトを読み込む
-		newSprite->Initialize(spriteName, spriteCommon_);
+		newSprite->Initialize(spriteName, object2DCommon_);
 
 		//リストに登録
 		sprites_.insert(std::make_pair(spriteName, std::move(newSprite)));
@@ -70,7 +70,7 @@ namespace MyEngine {
 			std::unique_ptr<Sprite> newSprite = std::make_unique<Sprite>();
 
 			//初期化
-			newSprite->Initialize(texturePath, spriteCommon_);
+			newSprite->Initialize(texturePath, object2DCommon_);
 
 			//新しく生成したスプライトを返す
 			return std::move(newSprite);

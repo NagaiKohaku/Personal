@@ -7,7 +7,7 @@ namespace MyEngine {
 		Framework::Initialize();
 
 		spriteManager_ = SpriteManager::GetInstance();
-		spriteManager_->Initialize(spriteCommon_.get());
+		spriteManager_->Initialize(object2DCommon_.get());
 
 		colliderManager_ = ColliderManager::GetInstance();
 		colliderManager_->Initialize();

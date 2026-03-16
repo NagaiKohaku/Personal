@@ -17,59 +17,17 @@ namespace MyEngine {
 	///=====================================================/// 
 	/// 初期化
 	///=====================================================///
-	void Sprite::Initialize(const std::string& fileName, SpriteCommon* spriteCommonPtr) {
+	void Sprite::Initialize(const std::string& fileName, Object2DCommon* object2DCommonPtr) {
 
 		/// === インスタンスの取得 === ///
 
 		//スプライト基底のインスタンスを取得
-		spriteCommon_ = spriteCommonPtr;
-
-		/// === 頂点リソースの作成 === ///
-
-		//リソースを作成
-		vertexResource_ = spriteCommon_->GetDxCommon()->CreateBufferResource(sizeof(VertexData) * 4);
-
-		//リソースの先頭のアドレスを取得する
-		vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
-
-		//使用するリソースのサイズを設定
-		vertexBufferView_.SizeInBytes = sizeof(VertexData) * 4;
-
-		//1頂点当たりのサイズを設定
-		vertexBufferView_.StrideInBytes = sizeof(VertexData);
-
-		//書き込むためのアドレスを取得する
-		vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData_));
-
-		/// === 頂点インデックスリソースの作成 === ///
-
-		//リソースを作成
-		IndexResource_ = spriteCommon_->GetDxCommon()->CreateBufferResource(sizeof(uint32_t) * 6);
-
-		//リソースの先頭のアドレスを取得する
-		indexBufferView_.BufferLocation = IndexResource_->GetGPUVirtualAddress();
-
-		//使用するリソースのサイズを設定
-		indexBufferView_.SizeInBytes = sizeof(uint32_t) * 6;
-
-		//フォーマットを設定
-		indexBufferView_.Format = DXGI_FORMAT_R32_UINT;
-
-		//書き込むためのアドレスを取得する
-		IndexResource_->Map(0, nullptr, reinterpret_cast<void**>(&indexData_));
-
-		//頂点インデックスのデータを書き込む
-		indexData_[0] = 0;
-		indexData_[1] = 1;
-		indexData_[2] = 2;
-		indexData_[3] = 1;
-		indexData_[4] = 3;
-		indexData_[5] = 2;
+		object2DCommon_ = object2DCommonPtr;
 
 		/// === マテリアルリソースの作成 === ///
 
 		//リソースを作成
-		materialResource_ = spriteCommon_->GetDxCommon()->CreateBufferResource(sizeof(Material));
+		materialResource_ = object2DCommon_->GetDxCommon()->CreateBufferResource(sizeof(Material));
 
 		//書き込むためのアドレスを取得する
 		materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));
@@ -142,24 +100,6 @@ namespace MyEngine {
 		float texTop = textureLeftTop_.y / metadata.height;
 		float texBottom = (textureLeftTop_.y + textureSize_.y) / metadata.height;
 
-		/// === 計算した頂点位置とUVをvertexData_に書き込む === ///
-
-		//左下
-		vertexData_[0].position = { left,bottom,0.0f,1.0f };
-		vertexData_[0].texcoord = { texLeft,texBottom };
-
-		//左上
-		vertexData_[1].position = { left,top,0.0f,1.0f };
-		vertexData_[1].texcoord = { texLeft,texTop };
-
-		//右下
-		vertexData_[2].position = { right,bottom,0.0f,1.0f };
-		vertexData_[2].texcoord = { texRight,texBottom };
-
-		//右上
-		vertexData_[3].position = { right,top,0.0f,1.0f };
-		vertexData_[3].texcoord = { texRight,texTop };
-
 		materialData_->color          = config_.color;
 		materialData_->enableLighting = config_.enableLighting;
 		materialData_->enableEdit     = config_.enableEdit;
@@ -175,19 +115,19 @@ namespace MyEngine {
 		std::string fileName = "Resource/Sprite/" + fileName_ + "/" + texturePaths_[currentTextureIndex_];
 
 		//頂点データの設定
-		spriteCommon_->GetDxCommon()->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView_);
+		object2DCommon_->GetDxCommon()->GetCommandList()->IASetVertexBuffers(0, 1, &object2DCommon_->GetVertexBufferView());
 
 		//頂点番号データの設定
-		spriteCommon_->GetDxCommon()->GetCommandList()->IASetIndexBuffer(&indexBufferView_);
+		object2DCommon_->GetDxCommon()->GetCommandList()->IASetIndexBuffer(&object2DCommon_->GetIndexBufferView());
 
 		//マテリアルデータの設定
-		spriteCommon_->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
+		object2DCommon_->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
 
 		//テクスチャの設定
-		spriteCommon_->GetDxCommon()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSrvHandleGPU(fileName));
+		object2DCommon_->GetDxCommon()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSrvHandleGPU(fileName));
 
 		//描画命令
-		spriteCommon_->GetDxCommon()->GetCommandList()->DrawIndexedInstanced(6, 1, 0, 0, 0);
+		object2DCommon_->GetDxCommon()->GetCommandList()->DrawIndexedInstanced(6, 1, 0, 0, 0);
 	}
 
 	///=====================================================/// 

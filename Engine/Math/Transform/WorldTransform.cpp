@@ -55,6 +55,22 @@ namespace MyEngine {
 		worldMatrix_ = localMatrix_ * parentMatrix;
 	}
 
+	void WorldTransform::UpdateWorldMatrixOnly() {
+
+		Matrix4x4 parentMatrix = MakeIdentity4x4();
+
+		if (parent_) {
+
+			Matrix4x4 pTranslateMatrix = parent_->GetWorldTranslateMatrix();
+			Matrix4x4 pRotateMatrix = parent_->GetWorldRotateMatrix();
+			Matrix4x4 pScaleMatrix = parent_->GetWorldScaleMatrix();
+
+			parentMatrix = (pScaleMatrix * pRotateMatrix) * pTranslateMatrix;
+		}
+
+		worldMatrix_ = localMatrix_ * parentMatrix;
+	}
+
 	void WorldTransform::DisplayImGui() {
 
 #ifdef _USE_IMGUI

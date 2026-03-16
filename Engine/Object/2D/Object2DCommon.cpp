@@ -13,6 +13,65 @@ Object2DCommon::~Object2DCommon() = default;
 void Object2DCommon::Initialize(DirectXCommon* dxCommonPtr) {
 
 	ObjectCommonBase::Initialize(dxCommonPtr);
+
+	/// === 頂点リソースの作成 === ///
+
+	//リソースを作成
+	vertexResource_ = dxCommon_->CreateBufferResource(sizeof(VertexData) * 4);
+
+	//リソースの先頭のアドレスを取得する
+	vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
+
+	//使用するリソースのサイズを設定
+	vertexBufferView_.SizeInBytes = sizeof(VertexData) * 4;
+
+	//1頂点当たりのサイズを設定
+	vertexBufferView_.StrideInBytes = sizeof(VertexData);
+
+	//書き込むためのアドレスを取得する
+	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData_));
+
+	//左下
+	vertexData_[0].position = { 0.0f,0.0f,0.0f,1.0f };
+	vertexData_[0].texcoord = { 0.0f,0.0f };
+
+	//左上
+	vertexData_[1].position = { 0.0f,1.0f,0.0f,1.0f };
+	vertexData_[1].texcoord = { 0.0f,1.0f };
+
+	//右下
+	vertexData_[2].position = { 1.0f,0.0f,0.0f,1.0f };
+	vertexData_[2].texcoord = { 1.0f,0.0f };
+
+	//右上
+	vertexData_[3].position = { 1.0f,1.0f,0.0f,1.0f };
+	vertexData_[3].texcoord = { 1.0f,1.0f };
+
+	/// === 頂点インデックスリソースの作成 === ///
+
+	//リソースを作成
+	IndexResource_ = dxCommon_->CreateBufferResource(sizeof(uint32_t) * 6);
+
+	//リソースの先頭のアドレスを取得する
+	indexBufferView_.BufferLocation = IndexResource_->GetGPUVirtualAddress();
+
+	//使用するリソースのサイズを設定
+	indexBufferView_.SizeInBytes = sizeof(uint32_t) * 6;
+
+	//フォーマットを設定
+	indexBufferView_.Format = DXGI_FORMAT_R32_UINT;
+
+	//書き込むためのアドレスを取得する
+	IndexResource_->Map(0, nullptr, reinterpret_cast<void**>(&indexData_));
+
+	//頂点インデックスのデータを書き込む
+	indexData_[0] = 0;
+	indexData_[1] = 1;
+	indexData_[2] = 2;
+	indexData_[3] = 1;
+	indexData_[4] = 3;
+	indexData_[5] = 2;
+
 }
 
 void Object2DCommon::CommonDrawSetting() {

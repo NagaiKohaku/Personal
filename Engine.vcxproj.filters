@@ -82,9 +82,6 @@
     <ClCompile Include="Engine\2d\Sprite\Sprite.cpp">
       <Filter>Engine\2d\Sprite</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\2d\Sprite\SpriteCommon.cpp">
-      <Filter>Engine\2d\Sprite</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\2d\Sprite\SpriteManager.cpp">
       <Filter>Engine\2d\Sprite</Filter>
     </ClCompile>
@@ -232,9 +229,6 @@
     <ClCompile Include="Application\Object\Shadow\Shadow.cpp">
       <Filter>Application\Object\Shadow</Filter>
     </ClCompile>
-    <ClCompile Include="Application\Object\Manager\ObjectManager.cpp">
-      <Filter>Application\Object\Manager</Filter>
-    </ClCompile>
     <ClCompile Include="Application\Object\Bullet\Core\BulletBase.cpp">
       <Filter>Application\Object\Bullet\Core</Filter>
     </ClCompile>
@@ -345,6 +339,7 @@
     <ClCompile Include="Engine\Object\2D\Object2D.cpp" />
     <ClCompile Include="Engine\Object\3D\Object3DCommon.cpp" />
     <ClCompile Include="Engine\Object\3D\Object3D.cpp" />
+    <ClCompile Include="Application\Object\Manager\ObjectManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application\Object\Camera\FollowCamera.h">
@@ -378,9 +373,6 @@
       <Filter>Engine\2d\Sprite</Filter>
     </ClInclude>
     <ClInclude Include="Engine\2d\Sprite\Sprite.h">
-      <Filter>Engine\2d\Sprite</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\2d\Sprite\SpriteCommon.h">
       <Filter>Engine\2d\Sprite</Filter>
     </ClInclude>
     <ClInclude Include="Engine\2d\Sprite\TextureManager.h">
@@ -533,9 +525,6 @@
     <ClInclude Include="Application\Object\Shadow\Shadow.h">
       <Filter>Application\Object\Shadow</Filter>
     </ClInclude>
-    <ClInclude Include="Application\Object\Manager\ObjectManager.h">
-      <Filter>Application\Object\Manager</Filter>
-    </ClInclude>
     <ClInclude Include="Application\Object\Bullet\Core\BulletBase.h">
       <Filter>Application\Object\Bullet\Core</Filter>
     </ClInclude>
@@ -662,6 +651,7 @@
     <ClInclude Include="Engine\Object\2D\Object2D.h" />
     <ClInclude Include="Engine\Object\3D\Object3DCommon.h" />
     <ClInclude Include="Engine\Object\3D\Object3D.h" />
+    <ClInclude Include="Application\Object\Manager\ObjectManager.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resource\Shader\DebugObject.hlsli">

@@ -25,6 +25,8 @@ namespace MyEngine {
 		/// </summary>
 		void UpdateMatrix();
 
+		void UpdateWorldMatrixOnly();
+
 		/// <summary>
 		/// パラメータのデバッグ表示
 		/// </summary>
@@ -122,6 +124,8 @@ namespace MyEngine {
 		/// </summary>
 		/// <param name="matrix">行列</param>
 		void SetWorldMatrix(const Matrix4x4& matrix) { worldMatrix_ = matrix; }
+
+		void SetLocalMatrix(const Matrix4x4& matrix) { localMatrix_ = matrix; }
 
 		/// <summary>
 		/// 回転行列の設定

@@ -6,7 +6,6 @@
 #include <Base/View/DSVManager.h>
 #include <Base/View/SRVManager.h>
 #include <Base/OffScreen.h>
-#include <2d/Sprite/SpriteCommon.h>
 #include <3d/Model/ModelCommon.h>
 #include <2d/Sprite/TextureManager.h>
 #include <3d/Model/ModelManager.h>
@@ -76,10 +75,6 @@ namespace MyEngine {
 		//オフスクリーン
 		offScreen_ = std::make_unique<OffScreen>();
 		offScreen_->Initialize(winApp_.get(), dxCommon_.get(), rtvManager_.get(), dsvManager_.get(), srvManager_.get());
-
-		//スプライト基底
-		spriteCommon_ = std::make_unique<SpriteCommon>();
-		spriteCommon_->Initialize(dxCommon_.get());
 
 		//モデル基底
 		modelCommon_ = std::make_unique<ModelCommon>();

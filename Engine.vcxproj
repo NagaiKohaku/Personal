@@ -167,6 +167,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Application\Object\Enemy\State\EnemyExitState.cpp" />
     <ClCompile Include="Application\Object\Enemy\State\EnemyMoveState.cpp" />
     <ClCompile Include="Application\Effect\Manager\EmitterManager.cpp" />
+    <ClCompile Include="Application\Object\Manager\ObjectManager.cpp" />
     <ClCompile Include="Application\Object\Player\State\AttackState\AttackState.cpp" />
     <ClCompile Include="Application\Object\Player\State\MovementState\MovementState.cpp" />
     <ClCompile Include="Application\Scene\GameScene\Event\ClearEvent.cpp" />
@@ -183,7 +184,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Application\Object\Bullet\Core\BulletBase.cpp" />
     <ClCompile Include="Application\Object\Bullet\Core\BulletManager.cpp" />
     <ClCompile Include="Engine\2d\Sprite\Sprite.cpp" />
-    <ClCompile Include="Engine\2d\Sprite\SpriteCommon.cpp" />
     <ClCompile Include="Engine\3d\Model\Model.cpp" />
     <ClCompile Include="Engine\3d\Model\ModelCommon.cpp" />
     <ClCompile Include="Engine\Base\Audio.cpp" />
@@ -254,7 +254,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Application\Object\Shadow\Shadow.cpp" />
     <ClCompile Include="Application\Scene\TitleScene.cpp" />
     <ClCompile Include="Application\Effect\Shake\Shake.cpp" />
-    <ClCompile Include="Application\Object\Manager\ObjectManager.cpp" />
     <ClCompile Include="Application\Object\Player\State\AttackState\TankAttackState.cpp" />
     <ClCompile Include="Application\Object\Player\State\MovementState\TankMoveState.cpp" />
     <ClCompile Include="Application\Effect\Manager\UIManager.cpp" />
@@ -272,6 +271,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Application\LevelEditor\LevelDataLoader.h" />
     <ClInclude Include="Application\Object\Bullet\Enemy\EnemyBullet.h" />
     <ClInclude Include="Application\Object\Ground\Building.h" />
+    <ClInclude Include="Application\Object\Manager\ObjectManager.h" />
     <ClInclude Include="Application\Object\Player\State\AttackState\AttackState.h" />
     <ClInclude Include="Application\Object\Enemy\State\EnemyState.h" />
     <ClInclude Include="Application\Object\Enemy\State\EnemyAttackState.h" />
@@ -296,7 +296,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Application\Object\Bullet\Core\BulletBase.h" />
     <ClInclude Include="Application\Object\Bullet\Core\BulletManager.h" />
     <ClInclude Include="Engine\2d\Sprite\Sprite.h" />
-    <ClInclude Include="Engine\2d\Sprite\SpriteCommon.h" />
     <ClInclude Include="Engine\Base\Framework.h" />
     <ClInclude Include="Engine\Base\Game.h" />
     <ClInclude Include="Engine\Base\LayerType.h" />
@@ -359,7 +358,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Application\Scene\TitleScene.h" />
     <ClInclude Include="Application\Effect\Fade\Fade.h" />
     <ClInclude Include="Application\Effect\Shake\Shake.h" />
-    <ClInclude Include="Application\Object\Manager\ObjectManager.h" />
     <ClInclude Include="Application\Object\Player\LockOn.h" />
     <ClInclude Include="Application\Effect\Flash\Flash.h" />
     <ClInclude Include="Application\Object\Player\State\AttackState\JetAttackState.h" />

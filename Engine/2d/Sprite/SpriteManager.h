@@ -6,6 +6,8 @@
 
 namespace MyEngine {
 
+	class Object2DCommon;
+
 	/// <summary>
 	/// スプライトの管理を行うクラス。
 	/// </summary>
@@ -24,7 +26,7 @@ namespace MyEngine {
 		/// <summary>
 		/// SpriteManagerを初期化します。
 		/// </summary>
-		void Initialize(SpriteCommon* spriteCommonPtr);
+		void Initialize(Object2DCommon* object2DCommonPtr);
 
 		/// <summary>
 		/// 指定した名前のスプライトを検索し、未登録であれば読み込みます。
@@ -48,7 +50,7 @@ namespace MyEngine {
 	private:
 
 		//スプライト基底
-		SpriteCommon* spriteCommon_;
+		Object2DCommon* object2DCommon_;
 
 		//スプライトリスト
 		std::map<std::string, std::unique_ptr<Sprite>> sprites_;

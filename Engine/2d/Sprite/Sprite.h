@@ -1,6 +1,6 @@
 #pragma once
 
-#include "2d/Sprite/SpriteCommon.h"
+#include <Object/2D/Object2DCommon.h>
 
 #include <Math/Vector/Vector2.h>
 #include <Math/Vector/Vector3.h>
@@ -65,7 +65,7 @@ namespace MyEngine {
 		/// スプライトの描画に必要なリソースを初期化します。
 		/// </summary>
 		/// <param name="fileName">ファイル名(.png切り捨て)</param>
-		void Initialize(const std::string& fileName, SpriteCommon* spriteCommonPtr);
+		void Initialize(const std::string& fileName, Object2DCommon* object2DCommonPtr);
 
 		/// <summary>
 		/// スプライトの頂点データを更新します。
@@ -103,37 +103,17 @@ namespace MyEngine {
 	private:
 
 		//スプライト基底
-		SpriteCommon* spriteCommon_ = nullptr;
+		Object2DCommon* object2DCommon_ = nullptr;
 
 		/// === バッファリソース === ///
-
-		//頂点リソース
-		Microsoft::WRL::ComPtr<ID3D12Resource> vertexResource_ = nullptr;
-
-		//頂点番号リソース
-		Microsoft::WRL::ComPtr<ID3D12Resource> IndexResource_ = nullptr;
 
 		//マテリアルリソース
 		Microsoft::WRL::ComPtr<ID3D12Resource> materialResource_ = nullptr;
 
 		/// === リソースデータ === ///
 
-		//頂点データ
-		VertexData* vertexData_ = nullptr;
-
-		//頂点番号データ
-		uint32_t* indexData_ = nullptr;
-
 		//マテリアルデータ
 		Material* materialData_ = nullptr;
-
-		/// === バッファビュー === ///
-
-		//頂点バッファビュー
-		D3D12_VERTEX_BUFFER_VIEW vertexBufferView_;
-
-		//頂点番号バッファビュー
-		D3D12_INDEX_BUFFER_VIEW indexBufferView_;
 
 		/// === その他変数 === ///
 

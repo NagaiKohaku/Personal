@@ -6,6 +6,7 @@
 #include <Object/Base/ObjectCommonBase.h>
 #include <2d/Sprite/SpriteManager.h>
 #include <2d/Sprite/Sprite.h>
+#include <Math/Utility/MakeMatrixMath.h>
 
 using namespace MyEngine;
 
@@ -24,7 +25,16 @@ void Object2D::Update() {
 		sprite_->Update();
 	}
 
-	transform_.UpdateMatrix();
+	// 2D専用の行列計算（アンカーポイント対応版）
+	Matrix4x4 mOffset = MakeTranslateMatrix({ -sprite_->GetConfig().anchorPoint.x, -sprite_->GetConfig().anchorPoint.y, 0.0f });
+	Matrix4x4 mScale = MakeScaleMatrix(transform_.scale_);
+	Matrix4x4 mRotate = MakeRotateZMatrix(transform_.rotate_.z);
+	Matrix4x4 mTranslate = MakeTranslateMatrix(transform_.translate_);
+
+	// 合成 (Offset -> Scale -> Rotate -> Translate)
+	transform_.SetLocalMatrix(mOffset * mScale * mRotate * mTranslate);
+
+	transform_.UpdateWorldMatrixOnly();
 
 	ObjectBase::Update();
 }
