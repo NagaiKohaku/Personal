@@ -39,7 +39,7 @@ public:
 private:
 
 	// 影オブジェクト
-	std::unique_ptr<MyEngine::Object3D> shadow_;
+	MyEngine::Object3D* shadow_;
 
 	// オブジェクト間の距離
 	float maxLength_;

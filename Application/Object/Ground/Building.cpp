@@ -10,9 +10,7 @@ using namespace MyEngine;
 void Building::Initialize(EngineContext context, Vector3 pos, Vector3 scale) {
 
 	//建物オブジェクト生成
-	object_ = std::make_unique<Object3D>();
-
-	object_->Initialize(context.objectCommon.object3DCommon, context.camera, context.renderer);
+	object_ = context.objectManager->CreateObject3D();
 
 	object_->SetModel("Cube");
 

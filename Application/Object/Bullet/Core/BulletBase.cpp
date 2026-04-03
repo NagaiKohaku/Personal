@@ -19,10 +19,7 @@ void BulletBase::Initialize(EngineContext context, Vector3 pos, Vector3 directio
 	/// === オブジェクトの生成 === ///
 
 	//生成
-	object_ = std::make_unique<Object3D>();
-
-	//初期化
-	object_->Initialize(context.objectCommon.object3DCommon, context.camera, context.renderer);
+	object_ = context.objectManager->CreateObject3D();
 
 	//座標の設定
 	object_->GetWorldTransform().translate_ = pos;
@@ -73,6 +70,11 @@ void BulletBase::Update() {
 	if (lifeTimer_ >= lifeTimeMax_) {
 
 		isDead_ = true;
+	}
+
+	if (isDead_) {
+
+		object_->SetIsRemove(true);
 	}
 
 	//弾の移動

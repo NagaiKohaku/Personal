@@ -54,40 +54,21 @@ void Player::Initialize(EngineContext context, BulletManager* bulletPtr, bool is
 
 	/// === オブジェクトの生成 === ///
 
-	//コアオブジェクトの生成
-	core_ = std::make_unique<Object3D>();
+	//プレイヤーオブジェクトの生成
+	playerObject_ = context.objectManager->CreateObject3D();
 
-	core_->Initialize(context.objectCommon.object3DCommon, context.camera, context.renderer);
+	playerObject_->SetObjectData(objectData_[0]);
+	playerObject_->SetModel("Core");
 
-	core_->SetObjectData(objectData_[0]);
+	emitterList_.push_back(EmitterManager::GetInstance()->CreateEmitter("RightTrail", "Trail", &playerObject_->GetPartTransform(PART_RIGHT_WING)));
 
-	//右ウィングオブジェクトの生成
-	rightWing_ = std::make_unique<Object3D>();
+	emitterList_.push_back(EmitterManager::GetInstance()->CreateEmitter("LeftTrail", "Trail", &playerObject_->GetPartTransform(PART_LEFT_WING)));
 
-	rightWing_->Initialize(context.objectCommon.object3DCommon, context.camera, context.renderer);
+	emitterList_.push_back(EmitterManager::GetInstance()->CreateEmitter("Ecplosive", "PlayerExplosive", &playerObject_->GetPartTransform(PART_CORE)));
 
-	rightWing_->SetObjectData(objectData_[1]);
+	emitterList_.push_back(EmitterManager::GetInstance()->CreateEmitter("Destroy", "Destroy", &playerObject_->GetPartTransform(PART_CORE)));
 
-	rightWing_->GetWorldTransform().SetParent(&core_->GetWorldTransform());
-
-	//左ウィングオブジェクトの生成
-	leftWing_ = std::make_unique<Object3D>();
-
-	leftWing_->Initialize(context.objectCommon.object3DCommon, context.camera, context.renderer);
-
-	leftWing_->SetObjectData(objectData_[2]);
-
-	leftWing_->GetWorldTransform().SetParent(&core_->GetWorldTransform());
-
-	emitterList_.push_back(EmitterManager::GetInstance()->CreateEmitter("RightTrail", "Trail", &rightWing_->GetWorldTransform()));
-
-	emitterList_.push_back(EmitterManager::GetInstance()->CreateEmitter("LeftTrail", "Trail", &leftWing_->GetWorldTransform()));
-
-	emitterList_.push_back(EmitterManager::GetInstance()->CreateEmitter("Ecplosive", "PlayerExplosive", &core_->GetWorldTransform()));
-
-	emitterList_.push_back(EmitterManager::GetInstance()->CreateEmitter("Destroy", "Destroy", &core_->GetWorldTransform()));
-
-	emitterList_.push_back(EmitterManager::GetInstance()->CreateEmitter("MuzzleFlash", "MuzzleFlash", &core_->GetWorldTransform()));
+	emitterList_.push_back(EmitterManager::GetInstance()->CreateEmitter("MuzzleFlash", "MuzzleFlash", &playerObject_->GetPartTransform(PART_CORE)));
 
 	emitterList_[static_cast<size_t>(EmitterType::RIGHTTRAIL)]->Emit();
 
@@ -104,7 +85,7 @@ void Player::Initialize(EngineContext context, BulletManager* bulletPtr, bool is
 	collider_ = std::make_unique<SphereCollider>();
 
 	//初期化
-	collider_->Initialize(context.objectCommon.debugObjectCommon, context.renderer, &core_->GetWorldTransform());
+	collider_->Initialize(context.objectCommon.debugObjectCommon, context.renderer, &playerObject_->GetWorldTransform());
 
 	//タグの設定
 	collider_->SetTag(Collider::Tag::PLAYER);
@@ -150,7 +131,7 @@ void Player::Update() {
 	if (!isDead_) {
 
 		//地面に接していたら
-		if (core_->GetWorldTransform().translate_.y <= 1.0f) {
+		if (GetCoreWorldTransform().translate_.y <= 1.0f) {
 
 			//戦車状態に変更
 			moveState_ = MoveState::TANK;
@@ -182,14 +163,10 @@ void Player::Update() {
 	}
 
 	//プレイヤーの更新
-	core_->Update();
-
-	rightWing_->Update();
-
-	leftWing_->Update();
+	playerObject_->Update();
 
 	//影の更新
-	shadow_->Update(core_->GetWorldTransform().translate_);
+	shadow_->Update(GetCoreWorldTransform().translate_);
 
 	//移動可能であれば
 	if (isMoveActive_) {
@@ -207,17 +184,11 @@ void Player::Update() {
 ///=====================================================///
 void Player::TransformUpdate() {
 
-	//コアオブジェクトの更新
-	core_->Update();
-
-	//右ウィングの更新
-	rightWing_->Update();
-
-	//左ウィングの更新
-	leftWing_->Update();
+	//プレイヤーオブジェクトの更新
+	playerObject_->Update();
 
 	//影の更新
-	shadow_->Update(core_->GetWorldTransform().translate_);
+	shadow_->Update(GetCoreWorldTransform().translate_);
 }
 
 ///=====================================================/// 
@@ -228,14 +199,8 @@ void Player::Draw() {
 	//破壊されていなければ
 	if (!isDestroy_) {
 
-		//コアオブジェクトの描画
-		core_->Draw(LayerType::OBJECT);
-
-		//右ウィングの描画
-		rightWing_->Draw(LayerType::OBJECT);
-
-		//左ウィングの描画
-		leftWing_->Draw(LayerType::OBJECT);
+		//プレイヤーオブジェクトの描画
+		playerObject_->Draw(LayerType::OBJECT);
 
 		//影の描画
 		shadow_->Draw();
@@ -254,23 +219,23 @@ void Player::Draw() {
 
 void Player::UpdateLockOn(float lockOnRange) {
 
-	std::list<Enemy*> enemyList = ObjectManager::GetInstance()->GetEnemies();
+	//std::list<Enemy*> enemyList = ObjectManager::GetInstance()->GetEnemies();
 
-	for (auto& enemy : enemyList) {
+	//for (auto& enemy : enemyList) {
 
-		//敵が死亡していたらスキップ
-		if (enemy->CheckIsDead()) {
+	//	//敵が死亡していたらスキップ
+	//	if (enemy->CheckIsDead()) {
 
-			continue;
-		}
+	//		continue;
+	//	}
 
-		//ロックオン範囲内であれば
-		if (lockOn_->GetMainReticleToEnemyLength(enemy) <= lockOnRange) {
+	//	//ロックオン範囲内であれば
+	//	if (lockOn_->GetMainReticleToEnemyLength(enemy) <= lockOnRange) {
 
-			//ロックオン対象に追加
-			lockOn_->AddLockOnEnemy(enemy);
-		}
-	}
+	//		//ロックオン対象に追加
+	//		lockOn_->AddLockOnEnemy(enemy);
+	//	}
+	//}
 }
 
 void Player::JetAttack() {
@@ -279,11 +244,11 @@ void Player::JetAttack() {
 	emitterList_[static_cast<size_t>(EmitterType::MUZZLEFLASH)]->Emit();
 
 	//オブジェクトからレティクルへの方向
-	Vector3 direction = lockOn_->GetMainReticlePos() - core_->GetWorldTransform().translate_;
+	Vector3 direction = lockOn_->GetMainReticlePos() - GetCoreWorldTransform().translate_;
 
 	//バレットマネージャーに弾を追加
 	bulletManager_->AddBullet(
-		core_->GetWorldTransform().translate_,
+		GetCoreWorldTransform().translate_,
 		Normalize(direction),
 		BulletManager::BulletType::JET
 	);
@@ -301,11 +266,11 @@ void Player::TankAttack() {
 	for (auto& pos : reticlePositions) {
 
 		//オブジェクトからレティクルへの方向
-		Vector3 direction = pos - core_->GetWorldTransform().translate_;
+		Vector3 direction = pos - GetCoreWorldTransform().translate_;
 
 		//バレットマネージャーに弾を追加
 		bulletManager_->AddBullet(
-			core_->GetWorldTransform().translate_,
+			GetCoreWorldTransform().translate_,
 			Normalize(direction),
 			BulletManager::BulletType::TANK
 		);
@@ -407,16 +372,16 @@ void Player::IsCollision() {
 void Player::Dead() {
 
 	//下に移動・回転
-	core_->GetWorldTransform().translate_ += Vector3(0.0f, -0.03f, 0.0f);
+	GetCoreWorldTransform().translate_ += Vector3(0.0f, -0.03f, 0.0f);
 
 	//コアを軸に回転
-	core_->GetWorldTransform().rotate_ += Vector3(0.0f, 0.0f, 0.1f);
+	GetCoreWorldTransform().rotate_ += Vector3(0.0f, 0.0f, 0.1f);
 
 	//地面に接したら
-	if (core_->GetWorldTransform().translate_.y <= 1.0f) {
+	if (GetCoreWorldTransform().translate_.y <= 1.0f) {
 
 		//地面に接した位置で固定
-		core_->GetWorldTransform().translate_.y = 1.0f;
+		GetCoreWorldTransform().translate_.y = 1.0f;
 
 		//破壊されていなければ
 		if (!isDestroy_) {

@@ -38,13 +38,7 @@ void Reticle::Initialize(EngineContext context) {
 	/// === 3Dオブジェクトの生成 === ///
 
 	//生成
-	object3D_ = std::make_unique<Object3D>();
-
-	//初期化
-	object3D_->Initialize(context.objectCommon.object3DCommon, context.camera, context.renderer);
-
-	//モデルを設定
-	object3D_->SetModel("Cube");
+	object3D_ = context.objectManager->CreateObject3D();
 
 	/// === 他変数の設定 === ///
 

@@ -97,7 +97,7 @@ private:
 	std::string directoryPath_;
 
 	//エネミーリスト
-	std::list<Enemy*> enemies_;
+	std::list<std::unique_ptr<Enemy>> enemies_;
 
 	//スポーンタイマー
 	float spawnTimer_;

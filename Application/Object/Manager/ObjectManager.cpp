@@ -1,8 +1,8 @@
 #include <Object/Manager/ObjectManager.h>
 
-#include <Object/Player/Player.h>
-#include <Object/Enemy/Enemy.h>
-#include <Object/Enemy/EnemyManager.h>
+#include <Object/Base/ObjectBase.h>
+#include <Object/2D/Object2D.h>
+#include <Object/3D/Object3D.h>
 
 using namespace MyEngine;
 
@@ -11,62 +11,59 @@ ObjectManager* ObjectManager::GetInstance() {
 	return &instance;
 }
 
-void ObjectManager::Initialize() {
+void ObjectManager::Initialize(
+	Object2DCommon* object2DCommonPtr,
+	Object3DCommon* object3DCommonPtr,
+	Camera* cameraPtr,
+	Renderer* rendererPtr
+) {
+
+	object2DCommon_ = object2DCommonPtr;
+	object3DCommon_ = object3DCommonPtr;
+	camera_ = cameraPtr;
+	renderer_ = rendererPtr;
 }
 
 void ObjectManager::Update() {
 
-	//エネミーの削除
-	enemies_.remove_if([](const std::unique_ptr<Enemy>& enemy) {
-		if (enemy->GetIsRemove()) {
+	objects_.remove_if([](const std::unique_ptr<ObjectBase>& object) {
+		if (object->GetIsRemove()) {
 			return true;
 		}
 		return false;
 		});
-
-	//if (player_) {
-	//	player_->Update();
-	//}
-
-	//for(auto& enemy : enemies_) {
-
-	//	enemy->Update();
-	//}
 }
 
 void ObjectManager::Draw() {
 
-	//if (player_) {
-	//	player_->Draw();
-	//}
-
-	//for (auto& enemy : enemies_) {
-
-	//	enemy->Draw();
-	//}
-}
-
-void ObjectManager::SpawnPlayer() {
-	player_ = std::make_unique<Player>();
-}
-
-void ObjectManager::SpawnEnemy() {
-	enemies_.push_back(std::make_unique<Enemy>());
 }
 
 void ObjectManager::ClearAll() {
-	player_.reset();
-	enemies_.clear();
-	killCount_ = 0;
+
+	for (auto& object : objects_) {
+
+		object->SetIsRemove(true);
+	}
 }
 
-std::list<Enemy*> ObjectManager::GetEnemies() {
+Object2D* ObjectManager::CreateObject2D() {
 
-	std::list<Enemy*> enemyList;
+	std::unique_ptr<Object2D> newObject;
 
-	for (auto& enemy : enemies_) {
-		enemyList.push_back(enemy.get());
-	}
+	newObject->Initialize(object2DCommon_, camera_, renderer_);
 
-	return enemyList;
+	objects_.push_back(std::move(newObject));
+
+	return static_cast<Object2D*>(objects_.back().get());
+}
+
+Object3D* ObjectManager::CreateObject3D() {
+
+	std::unique_ptr<Object3D> newObject = std::make_unique<Object3D>();
+
+	newObject->Initialize(object3DCommon_, camera_, renderer_);
+
+	objects_.push_back(std::move(newObject));
+
+	return static_cast<Object3D*>(objects_.back().get());
 }

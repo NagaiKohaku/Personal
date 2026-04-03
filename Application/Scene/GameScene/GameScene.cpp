@@ -73,21 +73,19 @@ void GameScene::Initialize(EngineContext context) {
 
 	/// === プレイヤーの生成 === ///
 
-	ObjectManager::GetInstance()->SpawnPlayer();
-
-	player_ = ObjectManager::GetInstance()->GetPlayer();
+	player_ = std::make_unique<Player>();
 
 	player_->Initialize(context_, bulletManager_.get(), false);
 
 	/// === 敵の生成 === ///
 
-	enemyManager_->Initialize(context_, bulletManager_.get(), player_);
+	enemyManager_->Initialize(context_, bulletManager_.get(), player_.get());
 
 	/// === 追尾カメラの生成 === ///
 
 	followCamera_ = std::make_unique<FollowCamera>();
 
-	followCamera_->Initialize(context_.camera, player_);
+	followCamera_->Initialize(context_.camera, player_.get());
 
 	//最初は追従を無効化する
 	followCamera_->SetIsActive(false);
@@ -101,11 +99,11 @@ void GameScene::Initialize(EngineContext context) {
 
 	sceneProgress_ = std::make_unique<GameSceneProgress>();
 
-	sceneProgress_->Initialize(context_, player_, followCamera_.get());
+	sceneProgress_->Initialize(context_, player_.get(), followCamera_.get());
 
 	/// === フェードの設定 === ///
 
-	Fade::GetInstance()->SetPlayer(player_);
+	Fade::GetInstance()->SetPlayer(player_.get());
 
 	//フェードイン開始
 	Fade::GetInstance()->StartFadeIn();

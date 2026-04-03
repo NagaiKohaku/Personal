@@ -24,40 +24,44 @@ namespace MyEngine {
 		//モデルデータの読み込み
 		LoadObjFile(directoryPath, filename);
 
-		/// === メッシュの生成 === ///
+		/// === メッシュパーツごとの生成 === ///
+		for (auto& part : meshParts_) {
+			//生成
+			part.mesh = std::make_unique<ModelMesh>();
 
-		//生成
-		mesh_ = std::make_unique<ModelMesh>();
+			//頂点数の設定
+			part.mesh->SetVertexCount(uint32_t(part.modelData.vertices.size()));
 
-		//頂点数の設定
-		mesh_->SetVertexCount(uint32_t(modelData_.vertices.size()));
+			//インデックス数の設定
+			part.mesh->SetIndexCount(uint32_t(part.modelData.indices.size()));
 
-		//インデックス数の設定
-		mesh_->SetIndexCount(uint32_t(modelData_.indices.size()));
+			//初期化
+			part.mesh->Initialize(modelCommon_->GetDxCommon());
 
-		//初期化
-		mesh_->Initialize(modelCommon_->GetDxCommon());
+			//頂点データとインデックスデータのコピー
+			part.mesh->CopyMeshData(part.modelData.indices, part.modelData.vertices);
 
-		//頂点データとインデックスデータのコピー
-		mesh_->CopyMeshData(modelData_.indices, modelData_.vertices);
+			/// === マテリアルリソースの生成 === ///
 
-		/// === マテリアルリソースの生成 === ///
+			//マテリアルリソースを作成
+			part.materialResource = modelCommon_->GetDxCommon()->CreateBufferResource(sizeof(Material));
 
-		//マテリアルリソースを作成
-		materialResource_ = modelCommon_->GetDxCommon()->CreateBufferResource(sizeof(Material));
+			//書き込むためのアドレスを取得する
+			part.materialResource->Map(0, nullptr, reinterpret_cast<void**>(&part.materialData));
 
-		//書き込むためのアドレスを取得する
-		materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));
+			//マテリアルデータの設定
+			part.materialData->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+			part.materialData->enableLighting = true;
+			part.materialData->uvTransform = MakeIdentity4x4();
+			part.materialData->shininess = 50.0f;
+			part.materialData->environmentCoefficient = 1.0f;
 
-		//マテリアルデータの設定
-		materialData_->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-		materialData_->enableLighting = true;
-		materialData_->uvTransform = MakeIdentity4x4();
-		materialData_->shininess = 50.0f;
-		materialData_->environmentCoefficient = 1.0f;
-
-		//テクスチャの読み込み
-		TextureManager::GetInstance()->LoadTexture(textureFilePath_);
+			if (!part.textureFilePath.empty()) {
+				//テクスチャの読み込み
+				TextureManager::GetInstance()->LoadTexture(part.textureFilePath);
+				part.textureIndex = TextureManager::GetInstance()->GetSrvIndex(part.textureFilePath);
+			}
+		}
 	}
 
 	///=====================================================///
@@ -68,46 +72,52 @@ namespace MyEngine {
 		//モデル基底のインスタンスを取得
 		modelCommon_ = modelCommonPtr;
 
+		// パーツを1つ作成
+		MeshPart part;
+		part.materialName = "Default";
+		part.textureFilePath = textureFilePath;
+
 		/// === メッシュの生成 === ///
 
 		//生成
-		mesh_ = CreateMesh(type);
+		part.mesh = CreateMesh(type);
 
 		//初期化
-		mesh_->Initialize(modelCommon_->GetDxCommon());
+		part.mesh->Initialize(modelCommon_->GetDxCommon());
 
 		//頂点データの設定
-		for (uint32_t i = 0; i < mesh_->GetVertexCount(); i++) {
+		for (uint32_t i = 0; i < part.mesh->GetVertexCount(); i++) {
 
-			modelData_.vertices.push_back(mesh_->GetVertexData()[i]);
+			part.modelData.vertices.push_back(part.mesh->GetVertexData()[i]);
 		}
 
 		//インデックスデータの設定
-		for (uint32_t i = 0; i < mesh_->GetIndexCount(); i++) {
+		for (uint32_t i = 0; i < part.mesh->GetIndexCount(); i++) {
 
-			modelData_.indices.push_back(mesh_->GetIndexData()[i]);
+			part.modelData.indices.push_back(part.mesh->GetIndexData()[i]);
 		}
 
 		/// === マテリアルデータの生成 === ///
 
 		//マテリアルリソースを作成
-		materialResource_ = modelCommon_->GetDxCommon()->CreateBufferResource(sizeof(Material));
+		part.materialResource = modelCommon_->GetDxCommon()->CreateBufferResource(sizeof(Material));
 
 		//書き込むためのアドレスを取得する
-		materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));
+		part.materialResource->Map(0, nullptr, reinterpret_cast<void**>(&part.materialData));
 
 		//マテリアルデータの設定
-		materialData_->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-		materialData_->enableLighting = true;
-		materialData_->uvTransform = MakeIdentity4x4();
-		materialData_->shininess = 50.0f;
-		materialData_->environmentCoefficient = 1.0f;
-
-		//テクスチャファイルパスの設定
-		textureFilePath_ = textureFilePath;
+		part.materialData->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+		part.materialData->enableLighting = true;
+		part.materialData->uvTransform = MakeIdentity4x4();
+		part.materialData->shininess = 50.0f;
+		part.materialData->environmentCoefficient = 1.0f;
 
 		//テクスチャの読み込み
-		TextureManager::GetInstance()->LoadTexture(textureFilePath_);
+		TextureManager::GetInstance()->LoadTexture(part.textureFilePath);
+		part.textureIndex = TextureManager::GetInstance()->GetSrvIndex(part.textureFilePath);
+
+		// パーツを追加
+		meshParts_.push_back(std::move(part));
 	}
 
 	///=====================================================/// 
@@ -122,37 +132,38 @@ namespace MyEngine {
 
 		Copy(model);
 
-		/// === メッシュの生成 === ///
+		/// === メッシュパーツごとの生成 === ///
+		for (auto& part : meshParts_) {
+			//生成
+			part.mesh = CreateMesh(type);
 
-		//生成
-		mesh_ = CreateMesh(type);
+			//頂点数を設定
+			part.mesh->SetVertexCount(uint32_t(part.modelData.vertices.size()));
 
-		//頂点数を設定
-		mesh_->SetVertexCount(uint32_t(modelData_.vertices.size()));
+			//インデックス数を設定
+			part.mesh->SetIndexCount(uint32_t(part.modelData.indices.size()));
 
-		//インデックス数を設定
-		mesh_->SetIndexCount(uint32_t(modelData_.indices.size()));
+			//初期化
+			part.mesh->Initialize(modelCommon_->GetDxCommon());
 
-		//初期化
-		mesh_->Initialize(modelCommon_->GetDxCommon());
+			//頂点データとインデックスデータのコピー
+			part.mesh->CopyMeshData(part.modelData.indices, part.modelData.vertices);
 
-		//頂点データとインデックスデータのコピー
-		mesh_->CopyMeshData(modelData_.indices, modelData_.vertices);
+			/// === マテリアルリソースの生成 === ///
 
-		/// === マテリアルリソースの生成 === ///
+			//マテリアルリソースを作成
+			part.materialResource = modelCommon_->GetDxCommon()->CreateBufferResource(sizeof(Material));
 
-		//マテリアルリソースを作成
-		materialResource_ = modelCommon_->GetDxCommon()->CreateBufferResource(sizeof(Material));
+			//書き込むためのアドレスを取得する
+			part.materialResource->Map(0, nullptr, reinterpret_cast<void**>(&part.materialData));
 
-		//書き込むためのアドレスを取得する
-		materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));
-
-		//マテリアルデータの設定
-		materialData_->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-		materialData_->enableLighting = true;
-		materialData_->uvTransform = MakeIdentity4x4();
-		materialData_->shininess = 50.0f;
-		materialData_->environmentCoefficient = 1.0f;
+			//マテリアルデータの設定
+			part.materialData->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+			part.materialData->enableLighting = true;
+			part.materialData->uvTransform = MakeIdentity4x4();
+			part.materialData->shininess = 50.0f;
+			part.materialData->environmentCoefficient = 1.0f;
+		}
 	}
 
 	///=====================================================/// 
@@ -160,45 +171,49 @@ namespace MyEngine {
 	///=====================================================///
 	void Model::Draw() {
 
-		//メッシュの設定
-		mesh_->SendDataForGPU();
+		for (auto& part : meshParts_) {
+			//メッシュの設定
+			part.mesh->SendDataForGPU();
 
-		//マテリアルデータの設定
-		modelCommon_->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource_.Get()->GetGPUVirtualAddress());
+			//マテリアルデータの設定
+			modelCommon_->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(0, part.materialResource.Get()->GetGPUVirtualAddress());
 
-		//テクスチャデータの設定
-		modelCommon_->GetDxCommon()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSrvHandleGPU(textureFilePath_));
+			//テクスチャデータの設定
+			modelCommon_->GetDxCommon()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSrvHandleGPU(part.textureFilePath));
 
-		//描画コマンド発行
-		modelCommon_->GetDxCommon()->GetCommandList()->DrawIndexedInstanced(UINT(mesh_->GetIndexCount()), 1, 0, 0, 0);
-
+			//描画コマンド発行
+			modelCommon_->GetDxCommon()->GetCommandList()->DrawIndexedInstanced(UINT(part.mesh->GetIndexCount()), 1, 0, 0, 0);
+		}
 	}
 
 	///=====================================================/// 
 	/// モデルのメッシュデータを GPU に転送
 	///=====================================================///
 	void Model::SendMeshDataForGPU() {
-
-		//メッシュの設定
-		mesh_->SendDataForGPU();
+		for (auto& part : meshParts_) {
+			//メッシュの設定
+			part.mesh->SendDataForGPU();
+		}
 	}
 
 	///=====================================================/// 
 	/// モデルのマテリアルデータを GPU に転送
 	///=====================================================///
 	void Model::SendMaterialDataForGPU() {
-
-		//マテリアルデータの設定
-		modelCommon_->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource_.Get()->GetGPUVirtualAddress());
+		for (auto& part : meshParts_) {
+			//マテリアルデータの設定
+			modelCommon_->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(0, part.materialResource.Get()->GetGPUVirtualAddress());
+		}
 	}
 
 	///=====================================================/// 
 	/// モデルのテクスチャデータを GPU に転送
 	///=====================================================///
 	void Model::SendTextureDataForGPU() {
-
-		//テクスチャデータの設定
-		modelCommon_->GetDxCommon()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSrvHandleGPU(textureFilePath_));
+		for (auto& part : meshParts_) {
+			//テクスチャデータの設定
+			modelCommon_->GetDxCommon()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSrvHandleGPU(part.textureFilePath));
+		}
 	}
 
 	///=====================================================/// 
@@ -206,9 +221,20 @@ namespace MyEngine {
 	///=====================================================///
 	void Model::Copy(Model* model) {
 
-		modelData_ = model->modelData_;
+		// 全てのパーツをコピーする
+		meshParts_.clear();
+		for (auto& mPart : model->GetMeshParts()) {
 
-		textureFilePath_ = model->textureFilePath_;
+			MeshPart newPart;
+
+			newPart.materialName = mPart.materialName;
+			newPart.textureFilePath = mPart.textureFilePath;
+			newPart.textureIndex = mPart.textureIndex;
+			newPart.modelData = mPart.modelData;
+
+			// mesh, materialResource 等は Initialize 等で再構築される前提
+			meshParts_.push_back(std::move(newPart));
+		}
 	}
 
 	///=====================================================/// 
@@ -232,6 +258,12 @@ namespace MyEngine {
 
 		//ファイルから読んだ1行を格納するもの
 		std::string line;
+
+		// マテリアルごとへのテクスチャマッピング
+		std::unordered_map<std::string, std::string> materialMap;
+
+		// 現在処理中のパーツインデックス
+		size_t currentPartIndex = static_cast<size_t>(-1);
 
 		/// === objファイルからデータを読み込む === ///
 
@@ -342,8 +374,15 @@ namespace MyEngine {
 				//頂点データの設定
 				for (int i = 2; i >= 0; i--) {
 
-					modelData_.indices.push_back(uint32_t(modelData_.vertices.size()));
-					modelData_.vertices.push_back(triangle[i]);
+					if (currentPartIndex == static_cast<size_t>(-1)) {
+						MeshPart defaultPart;
+						defaultPart.materialName = "Default";
+						meshParts_.push_back(std::move(defaultPart));
+						currentPartIndex = 0;
+					}
+
+					meshParts_[currentPartIndex].modelData.indices.push_back(uint32_t(meshParts_[currentPartIndex].modelData.vertices.size()));
+					meshParts_[currentPartIndex].modelData.vertices.push_back(triangle[i]);
 				}
 
 			} else if (identifier == "mtllib") {
@@ -356,7 +395,32 @@ namespace MyEngine {
 				s >> materialFilename;
 
 				//マテリアルデータを読み込む
-				LoadMaterialTemplateFile(directoryPath, materialFilename);
+				materialMap = LoadMaterialTemplateFile(directoryPath, materialFilename);
+			} else if (identifier == "usemtl") {
+
+				/// === 識別子が「usemtl」だったら === ///
+
+				std::string materialName;
+				s >> materialName;
+
+				bool found = false;
+				for (size_t i = 0; i < meshParts_.size(); i++) {
+					if (meshParts_[i].materialName == materialName) {
+						currentPartIndex = i;
+						found = true;
+						break;
+					}
+				}
+
+				if (!found) {
+					MeshPart newPart;
+					newPart.materialName = materialName;
+					if (materialMap.contains(materialName)) {
+						newPart.textureFilePath = materialMap.at(materialName);
+					}
+					meshParts_.push_back(std::move(newPart));
+					currentPartIndex = meshParts_.size() - 1;
+				}
 			}
 		}
 	}
@@ -364,7 +428,10 @@ namespace MyEngine {
 	///=====================================================/// 
 	/// MTLファイルを読み込み、モデルのテクスチャパスを設定
 	///=====================================================///
-	void Model::LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename) {
+	std::unordered_map<std::string, std::string> Model::LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename) {
+
+		std::unordered_map<std::string, std::string> materialMap;
+		std::string currentMaterialName;
 
 		//ファイルから読んだ1行を格納するもの
 		std::string line;
@@ -386,7 +453,13 @@ namespace MyEngine {
 			//先頭から識別子を読み込む
 			s >> identifier;
 
-			if (identifier == "map_Kd") {
+			if (identifier == "newmtl") {
+
+				/// === 識別子が「newmtl」だったら === ///
+
+				s >> currentMaterialName;
+
+			} else if (identifier == "map_Kd") {
 
 				/// === 識別子が「map_kd」だったら === ///
 
@@ -396,9 +469,13 @@ namespace MyEngine {
 				//ファイル名を読み込む
 				s >> textureFilename;
 
-				//連結してファイルパスにする
-				textureFilePath_ = directoryPath + "/" + textureFilename;
+				//連結してファイルマップに登録する
+				if (!currentMaterialName.empty()) {
+					materialMap[currentMaterialName] = directoryPath + "/" + textureFilename;
+				}
 			}
 		}
+
+		return materialMap;
 	}
 }

@@ -420,15 +420,25 @@ namespace MyEngine {
 			//パーティクルの描画前処理
 			particleCommon_->CommonDrawSetting();
 
-			model_->SendMeshDataForGPU();
-
-			model_->SendMaterialDataForGPU();
-
-			model_->SendTextureDataForGPU();
-
+			// インスタンシング用データ(SRV)の設定
 			directXCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(1, srvManager_->GetGPUDescriptorHandle(srvIndex_));
 
-			directXCommon_->GetCommandList()->DrawIndexedInstanced(model_->GetMesh()->GetIndexCount(), numInstance_, 0, 0, 0);
+			// モデルの各パーツを描画
+			for (size_t i = 0; i < model_->GetMeshParts().size(); i++) {
+				auto mesh = model_->GetMesh(i);
+
+				// メッシュデータの設定
+				mesh->SendDataForGPU();
+
+				// マテリアルデータの設定
+				directXCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(0, model_->GetMeshParts()[i].materialResource.Get()->GetGPUVirtualAddress());
+
+				// テクスチャデータの設定
+				directXCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSrvHandleGPU(model_->GetTextureFilePath(i)));
+
+				// インスタンシング描画コマンド発行
+				directXCommon_->GetCommandList()->DrawIndexedInstanced(mesh->GetIndexCount(), numInstance_, 0, 0, 0);
+			}
 			};
 
 		//レンダラーにコマンドを登録

@@ -44,23 +44,25 @@ void EnemyAttackState::Update(Enemy& enemy) {
 	//タイマーの比率
 	float ratio = timer_ / maxTime_;
 
-	//プレイヤーのポインタを取得
-	Player* player = ObjectManager::GetInstance()->GetPlayer();
+	//Todo:コメントアウト
 
-	//攻撃可能になったら
-	if (attackTimer_ >= attackFrequency_) {
+	////プレイヤーのポインタを取得
+	//Player* player = ObjectManager::GetInstance()->GetPlayer();
 
-		//プレイヤーへの方向
-		Vector3 direction = player->GetWorldPos() - enemy.GetWorldPos();
+	////攻撃可能になったら
+	//if (attackTimer_ >= attackFrequency_) {
 
-		//プレイヤーに向かって弾を発射
-		enemy.GetBulletManager()->AddBullet(
-			enemy.GetWorldPos(),
-			Normalize(direction),
-			BulletManager::BulletType::ENEMY
-		);
+	//	//プレイヤーへの方向
+	//	Vector3 direction = player->GetWorldPos() - enemy.GetWorldPos();
 
-		//攻撃タイマーのリセット
-		attackTimer_ = 0.0f;
-	}
+	//	//プレイヤーに向かって弾を発射
+	//	enemy.GetBulletManager()->AddBullet(
+	//		enemy.GetWorldPos(),
+	//		Normalize(direction),
+	//		BulletManager::BulletType::ENEMY
+	//	);
+
+	//	//攻撃タイマーのリセット
+	//	attackTimer_ = 0.0f;
+	//}
 }

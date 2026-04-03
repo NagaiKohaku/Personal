@@ -11,10 +11,7 @@ using namespace MyEngine;
 void Ground::Initialize(EngineContext context) {
 
 	// オブジェクトの生成
-	object_ = std::make_unique<Object3D>();
-
-	// オブジェクトの初期化
-	object_->Initialize(context.objectCommon.object3DCommon, context.camera, context.renderer);
+	object_ = context.objectManager->CreateObject3D();
 
 	object_->SetModel("Plane");
 

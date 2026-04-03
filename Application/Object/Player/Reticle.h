@@ -53,7 +53,7 @@ private:
 	std::unique_ptr<MyEngine::Object2D> object2D_;
 
 	//3Dレティクル
-	std::unique_ptr<MyEngine::Object3D> object3D_;
+	MyEngine::Object3D* object3D_;
 
 	//2Dレティクルの描画フラグ
 	bool isDraw2D_;

@@ -78,10 +78,12 @@ GameSceneEventBase::EventType GameEvent::RequestNextEvent() const {
 		return EventType::PAUSE;
 	}
 
-	if (ObjectManager::GetInstance()->GetKillCount() >= 30) {
+	//Todo:コメントアウト
 
-		return EventType::CLEAR;
-	}
+	//if (ObjectManager::GetInstance()->GetKillCount() >= 30) {
+
+	//	return EventType::CLEAR;
+	//}
 
 	if (player_->GetIsDead()) {
 

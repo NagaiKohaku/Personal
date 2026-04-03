@@ -124,7 +124,7 @@ private:
 	Player* player_;
 
 	//オブジェクト
-	std::unique_ptr<MyEngine::Object3D> object_ = nullptr;
+	MyEngine::Object3D* object_ = nullptr;
 
 	std::unique_ptr<EnemyState> state_;
 

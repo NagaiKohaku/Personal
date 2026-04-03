@@ -88,7 +88,7 @@ protected:
 protected:
 
 	//オブジェクト
-	std::unique_ptr<MyEngine::Object3D> object_ = nullptr;
+	MyEngine::Object3D* object_ = nullptr;
 
 	//コライダー
 	std::unique_ptr<MyEngine::SphereCollider> collider_;

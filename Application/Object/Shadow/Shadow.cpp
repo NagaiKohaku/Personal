@@ -13,9 +13,7 @@ void Shadow::Initialize(EngineContext context) {
 
 	/// === オブジェクトの生成 === ///
 
-	shadow_ = std::make_unique<Object3D>();
-
-	shadow_->Initialize(context.objectCommon.object3DCommon, context.camera, context.renderer);
+	shadow_ = context.objectManager->CreateObject3D();
 
 	shadow_->SetModel("Sphere");
 

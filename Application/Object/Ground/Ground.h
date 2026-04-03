@@ -41,7 +41,7 @@ public:
 private:
 
 	//地面オブジェクト
-	std::unique_ptr<MyEngine::Object3D> object_;
+	MyEngine::Object3D* object_;
 
 	//UV座標Y
 	float uvPosY;

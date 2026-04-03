@@ -58,7 +58,7 @@ private:
 	std::unique_ptr<FollowCamera> followCamera_;
 
 	//プレイヤー
-	Player* player_;
+	std::unique_ptr<Player> player_;
 
 	//エネミーマネージャー
 	std::unique_ptr<EnemyManager> enemyManager_;

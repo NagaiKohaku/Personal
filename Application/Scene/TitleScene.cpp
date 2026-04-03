@@ -53,10 +53,7 @@ void TitleScene::Initialize(EngineContext context) {
 
 	groundManager_->Initialize(context_);
 
-	//プレイヤーの生成
-	ObjectManager::GetInstance()->SpawnPlayer();
-
-	player_ = ObjectManager::GetInstance()->GetPlayer();
+	player_ = std::make_unique<Player>();
 
 	player_->Initialize(context_, nullptr, false);
 
@@ -88,7 +85,7 @@ void TitleScene::Initialize(EngineContext context) {
 
 	/// === その他 === ///
 
-	Fade::GetInstance()->SetPlayer(player_);
+	Fade::GetInstance()->SetPlayer(player_.get());
 
 	//フェードイン開始
 	Fade::GetInstance()->StartFadeIn();

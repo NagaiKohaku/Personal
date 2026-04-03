@@ -25,7 +25,7 @@ namespace MyEngine {
 		///-------------------------------------------/// 
 		/// メンバ構造体
 		///-------------------------------------------///
-	private:
+	public:
 
 		//マテリアル
 		struct Material {
@@ -42,6 +42,21 @@ namespace MyEngine {
 			std::vector<MeshBase::VertexData> vertices; // 頂点データ
 			std::vector<uint32_t> indices; // インデックスデータ
 		};
+
+		//モデルの部位データ(マルチメッシュ用)
+		struct MeshPart {
+			std::string materialName;
+			std::unique_ptr<MeshBase> mesh;
+			Microsoft::WRL::ComPtr<ID3D12Resource> materialResource = nullptr;
+			Material* materialData = nullptr;
+			ModelData modelData;
+			std::string textureFilePath;
+			uint32_t textureIndex;
+		};
+
+	private:
+
+
 
 		///-------------------------------------------/// 
 		/// メンバ関数
@@ -108,11 +123,12 @@ namespace MyEngine {
 		void LoadObjFile(const std::string& directoryPath, const std::string& filename);
 
 		/// <summary>
-		/// MTLファイルを読み込み、モデルのテクスチャパスを設定します。
+		/// MTLファイルを読み込み、マテリアル名とテクスチャパスのマップを生成します。
 		/// </summary>
 		/// <param name="directoryPath">MTLファイルが存在するディレクトリパス</param>
 		/// <param name="filename">MTLファイル名</param>
-		void LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename);
+		/// <returns>マテリアル名とテクスチャパスのマップ</returns>
+		std::unordered_map<std::string, std::string> LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename);
 
 		///-------------------------------------------/// 
 		/// メンバ変数
@@ -122,23 +138,8 @@ namespace MyEngine {
 		//モデル基底
 		ModelCommon* modelCommon_;
 
-		//メッシュ
-		std::unique_ptr<MeshBase> mesh_;
-
-		//マテリアルリソース
-		Microsoft::WRL::ComPtr<ID3D12Resource> materialResource_ = nullptr;
-
-		//マテリアルデータ
-		Material* materialData_ = nullptr;
-
-		//モデルデータ
-		ModelData modelData_;
-
-		//テクスチャファイルパス
-		std::string textureFilePath_;
-
-		//テクスチャ番号
-		uint32_t textureIndex_;
+		//メッシュパーツのリスト（マルチメッシュ対応）
+		std::vector<MeshPart> meshParts_;
 
 		///-------------------------------------------/// 
 		/// ゲッター・セッター
@@ -146,81 +147,118 @@ namespace MyEngine {
 	public:
 
 		/// <summary>
+		/// メッシュパーツのリストを取得
+		/// </summary>
+		/// <returns>メッシュパーツのリスト</returns>
+		std::vector<MeshPart>& GetMeshParts() { return meshParts_; }
+
+		/// <summary>
 		/// メッシュを取得
 		/// </summary>
+		/// <param name="index">パーツのインデックス番号(デフォルトは0)</param>
 		/// <returns>メッシュ</returns>
-		MeshBase* GetMesh() { return mesh_.get(); }
+		MeshBase* GetMesh(size_t index = 0) { return meshParts_[index].mesh.get(); }
 
 		/// <summary>
 		/// モデルデータの取得
 		/// </summary>
+		/// <param name="index">パーツのインデックス番号(デフォルトは0)</param>
 		/// <returns>モデルデータ</returns>
-		ModelData GetModelData() { return modelData_; }
+		ModelData GetModelData(size_t index = 0) { return meshParts_[index].modelData; }
 
 		/// <summary>
 		/// テクスチャファイルパスを取得
 		/// </summary>
+		/// <param name="index">パーツのインデックス番号(デフォルトは0)</param>
 		/// <returns>テクスチャファイルパス</returns>
-		std::string GetTextureFilePath() const { return textureFilePath_; }
+		std::string GetTextureFilePath(size_t index = 0) const { return meshParts_[index].textureFilePath; }
 
 		/// <summary>
 		/// 色を取得
 		/// </summary>
+		/// <param name="index">パーツのインデックス番号(デフォルトは0)</param>
 		/// <returns>色</returns>
-		const Vector4& GetColor() { return materialData_->color; }
+		const Vector4& GetColor(size_t index = 0) { return meshParts_[index].materialData->color; }
 
 		/// <summary>
 		/// UV座標を取得
 		/// </summary>
+		/// <param name="index">パーツのインデックス番号(デフォルトは0)</param>
 		/// <returns>UV座標</returns>
-		const Matrix4x4& GetUVTransform() { return materialData_->uvTransform; }
+		const Matrix4x4& GetUVTransform(size_t index = 0) { return meshParts_[index].materialData->uvTransform; }
 
 		/// <summary>
 		/// 光沢度を取得
 		/// </summary>
+		/// <param name="index">パーツのインデックス番号(デフォルトは0)</param>
 		/// <returns>光沢度</returns>
-		const float GetShininess() { return materialData_->shininess; }
+		const float GetShininess(size_t index = 0) { return meshParts_[index].materialData->shininess; }
 
 		/// <summary>
 		/// 環境反射係数を取得
 		/// </summary>
+		/// <param name="index">パーツのインデックス番号(デフォルトは0)</param>
 		/// <returns>環境反射係数</returns>
-		const float GetEnvironmentCoefficient() { return materialData_->environmentCoefficient; }
+		const float GetEnvironmentCoefficient(size_t index = 0) { return meshParts_[index].materialData->environmentCoefficient; }
 
 		/// <summary>
-		/// 色の設定
+		/// 全パーツに色を設定
 		/// </summary>
 		/// <param name="color">色</param>
-		void SetColor(const Vector4& color) { materialData_->color = color; }
+		void SetColor(const Vector4& color) {
+			for (auto& part : meshParts_) {
+				part.materialData->color = color;
+			}
+		}
 
 		/// <summary>
-		/// UV座標を設定
+		/// 全パーツにUV座標を設定
 		/// </summary>
-		/// <param name="uvTransform"></param>
-		void SetUVTransform(const Matrix4x4& uvTransform) { materialData_->uvTransform = uvTransform; }
+		/// <param name="uvTransform">UV Transform</param>
+		void SetUVTransform(const Matrix4x4& uvTransform) {
+			for (auto& part : meshParts_) {
+				part.materialData->uvTransform = uvTransform;
+			}
+		}
 
 		/// <summary>
-		/// 光沢度の設定
+		/// 全パーツに光沢度を設定
 		/// </summary>
 		/// <param name="shininess">光沢度</param>
-		void SetShininess(const float& shininess) { materialData_->shininess = shininess; }
+		void SetShininess(const float& shininess) {
+			for (auto& part : meshParts_) {
+				part.materialData->shininess = shininess;
+			}
+		}
 
 		/// <summary>
-		/// 環境反射係数を設定
+		/// 全パーツに環境反射係数を設定
 		/// </summary>
 		/// <param name="coefficient">環境反射係数</param>
-		void SetEnvironmentCoefficient(const float& coefficient) { materialData_->environmentCoefficient = coefficient; }
+		void SetEnvironmentCoefficient(const float& coefficient) {
+			for (auto& part : meshParts_) {
+				part.materialData->environmentCoefficient = coefficient;
+			}
+		}
 
 		/// <summary>
-		/// テクスチャファイルパスの設定
+		/// 全パーツにテクスチャファイルパスを設定
 		/// </summary>
 		/// <param name="filePath">テクスチャファイルパス</param>
-		void SetTextureFilePath(const std::string filePath) { textureFilePath_ = filePath; }
+		void SetTextureFilePath(const std::string filePath) {
+			for (auto& part : meshParts_) {
+				part.textureFilePath = filePath;
+			}
+		}
 
 		/// <summary>
-		/// テクスチャ番号の設定
+		/// 全パーツにテクスチャ番号を設定
 		/// </summary>
 		/// <param name="index">テクスチャ番号</param>
-		void SetTextureIndex(const uint32_t index) { textureIndex_ = index; }
+		void SetTextureIndex(const uint32_t index) {
+			for (auto& part : meshParts_) {
+				part.textureIndex = index;
+			}
+		}
 	};
 }

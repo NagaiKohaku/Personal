@@ -44,13 +44,18 @@ namespace MyEngine {
 
 		bool isUpdateTransform_ = true;
 
+		bool isRemove_ = false;
+
 	public:
 
 		WorldTransform& GetWorldTransform() { return transform_; }
 
 		bool GetIsUpdateTransform() const { return isUpdateTransform_; }
 
+		bool GetIsRemove() const { return isRemove_; }
+
 		void SetIsUpdateTransform(const bool& flag) { isUpdateTransform_ = flag; }
 
+		void SetIsRemove(const bool& flag) { isRemove_ = flag; }
 	};
 }

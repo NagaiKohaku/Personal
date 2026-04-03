@@ -12,9 +12,6 @@ namespace MyEngine {
 		colliderManager_ = ColliderManager::GetInstance();
 		colliderManager_->Initialize();
 
-		objectManager_ = ObjectManager::GetInstance();
-		objectManager_->Initialize();
-
 		camera_ = std::make_unique<Camera>();
 		camera_->Initialize(
 			static_cast<float>(winApp_->GetWindowWidth()),
@@ -23,6 +20,14 @@ namespace MyEngine {
 			object3DCommon_.get(),
 			debugObjectCommon_.get(),
 			input_.get()
+		);
+
+		objectManager_ = ObjectManager::GetInstance();
+		objectManager_->Initialize(
+			object2DCommon_.get(),
+			object3DCommon_.get(),
+			camera_.get(),
+			renderer_.get()
 		);
 
 		emitterManager_ = EmitterManager::GetInstance();
@@ -35,6 +40,7 @@ namespace MyEngine {
 		levelDataLoder_->Initialize();
 
 		engineContext_.offScreen = offScreen_.get();
+		engineContext_.objectManager = objectManager_;
 		engineContext_.objectCommon.object2DCommon = object2DCommon_.get();
 		engineContext_.objectCommon.object3DCommon = object3DCommon_.get();
 		engineContext_.objectCommon.particleCommon = particleCommon_.get();

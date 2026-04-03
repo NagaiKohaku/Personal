@@ -46,7 +46,7 @@ public:
 private:
 
 	//建物オブジェクト
-	std::unique_ptr<MyEngine::Object3D> object_;
+	MyEngine::Object3D* object_;
 
 	//移動速度
 	float speed_;

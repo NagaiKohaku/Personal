@@ -31,8 +31,7 @@ void Enemy::Initialize(EngineContext context, BulletManager* bulletPtr, Player* 
 	/// === オブジェクトの生成 === ///
 
 	//敵オブジェクトの生成と初期化
-	object_ = std::make_unique<Object3D>();
-	object_->Initialize(context.objectCommon.object3DCommon, context.camera, context.renderer);
+	object_ = context.objectManager->CreateObject3D();
 	object_->SetObjectData(objectData);
 
 	//影オブジェクトの生成と初期化
@@ -397,8 +396,10 @@ void Enemy::CheckDead() {
 		//被弾揺れタイマーを初期化
 		shakeTimer_ = 0.0f;
 
-		//キル数をカウントアップ
-		ObjectManager::GetInstance()->AddKillCount();
+		//Todo:コメントアウト
+
+		////キル数をカウントアップ
+		//ObjectManager::GetInstance()->AddKillCount();
 
 	}
 }
@@ -410,6 +411,8 @@ void Enemy::StartRemove() {
 
 	//コライダーを削除
 	collider_->Remove();
+
+	object_->SetIsRemove(true);
 
 }
 

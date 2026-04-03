@@ -105,10 +105,10 @@ void TankMoveState::Update(Player& player) {
 	/// === 左ウィングの移動・回転 === ///
 
 	//左ウィングの移動・回転
-	leftWingWT.translate_ = EaseOut(leftWingPos, Vector3(-0.75f, 0.0f, 0.0f), 0.1f, 2.0f);
+	leftWingWT.translate_ = EaseOut(leftWingPos, Vector3(-0.75f, -1.25f, 0.0f), 0.1f, 2.0f);
 	leftWingWT.rotate_ = EaseOut(
 		leftWingRot,
-		Vector3(0.0f, 0.0f, -std::numbers::pi_v<float> / 2.0f - std::numbers::pi_v<float> *2.0f),
+		Vector3(0.0f, 0.0f, std::numbers::pi_v<float> / 2.0f - std::numbers::pi_v<float> * 2.0f),
 		0.1f,
 		2.0f
 	);
@@ -119,10 +119,10 @@ void TankMoveState::Update(Player& player) {
 	/// === 右ウィングの移動・回転 === ///
 
 	//右ウィングの移動・回転
-	rightWingWT.translate_ = EaseOut(rightWingPos, Vector3(0.75f, 0.0f, 0.0f), 0.1f, 2.0f);
+	rightWingWT.translate_ = EaseOut(rightWingPos, Vector3(0.75f, -1.25f, 0.0f), 0.1f, 2.0f);
 	rightWingWT.rotate_ = EaseOut(
 		rightWingRot,
-		Vector3(0.0f, 0.0f, std::numbers::pi_v<float> / 2.0f + std::numbers::pi_v<float> *2.0f),
+		Vector3(0.0f, 0.0f, -std::numbers::pi_v<float> / 2.0f + std::numbers::pi_v<float> * 2.0f),
 		0.1f,
 		2.0f
 	);

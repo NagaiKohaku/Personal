@@ -63,7 +63,7 @@ private:
 private:
 
 	//プレイヤー
-	Player* player_;
+	std::unique_ptr<Player> player_;
 
 	//グラウンドマネージャー
 	std::unique_ptr<GroundManager> groundManager_;

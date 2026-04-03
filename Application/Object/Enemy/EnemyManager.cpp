@@ -174,11 +174,10 @@ void EnemyManager::SpawnUpdate() {
 ///============================================================///
 void EnemyManager::Spawn(Vector3 entryPos, Vector3 standbyPos, ObjectData objectData) {
 
-	//エネミーを生成
-	ObjectManager::GetInstance()->SpawnEnemy();
+	std::unique_ptr<Enemy> newEnemy = std::make_unique<Enemy>();
 
 	//エネミーリストに追加
-	enemies_.push_back(ObjectManager::GetInstance()->GetEnemies().back());
+	enemies_.push_back(std::move(newEnemy));
 
 	//初期化
 	enemies_.back()->Initialize(context_, bulletManager_, player_, objectData);
@@ -206,7 +205,7 @@ void EnemyManager::Spawn(Vector3 entryPos, Vector3 standbyPos, ObjectData object
 void EnemyManager::DeleteEnemy() {
 
 	//エネミーの削除
-	enemies_.remove_if([](Enemy* enemy) {
+	enemies_.remove_if([](const std::unique_ptr<Enemy>& enemy) {
 		if (enemy->GetCanRemove()) {
 			enemy->SetIsRemove(true);
 			return true;
@@ -223,7 +222,7 @@ std::list<Enemy*> EnemyManager::GetEnemyList() {
 	std::list<Enemy*> enemyList;
 
 	for (auto& enemy : enemies_) {
-		enemyList.push_back(enemy);
+		enemyList.push_back(enemy.get());
 	}
 
 	return enemyList;

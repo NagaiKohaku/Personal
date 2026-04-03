@@ -48,6 +48,12 @@ public:
 		MUZZLEFLASH
 	};
 
+	enum class ModelPart {
+		PART_CORE,
+		PART_LEFT_WING,
+		PART_RIGHT_WING
+	};
+
 	///-------------------------------------------/// 
 	/// メンバ関数
 	///-------------------------------------------///
@@ -129,14 +135,12 @@ private:
 	//オブジェクトデータ
 	std::vector<ObjectData> objectData_;
 
-	//コアオブジェクト
-	std::unique_ptr<MyEngine::Object3D> core_ = nullptr;
+	//プレイヤーオブジェクト (マルチメッシュ化により1つに統合)
+	MyEngine::Object3D* playerObject_ = nullptr;
 
-	//右ウィングオブジェクト
-	std::unique_ptr<MyEngine::Object3D> rightWing_;
-
-	//左ウィングオブジェクト
-	std::unique_ptr<MyEngine::Object3D> leftWing_;
+	static const size_t PART_CORE = 0;
+	static const size_t PART_LEFT_WING = 1;
+	static const size_t PART_RIGHT_WING = 2;
 
 	//エミッターリスト
 	std::vector<MyEngine::EmitterGroup*> emitterList_;
@@ -180,13 +184,13 @@ public:
 	/// ワールド座標を取得
 	/// </summary>
 	/// <returns>ワールド座標</returns>
-	MyEngine::Vector3 GetWorldPos() { return core_->GetWorldTransform().GetWorldTranslate(); }
+	MyEngine::Vector3 GetWorldPos() { return playerObject_->GetPartTransform(PART_CORE).GetWorldTranslate(); }
 
-	MyEngine::WorldTransform GetCoreWorldTransform() { return core_->GetWorldTransform(); }
+	MyEngine::WorldTransform& GetCoreWorldTransform() { return playerObject_->GetPartTransform(PART_CORE); }
 
-	MyEngine::WorldTransform GetLeftWingWorldTransform() { return leftWing_->GetWorldTransform(); }
+	MyEngine::WorldTransform& GetLeftWingWorldTransform() { return playerObject_->GetPartTransform(PART_LEFT_WING); }
 
-	MyEngine::WorldTransform GetRightWingWorldTransform() { return rightWing_->GetWorldTransform(); }
+	MyEngine::WorldTransform& GetRightWingWorldTransform() { return playerObject_->GetPartTransform(PART_RIGHT_WING); }
 
 	MyEngine::WorldTransform GetLeftTrailWorldTransform() { return emitterList_[static_cast<size_t>(EmitterType::LEFTTRAIL)]->GetWorldTransform(); }
 
@@ -220,13 +224,13 @@ public:
 	/// 座標を設定
 	/// </summary>
 	/// <param name="pos">座標</param>
-	void SetPosition(MyEngine::Vector3 pos) { core_->GetWorldTransform().translate_ = pos; }
+	void SetPosition(MyEngine::Vector3 pos) { playerObject_->GetPartTransform(PART_CORE).translate_ = pos; }
 
-	void SetCoreWorldTransform(MyEngine::WorldTransform transform) { core_->GetWorldTransform() = transform; }
+	void SetCoreWorldTransform(MyEngine::WorldTransform transform) { playerObject_->SetPartTransform(PART_CORE, transform); }
 
-	void SetLeftWingWorldTransform(MyEngine::WorldTransform transform) { leftWing_->GetWorldTransform() = transform; }
+	void SetLeftWingWorldTransform(MyEngine::WorldTransform transform) { playerObject_->SetPartTransform(PART_LEFT_WING, transform); }
 
-	void SetRightWingWorldTransform(MyEngine::WorldTransform transform) { rightWing_->GetWorldTransform() = transform; }
+	void SetRightWingWorldTransform(MyEngine::WorldTransform transform) { playerObject_->SetPartTransform(PART_RIGHT_WING, transform); }
 
 	void SetLeftTrailWorldTransform(MyEngine::WorldTransform transform) { emitterList_[static_cast<size_t>(EmitterType::LEFTTRAIL)]->GetWorldTransform() = transform; }
 
