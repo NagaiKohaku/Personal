@@ -3,7 +3,7 @@
     "objects": [
         {
             "type": "MESH",
-            "name": "Core",
+            "name": "Player",
             "transform": {
                 "translation": [
                     0.0,
@@ -21,7 +21,7 @@
                     1.0
                 ]
             },
-            "file_name": "Core",
+            "file_name": "Player",
             "collider": {
                 "type": "BOX",
                 "center": [

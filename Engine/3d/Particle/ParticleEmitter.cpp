@@ -140,9 +140,6 @@ namespace MyEngine {
 
 		//テクスチャの設定
 		model_->SetTextureFilePath("Resource/Sprite/Particle/" + textureFileName_);
-
-		//テクスチャ番号の設定
-		model_->SetTextureIndex(textureManager_->GetSrvIndex(model_->GetTextureFilePath()));
 	}
 
 	///=====================================================/// 
@@ -424,20 +421,20 @@ namespace MyEngine {
 			directXCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(1, srvManager_->GetGPUDescriptorHandle(srvIndex_));
 
 			// モデルの各パーツを描画
-			for (size_t i = 0; i < model_->GetMeshParts().size(); i++) {
+			for (size_t i = 0; i < model_->GetModelParts().size(); i++) {
 				auto mesh = model_->GetMesh(i);
 
 				// メッシュデータの設定
 				mesh->SendDataForGPU();
 
 				// マテリアルデータの設定
-				directXCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(0, model_->GetMeshParts()[i].materialResource.Get()->GetGPUVirtualAddress());
+				directXCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(0, model_->GetModelParts()[i].materialResource.Get()->GetGPUVirtualAddress());
 
 				// テクスチャデータの設定
 				directXCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSrvHandleGPU(model_->GetTextureFilePath(i)));
 
 				// インスタンシング描画コマンド発行
-				directXCommon_->GetCommandList()->DrawIndexedInstanced(mesh->GetIndexCount(), numInstance_, 0, 0, 0);
+				directXCommon_->GetCommandList()->DrawIndexedInstanced(static_cast<UINT>(mesh->GetIndexData().size()), numInstance_, 0, 0, 0);
 			}
 			};
 
@@ -491,8 +488,6 @@ namespace MyEngine {
 						ModelManager::GetInstance()->LoadModel(modelName_, modelFileName_);
 					}
 
-					model_.reset();
-
 					model_ = ModelManager::GetInstance()->FindModel(modelName_);
 				}
 				ImGui::NextColumn();
@@ -515,7 +510,6 @@ namespace MyEngine {
 
 					model_->SetTextureFilePath("Resource/Sprite/Particle/" + textureFileName_);
 
-					model_->SetTextureIndex(textureManager_->GetSrvIndex(model_->GetTextureFilePath()));
 				}
 				ImGui::NextColumn();
 

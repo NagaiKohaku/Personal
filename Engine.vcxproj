@@ -184,7 +184,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Application\Object\Bullet\Core\BulletBase.cpp" />
     <ClCompile Include="Application\Object\Bullet\Core\BulletManager.cpp" />
     <ClCompile Include="Engine\2d\Sprite\Sprite.cpp" />
-    <ClCompile Include="Engine\3d\Model\Model.cpp" />
     <ClCompile Include="Engine\3d\Model\ModelCommon.cpp" />
     <ClCompile Include="Engine\Base\Audio.cpp" />
     <ClCompile Include="Engine\3d\Camera\Camera.cpp" />
@@ -217,6 +216,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Application\Scene\GameScene\GameSceneProgress.cpp" />
     <ClCompile Include="Application\Scene\GameScene\Event\GameSceneEventBase.cpp" />
     <ClCompile Include="Application\Scene\GameScene\Event\GameSceneEventFactory.cpp" />
+    <ClCompile Include="Engine\Object\GameObject.cpp" />
     <ClCompile Include="main.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Development|x64'">MaxSpeed</Optimization>
       <WholeProgramOptimization Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</WholeProgramOptimization>
@@ -266,6 +266,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Object\2D\Object2D.cpp" />
     <ClCompile Include="Engine\Object\3D\Object3DCommon.cpp" />
     <ClCompile Include="Engine\Object\3D\Object3D.cpp" />
+    <ClCompile Include="Engine\Object\Model\Model.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application\LevelEditor\LevelDataLoader.h" />
@@ -299,7 +300,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Base\Framework.h" />
     <ClInclude Include="Engine\Base\Game.h" />
     <ClInclude Include="Engine\Base\LayerType.h" />
-    <ClInclude Include="Engine\3d\Model\Model.h" />
     <ClInclude Include="Engine\3d\Model\ModelCommon.h" />
     <ClInclude Include="Engine\Base\Audio.h" />
     <ClInclude Include="Engine\3d\Camera\Camera.h" />
@@ -380,6 +380,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Object\2D\Object2D.h" />
     <ClInclude Include="Engine\Object\3D\Object3DCommon.h" />
     <ClInclude Include="Engine\Object\3D\Object3D.h" />
+    <ClInclude Include="Engine\Object\GameObject.h" />
+    <ClInclude Include="Engine\Object\ObjectTag.h" />
+    <ClInclude Include="Engine\Object\Model\Model.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Application\LevelEditor\Python\add_collider.py">

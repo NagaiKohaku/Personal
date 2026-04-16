@@ -3,7 +3,7 @@
     "objects": [
         {
             "type": "MESH",
-            "name": "Oni_1",
+            "name": "Enemy_1",
             "transform": {
                 "translation": [
                     0.0,
@@ -21,13 +21,13 @@
                     1.0
                 ]
             },
-            "file_name": "Oni",
+            "file_name": "Enemy",
             "disable": false,
             "object_group": "Enemy"
         },
         {
             "type": "MESH",
-            "name": "Oni_2",
+            "name": "Enemy_2",
             "transform": {
                 "translation": [
                     -2.5,
@@ -45,13 +45,13 @@
                     1.0
                 ]
             },
-            "file_name": "Oni",
+            "file_name": "Enemy",
             "disable": false,
             "object_group": "Enemy"
         },
         {
             "type": "MESH",
-            "name": "Oni_3",
+            "name": "Enemy_3",
             "transform": {
                 "translation": [
                     0.0,
@@ -69,13 +69,13 @@
                     1.0
                 ]
             },
-            "file_name": "Oni",
+            "file_name": "Enemy",
             "disable": false,
             "object_group": "Enemy"
         },
         {
             "type": "MESH",
-            "name": "Oni_4",
+            "name": "Enemy_4",
             "transform": {
                 "translation": [
                     2.5,
@@ -93,13 +93,13 @@
                     1.0
                 ]
             },
-            "file_name": "Oni",
+            "file_name": "Enemy",
             "disable": false,
             "object_group": "Enemy"
         },
         {
             "type": "MESH",
-            "name": "Oni_5",
+            "name": "Enemy_5",
             "transform": {
                 "translation": [
                     -2.5,
@@ -117,13 +117,13 @@
                     1.0
                 ]
             },
-            "file_name": "Oni",
+            "file_name": "Enemy",
             "disable": false,
             "object_group": "Enemy"
         },
         {
             "type": "MESH",
-            "name": "Oni_6",
+            "name": "Enemy_6",
             "transform": {
                 "translation": [
                     0.0,
@@ -141,13 +141,13 @@
                     1.0
                 ]
             },
-            "file_name": "Oni",
+            "file_name": "Enemy",
             "disable": false,
             "object_group": "Enemy"
         },
         {
             "type": "MESH",
-            "name": "Oni_7",
+            "name": "Enemy_7",
             "transform": {
                 "translation": [
                     2.5,
@@ -165,7 +165,7 @@
                     1.0
                 ]
             },
-            "file_name": "Oni",
+            "file_name": "Enemy",
             "disable": false,
             "object_group": "Enemy"
         }

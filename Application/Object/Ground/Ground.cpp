@@ -1,8 +1,8 @@
 #include "Ground.h"
 
 #include <Object/3D/Object3D.h>
-#include "2d/Sprite/TextureManager.h"
-#include "3d/Model/Model.h"
+#include <2d/Sprite/TextureManager.h>
+#include <Object/Model/Model.h>
 
 #include <Math/Utility/MakeMatrixMath.h>
 
@@ -27,7 +27,7 @@ void Ground::Initialize(EngineContext context) {
 	object_->GetWorldTransform().rotate_ = { 3.14f / 2.0f,0.0f,0.0f };
 
 	// 環境光係数の設定
-	object_->GetModel()->SetEnvironmentCoefficient(0.0f);
+	object_->GetModel()->GetModelParts()[0].material->environmentCoefficient = 0.0f;
 
 	// UV座標Y初期化
 	uvPosY = 0.0f;
@@ -48,7 +48,7 @@ void Ground::Update() {
 	Matrix4x4 uvRotateMatrix = MakeIdentity4x4();
 
 	// UV変換行列設定
-	object_->GetModel()->SetUVTransform((uvScaleMatrix * uvRotateMatrix) * uvTransformMatrix);
+	object_->GetModel()->GetModelParts()[0].material->uvTransform = (uvScaleMatrix * uvRotateMatrix) * uvTransformMatrix;
 }
 
 void Ground::TransformUpdate() {

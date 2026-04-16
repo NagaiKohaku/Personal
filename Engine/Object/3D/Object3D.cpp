@@ -45,7 +45,7 @@ void Object3D::Draw(LayerType layer) {
 		objectCommon_->CommonDrawSetting();
 
 		if (model_) {
-			const auto& parts = model_->GetMeshParts();
+			const auto& parts = model_->GetModelParts();
 			for (size_t i = 0; i < parts.size(); i++) {
 				const auto& part = parts[i];
 				auto mesh = model_->GetMesh(i);
@@ -63,7 +63,7 @@ void Object3D::Draw(LayerType layer) {
 				objectCommon_->GetDxCommon()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSrvHandleGPU(part.textureFilePath));
 
 				//描画コマンド発行
-				objectCommon_->GetDxCommon()->GetCommandList()->DrawIndexedInstanced(UINT(mesh->GetIndexCount()), 1, 0, 0, 0);
+				objectCommon_->GetDxCommon()->GetCommandList()->DrawIndexedInstanced(UINT(mesh->GetIndexData().size()), 1, 0, 0, 0);
 			}
 		}
 		};
@@ -78,7 +78,7 @@ void Object3D::SetModel(const std::string& modelName) {
 
 	if (model_) {
 
-		size_t partCount = model_->GetMeshParts().size();
+		size_t partCount = model_->GetModelParts().size();
 
 		CreatePartWVPResources(static_cast<int32_t>(partCount));
 	}

@@ -10,6 +10,7 @@
 #include <Math/Matrix/Matrix4x4.h>
 
 #include "string"
+#include "vector"
 #include "wrl.h"
 
 namespace MyEngine {
@@ -51,12 +52,7 @@ namespace MyEngine {
 		/// </summary>
 		void SendDataForGPU();
 
-		/// <summary>
-		/// 外部から頂点データとインデックスデータをコピーしてメッシュを更新します。
-		/// </summary>
-		/// <param name="indices">コピーするインデックスデータの配列</param>
-		/// <param name="vertices">コピーする頂点データの配列</param>
-		void CopyMeshData(std::vector<uint32_t> indices, std::vector<VertexData> vertices);
+		void AddVertexData(const VertexData& vertex);
 
 		///-------------------------------------------/// 
 		/// ゲッター・セッター
@@ -64,40 +60,16 @@ namespace MyEngine {
 	public:
 
 		/// <summary>
-		/// 頂点数を取得
-		/// </summary>
-		/// <returns>頂点数</returns>
-		uint32_t GetVertexCount() const { return vertexCount_; }
-
-		/// <summary>
-		/// インデックス数を取得
-		/// </summary>
-		/// <returns>インデックス数</returns>
-		uint32_t GetIndexCount() const { return indexCount_; }
-
-		/// <summary>
 		/// 頂点データを取得
 		/// </summary>
 		/// <returns>頂点データ</returns>
-		VertexData* GetVertexData() const { return vertexData_; }
+		const std::vector<VertexData>& GetVertexData() const { return vertexData_; }
 
 		/// <summary>
 		/// インデックスデータを取得
 		/// </summary>
 		/// <returns>インデックスデータ</returns>
-		uint32_t* GetIndexData() const { return indexData_; }
-
-		/// <summary>
-		/// 頂点数を設定
-		/// </summary>
-		/// <param name="count">頂点数</param>
-		void SetVertexCount(uint32_t count) { vertexCount_ = count; }
-
-		/// <summary>
-		/// インデックス数を設定
-		/// </summary>
-		/// <param name="count">インデックス数</param>
-		void SetIndexCount(uint32_t count) { indexCount_ = count; }
+		const std::vector<uint32_t>& GetIndexData() const { return indexData_; }
 
 		///-------------------------------------------/// 
 		/// メンバ変数
@@ -106,12 +78,6 @@ namespace MyEngine {
 
 		//DirectX基底
 		DirectXCommon* dxCommon_ = nullptr;
-
-		//頂点数
-		uint32_t vertexCount_ = 0;
-
-		//インデックス数
-		uint32_t indexCount_ = 0;
 
 		/// === バッファリソース === ///
 
@@ -124,10 +90,14 @@ namespace MyEngine {
 		/// === バッファリソース内のデータを指すポインタ === ///
 
 		//頂点データ
-		VertexData* vertexData_ = nullptr;
+		std::vector<VertexData> vertexData_;
 
 		//頂点番号データ
-		uint32_t* indexData_ = nullptr;
+		std::vector<uint32_t> indexData_;
+
+		VertexData* mappedVertexData_;
+
+		uint32_t* mappedIndexData_;
 
 		/// === バッファビュー === ///
 

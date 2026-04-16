@@ -1,7 +1,7 @@
 #pragma once
 
-#include "3d/Model/ModelCommon.h"
-#include "3d/Model/Model.h"
+#include <3d/Model/ModelCommon.h>
+#include <Object/Model/Model.h>
 
 #include "memory"
 #include "map"
@@ -36,14 +36,6 @@ namespace MyEngine {
 		void LoadModel(const std::string& modelName, const std::string& modelFileName);
 
 		/// <summary>
-		/// 指定されたモデル名、ディレクトリ、ファイル名からモデルを読み込み、管理コンテナに登録します。
-		/// </summary>
-		/// <param name="modelName">管理用のモデル名</param>
-		/// <param name="modelDirectory">モデルファイルが格納されているディレクトリ名</param>
-		/// <param name="modelFileName">モデルファイルの名前</param>
-		void LoadModel(const std::string& modelName, const std::string& modelDirectory, const std::string& modelFileName);
-
-		/// <summary>
 		/// 指定したタイプのメッシュモデルを生成し、テクスチャを設定して管理コンテナに登録します。
 		/// </summary>
 		/// <param name="modelName">管理用のモデル名</param>
@@ -56,7 +48,7 @@ namespace MyEngine {
 		/// </summary>
 		/// <param name="modelName">検索するモデルの名前</param>
 		/// <returns>名前が合致したモデルをコピーしたインスタンス</returns>
-		std::unique_ptr<Model> FindModel(const std::string& modelName);
+		Model* FindModel(const std::string& modelName);
 
 		///-------------------------------------------/// 
 		/// メンバ変数

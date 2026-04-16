@@ -103,9 +103,9 @@ namespace MyEngine {
 
 		//接触していれば
 		if (isCollision_) {
-			debugObject_->GetModel()->SetColor(hitColor_);
+			debugObject_->GetModel()->GetModelParts()[0].material->color = hitColor_;
 		} else {
-			debugObject_->GetModel()->SetColor(defaultColor_);
+			debugObject_->GetModel()->GetModelParts()[0].material->color = defaultColor_;
 		}
 
 		//接触タグのリセット

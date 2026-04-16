@@ -53,29 +53,7 @@ namespace MyEngine {
 		std::unique_ptr<Model> model = std::make_unique<Model>();
 
 		//モデルの読み込み
-		model->Initialize("Resource/Model/" + modelFileName, modelFileName + ".obj", modelCommon_);
-
-		//モデル名とモデルデータをコンテナに登録
-		models_.insert(std::make_pair(modelName, std::move(model)));
-	}
-
-	///==========================================================================/// 
-	/// 指定されたモデル名、ディレクトリ、ファイル名からモデルを読み込み、管理コンテナに登録
-	///==========================================================================///
-	void ModelManager::LoadModel(const std::string& modelName, const std::string& modelDirectory, const std::string& modelFileName) {
-
-		//読み込み済みモデルの検索
-		if (models_.contains(modelName)) {
-
-			//読み込み済みなら早期return
-			return;
-		}
-
-		//モデルデータ
-		std::unique_ptr<Model> model = std::make_unique<Model>();
-
-		//モデルの読み込み
-		model->Initialize("Resource/Model/" + modelDirectory, modelFileName + ".obj", modelCommon_);
+		model->Initialize(modelCommon_, MeshType::MODEL, modelFileName);
 
 		//モデル名とモデルデータをコンテナに登録
 		models_.insert(std::make_pair(modelName, std::move(model)));
@@ -96,7 +74,7 @@ namespace MyEngine {
 		std::unique_ptr<Model> model = std::make_unique<Model>();
 
 		//メッシュモデルの初期化
-		model->Initialize(type, textureFilePath, modelCommon_);
+		model->Initialize(modelCommon_, type, textureFilePath);
 
 		//モデル名とモデルデータをコンテナに登録
 		models_.insert(std::make_pair(modelName, std::move(model)));
@@ -105,25 +83,13 @@ namespace MyEngine {
 	///=====================================================/// 
 	/// 登録済みモデルを検索
 	///=====================================================///
-	std::unique_ptr<Model> ModelManager::FindModel(const std::string& modelName) {
+	Model* ModelManager::FindModel(const std::string& modelName) {
 
 		//読み込み済みモデルの検索
 		if (models_.contains(modelName)) {
 
-			//リストからモデルを取得
-			Model* model = models_.at(modelName).get();
-
-			//メッシュタイプを取得
-			MeshType meshType = GetMeshType(model);
-
-			//モデルを生成
-			std::unique_ptr<Model> newModel = std::make_unique<Model>();
-
-			//初期化
-			newModel->Initialize(meshType, model, modelCommon_);
-
 			//読み込みモデルを戻り値としてreturn
-			return std::move(newModel);
+			return models_.at(modelName).get();
 		}
 
 		//ファイル名一致なし

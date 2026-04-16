@@ -1,6 +1,6 @@
 #include "Shadow.h"
 
-#include "3d/Model/Model.h"
+#include <Object/Model/Model.h>
 
 #include <Math/Utility/Easing.h>
 
@@ -19,10 +19,10 @@ void Shadow::Initialize(EngineContext context) {
 
 	shadow_->GetWorldTransform().scale_ = { 1.0f,0.01f,1.0f };
 
-	shadow_->GetModel()->SetColor({ 0.0f,0.0f,0.0f,1.0f });
+	shadow_->GetModel()->GetModelParts()[0].material->color = { 0.0f,0.0f,0.0f,1.0f };
 
 	//反射係数の設定
-	shadow_->GetModel()->SetEnvironmentCoefficient(0.0f);
+	shadow_->GetModel()->GetModelParts()[0].material->environmentCoefficient =  0.0f;
 
 	/// === 他変数の設定 === ///
 

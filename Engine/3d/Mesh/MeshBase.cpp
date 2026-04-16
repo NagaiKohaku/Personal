@@ -14,14 +14,10 @@ namespace MyEngine {
 		dxCommon_->GetCommandList()->IASetIndexBuffer(&indexBufferView_);
 	}
 
-	///=====================================================/// 
-	/// 外部から頂点データとインデックスデータをコピーしてメッシュを更新
-	///=====================================================///
-	void MeshBase::CopyMeshData(std::vector<uint32_t> indices, std::vector<VertexData> vertices) {
-		//vertexData_に頂点データをコピー
-		std::memcpy(vertexData_, vertices.data(), sizeof(VertexData) * vertices.size());
+	void MeshBase::AddVertexData(const VertexData& vertex) {
 
-		//indexData_にインデックスデータをコピー
-		std::memcpy(indexData_, indices.data(), sizeof(uint32_t) * indices.size());
+		indexData_.push_back(static_cast<uint32_t>(vertexData_.size()));
+
+		vertexData_.push_back(vertex);
 	}
 }

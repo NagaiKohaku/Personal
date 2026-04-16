@@ -13,20 +13,22 @@ namespace MyEngine {
 
 		/// === 頂点リソースの生成 === ///
 
+		vertexData_.resize(static_cast<size_t>(4 * kCylinderDivide));
+
 		//リソースの生成
-		vertexResource_ = dxCommon_->CreateBufferResource(sizeof(VertexData) * 4 * kCylinderDivide);
+		vertexResource_ = dxCommon_->CreateBufferResource(sizeof(VertexData) * vertexData_.size());
 
 		//バッファビューの作成
 		vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
 
 		//使用するリソースのサイズを設定
-		vertexBufferView_.SizeInBytes = sizeof(VertexData) * 4 * kCylinderDivide;
+		vertexBufferView_.SizeInBytes = sizeof(VertexData) * static_cast<UINT>(vertexData_.size());
 
 		//1頂点当たりのサイズを設定
 		vertexBufferView_.StrideInBytes = sizeof(VertexData);
 
 		//リソースにデータを書き込めるようにする
-		vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData_));
+		vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&mappedVertexData_));
 
 		/// === 頂点データの設定 === ///
 
@@ -62,24 +64,26 @@ namespace MyEngine {
 			vertexData_[index * 4 + 3].normal = { -sinNext,0.0f,cosNext };
 		}
 
+		std::memcpy(mappedVertexData_, vertexData_.data(), sizeof(VertexData) * vertexData_.size());
+
 		/// === 頂点インデックスリソースの生成 === ///
 
-		indexCount_ = 6 * kCylinderDivide;
+		indexData_.resize(static_cast<size_t>(6 * kCylinderDivide));
 
 		//頂点インデックスリソースの生成
-		indexResource_ = dxCommon_->CreateBufferResource(sizeof(uint32_t) * indexCount_);
+		indexResource_ = dxCommon_->CreateBufferResource(sizeof(uint32_t) * indexData_.size());
 
 		//リソースの場所を取得
 		indexBufferView_.BufferLocation = indexResource_->GetGPUVirtualAddress();
 
 		//使用するリソースのサイズを設定
-		indexBufferView_.SizeInBytes = sizeof(uint32_t) * indexCount_;
+		indexBufferView_.SizeInBytes = sizeof(uint32_t) * static_cast<UINT>(indexData_.size());
 
 		//フォーマットを設定
 		indexBufferView_.Format = DXGI_FORMAT_R32_UINT;
 
 		//リソースにデータを書き込めるようにする
-		indexResource_->Map(0, nullptr, reinterpret_cast<void**>(&indexData_));
+		indexResource_->Map(0, nullptr, reinterpret_cast<void**>(&mappedIndexData_));
 
 		for (uint32_t index = 0; index < kCylinderDivide; ++index) {
 			indexData_[index * 6 + 0] = index * 4 + 0;
@@ -89,5 +93,8 @@ namespace MyEngine {
 			indexData_[index * 6 + 4] = index * 4 + 3;
 			indexData_[index * 6 + 5] = index * 4 + 2;
 		}
+
+		std::memcpy(mappedIndexData_, indexData_.data(), sizeof(uint32_t) * indexData_.size());
+
 	}
 }

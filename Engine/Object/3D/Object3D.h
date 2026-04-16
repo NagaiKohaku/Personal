@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Object/Base/ObjectBase.h>
-#include <3d/Model/Model.h>
+#include <Object/Model/Model.h>
 #include <LevelEditor/ObjectData.h>
 #include <Base/Renderer.h>
 #include <Math/Matrix/TransformationMatrix.h>
@@ -24,7 +24,7 @@ namespace MyEngine {
 	private:
 
 		//モデル
-		std::unique_ptr<Model> model_ = nullptr;
+		Model* model_;
 
 		//パーツごとのトランスフォーム
 		std::vector<WorldTransform> partTransforms_;
@@ -47,7 +47,7 @@ namespace MyEngine {
 		/// モデルを取得
 		/// </summary>
 		/// <returns>モデル</returns>
-		Model* GetModel() const { return model_.get(); }
+		Model* GetModel() const { return model_; }
 
 		/// <summary>
 		/// パーツのワールドトランスフォームを取得

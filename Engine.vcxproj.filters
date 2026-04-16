@@ -100,9 +100,6 @@
     <ClCompile Include="Engine\3d\Light\SpotLight.cpp">
       <Filter>Engine\3d\Light</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\3d\Model\Model.cpp">
-      <Filter>Engine\3d\Model</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\3d\Model\ModelCommon.cpp">
       <Filter>Engine\3d\Model</Filter>
     </ClCompile>
@@ -340,6 +337,8 @@
     <ClCompile Include="Engine\Object\3D\Object3DCommon.cpp" />
     <ClCompile Include="Engine\Object\3D\Object3D.cpp" />
     <ClCompile Include="Application\Object\Manager\ObjectManager.cpp" />
+    <ClCompile Include="Engine\Object\GameObject.cpp" />
+    <ClCompile Include="Engine\Object\Model\Model.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application\Object\Camera\FollowCamera.h">
@@ -391,9 +390,6 @@
       <Filter>Engine\3d\Light</Filter>
     </ClInclude>
     <ClInclude Include="Engine\3d\Model\ModelManager.h">
-      <Filter>Engine\3d\Model</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\3d\Model\Model.h">
       <Filter>Engine\3d\Model</Filter>
     </ClInclude>
     <ClInclude Include="Engine\3d\Model\ModelCommon.h">
@@ -652,6 +648,9 @@
     <ClInclude Include="Engine\Object\3D\Object3DCommon.h" />
     <ClInclude Include="Engine\Object\3D\Object3D.h" />
     <ClInclude Include="Application\Object\Manager\ObjectManager.h" />
+    <ClInclude Include="Engine\Object\GameObject.h" />
+    <ClInclude Include="Engine\Object\ObjectTag.h" />
+    <ClInclude Include="Engine\Object\Model\Model.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resource\Shader\DebugObject.hlsli">

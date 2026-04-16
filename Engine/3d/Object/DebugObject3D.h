@@ -1,6 +1,6 @@
 #pragma once
 
-#include "3d/Model/Model.h"
+#include <Object/Model/Model.h>
 #include <Base/Renderer.h>
 
 #include <Math/Matrix/Matrix4x4.h>
@@ -76,7 +76,7 @@ namespace MyEngine {
 		TransformationMatrix* WVPData_ = nullptr;
 
 		//モデル情報
-		std::unique_ptr<Model> model_;
+		Model* model_;
 
 		///-------------------------------------------/// 
 		/// ゲッター・セッター
@@ -93,7 +93,7 @@ namespace MyEngine {
 		/// モデルを取得
 		/// </summary>
 		/// <returns>モデル</returns>
-		Model* GetModel() const { return model_.get(); }
+		Model* GetModel() const { return model_; }
 
 		/// <summary>
 		/// カメラの設定

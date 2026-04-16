@@ -13,22 +13,22 @@ namespace MyEngine {
 
 		/// === 頂点リソースの生成 === ///
 
-		vertexCount_ = 4;
+		vertexData_.resize(static_cast<size_t>(4));
 
 		//頂点リソースの生成
-		vertexResource_ = dxCommon_->CreateBufferResource(sizeof(VertexData) * vertexCount_);
+		vertexResource_ = dxCommon_->CreateBufferResource(sizeof(VertexData) * vertexData_.size());
 
 		//頂点バッファビューの作成
 		vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
 
 		//使用するリソースのサイズを設定
-		vertexBufferView_.SizeInBytes = sizeof(VertexData) * vertexCount_;
+		vertexBufferView_.SizeInBytes = sizeof(VertexData) * static_cast<UINT>(vertexData_.size());
 
 		//1頂点当たりのサイズを設定
 		vertexBufferView_.StrideInBytes = sizeof(VertexData);
 
 		//リソースにデータを書き込めるようにする
-		vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData_));
+		vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&mappedVertexData_));
 
 		//頂点データの初期化
 		//左下
@@ -48,24 +48,26 @@ namespace MyEngine {
 		vertexData_[3].texcoord = { 1.0f,0.0f };
 		vertexData_[3].normal = { 0.0f,0.0f,-1.0f };
 
+		std::memcpy(mappedVertexData_, vertexData_.data(), sizeof(VertexData) * vertexData_.size());
+
 		/// === 頂点インデックスリソースの生成 === ///
 
-		indexCount_ = 6;
+		indexData_.resize(static_cast<size_t>(6));
 
 		//頂点インデックスリソースの生成
-		indexResource_ = dxCommon_->CreateBufferResource(sizeof(uint32_t) * indexCount_);
+		indexResource_ = dxCommon_->CreateBufferResource(sizeof(uint32_t) * indexData_.size());
 
 		//リソースの場所を取得
 		indexBufferView_.BufferLocation = indexResource_->GetGPUVirtualAddress();
 
 		//使用するリソースのサイズを設定
-		indexBufferView_.SizeInBytes = sizeof(uint32_t) * indexCount_;
+		indexBufferView_.SizeInBytes = sizeof(uint32_t) * static_cast<UINT>(indexData_.size());
 
 		//フォーマットを設定
 		indexBufferView_.Format = DXGI_FORMAT_R32_UINT;
 
 		//リソースにデータを書き込めるようにする
-		indexResource_->Map(0, nullptr, reinterpret_cast<void**>(&indexData_));
+		indexResource_->Map(0, nullptr, reinterpret_cast<void**>(&mappedIndexData_));
 
 		//頂点インデックスデータの初期化
 		indexData_[0] = 0;
@@ -74,5 +76,8 @@ namespace MyEngine {
 		indexData_[3] = 1;
 		indexData_[4] = 3;
 		indexData_[5] = 2;
+
+		std::memcpy(mappedIndexData_, indexData_.data(), sizeof(uint32_t) * indexData_.size());
+
 	}
 }

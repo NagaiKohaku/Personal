@@ -16,22 +16,22 @@ namespace MyEngine {
 		/// === 頂点リソースの生成 === ///
 
 		//分割数から頂点数を計算
-		vertexCount_ = (kLatitudeCount + 1) * (kLongitudeCount + 1);
+		vertexData_.resize(static_cast<size_t>(4 * ((kLatitudeCount + 1) * (kLongitudeCount + 1))));
 
 		//リソースの生成
-		vertexResource_ = dxCommon_->CreateBufferResource(sizeof(VertexData) * 4 * vertexCount_);
+		vertexResource_ = dxCommon_->CreateBufferResource(sizeof(VertexData) * vertexData_.size());
 
 		//バッファビューの作成
 		vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
 
 		//リソースのサイズを設定
-		vertexBufferView_.SizeInBytes = sizeof(VertexData) * 4 * vertexCount_;
+		vertexBufferView_.SizeInBytes = sizeof(VertexData) * static_cast<UINT>(vertexData_.size());
 
 		//1頂点当たりのサイズを設定
 		vertexBufferView_.StrideInBytes = sizeof(VertexData);
 
 		//リソースにデータを書き込めるようにする
-		vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData_));
+		vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&mappedVertexData_));
 
 		/// === 頂点データの生成 === ///
 
@@ -125,25 +125,27 @@ namespace MyEngine {
 			}
 		}
 
+		std::memcpy(mappedVertexData_, vertexData_.data(), sizeof(VertexData) * vertexData_.size());
+
 		/// === 頂点インデックスリソースの生成 === ///
 
 		//分割数からインデックス数を計算
-		indexCount_ = 6 * kLatitudeCount * kLongitudeCount;
+		indexData_.resize(static_cast<size_t>(6 * kLatitudeCount * kLongitudeCount));
 
 		//リソースの生成
-		indexResource_ = dxCommon_->CreateBufferResource(sizeof(uint32_t) * indexCount_);
+		indexResource_ = dxCommon_->CreateBufferResource(sizeof(uint32_t) * indexData_.size());
 
 		//リソースの場所を取得
 		indexBufferView_.BufferLocation = indexResource_->GetGPUVirtualAddress();
 
 		//使用するリソースのサイズを設定
-		indexBufferView_.SizeInBytes = sizeof(uint32_t) * indexCount_;
+		indexBufferView_.SizeInBytes = sizeof(uint32_t) * static_cast<UINT>(indexData_.size());
 
 		//フォーマットを設定
 		indexBufferView_.Format = DXGI_FORMAT_R32_UINT;
 
 		//リソースにデータを書き込めるようにする
-		indexResource_->Map(0, nullptr, reinterpret_cast<void**>(&indexData_));
+		indexResource_->Map(0, nullptr, reinterpret_cast<void**>(&mappedIndexData_));
 
 		/// === インデックスデータの生成 === ///
 
@@ -168,5 +170,8 @@ namespace MyEngine {
 			//左上
 			indexData_[index * 6 + 5] = index * 4 + 2;
 		}
+
+		std::memcpy(mappedIndexData_, indexData_.data(), sizeof(uint32_t)* indexData_.size());
+
 	}
 }

@@ -322,15 +322,8 @@ void Enemy::Blink() {
 	//0.0f~1.0fの間を往復
 	float blink = (sinf(blinkTimer_ * 2.0f * std::numbers::pi_v<float> *blinkFrequency_) + 1.0f) * 0.5f;
 
-	//オブジェクトの色情報
-	Vector4 color = object_->GetModel()->GetColor();
-
-	//赤色に点滅するように設定
-	color.y = 1.0f - blink;
-	color.z = 1.0f - blink;
-
-	//色情報を設定
-	object_->GetModel()->SetColor(color);
+	object_->GetModel()->GetModelParts()[0].material->color.y = 1.0f - blink;
+	object_->GetModel()->GetModelParts()[0].material->color.z = 1.0f - blink;
 }
 
 ///=====================================================/// 
@@ -434,7 +427,7 @@ void Enemy::StartDestroy() {
 void Enemy::ResetColor() {
 
 	//オブジェクトの色を元に戻す
-	object_->GetModel()->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+	object_->GetModel()->GetModelParts()[0].material->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 
 	isBlink_ = false;
 }

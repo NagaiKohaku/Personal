@@ -1,7 +1,7 @@
 # Blender 4.1.1
 # www.blender.org
-mtllib Oni.mtl
-o Oni
+mtllib Enemy.mtl
+o Enemy
 v 0.000000 1.000000 -1.000000
 v 1.000000 -0.000000 -1.000000
 v 0.000000 -1.000000 -1.000000

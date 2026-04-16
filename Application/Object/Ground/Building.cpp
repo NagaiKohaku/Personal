@@ -1,6 +1,6 @@
 #include "Building.h"
 
-#include "3d/Model/Model.h"
+#include <Object/Model/Model.h>
 
 using namespace MyEngine;
 

@@ -7,8 +7,8 @@
 #include <Math/Matrix/Matrix4x4.h>
 #include <Math/Transform/WorldTransform.h>
 #include <Math/Shape/AABB.h>
-#include "3d/Mesh/MeshBase.h"
-#include "3d/Model/Model.h"
+#include <3d/Mesh/MeshBase.h>
+#include <Object/Model/Model.h>
 #include <Base/Input.h>
 #include <Base/Renderer.h>
 
@@ -326,7 +326,7 @@ namespace MyEngine {
 		/// === パーティクル情報 === ///
 
 		//モデル
-		std::unique_ptr<Model> model_;
+		Model* model_;
 
 		//インスタンス数
 		uint32_t numInstance_;

@@ -1,6 +1,6 @@
 #include "MeshType.h"
 
-#include "3d/Model/Model.h"
+#include <Object/Model/Model.h>
 
 #include "3d/Mesh/PlaneMesh.h"
 #include "3d/Mesh/RingMesh.h"

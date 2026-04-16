@@ -148,14 +148,7 @@ void LevelDataLoader::Load(const std::string& fileName) {
 				//モデルのファイル名を取得
 				newObject.filename = object["file_name"].get<std::string>();
 
-				if (newObject.type != ObjectType::NONE) {
-
-					//モデルの読み込み
-					ModelManager::GetInstance()->LoadModel(newObject.filename, objectType, newObject.filename);
-				} else {
-
-					ModelManager::GetInstance()->LoadModel(newObject.filename, newObject.filename);
-				}
+				ModelManager::GetInstance()->LoadModel(newObject.filename, newObject.filename);
 
 			}
 
