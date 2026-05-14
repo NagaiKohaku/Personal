@@ -6,9 +6,10 @@
 #include <3d/Collider/ColliderManager.h>
 #include <Scene/EngineContext.h>
 
-#include <Scene/GameScene/GameScene.h>
-#include <Scene/TitleScene.h>
-#include <Scene/ParticleEditorScene.h>
+//#include <Scene/GameScene/GameScene.h>
+//#include <Scene/TitleScene.h>
+//#include <Scene/ParticleEditorScene.h>
+#include <Scene/TestScene.h>
 
 namespace MyEngine {
 
@@ -109,21 +110,24 @@ namespace MyEngine {
 
 		switch (sceneType) {
 
-			//タイトルシーン
-		case SceneType::kTitle:
+		//	//タイトルシーン
+		//case SceneType::kTitle:
 
-			return std::make_unique<TitleScene>();
+		//	return std::make_unique<TitleScene>();
 
-			//ゲームシーン
-		case SceneType::kGame:
+		//	//ゲームシーン
+		//case SceneType::kGame:
 
-			return std::make_unique<GameScene>();
+		//	return std::make_unique<GameScene>();
 
-		case SceneType::kParticleEditor:
+		//case SceneType::kParticleEditor:
 
-			//パーティクルエディターシーン
-			return std::make_unique<ParticleEditorScene>();
+		//	//パーティクルエディターシーン
+		//	return std::make_unique<ParticleEditorScene>();
 
+		case SceneType::kTest:
+
+			return std::make_unique<TestScene>();
 		default:
 			return nullptr;
 		}

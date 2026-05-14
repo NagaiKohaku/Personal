@@ -3,13 +3,14 @@
 #include <Base/Framework.h>
 
 #include <Base/ImGuiManager.h>
-#include <2d/Sprite/SpriteManager.h>
+#include <Object/2D/Sprite/SpriteManager.h>
+#include <Object/3D/Model/ModelManager.h>
+#include <Object/Base/ObjectManager.h>
+#include <Object/3D/Camera/CameraManager.h>
 #include <3d/Collider/ColliderManager.h>
-#include <Object/Manager/ObjectManager.h>
 #include <Effect/Manager/EmitterManager.h>
 #include <Effect/Manager/UIManager.h>
 #include <LevelEditor/LevelDataLoader.h>
-#include <3d/Camera/Camera.h>
 #include <Scene/EngineContext.h>
 #include <Scene/SceneManager.h>
 #include <Effect/Fade/Fade.h>
@@ -33,23 +34,23 @@ namespace MyEngine {
 
 	private:
 
-		SpriteManager* spriteManager_;
+		std::unique_ptr<SpriteManager> spriteManager_;
 
-		ColliderManager* colliderManager_;
+		std::unique_ptr<ObjectManager> objectManager_;
 
-		ObjectManager* objectManager_;
+		std::unique_ptr<CameraManager> cameraManager_;
 
-		EmitterManager* emitterManager_;
+		std::unique_ptr<ColliderManager> colliderManager_;
 
-		UIManager* uiManager_;
+		std::unique_ptr<EmitterManager> emitterManager_;
 
-		LevelDataLoader* levelDataLoder_;
+		std::unique_ptr<UIManager> uiManager_;
 
-		std::unique_ptr<Camera> camera_;
+		std::unique_ptr<LevelDataLoader> levelDataLoder_;
+
+		std::unique_ptr<SceneManager> sceneManager_;
 
 		EngineContext engineContext_;
-
-		SceneManager* sceneManager_;
 
 		Fade* fade_;
 

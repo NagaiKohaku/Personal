@@ -26,7 +26,8 @@ namespace MyEngine {
 		enum class SceneType {
 			kTitle,
 			kGame,
-			kParticleEditor
+			kParticleEditor,
+			kTest
 		};
 
 		///-------------------------------------------/// 

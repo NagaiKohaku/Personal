@@ -52,9 +52,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Application\Object\Camera\FollowCamera.cpp">
-      <Filter>Application\Object\Camera</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\3d\Collider\AABBCollider.cpp">
       <Filter>Engine\3d\Collider</Filter>
     </ClCompile>
@@ -67,58 +64,46 @@
     <ClCompile Include="Engine\3d\Collider\SphereCollider.cpp">
       <Filter>Engine\3d\Collider</Filter>
     </ClCompile>
-    <ClCompile Include="Application\Object\Enemy\Enemy.cpp">
-      <Filter>Application\Object\Enemy</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\Object\Enemy\EnemyManager.cpp">
-      <Filter>Application\Object\Enemy</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\Object\Player\Reticle.cpp">
-      <Filter>Application\Object\Player</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\Object\Player\Player.cpp">
-      <Filter>Application\Object\Player</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\2d\Sprite\Sprite.cpp">
+    <ClCompile Include="Engine\Object\Component\Geometry\Sprite\Sprite.cpp">
       <Filter>Engine\2d\Sprite</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\2d\Sprite\SpriteManager.cpp">
+    <ClCompile Include="Engine\Object\2D\Sprite\SpriteManager.cpp">
       <Filter>Engine\2d\Sprite</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\2d\Sprite\TextureManager.cpp">
+    <ClCompile Include="Engine\Object\2D\Texture\TextureManager.cpp">
       <Filter>Engine\2d\Sprite</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\3d\Camera\Camera.cpp">
+    <ClCompile Include="Engine\Object\3D\Camera\Camera.cpp">
       <Filter>Engine\3d\Camera</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\3d\Light\DirectionalLight.cpp">
+    <ClCompile Include="Engine\Object\3D\Light\DirectionalLight\DirectionalLight.cpp">
       <Filter>Engine\3d\Light</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\3d\Light\PointLight.cpp">
+    <ClCompile Include="Engine\Object\3D\Light\PointLight\PointLight.cpp">
       <Filter>Engine\3d\Light</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\3d\Light\SpotLight.cpp">
+    <ClCompile Include="Engine\Object\3D\Light\SpotLight\SpotLight.cpp">
       <Filter>Engine\3d\Light</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\3d\Model\ModelCommon.cpp">
+    <ClCompile Include="Engine\Object\3D\Model\ModelCommon.cpp">
       <Filter>Engine\3d\Model</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\3d\Model\ModelManager.cpp">
+    <ClCompile Include="Engine\Object\3D\Model\ModelManager.cpp">
       <Filter>Engine\3d\Model</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\3d\Mesh\CylinderMesh.cpp">
+    <ClCompile Include="Engine\Object\3D\Mesh\CylinderMesh.cpp">
       <Filter>Engine\3d\Mesh</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\3d\Mesh\ModelMesh.cpp">
+    <ClCompile Include="Engine\Object\3D\Mesh\ModelMesh.cpp">
       <Filter>Engine\3d\Mesh</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\3d\Mesh\PlaneMesh.cpp">
+    <ClCompile Include="Engine\Object\3D\Mesh\PlaneMesh.cpp">
       <Filter>Engine\3d\Mesh</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\3d\Mesh\MeshType.cpp">
+    <ClCompile Include="Engine\Object\3D\Mesh\MeshType.cpp">
       <Filter>Engine\3d\Mesh</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\3d\Mesh\RingMesh.cpp">
+    <ClCompile Include="Engine\Object\3D\Mesh\RingMesh.cpp">
       <Filter>Engine\3d\Mesh</Filter>
     </ClCompile>
     <ClCompile Include="Engine\3d\Particle\EmitterGroup.cpp">
@@ -129,15 +114,6 @@
     </ClCompile>
     <ClCompile Include="Engine\3d\Particle\ParticleEmitter.cpp">
       <Filter>Engine\3d\Particle</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\3d\Object\DebugObject3D.cpp">
-      <Filter>Engine\3d\Object</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\3d\Object\DebugObjectCommon.cpp">
-      <Filter>Engine\3d\Object</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\3d\Object\DebugLine.cpp">
-      <Filter>Engine\3d\Object</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Base\Audio.cpp">
       <Filter>Engine\Base</Filter>
@@ -178,35 +154,17 @@
     <ClCompile Include="Engine\Scene\SceneManager.cpp">
       <Filter>Engine\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Application\Scene\ParticleEditorScene.cpp">
-      <Filter>Application\Scene</Filter>
-    </ClCompile>
     <ClCompile Include="Application\LevelEditor\LevelDataLoader.cpp">
       <Filter>Application\LevelEditor</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\3d\Mesh\MeshBase.cpp">
+    <ClCompile Include="Engine\Object\3D\Mesh\MeshBase.cpp">
       <Filter>Engine\3d\Mesh</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\3d\Mesh\SphereMesh.cpp">
+    <ClCompile Include="Engine\Object\3D\Mesh\SphereMesh.cpp">
       <Filter>Engine\3d\Mesh</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\3d\Mesh\CubeMesh.cpp">
+    <ClCompile Include="Engine\Object\3D\Mesh\CubeMesh.cpp">
       <Filter>Engine\3d\Mesh</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\Object\Ground\LineGround.cpp">
-      <Filter>Application\Object\Ground</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\Object\Ground\GroundManager.cpp">
-      <Filter>Application\Object\Ground</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\Object\Ground\Ground.cpp">
-      <Filter>Application\Object\Ground</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\Object\Ground\Building.cpp">
-      <Filter>Application\Object\Ground</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\Scene\TitleScene.cpp">
-      <Filter>Application\Scene</Filter>
     </ClCompile>
     <ClCompile Include="Application\Effect\Fade\Fade.cpp">
       <Filter>Application\Effect\Fade</Filter>
@@ -222,81 +180,6 @@
     </ClCompile>
     <ClCompile Include="Application\Effect\Manager\UIManager.cpp">
       <Filter>Application\Effect\Manager</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\Object\Shadow\Shadow.cpp">
-      <Filter>Application\Object\Shadow</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\Object\Bullet\Core\BulletBase.cpp">
-      <Filter>Application\Object\Bullet\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\Object\Bullet\Core\BulletManager.cpp">
-      <Filter>Application\Object\Bullet\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\Object\Bullet\Enemy\EnemyBullet.cpp">
-      <Filter>Application\Object\Bullet\Enemy</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\Object\Bullet\Player\JetBullet.cpp">
-      <Filter>Application\Object\Bullet\Player</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\Object\Bullet\Player\TankBullet.cpp">
-      <Filter>Application\Object\Bullet\Player</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\Object\Enemy\State\EnemyAttackState.cpp">
-      <Filter>Application\Object\Enemy\State</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\Object\Enemy\State\EnemyDeadState.cpp">
-      <Filter>Application\Object\Enemy\State</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\Object\Enemy\State\EnemyEntryState.cpp">
-      <Filter>Application\Object\Enemy\State</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\Object\Enemy\State\EnemyExitState.cpp">
-      <Filter>Application\Object\Enemy\State</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\Object\Enemy\State\EnemyMoveState.cpp">
-      <Filter>Application\Object\Enemy\State</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\Object\Player\LockOn.cpp">
-      <Filter>Application\Object\Player</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\Object\Player\State\AttackState\JetAttackState.cpp">
-      <Filter>Application\Object\Player\State\AttackState</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\Object\Player\State\AttackState\TankAttackState.cpp">
-      <Filter>Application\Object\Player\State\AttackState</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\Object\Player\State\MovementState\TankMoveState.cpp">
-      <Filter>Application\Object\Player\State\MovementState</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\Object\Player\State\MovementState\JetMoveState.cpp">
-      <Filter>Application\Object\Player\State\MovementState</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\Scene\GameScene\GameSceneProgress.cpp">
-      <Filter>Application\Scene\GameScene</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\Scene\GameScene\GameScene.cpp">
-      <Filter>Application\Scene\GameScene</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\Scene\GameScene\Event\ClearEvent.cpp">
-      <Filter>Application\Scene\GameScene\Event</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\Scene\GameScene\Event\GameEvent.cpp">
-      <Filter>Application\Scene\GameScene\Event</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\Scene\GameScene\Event\GameOverEvent.cpp">
-      <Filter>Application\Scene\GameScene\Event</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\Scene\GameScene\Event\GameSceneEventBase.cpp">
-      <Filter>Application\Scene\GameScene\Event</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\Scene\GameScene\Event\GameSceneEventFactory.cpp">
-      <Filter>Application\Scene\GameScene\Event</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\Scene\GameScene\Event\PauseEvent.cpp">
-      <Filter>Application\Scene\GameScene\Event</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\Scene\GameScene\Event\StartEvent.cpp">
-      <Filter>Application\Scene\GameScene\Event</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Math\Matrix\Matrix4x4.cpp">
       <Filter>Engine\Math\Matrix</Filter>
@@ -322,28 +205,24 @@
     <ClCompile Include="Engine\Math\Utility\Random.cpp">
       <Filter>Engine\Math\Utility</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Math\Transform\WorldTransform.cpp">
+    <ClCompile Include="Engine\Object\Component\WorldTransform\WorldTransform.cpp">
       <Filter>Engine\Math\Transform</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Base\Framework.cpp" />
     <ClCompile Include="Engine\Base\Game.cpp" />
     <ClCompile Include="Engine\Base\View\ViewManagerBase.cpp" />
-    <ClCompile Include="Application\Object\Player\State\AttackState\AttackState.cpp" />
-    <ClCompile Include="Application\Object\Player\State\MovementState\MovementState.cpp" />
-    <ClCompile Include="Engine\Object\Base\ObjectBase.cpp" />
-    <ClCompile Include="Engine\Object\Base\ObjectCommonBase.cpp" />
-    <ClCompile Include="Engine\Object\2D\Object2DCommon.cpp" />
-    <ClCompile Include="Engine\Object\2D\Object2D.cpp" />
-    <ClCompile Include="Engine\Object\3D\Object3DCommon.cpp" />
-    <ClCompile Include="Engine\Object\3D\Object3D.cpp" />
-    <ClCompile Include="Application\Object\Manager\ObjectManager.cpp" />
-    <ClCompile Include="Engine\Object\GameObject.cpp" />
-    <ClCompile Include="Engine\Object\Model\Model.cpp" />
+    <ClCompile Include="Engine\Object\Base\GameObject.cpp" />
+    <ClCompile Include="Engine\Object\Component\Geometry\Model\Model.cpp" />
+    <ClCompile Include="Application\Scene\TestScene.cpp" />
+    <ClCompile Include="Engine\Object\Component\Base\ComponentBase.cpp" />
+    <ClCompile Include="Engine\Object\3D\Material\ModelMaterial.cpp" />
+    <ClCompile Include="Engine\Object\2D\Texture\Texture.cpp" />
+    <ClCompile Include="Engine\Object\Base\ObjectManager.cpp" />
+    <ClCompile Include="Engine\Object\3D\Camera\CameraManager.cpp" />
+    <ClCompile Include="Engine\Object\3D\Light\LightManager.cpp" />
+    <ClCompile Include="Engine\Object\Component\Base\ComponentManager.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Application\Object\Camera\FollowCamera.h">
-      <Filter>Application\Object\Camera</Filter>
-    </ClInclude>
     <ClInclude Include="Engine\3d\Collider\AABBCollider.h">
       <Filter>Engine\3d\Collider</Filter>
     </ClInclude>
@@ -356,58 +235,46 @@
     <ClInclude Include="Engine\3d\Collider\SphereCollider.h">
       <Filter>Engine\3d\Collider</Filter>
     </ClInclude>
-    <ClInclude Include="Application\Object\Enemy\Enemy.h">
-      <Filter>Application\Object\Enemy</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\Object\Enemy\EnemyManager.h">
-      <Filter>Application\Object\Enemy</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\Object\Player\Reticle.h">
-      <Filter>Application\Object\Player</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\Object\Player\Player.h">
-      <Filter>Application\Object\Player</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\2d\Sprite\SpriteManager.h">
+    <ClInclude Include="Engine\Object\2D\Sprite\SpriteManager.h">
       <Filter>Engine\2d\Sprite</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\2d\Sprite\Sprite.h">
+    <ClInclude Include="Engine\Object\Component\Geometry\Sprite\Sprite.h">
       <Filter>Engine\2d\Sprite</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\2d\Sprite\TextureManager.h">
+    <ClInclude Include="Engine\Object\2D\Texture\TextureManager.h">
       <Filter>Engine\2d\Sprite</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\3d\Camera\Camera.h">
+    <ClInclude Include="Engine\Object\3D\Camera\Camera.h">
       <Filter>Engine\3d\Camera</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\3d\Light\DirectionalLight.h">
+    <ClInclude Include="Engine\Object\3D\Light\DirectionalLight\DirectionalLight.h">
       <Filter>Engine\3d\Light</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\3d\Light\PointLight.h">
+    <ClInclude Include="Engine\Object\3D\Light\PointLight\PointLight.h">
       <Filter>Engine\3d\Light</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\3d\Light\SpotLight.h">
+    <ClInclude Include="Engine\Object\3D\Light\SpotLight\SpotLight.h">
       <Filter>Engine\3d\Light</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\3d\Model\ModelManager.h">
+    <ClInclude Include="Engine\Object\3D\Model\ModelManager.h">
       <Filter>Engine\3d\Model</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\3d\Model\ModelCommon.h">
+    <ClInclude Include="Engine\Object\3D\Model\ModelCommon.h">
       <Filter>Engine\3d\Model</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\3d\Mesh\CylinderMesh.h">
+    <ClInclude Include="Engine\Object\3D\Mesh\CylinderMesh.h">
       <Filter>Engine\3d\Mesh</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\3d\Mesh\ModelMesh.h">
+    <ClInclude Include="Engine\Object\3D\Mesh\ModelMesh.h">
       <Filter>Engine\3d\Mesh</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\3d\Mesh\PlaneMesh.h">
+    <ClInclude Include="Engine\Object\3D\Mesh\PlaneMesh.h">
       <Filter>Engine\3d\Mesh</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\3d\Mesh\MeshType.h">
+    <ClInclude Include="Engine\Object\3D\Mesh\MeshType.h">
       <Filter>Engine\3d\Mesh</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\3d\Mesh\RingMesh.h">
+    <ClInclude Include="Engine\Object\3D\Mesh\RingMesh.h">
       <Filter>Engine\3d\Mesh</Filter>
     </ClInclude>
     <ClInclude Include="Engine\3d\Particle\EmitterGroup.h">
@@ -418,15 +285,6 @@
     </ClInclude>
     <ClInclude Include="Engine\3d\Particle\ParticleEmitter.h">
       <Filter>Engine\3d\Particle</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\3d\Object\DebugObject3D.h">
-      <Filter>Engine\3d\Object</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\3d\Object\DebugObjectCommon.h">
-      <Filter>Engine\3d\Object</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\3d\Object\DebugLine.h">
-      <Filter>Engine\3d\Object</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Base\Audio.h">
       <Filter>Engine\Base</Filter>
@@ -470,38 +328,20 @@
     <ClInclude Include="Engine\Scene\SceneManager.h">
       <Filter>Engine\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="Application\Scene\ParticleEditorScene.h">
-      <Filter>Application\Scene</Filter>
-    </ClInclude>
     <ClInclude Include="Application\LevelEditor\LevelDataLoader.h">
       <Filter>Application\LevelEditor</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\3d\Mesh\MeshBase.h">
+    <ClInclude Include="Engine\Object\3D\Mesh\MeshBase.h">
       <Filter>Engine\3d\Mesh</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\3d\Mesh\SphereMesh.h">
+    <ClInclude Include="Engine\Object\3D\Mesh\SphereMesh.h">
       <Filter>Engine\3d\Mesh</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\3d\Mesh\CubeMesh.h">
+    <ClInclude Include="Engine\Object\3D\Mesh\CubeMesh.h">
       <Filter>Engine\3d\Mesh</Filter>
     </ClInclude>
     <ClInclude Include="Application\LevelEditor\ObjectData.h">
       <Filter>Application\LevelEditor</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\Object\Ground\LineGround.h">
-      <Filter>Application\Object\Ground</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\Object\Ground\GroundManager.h">
-      <Filter>Application\Object\Ground</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\Object\Ground\Ground.h">
-      <Filter>Application\Object\Ground</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\Object\Ground\Building.h">
-      <Filter>Application\Object\Ground</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\Scene\TitleScene.h">
-      <Filter>Application\Scene</Filter>
     </ClInclude>
     <ClInclude Include="Application\Effect\Fade\Fade.h">
       <Filter>Application\Effect\Fade</Filter>
@@ -517,90 +357,6 @@
     </ClInclude>
     <ClInclude Include="Application\Effect\Manager\UIManager.h">
       <Filter>Application\Effect\Manager</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\Object\Shadow\Shadow.h">
-      <Filter>Application\Object\Shadow</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\Object\Bullet\Core\BulletBase.h">
-      <Filter>Application\Object\Bullet\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\Object\Bullet\Core\BulletManager.h">
-      <Filter>Application\Object\Bullet\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\Object\Bullet\Enemy\EnemyBullet.h">
-      <Filter>Application\Object\Bullet\Enemy</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\Object\Bullet\Player\JetBullet.h">
-      <Filter>Application\Object\Bullet\Player</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\Object\Bullet\Player\TankBullet.h">
-      <Filter>Application\Object\Bullet\Player</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\Object\Enemy\State\EnemyState.h">
-      <Filter>Application\Object\Enemy\State</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\Object\Enemy\State\EnemyAttackState.h">
-      <Filter>Application\Object\Enemy\State</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\Object\Enemy\State\EnemyDeadState.h">
-      <Filter>Application\Object\Enemy\State</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\Object\Enemy\State\EnemyEntryState.h">
-      <Filter>Application\Object\Enemy\State</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\Object\Enemy\State\EnemyExitState.h">
-      <Filter>Application\Object\Enemy\State</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\Object\Enemy\State\EnemyMoveState.h">
-      <Filter>Application\Object\Enemy\State</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\Object\Player\LockOn.h">
-      <Filter>Application\Object\Player</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\Object\Player\State\AttackState\AttackState.h">
-      <Filter>Application\Object\Player\State\AttackState</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\Object\Player\State\AttackState\JetAttackState.h">
-      <Filter>Application\Object\Player\State\AttackState</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\Object\Player\State\AttackState\TankAttackState.h">
-      <Filter>Application\Object\Player\State\AttackState</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\Object\Player\State\MovementState\TankMoveState.h">
-      <Filter>Application\Object\Player\State\MovementState</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\Object\Player\State\MovementState\MovementState.h">
-      <Filter>Application\Object\Player\State\MovementState</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\Object\Player\State\MovementState\JetMoveState.h">
-      <Filter>Application\Object\Player\State\MovementState</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\Scene\GameScene\GameSceneProgress.h">
-      <Filter>Application\Scene\GameScene</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\Scene\GameScene\GameScene.h">
-      <Filter>Application\Scene\GameScene</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\Scene\GameScene\Event\ClearEvent.h">
-      <Filter>Application\Scene\GameScene\Event</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\Scene\GameScene\Event\GameEvent.h">
-      <Filter>Application\Scene\GameScene\Event</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\Scene\GameScene\Event\GameOverEvent.h">
-      <Filter>Application\Scene\GameScene\Event</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\Scene\GameScene\Event\GameSceneEventBase.h">
-      <Filter>Application\Scene\GameScene\Event</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\Scene\GameScene\Event\GameSceneEventFactory.h">
-      <Filter>Application\Scene\GameScene\Event</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\Scene\GameScene\Event\PauseEvent.h">
-      <Filter>Application\Scene\GameScene\Event</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\Scene\GameScene\Event\StartEvent.h">
-      <Filter>Application\Scene\GameScene\Event</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Math\Matrix\Matrix4x4.h">
       <Filter>Engine\Math\Matrix</Filter>
@@ -626,7 +382,7 @@
     <ClInclude Include="Engine\Math\Utility\Random.h">
       <Filter>Engine\Math\Utility</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Math\Transform\WorldTransform.h">
+    <ClInclude Include="Engine\Object\Component\WorldTransform\WorldTransform.h">
       <Filter>Engine\Math\Transform</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Math\Shape\Sphere.h">
@@ -640,17 +396,19 @@
     <ClInclude Include="Engine\Base\View\ViewManagerBase.h" />
     <ClInclude Include="Application\Scene\EngineContext.h" />
     <ClInclude Include="Engine\Base\ObjectCommon.h" />
-    <ClInclude Include="Engine\Object\Base\ObjectBase.h" />
     <ClInclude Include="Engine\Math\Matrix\TransformationMatrix.h" />
-    <ClInclude Include="Engine\Object\Base\ObjectCommonBase.h" />
-    <ClInclude Include="Engine\Object\2D\Object2DCommon.h" />
-    <ClInclude Include="Engine\Object\2D\Object2D.h" />
-    <ClInclude Include="Engine\Object\3D\Object3DCommon.h" />
-    <ClInclude Include="Engine\Object\3D\Object3D.h" />
-    <ClInclude Include="Application\Object\Manager\ObjectManager.h" />
-    <ClInclude Include="Engine\Object\GameObject.h" />
-    <ClInclude Include="Engine\Object\ObjectTag.h" />
-    <ClInclude Include="Engine\Object\Model\Model.h" />
+    <ClInclude Include="Engine\Object\Base\GameObject.h" />
+    <ClInclude Include="Engine\Object\Base\ObjectTag.h" />
+    <ClInclude Include="Engine\Object\Component\Geometry\Model\Model.h" />
+    <ClInclude Include="Application\Scene\TestScene.h" />
+    <ClInclude Include="Engine\Object\Component\Base\ComponentBase.h" />
+    <ClInclude Include="Engine\Object\3D\Material\ModelMaterial.h" />
+    <ClInclude Include="Engine\Object\2D\Texture\Texture.h" />
+    <ClInclude Include="Engine\Object\Base\ObjectManager.h" />
+    <ClInclude Include="Engine\Object\3D\Camera\CameraManager.h" />
+    <ClInclude Include="Engine\Object\3D\Light\LightManager.h" />
+    <ClInclude Include="Engine\Object\Component\Base\ComponentManager.h" />
+    <ClInclude Include="Engine\Object\Component\Base\ComponentList.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resource\Shader\DebugObject.hlsli">

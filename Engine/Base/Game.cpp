@@ -6,60 +6,47 @@ namespace MyEngine {
 
 		Framework::Initialize();
 
-		spriteManager_ = SpriteManager::GetInstance();
+		spriteManager_ = std::make_unique<SpriteManager>();
 		spriteManager_->Initialize(object2DCommon_.get());
 
-		colliderManager_ = ColliderManager::GetInstance();
+		colliderManager_ = std::make_unique<ColliderManager>();
 		colliderManager_->Initialize();
 
-		camera_ = std::make_unique<Camera>();
-		camera_->Initialize(
-			static_cast<float>(winApp_->GetWindowWidth()),
-			static_cast<float>(winApp_->GetWindowHeight()),
-			offScreen_.get(),
-			object3DCommon_.get(),
-			debugObjectCommon_.get(),
-			input_.get()
-		);
+		cameraManager_ = std::make_unique<CameraManager>();
+		cameraManager_->Initialize(dxCommon_.get(), winApp_.get(), input_.get());
 
-		objectManager_ = ObjectManager::GetInstance();
-		objectManager_->Initialize(
-			object2DCommon_.get(),
-			object3DCommon_.get(),
-			camera_.get(),
-			renderer_.get()
-		);
+		objectManager_ = std::make_unique<ObjectManager>();
 
-		emitterManager_ = EmitterManager::GetInstance();
+		emitterManager_ = std::make_unique<EmitterManager>();
 		emitterManager_->Initialize(particleCommon_.get(), input_.get(), renderer_.get());
 
-		uiManager_ = UIManager::GetInstance();
-		uiManager_->Initialize(object2DCommon_.get(), camera_.get(), input_.get(), renderer_.get());
+		uiManager_ = std::make_unique<UIManager>();
+		uiManager_->Initialize(object2DCommon_.get(), cameraManager_->GetMainCamera(), input_.get(), renderer_.get());
 
-		levelDataLoder_ = LevelDataLoader::GetInstance();
+		levelDataLoder_ = std::make_unique<LevelDataLoader>();
 		levelDataLoder_->Initialize();
 
 		engineContext_.offScreen = offScreen_.get();
-		engineContext_.objectManager = objectManager_;
+		engineContext_.objectManager = objectManager_.get();
 		engineContext_.objectCommon.object2DCommon = object2DCommon_.get();
 		engineContext_.objectCommon.object3DCommon = object3DCommon_.get();
 		engineContext_.objectCommon.particleCommon = particleCommon_.get();
 		engineContext_.objectCommon.debugObjectCommon = debugObjectCommon_.get();
-		engineContext_.camera = camera_.get();
+		engineContext_.cameraManager = cameraManager_.get();
 		engineContext_.input = input_.get();
 		engineContext_.audio = audio_.get();
 		engineContext_.renderer = renderer_.get();
 
-		sceneManager_ = SceneManager::GetInstance();
+		sceneManager_ = std::make_unique<SceneManager>();
 		sceneManager_->Initialize(engineContext_);
 
 		fade_ = Fade::GetInstance();
-		fade_->Initialize(winApp_.get(), object2DCommon_.get(), camera_.get(), renderer_.get());
+		fade_->Initialize(winApp_.get(), object2DCommon_.get(), cameraManager_->GetMainCamera(), renderer_.get());
 
 		flash_ = Flash::GetInstance();
-		flash_->Initialize(object2DCommon_.get(), camera_.get(), renderer_.get());
+		flash_->Initialize(object2DCommon_.get(), cameraManager_->GetMainCamera(), renderer_.get());
 
-		sceneManager_->ChangeScene(SceneManager::SceneType::kTitle);
+		sceneManager_->ChangeScene(SceneManager::SceneType::kTest);
 
 	}
 
@@ -68,8 +55,6 @@ namespace MyEngine {
 		Framework::BeginImGui();
 
 		Framework::Update();
-
-		objectManager_->Update();
 
 		emitterManager_->Update();
 
@@ -98,8 +83,6 @@ namespace MyEngine {
 	void Game::Draw() {
 
 		Framework::PreDraw();
-
-		objectManager_->Draw();
 
 		emitterManager_->Draw();
 
