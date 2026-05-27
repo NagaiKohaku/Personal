@@ -13,10 +13,10 @@ namespace MyEngine {
 	///=====================================================/// 
 	/// モデルマネージャを初期化し、基本的なプリミティブモデルを生成
 	///=====================================================///
-	void ModelManager::Initialize(ModelCommon* modelCommonPtr) {
+	void ModelManager::Initialize(DirectXCommon* directCommonPtr) {
 
 		//モデル基底のインスタンスを取得
-		modelCommon_ = modelCommonPtr;
+		directCommon_ = directCommonPtr;
 
 		/// === 初期モデルの生成 === ///
 
@@ -49,14 +49,24 @@ namespace MyEngine {
 			return;
 		}
 
+		ModelData newModelData;
+
 		//モデルデータ
 		std::unique_ptr<Model> model = std::make_unique<Model>();
 
 		//モデルの読み込み
-		model->Initialize(modelCommon_, MeshType::MODEL, modelFileName);
+		model->Initialize(directCommon_, MeshType::MODEL, modelFileName);
+
+		newModelData.model = std::move(model);
+
+		for (uint32_t i = 0; i < kInstanceMax; i++) {
+			newModelData.instanceID.insert(std::make_pair(i, false));
+		}
+
+		newModelData.instanceCount = 0;
 
 		//モデル名とモデルデータをコンテナに登録
-		models_.insert(std::make_pair(modelFileName, std::move(model)));
+		models_.insert(std::make_pair(modelFileName, newModelData));
 	}
 
 	///==================================================================/// 
@@ -74,25 +84,51 @@ namespace MyEngine {
 		std::unique_ptr<Model> model = std::make_unique<Model>();
 
 		//メッシュモデルの初期化
-		model->Initialize(modelCommon_, type, textureFilePath);
+		model->Initialize(directCommon_, type, textureFilePath);
 
 		//モデル名とモデルデータをコンテナに登録
 		models_.insert(std::make_pair(modelName, std::move(model)));
 	}
 
-	///=====================================================/// 
-	/// 登録済みモデルを検索
-	///=====================================================///
-	Model* ModelManager::FindModel(const std::string& modelName) {
+	Model* ModelManager::GetModel(const std::string& modelName) const {
 
-		//読み込み済みモデルの検索
 		if (models_.contains(modelName)) {
-
-			//読み込みモデルを戻り値としてreturn
-			return models_.at(modelName).get();
+			return models_.at(modelName).model.get();
 		}
 
-		//ファイル名一致なし
 		return nullptr;
+	}
+
+	bool ModelManager::FindModel(const std::string& modelName) const {
+
+		if (models_.contains(modelName)) {
+			return true;
+		}
+
+		return false;
+	}
+
+	uint32_t ModelManager::GetFreeInstanceID(const std::string& modelName) const {
+
+		if (models_.contains(modelName)) {
+
+			for (uint32_t i = 0; i < kInstanceMax; i++) {
+
+				if (!models_.at(modelName).instanceID.at(i)) {
+					return i;
+				}
+			}
+		}
+
+		return kInstanceMax + 1;
+	}
+
+	uint32_t ModelManager::GetInstanceCount(const std::string& modelName) const {
+
+		if (models_.contains(modelName)) {
+			return models_.at(modelName).instanceCount;
+		}
+
+		return false;
 	}
 }

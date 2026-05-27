@@ -1,7 +1,6 @@
 #include "Camera.h"
 
 #include <Math/Utility/MakeMatrixMath.h>
-#include <Effect/Shake/Shake.h>
 
 #include "imgui.h"
 #include "numbers"
@@ -11,7 +10,10 @@ namespace MyEngine {
 	///=====================================================/// 
 	/// カメラの各種パラメータを初期化
 	///=====================================================///
-	void Camera::Initialize(float windowWidth, float windowHeight, DirectXCommon* directCommonPtr, Input* inputPtr) {
+	void Camera::Initialize(uint32_t windowWidth, uint32_t windowHeight, DirectXCommon* directCommonPtr, Input* inputPtr) {
+
+		float wWidth = static_cast<float>(windowWidth);
+		float wHeight = static_cast<float>(windowHeight);
 
 		directCommon_ = directCommonPtr;
 
@@ -26,8 +28,12 @@ namespace MyEngine {
 		//カメラ情報の設定
 		cameraForGpuData->worldPosition = Vector3(0.0f, 0.0f, 0.0f);
 
+		transform_.SetDirectCommon(directCommon_);
+
 		//カメラの座標の設定
 		transform_.Initialize();
+
+		debugTransform_.SetDirectCommon(directCommon_);
 
 		//デバッグカメラの座標の設定
 		debugTransform_.Initialize();
@@ -36,7 +42,7 @@ namespace MyEngine {
 		fovY_ = 0.45f;
 
 		//アスペクト比の設定
-		aspectRatio_ = windowWidth / windowHeight;
+		aspectRatio_ = wWidth / wHeight;
 
 		//NearClipの設定
 		nearClip_ = 0.1f;
@@ -48,13 +54,13 @@ namespace MyEngine {
 		viewMatrix_ = Inverse4x4(transform_.GetWorldMatrix());
 
 		//ビューポート行列の生成
-		viewportMatrix_ = MakeViewportMatrix(0, 0, windowWidth, windowHeight, 0, 1);
+		viewportMatrix_ = MakeViewportMatrix(0, 0, wWidth, wHeight, 0, 1);
 
 		//透視投影行列の生成
 		perspectiveProjectionMatrix_ = MakePerspectiveFovMatrix(fovY_, aspectRatio_, nearClip_, farClip_);
 
 		//直交投影行列の生成
-		orthographicProjectionMatrix_ = MakeOrthographicMatrix(0.0f, 0.0f, windowWidth, windowHeight, 0.0f, 100.0f);
+		orthographicProjectionMatrix_ = MakeOrthographicMatrix(0.0f, 0.0f, wWidth, wHeight, 0.0f, 100.0f);
 
 		//Z軸のオフセットの設定
 		offsetZ_ = 0.0f;
@@ -65,9 +71,9 @@ namespace MyEngine {
 		//デバッグカメラフラグの設定
 		isDebugCamera_ = false;
 
-		transform_.UpdateMatrix(Get3DViewProjectionMatrix());
+		transform_.Update();
 
-		debugTransform_.UpdateMatrix(Get3DViewProjectionMatrix());
+		debugTransform_.Update();
 
 	}
 
@@ -118,13 +124,10 @@ namespace MyEngine {
 			/// === 角度の設定 === ///
 
 			//今フレームの回転角度を加える
-			debugTransform_.rotate_ += rotateDelta;
+			debugTransform_.SetRotate(rotateDelta);
 
 			//角度行列を生成
-			Matrix4x4 matRot_ =
-				(MakeRotateXMatrix(debugTransform_.rotate_.x) *
-					MakeRotateYMatrix(debugTransform_.rotate_.y)) *
-				MakeRotateZMatrix(debugTransform_.rotate_.z);
+			Matrix4x4 matRot_ = debugTransform_.GetLocalRotateMatrix();
 
 			/// === 座標の設定 === ///
 
@@ -140,12 +143,12 @@ namespace MyEngine {
 			debugTransform_.SetOffset(offset);
 
 			//今フレームの移動量を加える
-			debugTransform_.translate_ += velocity;
+			debugTransform_.SetTranslate(debugTransform_.GetTranslate() + velocity);
 
 			/// === 行列の計算 === ///
 
 			//ワールドトランスフォームの更新
-			debugTransform_.UpdateMatrix(Get3DViewProjectionMatrix());
+			debugTransform_.Update();
 
 			//ビュー行列の計算
 			viewMatrix_ = Inverse4x4(debugTransform_.GetWorldMatrix());
@@ -155,10 +158,7 @@ namespace MyEngine {
 			/// === 通常カメラの場合 === ///
 
 				//角度行列を生成
-			Matrix4x4 matRot_ =
-				(MakeRotateXMatrix(transform_.rotate_.x) *
-					MakeRotateYMatrix(transform_.rotate_.y)) *
-				MakeRotateZMatrix(transform_.rotate_.z);
+			Matrix4x4 matRot_ = transform_.GetLocalRotateMatrix();
 
 			//追従対象からカメラまでのオフセット
 			Vector3 offset = { 0.0f,0.0f,offsetZ_ };
@@ -171,12 +171,10 @@ namespace MyEngine {
 			/// === 行列の計算 === ///
 
 			//ワールド行列の計算
-			transform_.UpdateMatrix(Get3DViewProjectionMatrix());
+			transform_.Update();
 
 			//ビュー行列の計算
 			viewMatrix_ = Inverse4x4(transform_.GetWorldMatrix());
-
-			Shake::GetInstance()->Update();
 		}
 
 		//カメラ位置を取得
@@ -199,29 +197,16 @@ namespace MyEngine {
 
 #ifdef _USE_IMGUI
 
-		ImGui::Checkbox("DebugCamera", &isDebugCamera_);
-
-		if (isDebugCamera_) {
-
-			debugTransform_.DisplayImGui();
-
-			ImGui::DragFloat("offsetZ", &debugCameraOffsetZ_, 0.1f);
-
-		} else {
-
-			transform_.DisplayImGui();
-
-			ImGui::DragFloat("offsetZ", &offsetZ_, 0.1f);
-		}
-
 #endif // _USE_IMGUI
 	}
+
 	Matrix4x4 Camera::Get3DViewProjectionMatrix() const {
 
 		Matrix4x4 viewProjectionMatrix = viewMatrix_ * perspectiveProjectionMatrix_;
 
 		return viewProjectionMatrix;
 	}
+
 	Matrix4x4 Camera::Get2DViewProjectionMatrix() const {
 
 		Matrix4x4 viewMatrix = MakeIdentity4x4();

@@ -16,17 +16,17 @@ namespace MyEngine {
 	///=====================================================/// 
 	/// 初期化
 	///=====================================================///
-	void Sprite::Initialize(const std::string& fileName, Object2DCommon* object2DCommonPtr) {
+	void Sprite::Initialize(DirectXCommon* directCommonPtr, const std::string& fileName) {
 
 		/// === インスタンスの取得 === ///
 
 		//スプライト基底のインスタンスを取得
-		object2DCommon_ = object2DCommonPtr;
+		directCommon_ = directCommonPtr;
 
 		/// === マテリアルリソースの作成 === ///
 
 		//リソースを作成
-		materialResource_ = object2DCommon_->GetDxCommon()->CreateBufferResource(sizeof(Material));
+		materialResource_ = directCommon_->CreateBufferResource(sizeof(Material));
 
 		//書き込むためのアドレスを取得する
 		materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));
@@ -113,20 +113,20 @@ namespace MyEngine {
 
 		std::string fileName = "Resource/Sprite/" + fileName_ + "/" + texturePaths_[currentTextureIndex_];
 
-		//頂点データの設定
-		object2DCommon_->GetDxCommon()->GetCommandList()->IASetVertexBuffers(0, 1, &object2DCommon_->GetVertexBufferView());
+		////頂点データの設定
+		//directCommon_->GetCommandList()->IASetVertexBuffers(0, 1, &directCommon_->GetVertexBufferView());
 
-		//頂点番号データの設定
-		object2DCommon_->GetDxCommon()->GetCommandList()->IASetIndexBuffer(&object2DCommon_->GetIndexBufferView());
+		////頂点番号データの設定
+		//directCommon_->GetCommandList()->IASetIndexBuffer(&directCommon_->GetIndexBufferView());
 
 		//マテリアルデータの設定
-		object2DCommon_->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
+		directCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
 
 		//テクスチャの設定
-		object2DCommon_->GetDxCommon()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSrvHandleGPU(fileName));
+		directCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSrvHandleGPU(fileName));
 
 		//描画命令
-		object2DCommon_->GetDxCommon()->GetCommandList()->DrawIndexedInstanced(6, 1, 0, 0, 0);
+		directCommon_->GetCommandList()->DrawIndexedInstanced(6, 1, 0, 0, 0);
 	}
 
 	///=====================================================/// 

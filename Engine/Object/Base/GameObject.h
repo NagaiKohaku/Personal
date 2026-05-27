@@ -1,9 +1,8 @@
 #pragma once
 
 #include <Object/Base/ObjectTag.h>
-#include <Math/Transform/WorldTransform.h>
 #include <Object/Component/Base/ComponentBase.h>
-#include <3d/Camera/Camera.h>
+#include <Object/Component/WorldTransform/WorldTransform.h>
 
 #include <string>
 #include <memory>
@@ -15,17 +14,15 @@ namespace MyEngine {
 
 	public:
 
-		void Initialize(Camera* cameraPtr, std::string name);
+		void Initialize(DirectXCommon* directCommonPtr, std::string name);
 
 		void Update();
 
 		void Draw();
 
-		void CreateWorldTransform();
+		void CreateWorldTransform(DirectXCommon* directCommonPtr);
 
 	private:
-
-		Camera* camera_;
 
 		std::string name_;
 

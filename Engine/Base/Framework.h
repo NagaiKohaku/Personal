@@ -11,9 +11,6 @@ namespace MyEngine {
 	class SRVManager;
 	class OffScreen;
 	class ModelCommon;
-	class Object2DCommon;
-	class Object3DCommon;
-	class DebugObjectCommon;
 	class ParticleCommon;
 	class ImGuiManager;
 	class Input;
@@ -65,14 +62,6 @@ namespace MyEngine {
 		std::unique_ptr<OffScreen> offScreen_;
 
 		std::unique_ptr<ModelCommon> modelCommon_;
-
-		std::unique_ptr<Object2DCommon> object2DCommon_;
-
-		std::unique_ptr<Object3DCommon> object3DCommon_;
-
-		std::unique_ptr<DebugObjectCommon> debugObjectCommon_;
-
-		std::unique_ptr<ParticleCommon> particleCommon_;
 
 		std::unique_ptr<ImGuiManager> imGuiManager_;
 

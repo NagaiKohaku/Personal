@@ -2,6 +2,7 @@
 
 #include "Base/DirectXCommon.h"
 #include "Base/OffScreen.h"
+#include "Object/3D/Model/ModelManager.h"
 
 namespace MyEngine {
 
@@ -63,17 +64,6 @@ namespace MyEngine {
 			//レイヤーに入っている描画コマンドすべてを実行する
 			for (int i = 0; i < offScreenDrawQueue_[layer].size(); i++) {
 
-				if (layer == LayerType::DEBUG) {
-
-					if (isDebug()) {
-
-						//描画コマンドを実行
-						func[i]();
-					}
-
-					continue;
-				}
-
 				//描画コマンドを実行
 				func[i]();
 			}
@@ -83,21 +73,12 @@ namespace MyEngine {
 		ClearOffScreenQueue();
 	}
 
-	///=====================================================/// 
-	/// 描画コマンドを指定したレイヤーと描画先に追加
-	///=====================================================///
-	void Renderer::AddDraw(LayerType layer, bool isOffScreen, std::function<void()> func) {
+	void Renderer::AddDraw(const std::string& modelName, std::function<void()> func) {
 
-		if (isOffScreen) {
+		if (ModelManager::GetInstance()->GetModel(modelName)) {
 
-			//オフスクリーン描画コマンドを追加
-			offScreenDrawQueue_[layer].push_back(func);
-		} else {
-
-			//描画コマンドを追加
-			drawQueue_[layer].push_back(func);
+			offScreenDrawQueue_[modelName].push_back(func);
 		}
-
 	}
 
 	///=====================================================/// 

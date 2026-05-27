@@ -4,7 +4,7 @@
 
 using namespace MyEngine;
 
-void Texture::Initialize(const std::string& filePath = "") {
+void Texture::Initialize(const std::string& filePath) {
 
 	if (filePath.empty()) {
 

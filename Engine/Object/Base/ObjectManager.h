@@ -1,8 +1,9 @@
 #pragma once
 
+#include <Base/DirectXCommon.h>
 #include <Object/Base/GameObject.h>
 
-#include <vector>
+#include <map>
 #include <string>
 
 namespace MyEngine {
@@ -10,21 +11,23 @@ namespace MyEngine {
 
 	public:
 
-		void Initialize();
+		void Initialize(DirectXCommon* directCommonPtr);
 
 		void Update();
 
 		void Draw();
 
-		void CreateGameObject();
+		void CreateGameObject(const std::string& name);
 
 	private:
 
-		std::vector<std::unique_ptr<GameObject>> gameObjects_;
+		DirectXCommon* directCommon_;
+
+		std::map<std::string, std::unique_ptr<GameObject>> gameObjects_;
 
 	public:
 
-		GameObject* GetGameObject(std::string name);
+		GameObject* GetGameObject(const std::string& name);
 
 	};
 }

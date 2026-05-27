@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Base/DirectXCommon.h>
 #include <Object/Component/Base/ComponentBase.h>
 #include <Math/Vector/Vector3.h>
 #include <Math/Matrix/Matrix4x4.h>
@@ -31,6 +32,18 @@ namespace MyEngine {
 		/// ゲッター・セッター
 		///-------------------------------------------///
 	public:
+
+		const Vector3 GetTranslate() const { return translate_; }
+
+		const Vector3 GetRotate() const { return rotate_; }
+
+		const Vector3 GetScale() const{ return scale_; }
+
+		void SetTranslate(const Vector3& pos) { translate_ = pos; }
+
+		void SetRotate(const Vector3& rotate) { rotate_ = rotate; }
+
+		void SetScale(const Vector3& scale) { scale_ = scale; }
 
 		/// === ベクトル取得 === ///
 
@@ -150,7 +163,11 @@ namespace MyEngine {
 		/// <param name="parent"></param>
 		void SetParent(WorldTransform* parent);
 
+		void SetDirectCommon(DirectXCommon* directCommonPtr) { directCommon_ = directCommonPtr; }
+
 	private:
+
+		DirectXCommon* directCommon_;
 
 		Microsoft::WRL::ComPtr<ID3D12Resource> matrixResource_;
 

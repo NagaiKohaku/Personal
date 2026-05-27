@@ -5,6 +5,7 @@
 #include "functional"
 #include "map"
 #include "vector"
+#include "string.h"
 
 namespace MyEngine {
 
@@ -42,7 +43,7 @@ namespace MyEngine {
 		/// <summary>
 		/// 描画コマンドを指定したレイヤーと描画先に追加します。
 		/// </summary>
-		void AddDraw(LayerType layer, bool isOffScreen, std::function<void()> func);
+		void AddDraw(const std::string& modelName, std::function<void()> func);
 
 		///-------------------------------------------/// 
 		/// クラス内関数
@@ -70,9 +71,9 @@ namespace MyEngine {
 	private:
 
 		//描画コマンドキュー
-		std::map<LayerType, std::vector<std::function<void()>>> drawQueue_;
+		std::map<std::string, std::vector<std::function<void()>>> drawQueue_;
 
 		//OffScreen用の描画コマンドキュー
-		std::map<LayerType, std::vector<std::function<void()>>> offScreenDrawQueue_;
+		std::map<std::string, std::vector<std::function<void()>>> offScreenDrawQueue_;
 	};
 }

@@ -1,6 +1,6 @@
 #include "LevelDataLoader.h"
 
-#include "3d/Model/ModelManager.h"
+#include <Object/3D/Model/ModelManager.h>
 
 #include "json.hpp"
 #include "fstream"
@@ -148,7 +148,7 @@ void LevelDataLoader::Load(const std::string& fileName) {
 				//モデルのファイル名を取得
 				newObject.filename = object["file_name"].get<std::string>();
 
-				ModelManager::GetInstance()->LoadModel(newObject.filename, newObject.filename);
+				ModelManager::GetInstance()->LoadModel(newObject.filename);
 
 			}
 

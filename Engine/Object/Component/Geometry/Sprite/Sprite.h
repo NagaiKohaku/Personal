@@ -1,7 +1,6 @@
 #pragma once
 
-#include <Object/2D/Object2DCommon.h>
-
+#include <Base/DirectXCommon.h>
 #include <Math/Vector/Vector2.h>
 #include <Math/Vector/Vector3.h>
 #include <Math/Vector/Vector4.h>
@@ -65,7 +64,7 @@ namespace MyEngine {
 		/// スプライトの描画に必要なリソースを初期化します。
 		/// </summary>
 		/// <param name="fileName">ファイル名(.png切り捨て)</param>
-		void Initialize(const std::string& fileName, Object2DCommon* object2DCommonPtr);
+		void Initialize(DirectXCommon* directCommonPtr, const std::string& fileName);
 
 		/// <summary>
 		/// スプライトの頂点データを更新します。
@@ -103,7 +102,7 @@ namespace MyEngine {
 	private:
 
 		//スプライト基底
-		Object2DCommon* object2DCommon_ = nullptr;
+		DirectXCommon* directCommon_ = nullptr;
 
 		/// === バッファリソース === ///
 

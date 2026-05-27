@@ -3,7 +3,7 @@
 #include <Base/DirectXCommon.h>
 #include <Math/Vector/Vector3.h>
 #include <Math/Matrix/Matrix4x4.h>
-#include <Math/Transform/WorldTransform.h>
+#include <Object/Component/WorldTransform/WorldTransform.h>
 #include <Base/Input.h>
 
 namespace MyEngine {
@@ -30,7 +30,7 @@ namespace MyEngine {
 		/// <summary>
 		/// カメラの各種パラメータを初期化します。
 		/// </summary>
-		void Initialize(float windowWidth, float windowHeight, DirectXCommon* directCommonPtr, Input* inputPtr);
+		void Initialize(uint32_t windowWidth, uint32_t windowHeight, DirectXCommon* directCommonPtr, Input* inputPtr);
 
 		/// <summary>
 		/// カメラの状態を更新します。
@@ -194,13 +194,13 @@ namespace MyEngine {
 		/// 座標の設定
 		/// </summary>
 		/// <param name="pos">座標</param>
-		void SetTransform(const Vector3 pos) { isDebugCamera_ ? debugTransform_.translate_ = pos : transform_.translate_ = pos; }
+		void SetTransform(const Vector3 pos) { isDebugCamera_ ? debugTransform_.SetTranslate(pos) : transform_.SetTranslate(pos); }
 
 		/// <summary>
 		/// 角度の設定
 		/// </summary>
 		/// <param name="rot">角度</param>
-		void SetRotate(const Vector3 rot) { isDebugCamera_ ? debugTransform_.rotate_ = rot : transform_.rotate_ = rot; }
+		void SetRotate(const Vector3 rot) { isDebugCamera_ ? debugTransform_.SetTranslate(rot) : transform_.SetTranslate(rot); }
 
 		/// <summary>
 		/// オフセットの設定

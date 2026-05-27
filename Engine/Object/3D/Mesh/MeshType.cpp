@@ -1,13 +1,13 @@
 #include "MeshType.h"
 
-#include <Object/Model/Model.h>
+#include <Object/Component/Geometry/Model/Model.h>
 
-#include "3d/Mesh/PlaneMesh.h"
-#include "3d/Mesh/RingMesh.h"
-#include "3d/Mesh/CylinderMesh.h"
-#include "3d/Mesh/SphereMesh.h"
-#include "3d/Mesh/CubeMesh.h"
-#include "3d/Mesh/ModelMesh.h"
+#include <Object/3D/Mesh/PlaneMesh.h>
+#include <Object/3D/Mesh/RingMesh.h>
+#include <Object/3D/Mesh/CylinderMesh.h>
+#include <Object/3D/Mesh/SphereMesh.h>
+#include <Object/3D/Mesh/CubeMesh.h>
+#include <Object/3D/Mesh/ModelMesh.h>
 
 namespace MyEngine {
 

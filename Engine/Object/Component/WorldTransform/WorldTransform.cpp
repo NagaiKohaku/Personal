@@ -28,6 +28,8 @@ namespace MyEngine {
 
 		worldMatrix_ = localMatrix_;
 
+		matrixResource_ = directCommon_->CreateBufferResource(sizeof(TransformationMatrix));
+
 		matrixResource_->Map(0, nullptr, reinterpret_cast<void**>(&mappedMatrix_));
 
 		mappedMatrix_->WVP = MakeIdentity4x4();
@@ -66,6 +68,7 @@ namespace MyEngine {
 
 	void WorldTransform::Draw() {
 
+		directCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(1, matrixResource_.Get()->GetGPUVirtualAddress());
 	}
 
 	void WorldTransform::Debug() {

@@ -5,7 +5,7 @@
 #include "Base/View/RTVManager.h"
 #include "Base/View/DSVManager.h"
 #include "Base/View/SRVManager.h"
-#include "3d/Camera/Camera.h"
+#include <Object/3D/Camera/Camera.h>
 #include <Math/Utility/MakeMatrixMath.h>
 #include "Other/Log.h"
 

@@ -10,13 +10,14 @@ void TestScene::Initialize(EngineContext context) {
 	context_.cameraManager->GetMainCamera()->SetDebugCameraFlag(false);
 
 	//カメラの座標
-	context_.cameraManager->GetMainCamera()->GetWorldTransform().translate_ = { 0.0f,1.0f,0.0f };
+	context_.cameraManager->GetMainCamera()->GetWorldTransform().SetTranslate({ 0.0f,1.0f,0.0f });
 
 	context_.cameraManager->GetMainCamera()->SetOffsetZ(-20.0f);
 
-	gameObject_ = std::make_unique<GameObject>();
+	context_.objectManager->CreateGameObject("test");
 
-	gameObject_->Initialize()
+	context_.objectManager->CreateGameObject("test");
+
 }
 
 void TestScene::Finalize() {

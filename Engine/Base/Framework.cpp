@@ -6,13 +6,9 @@
 #include <Base/View/DSVManager.h>
 #include <Base/View/SRVManager.h>
 #include <Base/OffScreen.h>
-#include <3d/Model/ModelCommon.h>
-#include <2d/Sprite/TextureManager.h>
-#include <3d/Model/ModelManager.h>
-#include <Object/2D/Object2DCommon.h>
-#include <Object/3D/Object3DCommon.h>
-#include <3d/Object/DebugObjectCommon.h>
-#include <3d/Particle/ParticleCommon.h>
+#include <Object/3D/Model/ModelManager.h>
+#include <Object/3D/Model/ModelCommon.h>
+#include <Object/2D/Texture/TextureManager.h>
 #include <Base/ImGuiManager.h>
 #include <Base/Renderer.h>
 #include <Base/Input.h>
@@ -84,23 +80,7 @@ namespace MyEngine {
 		TextureManager::GetInstance()->Initialize(dxCommon_.get(), srvManager_.get());
 
 		//モデルマネージャー
-		ModelManager::GetInstance()->Initialize(modelCommon_.get());
-
-		//2Dオブジェクト基底
-		object2DCommon_ = std::make_unique<Object2DCommon>();
-		object2DCommon_->Initialize(dxCommon_.get());
-
-		//3Dオブジェクト基底
-		object3DCommon_ = std::make_unique<Object3DCommon>();
-		object3DCommon_->Initialize(dxCommon_.get());
-
-		//デバッグオブジェクト基底
-		debugObjectCommon_ = std::make_unique<DebugObjectCommon>();
-		debugObjectCommon_->Initialize(dxCommon_.get());
-
-		//パーティクル基底
-		particleCommon_ = std::make_unique<ParticleCommon>();
-		particleCommon_->Initialize(dxCommon_.get(), srvManager_.get());
+		ModelManager::GetInstance()->Initialize(dxCommon_.get());
 
 		//ImGuiマネージャー
 		imGuiManager_ = std::make_unique<ImGuiManager>();

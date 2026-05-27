@@ -1,7 +1,5 @@
 #include "SpriteManager.h"
 
-#include <Object/2D/Object2DCommon.h>
-
 #include <fstream>
 #include <filesystem>
 
@@ -18,10 +16,10 @@ namespace MyEngine {
 	///=====================================================/// 
 	/// SpriteManagerを初期化
 	///=====================================================///
-	void SpriteManager::Initialize(Object2DCommon* object2DCommonPtr) {
+	void SpriteManager::Initialize(DirectXCommon* directCommonPtr) {
 
 		//スプライト基底のインスタンスを取得
-		object2DCommon_ = object2DCommonPtr;
+		directCommon_ = directCommonPtr;
 
 		//スプライトデータを読み込む
 		for (const auto& entry : std::filesystem::directory_iterator("Resource/Sprite")) {
@@ -49,7 +47,7 @@ namespace MyEngine {
 		std::unique_ptr<Sprite> newSprite = std::make_unique<Sprite>();
 
 		//スプライトを読み込む
-		newSprite->Initialize(spriteName, object2DCommon_);
+		newSprite->Initialize(directCommon_, spriteName);
 
 		//リストに登録
 		sprites_.insert(std::make_pair(spriteName, std::move(newSprite)));

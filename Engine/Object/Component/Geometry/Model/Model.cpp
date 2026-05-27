@@ -11,9 +11,9 @@
 
 using namespace MyEngine;
 
-void Model::Initialize(ModelCommon* modelCommon, MeshType type, const std::string& filePath) {
+void Model::Initialize(DirectXCommon* directCommonPtr, MeshType type, const std::string& filePath) {
 
-	modelCommon_ = modelCommon;
+	directCommon_ = directCommonPtr;
 
 	if (type == MeshType::MODEL) {
 
@@ -29,11 +29,11 @@ void Model::Initialize(ModelCommon* modelCommon, MeshType type, const std::strin
 
 	for (auto& part : modelParts_) {
 
-		part.mesh->Initialize(modelCommon_->GetDxCommon());
+		part.mesh->Initialize(directCommon_);
 
 		part.material = std::make_unique<ModelMaterial>();
 
-		part.material->Initialize(modelCommon_->GetDxCommon());
+		part.material->Initialize(directCommon_);
 
 		part.texture = std::make_unique<Texture>();
 
@@ -50,13 +50,13 @@ void Model::Draw() {
 		part.mesh->Draw();
 
 		//マテリアルデータの設定
-		part.material->Draw(modelCommon_->GetDxCommon());
+		part.material->Draw(directCommon_);
 
 		//テクスチャデータの設定
-		part.texture->Draw(modelCommon_->GetDxCommon());
+		part.texture->Draw(directCommon_);
 
 		//描画コマンド発行
-		modelCommon_->GetDxCommon()->GetCommandList()->DrawIndexedInstanced(static_cast<UINT>(part.mesh->GetIndexData().size()), 1, 0, 0, 0);
+		directCommon_->GetCommandList()->DrawIndexedInstanced(static_cast<UINT>(part.mesh->GetIndexData().size()), 1, 0, 0, 0);
 	}
 }
 

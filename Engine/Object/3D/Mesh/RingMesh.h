@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Object/Component/Geometry/Mesh/MeshBase.h>
+#include <Object/3D/Mesh/MeshBase.h>
 
 #include <numbers>
 

@@ -159,17 +159,12 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Application\LevelEditor\LevelDataLoader.cpp" />
-    <ClCompile Include="Application\Effect\Manager\EmitterManager.cpp" />
     <ClCompile Include="Engine\Object\Component\Base\ComponentManager.cpp" />
     <ClCompile Include="Engine\Object\3D\Camera\CameraManager.cpp" />
     <ClCompile Include="Engine\Object\Component\Base\ComponentBase.cpp" />
     <ClCompile Include="Engine\Object\3D\Mesh\CubeMesh.cpp" />
-    <ClCompile Include="Engine\3d\Collider\AABBCollider.cpp" />
-    <ClCompile Include="Engine\3d\Collider\Collider.cpp" />
-    <ClCompile Include="Engine\3d\Collider\ColliderManager.cpp" />
     <ClCompile Include="Engine\Base\View\DSVManager.cpp" />
     <ClCompile Include="Engine\Object\3D\Mesh\CylinderMesh.cpp" />
-    <ClCompile Include="Engine\3d\Particle\EmitterGroup.cpp" />
     <ClCompile Include="Engine\Object\Component\Geometry\Sprite\Sprite.cpp" />
     <ClCompile Include="Engine\Object\3D\Model\ModelCommon.cpp" />
     <ClCompile Include="Engine\Base\Audio.cpp" />
@@ -186,8 +181,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Object\3D\Light\DirectionalLight\DirectionalLight.cpp" />
     <ClCompile Include="Engine\Math\Utility\Clamp.cpp" />
     <ClCompile Include="Engine\Math\Utility\Random.cpp" />
-    <ClCompile Include="Application\Effect\Fade\Fade.cpp" />
-    <ClCompile Include="Application\Effect\Flash\Flash.cpp" />
     <ClCompile Include="Engine\Object\Base\GameObject.cpp" />
     <ClCompile Include="Engine\Object\3D\Light\LightManager.cpp" />
     <ClCompile Include="main.cpp">
@@ -202,11 +195,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Math\Vector\Vector4.cpp" />
     <ClCompile Include="Engine\Other\Log.cpp" />
     <ClCompile Include="Engine\Object\3D\Light\PointLight\PointLight.cpp" />
-    <ClCompile Include="Engine\3d\Particle\ParticleCommon.cpp" />
     <ClCompile Include="Engine\Base\Renderer.cpp" />
     <ClCompile Include="Engine\Base\OffScreen.cpp" />
     <ClCompile Include="Engine\Base\View\RTVManager.cpp" />
-    <ClCompile Include="Engine\3d\Particle\ParticleEmitter.cpp" />
     <ClCompile Include="Engine\Object\3D\Mesh\PlaneMesh.cpp" />
     <ClCompile Include="Engine\Object\3D\Mesh\MeshBase.cpp" />
     <ClCompile Include="Engine\Object\3D\Mesh\RingMesh.cpp" />
@@ -217,10 +208,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Object\2D\Sprite\SpriteManager.cpp" />
     <ClCompile Include="Engine\Object\Component\WorldTransform\WorldTransform.cpp" />
     <ClCompile Include="Engine\Object\3D\Light\SpotLight\SpotLight.cpp" />
-    <ClCompile Include="Engine\3d\Collider\SphereCollider.cpp" />
     <ClCompile Include="Engine\Object\3D\Mesh\SphereMesh.cpp" />
-    <ClCompile Include="Application\Effect\Shake\Shake.cpp" />
-    <ClCompile Include="Application\Effect\Manager\UIManager.cpp" />
     <ClCompile Include="Engine\Base\View\ViewManagerBase.cpp" />
     <ClCompile Include="Engine\Object\Component\Geometry\Model\Model.cpp" />
     <ClCompile Include="Application\Scene\TestScene.cpp" />
@@ -230,20 +218,14 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application\LevelEditor\LevelDataLoader.h" />
-    <ClInclude Include="Application\Effect\Manager\EmitterManager.h" />
     <ClInclude Include="Application\Scene\EngineContext.h" />
     <ClInclude Include="Engine\Object\Component\Base\ComponentList.h" />
     <ClInclude Include="Engine\Object\Component\Base\ComponentManager.h" />
     <ClInclude Include="Engine\Object\3D\Camera\CameraManager.h" />
     <ClInclude Include="Engine\Object\Component\Base\ComponentBase.h" />
-    <ClInclude Include="Engine\Base\ObjectCommon.h" />
     <ClInclude Include="Engine\Object\3D\Mesh\CubeMesh.h" />
-    <ClInclude Include="Engine\3d\Collider\AABBCollider.h" />
-    <ClInclude Include="Engine\3d\Collider\Collider.h" />
-    <ClInclude Include="Engine\3d\Collider\ColliderManager.h" />
     <ClInclude Include="Engine\Base\View\DSVManager.h" />
     <ClInclude Include="Engine\Object\3D\Mesh\CylinderMesh.h" />
-    <ClInclude Include="Engine\3d\Particle\EmitterGroup.h" />
     <ClInclude Include="Engine\Object\Component\Geometry\Sprite\Sprite.h" />
     <ClInclude Include="Engine\Base\Framework.h" />
     <ClInclude Include="Engine\Base\Game.h" />
@@ -272,11 +254,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Math\Vector\Vector4.h" />
     <ClInclude Include="Engine\Other\Log.h" />
     <ClInclude Include="Engine\Object\3D\Light\PointLight\PointLight.h" />
-    <ClInclude Include="Engine\3d\Particle\ParticleCommon.h" />
     <ClInclude Include="Engine\Base\Renderer.h" />
     <ClInclude Include="Engine\Base\OffScreen.h" />
     <ClInclude Include="Engine\Base\View\RTVManager.h" />
-    <ClInclude Include="Engine\3d\Particle\ParticleEmitter.h" />
     <ClInclude Include="Engine\Object\3D\Mesh\PlaneMesh.h" />
     <ClInclude Include="Engine\Object\3D\Mesh\MeshBase.h" />
     <ClInclude Include="Engine\Object\3D\Mesh\RingMesh.h" />
@@ -287,13 +267,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Object\2D\Sprite\SpriteManager.h" />
     <ClInclude Include="Engine\Object\Component\WorldTransform\WorldTransform.h" />
     <ClInclude Include="Engine\Object\3D\Light\SpotLight\SpotLight.h" />
-    <ClInclude Include="Engine\3d\Collider\SphereCollider.h" />
     <ClInclude Include="Engine\Object\3D\Mesh\SphereMesh.h" />
     <ClInclude Include="Application\LevelEditor\ObjectData.h" />
-    <ClInclude Include="Application\Effect\Fade\Fade.h" />
-    <ClInclude Include="Application\Effect\Shake\Shake.h" />
-    <ClInclude Include="Application\Effect\Flash\Flash.h" />
-    <ClInclude Include="Application\Effect\Manager\UIManager.h" />
     <ClInclude Include="Engine\Base\View\ViewManagerBase.h" />
     <ClInclude Include="Engine\Object\Base\GameObject.h" />
     <ClInclude Include="Engine\Object\Base\ObjectTag.h" />

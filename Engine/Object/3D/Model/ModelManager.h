@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Object/3D/Model/ModelCommon.h>
+#include <Base\DirectXCommon.h>
 #include <Object/Component/Geometry/Model/Model.h>
 
 #include "memory"
@@ -13,6 +13,14 @@ namespace MyEngine {
 	/// ゲーム内で使用するモデルを管理するクラスです。
 	/// </summary>
 	class ModelManager {
+
+	private:
+
+		struct ModelData {
+			std::unique_ptr<Model> model;
+			std::map<uint32_t, bool> instanceID;
+			uint32_t instanceCount;
+		};
 
 		///-------------------------------------------/// 
 		/// メンバ関数
@@ -27,7 +35,7 @@ namespace MyEngine {
 		/// <summary>
 		/// モデルマネージャを初期化し、基本的なプリミティブモデルを生成します。
 		/// </summary>
-		void Initialize(ModelCommon* modelCommonPtr);
+		void Initialize(DirectXCommon* directCommonPtr);
 
 		/// <summary>
 		/// 指定されたモデル名とファイル名からモデルを読み込み、管理コンテナに登録します。
@@ -49,7 +57,13 @@ namespace MyEngine {
 		/// </summary>
 		/// <param name="modelName">検索するモデルの名前</param>
 		/// <returns>名前が合致したモデルをコピーしたインスタンス</returns>
-		Model* FindModel(const std::string& modelName);
+		Model* GetModel(const std::string& modelName) const;
+
+		bool FindModel(const std::string& modelName) const;
+
+		uint32_t GetFreeInstanceID(const std::string& modelName) const;
+
+		uint32_t GetInstanceCount(const std::string& modelName) const;
 
 		///-------------------------------------------/// 
 		/// メンバ変数
@@ -57,9 +71,11 @@ namespace MyEngine {
 	private:
 
 		//モデル基底
-		ModelCommon* modelCommon_;
+		DirectXCommon* directCommon_;
 
 		//モデルリスト
-		std::map<std::string, std::unique_ptr<Model>> models_;
+		std::map<std::string, ModelData> models_;
+
+		const uint32_t kInstanceMax = 100;
 	};
 }

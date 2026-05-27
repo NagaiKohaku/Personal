@@ -52,18 +52,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Engine\3d\Collider\AABBCollider.cpp">
-      <Filter>Engine\3d\Collider</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\3d\Collider\Collider.cpp">
-      <Filter>Engine\3d\Collider</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\3d\Collider\ColliderManager.cpp">
-      <Filter>Engine\3d\Collider</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\3d\Collider\SphereCollider.cpp">
-      <Filter>Engine\3d\Collider</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\Object\Component\Geometry\Sprite\Sprite.cpp">
       <Filter>Engine\2d\Sprite</Filter>
     </ClCompile>
@@ -105,15 +93,6 @@
     </ClCompile>
     <ClCompile Include="Engine\Object\3D\Mesh\RingMesh.cpp">
       <Filter>Engine\3d\Mesh</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\3d\Particle\EmitterGroup.cpp">
-      <Filter>Engine\3d\Particle</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\3d\Particle\ParticleCommon.cpp">
-      <Filter>Engine\3d\Particle</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\3d\Particle\ParticleEmitter.cpp">
-      <Filter>Engine\3d\Particle</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Base\Audio.cpp">
       <Filter>Engine\Base</Filter>
@@ -166,21 +145,6 @@
     <ClCompile Include="Engine\Object\3D\Mesh\CubeMesh.cpp">
       <Filter>Engine\3d\Mesh</Filter>
     </ClCompile>
-    <ClCompile Include="Application\Effect\Fade\Fade.cpp">
-      <Filter>Application\Effect\Fade</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\Effect\Flash\Flash.cpp">
-      <Filter>Application\Effect\Flash</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\Effect\Shake\Shake.cpp">
-      <Filter>Application\Effect\Shake</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\Effect\Manager\EmitterManager.cpp">
-      <Filter>Application\Effect\Manager</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\Effect\Manager\UIManager.cpp">
-      <Filter>Application\Effect\Manager</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\Math\Matrix\Matrix4x4.cpp">
       <Filter>Engine\Math\Matrix</Filter>
     </ClCompile>
@@ -223,18 +187,6 @@
     <ClCompile Include="Engine\Object\Component\Base\ComponentManager.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Engine\3d\Collider\AABBCollider.h">
-      <Filter>Engine\3d\Collider</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\3d\Collider\Collider.h">
-      <Filter>Engine\3d\Collider</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\3d\Collider\ColliderManager.h">
-      <Filter>Engine\3d\Collider</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\3d\Collider\SphereCollider.h">
-      <Filter>Engine\3d\Collider</Filter>
-    </ClInclude>
     <ClInclude Include="Engine\Object\2D\Sprite\SpriteManager.h">
       <Filter>Engine\2d\Sprite</Filter>
     </ClInclude>
@@ -276,15 +228,6 @@
     </ClInclude>
     <ClInclude Include="Engine\Object\3D\Mesh\RingMesh.h">
       <Filter>Engine\3d\Mesh</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\3d\Particle\EmitterGroup.h">
-      <Filter>Engine\3d\Particle</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\3d\Particle\ParticleCommon.h">
-      <Filter>Engine\3d\Particle</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\3d\Particle\ParticleEmitter.h">
-      <Filter>Engine\3d\Particle</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Base\Audio.h">
       <Filter>Engine\Base</Filter>
@@ -343,21 +286,6 @@
     <ClInclude Include="Application\LevelEditor\ObjectData.h">
       <Filter>Application\LevelEditor</Filter>
     </ClInclude>
-    <ClInclude Include="Application\Effect\Fade\Fade.h">
-      <Filter>Application\Effect\Fade</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\Effect\Flash\Flash.h">
-      <Filter>Application\Effect\Flash</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\Effect\Shake\Shake.h">
-      <Filter>Application\Effect\Shake</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\Effect\Manager\EmitterManager.h">
-      <Filter>Application\Effect\Manager</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\Effect\Manager\UIManager.h">
-      <Filter>Application\Effect\Manager</Filter>
-    </ClInclude>
     <ClInclude Include="Engine\Math\Matrix\Matrix4x4.h">
       <Filter>Engine\Math\Matrix</Filter>
     </ClInclude>
@@ -395,7 +323,6 @@
     <ClInclude Include="Engine\Base\Game.h" />
     <ClInclude Include="Engine\Base\View\ViewManagerBase.h" />
     <ClInclude Include="Application\Scene\EngineContext.h" />
-    <ClInclude Include="Engine\Base\ObjectCommon.h" />
     <ClInclude Include="Engine\Math\Matrix\TransformationMatrix.h" />
     <ClInclude Include="Engine\Object\Base\GameObject.h" />
     <ClInclude Include="Engine\Object\Base\ObjectTag.h" />

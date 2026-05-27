@@ -3,7 +3,6 @@
 /// ===シーン=== ///
 #include <Scene/BaseScene.h>
 
-#include <3d/Collider/ColliderManager.h>
 #include <Scene/EngineContext.h>
 
 //#include <Scene/GameScene/GameScene.h>
@@ -82,9 +81,6 @@ namespace MyEngine {
 	/// 現在のシーンを指定された種類の新しいシーンに切り替える
 	///=====================================================///
 	void SceneManager::ChangeScene(SceneType sceneType) {
-
-		//コライダーをすべて破棄
-		MyEngine::ColliderManager::GetInstance()->ClearColliders();
 
 		//シーンがすでにある場合は終了処理を実行
 		if (currentScene_) {

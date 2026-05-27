@@ -1,8 +1,10 @@
 #pragma once
-#include "Sprite.h"
 
-#include "memory"
-#include "map"
+#include <Base/DirectXCommon.h>
+#include <Object/Component/Geometry/Sprite/Sprite.h>
+
+#include <memory>
+#include <map>
 
 namespace MyEngine {
 
@@ -26,7 +28,7 @@ namespace MyEngine {
 		/// <summary>
 		/// SpriteManagerを初期化します。
 		/// </summary>
-		void Initialize(Object2DCommon* object2DCommonPtr);
+		void Initialize(DirectXCommon* directCommonPtr);
 
 		/// <summary>
 		/// 指定した名前のスプライトを検索し、未登録であれば読み込みます。
@@ -50,7 +52,7 @@ namespace MyEngine {
 	private:
 
 		//スプライト基底
-		Object2DCommon* object2DCommon_;
+		DirectXCommon* directCommon_;
 
 		//スプライトリスト
 		std::map<std::string, std::unique_ptr<Sprite>> sprites_;

@@ -55,7 +55,7 @@ namespace MyEngine {
 
 		void SetEnvironmentCoefficient(const float& num) { materialData_->environmentCoefficient = num; }
 
-		float GetEnvironmentCoefficient() { return materialData_->enableLighting; }
+		float GetEnvironmentCoefficient() { return materialData_->environmentCoefficient; }
 
 	};
 }

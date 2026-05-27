@@ -1,7 +1,7 @@
 #pragma once
 
-#include <Object/Component/ComponentBase.h>
-#include <Object/3D/Model/ModelCommon.h>
+#include <Object/Component/Base/ComponentBase.h>
+#include <Base/DirectXCommon.h>
 #include <Object/3D/Mesh/MeshBase.h>
 #include <Object/3D/Mesh/MeshType.h>
 #include <Object/3D/Material/ModelMaterial.h>
@@ -31,7 +31,7 @@ namespace MyEngine {
 
 	public:
 
-		void Initialize(ModelCommon* modelCommon, MeshType type, const std::string& filePath);
+		void Initialize(DirectXCommon* directCommonPtr, MeshType type, const std::string& filePath);
 
 		void Draw();
 
@@ -39,7 +39,7 @@ namespace MyEngine {
 
 		const std::string kResourceDirectoryPath_ = "Resource/Model/";
 
-		ModelCommon* modelCommon_;
+		DirectXCommon* directCommon_;
 
 		std::string modelDirectoryPath_;
 

@@ -43,5 +43,4 @@ public:
 	///-------------------------------------------///
 private:
 
-	std::unique_ptr<MyEngine::GameObject> gameObject_;
 };
