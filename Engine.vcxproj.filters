@@ -49,6 +49,8 @@
     <FxCompile Include="Resource\Shader\OffScreen\Vignette.PS.hlsl">
       <Filter>Resource\Shader\OffScreen</Filter>
     </FxCompile>
+    <FxCompile Include="Resource\Shader\ObjectBase.PS.hlsl" />
+    <FxCompile Include="Resource\Shader\ObjectBase.VS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -185,6 +187,7 @@
     <ClCompile Include="Engine\Object\3D\Camera\CameraManager.cpp" />
     <ClCompile Include="Engine\Object\3D\Light\LightManager.cpp" />
     <ClCompile Include="Engine\Object\Component\Base\ComponentManager.cpp" />
+    <ClCompile Include="Application\Entity\TestObject.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Object\2D\Sprite\SpriteManager.h">
@@ -336,6 +339,7 @@
     <ClInclude Include="Engine\Object\3D\Light\LightManager.h" />
     <ClInclude Include="Engine\Object\Component\Base\ComponentManager.h" />
     <ClInclude Include="Engine\Object\Component\Base\ComponentList.h" />
+    <ClInclude Include="Application\Entity\TestObject.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resource\Shader\DebugObject.hlsli">
@@ -398,6 +402,7 @@
     <None Include="Application\LevelEditor\Python\stretch_vertex.py">
       <Filter>Application\LevelEditor\Python</Filter>
     </None>
+    <None Include="Resource\Shader\ObjectBase.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Application">

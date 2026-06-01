@@ -52,12 +52,15 @@ namespace MyEngine {
 		ModelData newModelData;
 
 		//モデルデータ
-		std::unique_ptr<Model> model = std::make_unique<Model>();
+		std::shared_ptr<Model> model = std::make_unique<Model>();
 
 		//モデルの読み込み
-		model->Initialize(directCommon_, MeshType::MODEL, modelFileName);
+		model->Initialize();
 
-		newModelData.model = std::move(model);
+		model->LoadModel(directCommon_, MeshType::MODEL, modelFileName);
+
+
+		newModelData.model = model;
 
 		for (uint32_t i = 0; i < kInstanceMax; i++) {
 			newModelData.instanceID.insert(std::make_pair(i, false));
@@ -84,16 +87,18 @@ namespace MyEngine {
 		std::unique_ptr<Model> model = std::make_unique<Model>();
 
 		//メッシュモデルの初期化
-		model->Initialize(directCommon_, type, textureFilePath);
+		model->Initialize();
+
+		model->LoadModel(directCommon_, type, textureFilePath);
 
 		//モデル名とモデルデータをコンテナに登録
 		models_.insert(std::make_pair(modelName, std::move(model)));
 	}
 
-	Model* ModelManager::GetModel(const std::string& modelName) const {
+	std::shared_ptr<Model> ModelManager::GetModel(const std::string& modelName) const {
 
 		if (models_.contains(modelName)) {
-			return models_.at(modelName).model.get();
+			return models_.at(modelName).model;
 		}
 
 		return nullptr;

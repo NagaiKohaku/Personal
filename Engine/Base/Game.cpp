@@ -9,7 +9,7 @@ namespace MyEngine {
 		spriteManager_ = std::make_unique<SpriteManager>();
 		spriteManager_->Initialize(dxCommon_.get());
 
-		cameraManager_ = std::make_unique<CameraManager>();
+		cameraManager_ = CameraManager::GetInstance();
 		cameraManager_->Initialize(dxCommon_.get(), winApp_.get(), input_.get());
 
 		objectManager_ = std::make_unique<ObjectManager>();
@@ -20,7 +20,7 @@ namespace MyEngine {
 
 		engineContext_.offScreen = offScreen_.get();
 		engineContext_.objectManager = objectManager_.get();
-		engineContext_.cameraManager = cameraManager_.get();
+		engineContext_.cameraManager = cameraManager_;
 		engineContext_.input = input_.get();
 		engineContext_.audio = audio_.get();
 		engineContext_.renderer = renderer_.get();
@@ -39,6 +39,8 @@ namespace MyEngine {
 		Framework::Update();
 
 		sceneManager_->Update();
+
+		cameraManager_->Update();
 
 #ifdef _USE_IMGUI
 

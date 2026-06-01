@@ -27,14 +27,14 @@ void ObjectManager::CreateGameObject(const std::string& name) {
 	std::string newName = baseName;
 	int number = 1;
 
-	while (gameObjects_.contains(name)) {
+	while (gameObjects_.contains(newName)) {
 		newName = name + std::to_string(number);
 		number++;
 	}
 
 	gameObjects_[newName] = std::make_unique<GameObject>();
 
-	gameObjects_[newName]->Initialize(directCommon_, newName);
+	gameObjects_[newName]->Initialize();
 }
 
 GameObject* ObjectManager::GetGameObject(const std::string& name) {

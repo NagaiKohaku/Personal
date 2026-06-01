@@ -33,7 +33,7 @@ namespace MyEngine {
 
 		std::unique_ptr<ObjectManager> objectManager_;
 
-		std::unique_ptr<CameraManager> cameraManager_;
+		CameraManager* cameraManager_;
 
 		std::unique_ptr<LevelDataLoader> levelDataLoder_;
 

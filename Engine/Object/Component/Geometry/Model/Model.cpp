@@ -11,7 +11,35 @@
 
 using namespace MyEngine;
 
-void Model::Initialize(DirectXCommon* directCommonPtr, MeshType type, const std::string& filePath) {
+void MyEngine::Model::Initialize() {
+
+}
+
+void MyEngine::Model::Update() {
+}
+
+void MyEngine::Model::SendDataForGPU() {
+
+	for (auto& part : modelParts_) {
+
+		//メッシュの設定
+		part.mesh->Draw();
+
+		//マテリアルデータの設定
+		part.material->Draw(directCommon_);
+
+		//テクスチャデータの設定
+		part.texture->Draw(directCommon_);
+
+		//描画コマンド発行
+		directCommon_->GetCommandList()->DrawIndexedInstanced(static_cast<UINT>(part.mesh->GetIndexData().size()), 1, 0, 0, 0);
+	}
+}
+
+void MyEngine::Model::Debug() {
+}
+
+void Model::LoadModel(DirectXCommon* directCommonPtr, MeshType type, const std::string& filePath) {
 
 	directCommon_ = directCommonPtr;
 
@@ -39,24 +67,6 @@ void Model::Initialize(DirectXCommon* directCommonPtr, MeshType type, const std:
 
 		part.texture->Initialize(part.textureFilePath);
 
-	}
-}
-
-void Model::Draw() {
-
-	for (auto& part : modelParts_) {
-
-		//メッシュの設定
-		part.mesh->Draw();
-
-		//マテリアルデータの設定
-		part.material->Draw(directCommon_);
-
-		//テクスチャデータの設定
-		part.texture->Draw(directCommon_);
-
-		//描画コマンド発行
-		directCommon_->GetCommandList()->DrawIndexedInstanced(static_cast<UINT>(part.mesh->GetIndexData().size()), 1, 0, 0, 0);
 	}
 }
 

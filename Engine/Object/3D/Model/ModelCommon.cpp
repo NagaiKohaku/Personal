@@ -51,31 +51,43 @@ namespace MyEngine {
 		descriptionRootSignature.Flags =
 			D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 
+		/// === DescriptorRangeを設定 === ///
+
+		D3D12_DESCRIPTOR_RANGE wvpRange[1] = {};
+		wvpRange[0].BaseShaderRegister = 0; //0から始まる
+		wvpRange[0].NumDescriptors = 1;     //数は1つ
+		wvpRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV; //SRVを使う
+		wvpRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND; //Offsetを自動計算
+
 		D3D12_DESCRIPTOR_RANGE textureRange[1] = {};
-		textureRange[0].BaseShaderRegister = 0; //0から始まる
-		textureRange[0].NumDescriptors = 1; //数は1つ
+		textureRange[0].BaseShaderRegister = 1; //1から始まる
+		textureRange[0].NumDescriptors = 1;     //数は1つ
 		textureRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV; //SRVを使う
 		textureRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND; //Offsetを自動計算
+
+		/// === RootParameterを設定 === ///
 
 		//RootParameterを作成
 		D3D12_ROOT_PARAMETER rootParameters[7] = {};
 
-		//マテリアル
-		rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;                   //CBVを使う
-		rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;                //PixelShaderを使う
-		rootParameters[0].Descriptor.ShaderRegister = 0;                                   //レジスタ番号0とバインド
-
 		//WVP
+		rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;      //DescriptorTableを使う
+		rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;               //VertexShaderを使う
+		rootParameters[0].DescriptorTable.pDescriptorRanges = wvpRange;                    //Tableの中身の配列を指定
+		rootParameters[0].DescriptorTable.NumDescriptorRanges = _countof(wvpRange);        //Tableで利用する数
+		rootParameters[0].Descriptor.RegisterSpace = 0;                                    //レジスタ番号1を使う
+
+		//マテリアル
 		rootParameters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;                   //CBVを使う
-		rootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;               //VertexShaderを使う
+		rootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;                //PixelShaderを使う
 		rootParameters[1].Descriptor.ShaderRegister = 0;                                   //レジスタ番号0とバインド
 
 		//テクスチャ
 		rootParameters[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;      //DesctiptorTableを使う
 		rootParameters[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;                //PixelShaderを使う
-		rootParameters[2].DescriptorTable.pDescriptorRanges = textureRange;             //Tableの中身の配列を指定
-		rootParameters[2].DescriptorTable.NumDescriptorRanges = _countof(textureRange); //Tableで利用する数
-		rootParameters[2].Descriptor.RegisterSpace = 0;                                    //レジスタ番号0を使う
+		rootParameters[2].DescriptorTable.pDescriptorRanges = textureRange;                //Tableの中身の配列を指定
+		rootParameters[2].DescriptorTable.NumDescriptorRanges = _countof(textureRange);    //Tableで利用する数
+		rootParameters[2].Descriptor.RegisterSpace = 1;                                    //レジスタ番号1を使う
 
 		//カメラ
 		rootParameters[3].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;                   //CBVを使う
@@ -100,6 +112,8 @@ namespace MyEngine {
 		descriptionRootSignature.pParameters = rootParameters;               //ルートパラメータ配列へのポインタ
 		descriptionRootSignature.NumParameters = _countof(rootParameters);   //配列の長さ
 
+		/// === Samplerの設定 === ///
+
 		D3D12_STATIC_SAMPLER_DESC staticSamplers[1] = {};
 		staticSamplers[0].Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR;         //バイリニアフィルタ
 		staticSamplers[0].AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP;       //0~1の範囲外をリピート
@@ -109,6 +123,7 @@ namespace MyEngine {
 		staticSamplers[0].MaxLOD = D3D12_FLOAT32_MAX;                       //ありったけのMinMapを使う
 		staticSamplers[0].ShaderRegister = 0;                               //レジスタ番号0を使う
 		staticSamplers[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; //PixelShaderで使う
+
 		descriptionRootSignature.pStaticSamplers = staticSamplers;
 		descriptionRootSignature.NumStaticSamplers = _countof(staticSamplers);
 
@@ -195,7 +210,7 @@ namespace MyEngine {
 		//VertexShaderをコンパイルする
 		Microsoft::WRL::ComPtr<IDxcBlob> vertexShaderBlob =
 			dxCommon_->CompileShader(
-				L"Resource/Shader/Object3D.VS.hlsl",
+				L"Resource/Shader/ObjectBase.VS.hlsl",
 				L"vs_6_0"
 			);
 
@@ -204,7 +219,7 @@ namespace MyEngine {
 		//PixelShaderをコンパイルする
 		Microsoft::WRL::ComPtr<IDxcBlob> pixelShaderBlob =
 			dxCommon_->CompileShader(
-				L"Resource/Shader/Object3D.PS.hlsl",
+				L"Resource/Shader/ObjectBase.PS.hlsl",
 				L"ps_6_0"
 			);
 

@@ -1,5 +1,7 @@
 #include "TestScene.h"
 
+#include <Entity/TestObject.h>
+
 using namespace MyEngine;
 
 void TestScene::Initialize(EngineContext context) {

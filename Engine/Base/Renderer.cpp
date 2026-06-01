@@ -28,21 +28,10 @@ namespace MyEngine {
 	void Renderer::SwapChainDraw() {
 
 		//下位レイヤーから描画コマンドを実行
-		for (const auto& [layer, func] : drawQueue_) {
+		for (const auto& [modelName, func] : drawQueue_) {
 
 			//レイヤーに入っている描画コマンドすべてを実行する
-			for (int i = 0; i < drawQueue_[layer].size(); i++) {
-
-				if (layer == LayerType::DEBUG) {
-
-					if (isDebug()) {
-
-						//描画コマンドを実行
-						func[i]();
-					}
-
-					continue;
-				}
+			for (int i = 0; i < drawQueue_[modelName].size(); i++) {
 
 				//描画コマンドを実行
 				func[i]();
@@ -58,11 +47,13 @@ namespace MyEngine {
 	///=====================================================///
 	void Renderer::OffScreenDraw() {
 
+		drawModels_.back()->SendDataForGPU();
+
 		//下位レイヤーから描画コマンドを実行
-		for (const auto& [layer, func] : offScreenDrawQueue_) {
+		for (const auto& [modelName, func] : offScreenDrawQueue_) {
 
 			//レイヤーに入っている描画コマンドすべてを実行する
-			for (int i = 0; i < offScreenDrawQueue_[layer].size(); i++) {
+			for (int i = 0; i < offScreenDrawQueue_[modelName].size(); i++) {
 
 				//描画コマンドを実行
 				func[i]();

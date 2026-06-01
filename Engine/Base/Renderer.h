@@ -2,10 +2,13 @@
 
 #include "Base/LayerType.h"
 
+#include <Object/Component/Geometry/Model/Model.h>
+#include <Object/Component/Geometry/Sprite/Sprite.h>
+
 #include "functional"
 #include "map"
 #include "vector"
-#include "string.h"
+#include "string"
 
 namespace MyEngine {
 
@@ -75,5 +78,9 @@ namespace MyEngine {
 
 		//OffScreen用の描画コマンドキュー
 		std::map<std::string, std::vector<std::function<void()>>> offScreenDrawQueue_;
+
+		std::vector<Model*> drawModels_;
+
+		std::vector<Sprite*> drawSprites_;
 	};
 }

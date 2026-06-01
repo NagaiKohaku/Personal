@@ -14,13 +14,13 @@ namespace MyEngine {
 
 	public:
 
-		void Initialize(DirectXCommon* directCommonPtr, std::string name);
+		virtual ~GameObject() = default;
 
-		void Update();
+		virtual void Initialize();
 
-		void Draw();
+		virtual void Update();
 
-		void CreateWorldTransform(DirectXCommon* directCommonPtr);
+		virtual void Draw();
 
 	private:
 
@@ -47,8 +47,6 @@ namespace MyEngine {
 		ObjectTag GetObjectTag() const { return tag_; }
 
 		void SetComponent(std::shared_ptr<ComponentBase> component) { components_.push_back(component); }
-
-		ComponentBase* GetComponent();
 	};
 
 }

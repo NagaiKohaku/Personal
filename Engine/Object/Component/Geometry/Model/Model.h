@@ -16,7 +16,7 @@
 
 namespace MyEngine {
 
-	class Model {
+	class Model : public ComponentBase {
 
 	public:
 
@@ -31,9 +31,15 @@ namespace MyEngine {
 
 	public:
 
-		void Initialize(DirectXCommon* directCommonPtr, MeshType type, const std::string& filePath);
+		void Initialize() override;
 
-		void Draw();
+		void Update() override;
+
+		void SendDataForGPU() override;
+
+		void Debug() override;
+
+		void LoadModel(DirectXCommon* directCommonPtr, MeshType type, const std::string& filePath);
 
 	private:
 

@@ -4,11 +4,8 @@
 
 using namespace MyEngine;
 
-void GameObject::Initialize(DirectXCommon* directCommonPtr, std::string name) {
+void GameObject::Initialize() {
 
-	SetName(name);
-
-	CreateWorldTransform(directCommonPtr);
 }
 
 void GameObject::Update() {
@@ -25,27 +22,10 @@ void GameObject::Update() {
 void GameObject::Draw() {
 
 	for (auto& transform : partTransforms_) {
-		transform->Draw();
+		transform->SendDataForGPU();
 	}
 
 	for (auto& component : components_) {
-		component->Draw();
+		component->SendDataForGPU();
 	}
-}
-
-void MyEngine::GameObject::CreateWorldTransform(DirectXCommon* directCommonPtr) {
-
-	std::unique_ptr<WorldTransform> newTransform;
-
-	newTransform = std::make_unique<WorldTransform>();
-
-	newTransform->SetDirectCommon(directCommonPtr);
-
-	newTransform->Initialize();
-
-	partTransforms_.push_back(std::move(newTransform));
-}
-
-ComponentBase* MyEngine::GameObject::GetComponent() {
-	return nullptr;
 }

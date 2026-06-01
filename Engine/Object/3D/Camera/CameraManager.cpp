@@ -2,6 +2,11 @@
 
 using namespace MyEngine;
 
+CameraManager* CameraManager::GetInstance() {
+	static CameraManager instance;
+	return &instance;
+}
+
 void CameraManager::Initialize(DirectXCommon* directCommonPtr, WinApp* winAppPtr, Input* inputPtr) {
 
 	directCommon_ = directCommonPtr;

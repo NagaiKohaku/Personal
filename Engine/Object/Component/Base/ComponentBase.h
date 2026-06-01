@@ -10,7 +10,7 @@ namespace MyEngine {
 
 		virtual void Update() = 0;
 
-		virtual void Draw() = 0;
+		virtual void SendDataForGPU() = 0;
 
 		virtual void Debug() = 0;
 	};

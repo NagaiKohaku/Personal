@@ -17,7 +17,7 @@ namespace MyEngine {
 	private:
 
 		struct ModelData {
-			std::unique_ptr<Model> model;
+			std::shared_ptr<Model> model;
 			std::map<uint32_t, bool> instanceID;
 			uint32_t instanceCount;
 		};
@@ -57,7 +57,7 @@ namespace MyEngine {
 		/// </summary>
 		/// <param name="modelName">検索するモデルの名前</param>
 		/// <returns>名前が合致したモデルをコピーしたインスタンス</returns>
-		Model* GetModel(const std::string& modelName) const;
+		std::shared_ptr<Model> GetModel(const std::string& modelName) const;
 
 		bool FindModel(const std::string& modelName) const;
 

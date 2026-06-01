@@ -24,7 +24,7 @@ namespace MyEngine {
 
 		void Update() override;
 
-		void Draw() override;
+		void SendDataForGPU() override;
 
 		void Debug() override;
 

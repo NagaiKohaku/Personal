@@ -1,5 +1,6 @@
 #include "WorldTransform.h"
 
+#include <Object/3D/Camera/CameraManager.h>
 #include <Math/Utility/MakeMatrixMath.h>
 
 #include "imgui.h"
@@ -64,9 +65,16 @@ namespace MyEngine {
 
 		worldMatrix_ = localMatrix_ * parentMatrix;
 
+
 	}
 
-	void WorldTransform::Draw() {
+	void WorldTransform::SendDataForGPU() {
+
+		viewProjectionMatrix_ = CameraManager::GetInstance()->GetMainCamera()->Get3DViewProjectionMatrix();
+
+		mappedMatrix_->World = worldMatrix_;
+		mappedMatrix_->WorldInverseTranspose = Inverse4x4(worldMatrix_);
+		mappedMatrix_->WVP = worldMatrix_ * viewProjectionMatrix_;
 
 		directCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(1, matrixResource_.Get()->GetGPUVirtualAddress());
 	}

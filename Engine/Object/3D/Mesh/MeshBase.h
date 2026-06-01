@@ -30,6 +30,7 @@ namespace MyEngine {
 			Vector4 position;
 			Vector2 texcoord;
 			Vector3 normal;
+			float   materialIndex; // 使用するマテリアルのインデックス
 		};
 
 		///-------------------------------------------/// 

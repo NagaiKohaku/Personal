@@ -14,6 +14,8 @@ namespace MyEngine {
 
 	public:
 
+		static CameraManager* GetInstance();
+
 		void Initialize(DirectXCommon* directCommonPtr, WinApp* winAppPtr, Input* inputPtr);
 
 		void Update();
