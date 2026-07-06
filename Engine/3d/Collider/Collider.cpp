@@ -1,6 +1,7 @@
 #include "Collider.h"
 
 #include <Math/Utility/MakeMatrixMath.h>
+#include <3d/Collider/ColliderManager.h>
 
 #include "algorithm"
 
@@ -27,7 +28,7 @@ namespace MyEngine {
 		hitTagBefore_.clear();
 
 		//描画フラグの設定
-		isDraw_ = false;
+		isDraw_ = true;
 
 		//アクティブフラグの設定
 		isActive_ = true;
@@ -122,5 +123,11 @@ namespace MyEngine {
 
 		//デバッグオブジェクトの描画
 		debugObject_->Draw();
+	}
+
+	void Collider::Remove() {
+
+		//コライダーマネージャーから削除
+		ColliderManager::GetInstance()->RemoveCollider(this);
 	}
 }

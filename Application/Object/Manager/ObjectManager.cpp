@@ -2,6 +2,7 @@
 
 #include <Object/Player/Player.h>
 #include <Object/Enemy/Enemy.h>
+#include <Object/Enemy/BombEnemy.h>
 #include <Object/Enemy/EnemyManager.h>
 
 using namespace MyEngine;
@@ -19,6 +20,14 @@ void ObjectManager::Update() {
 	//エネミーの削除
 	enemies_.remove_if([](const std::unique_ptr<Enemy>& enemy) {
 		if (enemy->GetIsRemove()) {
+			return true;
+		}
+		return false;
+		});
+
+	//エネミーの削除
+	bombEnemy_.remove_if([](const std::unique_ptr<BombEnemy>& bombEnemy) {
+		if (bombEnemy->GetIsRemove()) {
 			return true;
 		}
 		return false;
@@ -54,6 +63,10 @@ void ObjectManager::SpawnEnemy() {
 	enemies_.push_back(std::make_unique<Enemy>());
 }
 
+void ObjectManager::SpawnBombEnemy() {
+	bombEnemy_.push_back(std::make_unique<BombEnemy>());
+}
+
 void ObjectManager::ClearAll() {
 	player_.reset();
 	enemies_.clear();
@@ -69,4 +82,15 @@ std::list<Enemy*> ObjectManager::GetEnemies() {
 	}
 
 	return enemyList;
+}
+
+std::list<BombEnemy*> ObjectManager::GetBombEnemies() {
+
+	std::list<BombEnemy*> bombEnemies;
+
+	for (auto& bombEnemy : bombEnemy_) {
+		bombEnemies.push_back(bombEnemy.get());
+	}
+
+	return bombEnemies;
 }

@@ -10,6 +10,8 @@
 
 #include <Math/Utility/Random.h>
 
+#include <imgui.h>
+
 #include "numbers"
 
 using namespace MyEngine;
@@ -79,6 +81,11 @@ void EnemyManager::Update() {
 		//エネミーの更新
 		enemy->Update();
 	}
+
+	for (auto& bombEnemy : bombEnemies_) {
+
+		bombEnemy->Update();
+	}
 }
 
 ///=====================================================/// 
@@ -102,6 +109,11 @@ void EnemyManager::Draw() {
 
 		//エネミーの描画
 		enemy->Draw();
+	}
+
+	for (auto& bombEnemy : bombEnemies_) {
+
+		bombEnemy->Draw();
 	}
 }
 
@@ -133,6 +145,8 @@ void EnemyManager::SpawnUpdate() {
 
 	//タイマーを進ませる
 	spawnTimer_ += 1.0f / 60.0f;
+
+	bombEnemySpawnTimer_ += 1.0f / 60.0f;
 
 	//スポーン間隔を越えたら
 	if (spawnTimer_ >= spawnInterval_) {
@@ -168,6 +182,13 @@ void EnemyManager::SpawnUpdate() {
 		//タイマーのリセット
 		spawnTimer_ = 0.0f;
 	}
+
+	if (bombEnemySpawnTimer_ >= bombEnemySpawnInterval_) {
+
+		SpawnBombEnemy();
+
+		bombEnemySpawnTimer_ = 0.0f;
+	}
 }
 
 ///============================================================/// 
@@ -201,6 +222,17 @@ void EnemyManager::Spawn(Vector3 entryPos, Vector3 standbyPos, ObjectData object
 
 }
 
+void EnemyManager::SpawnBombEnemy() {
+
+	//エネミーを生成
+	ObjectManager::GetInstance()->SpawnBombEnemy();
+
+	//エネミーリストに追加
+	bombEnemies_.push_back(ObjectManager::GetInstance()->GetBombEnemies().back());
+
+	bombEnemies_.back()->Initialize(bulletManager_,RandomRangeVector3(bombEnemySpawnOffset_,bombEnemySpawnRange_));
+}
+
 ///=====================================================/// 
 /// 管理している敵オブジェクトの削除処理
 ///=====================================================///
@@ -208,6 +240,18 @@ void EnemyManager::DeleteEnemy() {
 
 	//エネミーの削除
 	enemies_.remove_if([](Enemy* enemy) {
+		if (enemy->GetCanRemove()) {
+			enemy->SetIsRemove(true);
+			return true;
+		}
+		return false;
+		});
+}
+
+void EnemyManager::DeleteBombEnemy() {
+
+	//エネミーの削除
+	bombEnemies_.remove_if([](BombEnemy* enemy) {
 		if (enemy->GetCanRemove()) {
 			enemy->SetIsRemove(true);
 			return true;
@@ -228,4 +272,21 @@ std::list<Enemy*> EnemyManager::GetEnemyList() {
 	}
 
 	return enemyList;
+}
+
+void EnemyManager::ImGui() {
+
+#ifdef _USE_IMGUI
+
+	ImGui::Begin("EnemyManager");
+
+	if (ImGui::Button("Create")) {
+
+		SpawnBombEnemy();
+	}
+
+	ImGui::End();
+
+#endif // _USE_IMGUI
+
 }

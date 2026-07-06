@@ -51,5 +51,7 @@ namespace MyEngine {
 		/// <returns>AABB</returns>
 		AABB GetAABB() const { return aabb_; }
 
+		void SetTransform(Vector3 pos, Vector3 scale);
+
 	};
 }

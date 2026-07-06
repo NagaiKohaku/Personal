@@ -62,12 +62,4 @@ namespace MyEngine {
 		Collider::Draw();
 	}
 
-	///=====================================================/// 
-	/// SphereCollider をコライダーマネージャーから削除
-	///=====================================================///
-	void SphereCollider::Remove() {
-
-		//コライダーマネージャーから削除
-		ColliderManager::GetInstance()->RemoveCollider(this);
-	}
 }

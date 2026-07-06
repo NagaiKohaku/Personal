@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Object/Enemy/Enemy.h>
+#include "Object/Enemy/BombEnemy.h"
 
 #include "3d/Camera/Camera.h"
 
@@ -53,6 +54,8 @@ public:
 	/// </summary>
 	void StartClearUpdate();
 
+	void ImGui();
+
 	///-------------------------------------------/// 
 	/// クラス内処理関数
 	///-------------------------------------------///
@@ -71,10 +74,14 @@ private:
 	/// <param name="objectData">敵の見た目やパラメータを含むオブジェクトデータ</param>
 	void Spawn(MyEngine::Vector3 entryPos, MyEngine::Vector3 standbyPos, ObjectData objectData);
 
+	void SpawnBombEnemy();
+
 	/// <summary>
 	/// 管理している敵オブジェクトの削除処理を行います。
 	/// </summary>
 	void DeleteEnemy();
+
+	void DeleteBombEnemy();
 
 	///-------------------------------------------/// 
 	/// メンバ変数
@@ -99,11 +106,17 @@ private:
 	//エネミーリスト
 	std::list<Enemy*> enemies_;
 
+	std::list<BombEnemy*> bombEnemies_;
+
 	//スポーンタイマー
 	float spawnTimer_;
 
 	//スポーン間隔
 	float spawnInterval_;
+
+	float bombEnemySpawnTimer_ = 0.0f;
+
+	float bombEnemySpawnInterval_ = 5.0f;
 
 	//スポーン最大数
 	uint32_t spawnMaxSize_;
@@ -119,6 +132,10 @@ private:
 
 	//スポーン範囲
 	MyEngine::Vector3 spawnRange_;
+
+	MyEngine::Vector3 bombEnemySpawnOffset_ = { 0.0f,5.0f,1000.0f };
+
+	MyEngine::Vector3 bombEnemySpawnRange_ = { 10.0f,0.0f,0.0f };
 
 	//スポーンフラグ
 	bool isSpawn_;

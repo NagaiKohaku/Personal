@@ -28,8 +28,13 @@ namespace MyEngine {
 	///=====================================================///
 	void ColliderManager::Update() {
 
+		for (auto& collider : colliders_) {
+			collider->Update();
+		}
+
 		//全コライダーの接触判定
 		CheckAllCollision();
+
 	}
 
 	///=====================================================/// 
@@ -81,6 +86,7 @@ namespace MyEngine {
 					//接触相手のタグを登録
 					(*it1)->AddHitTag((*it2)->GetTag());
 					(*it2)->AddHitTag((*it1)->GetTag());
+
 				}
 			}
 		}

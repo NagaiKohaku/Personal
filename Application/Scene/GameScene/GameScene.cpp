@@ -68,7 +68,7 @@ void GameScene::Initialize(MyEngine::EngineContext context) {
 
 	/// === グラウンドマネージャーの生成 === ///
 
-	groundManager_ = std::make_unique<GroundManager>();
+	groundManager_ = GroundManager::GetInstance();
 
 	groundManager_->Initialize();
 
@@ -224,6 +224,12 @@ void GameScene::ImGui() {
 	ImGui::Text("Shift + LeftClick : Move Camera");
 	ImGui::Text("Shift + RightClick : Rotate Camera");
 	ImGui::Text("Shift + MiddleWheel : Move Offset Camera");
+
+	groundManager_->ImGui();
+
+	bulletManager_->ImGui();
+
+	enemyManager_->ImGui();
 
 	//ImGuiの終了
 	ImGui::End();
