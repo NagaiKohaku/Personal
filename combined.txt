@@ -30,7 +30,9 @@
 └── └── └── └── └── BulletManager.h
 └── └── └── ├── Enemy/
 └── └── └── └── ├── EnemyBullet.cpp
-└── └── └── └── └── EnemyBullet.h
+└── └── └── └── ├── EnemyBullet.h
+└── └── └── └── ├── GroundBullet.cpp
+└── └── └── └── └── GroundBullet.h
 └── └── └── └── Player/
 └── └── └──     ├── JetBullet.cpp
 └── └── └──     ├── JetBullet.h
@@ -40,6 +42,8 @@
 └── └── └── ├── FollowCamera.cpp
 └── └── └── └── FollowCamera.h
 └── └── ├── Enemy/
+└── └── └── ├── BombEnemy.cpp
+└── └── └── ├── BombEnemy.h
 └── └── └── ├── Enemy.cpp
 └── └── └── ├── Enemy.h
 └── └── └── ├── EnemyManager.cpp
@@ -59,6 +63,8 @@
 └── └── ├── Ground/
 └── └── └── ├── Building.cpp
 └── └── └── ├── Building.h
+└── └── └── ├── DamageGround.cpp
+└── └── └── ├── DamageGround.h
 └── └── └── ├── Ground.cpp
 └── └── └── ├── Ground.h
 └── └── └── ├── GroundManager.cpp
@@ -2558,6 +2564,8 @@ void BulletBase::Initialize(Vector3 pos, Vector3 direction) {
 	lifeTimeMax_ = GetLifeTime();
 
 	isDead_ = false;
+
+	object_->Update();
 }
 
 ///=====================================================/// 
@@ -2582,9 +2590,6 @@ void BulletBase::Update() {
 
 	//オブジェクトの更新
 	object_->Update();
-
-	//コライダーの更新
-	collider_->Update();
 }
 
 ///=====================================================/// 
@@ -2604,8 +2609,6 @@ void BulletBase::Draw() {
 	//オブジェクトの描画
 	object_->Draw(LayerType::OBJECT);
 
-	//コライダーの描画
-	collider_->Draw();
 }
 
 ///=====================================================/// 
@@ -2650,7 +2653,7 @@ public:
 	/// <summary>
 	/// 更新
 	/// </summary>
-	void Update();
+	virtual void Update();
 
 	/// <summary>
 	/// 座標のみ更新
@@ -2660,7 +2663,7 @@ public:
 	/// <summary>
 	/// 描画
 	/// </summary>
-	void Draw();
+	virtual void Draw();
 
 protected:
 
@@ -2745,6 +2748,9 @@ File Path: Application/Object/Bullet/Core/BulletManager.cpp
 #include <Object/Bullet/Player/JetBullet.h>
 #include <Object/Bullet/Player/TankBullet.h>
 #include <Object/Bullet/Enemy/EnemyBullet.h>
+#include <Object/Bullet/Enemy/GroundBullet.h>
+
+#include <imgui.h>
 
 using namespace MyEngine;
 
@@ -2829,6 +2835,10 @@ std::unique_ptr<BulletBase> BulletManager::CreateBullet(BulletType type) {
 
 		newBullet = std::make_unique<EnemyBullet>();
 		break;
+	case BulletType::GROUND:
+
+		newBullet = std::make_unique<GroundBullet>();
+		break;
 	}
 
 	return std::move(newBullet);
@@ -2850,6 +2860,23 @@ void BulletManager::RemoveBullet() {
 
 		return false;
 		});
+}
+
+void BulletManager::ImGui() {
+
+#ifdef _USE_IMGUI
+
+	ImGui::Begin("BulletManager");
+
+	if (ImGui::Button("Create")) {
+
+		AddBullet(Vector3(2.0f, 30.0f, 200.0f), Vector3(0.0f, -1.0f, -1.0f), BulletType::GROUND);
+	}
+
+	ImGui::End();
+
+#endif // _USE_IMGUI
+
 }
 
 ============================================================
@@ -2877,7 +2904,8 @@ public:
 	enum class BulletType {
 		TANK, //戦車状態の弾
 		JET,  //戦闘機状態の弾
-		ENEMY //敵の弾
+		ENEMY, //敵の弾
+		GROUND
 	};
 
 	///-------------------------------------------/// 
@@ -2909,6 +2937,8 @@ public:
 	/// 新しい弾を生成して管理リストに追加します。
 	/// </summary>
 	void AddBullet(MyEngine::Vector3 pos, MyEngine::Vector3 direction, BulletType type);
+
+	void ImGui();
 
 	///-------------------------------------------/// 
 	/// クラス内処理関数
@@ -3030,6 +3060,138 @@ private:
 	MyEngine::Collider::Tag GetColliderTag() const override { return colliderTag_; }
 
 };
+
+============================================================
+File Path: Application/Object/Bullet/Enemy/GroundBullet.cpp
+============================================================
+#include "GroundBullet.h"
+
+#include "Object/Ground/GroundManager.h"
+
+using namespace MyEngine;
+
+void GroundBullet::Update() {
+
+	timer_ += 1.0f / 60.0f;
+
+	BulletBase::Update();
+
+	if (object_->GetWorldTransform().translate_.y <= 0.0f) {
+
+		CreateDamageGround();
+	}
+
+	if (timer_ >= lifeTime_) {
+
+		isDead_ = true;
+	}
+
+}
+
+void GroundBullet::IsCollision() {
+
+}
+
+void GroundBullet::Draw() {
+
+	BulletBase::Draw();
+
+}
+
+void GroundBullet::CreateDamageGround() {
+
+	if (!beenCreated_) {
+
+		Vector3 hitPos = object_->GetWorldTransform().translate_;
+
+		GroundManager::GetInstance()->CreateDamageGround(hitPos);
+
+		beenCreated_ = true;
+	}
+}
+
+============================================================
+File Path: Application/Object/Bullet/Enemy/GroundBullet.h
+============================================================
+#pragma once
+
+#include <Object/Bullet/Core/BulletBase.h>
+
+#include "3d/Collider/SphereCollider.h"
+
+#include "memory"
+
+class GroundBullet : public BulletBase {
+
+private:
+
+	void Update() override;
+
+	/// <summary>
+	/// 他オブジェクトと接触している場合の処理を行います
+	/// </summary>
+	void IsCollision() override;
+
+	void Draw() override;
+
+private:
+
+	//オブジェクトのサイズ
+	const MyEngine::Vector3 objectSize_ = { 0.5f,0.5f,0.5f };
+
+	//コライダーのサイズ
+	const float colliderSize_ = 0.5f;
+
+	//移動速度
+	const float speed_ = 0.5f;
+
+	//生存時間
+	const float lifeTime_ = 2.0f;
+
+	//コライダーのタグ
+	const MyEngine::Collider::Tag colliderTag_ = MyEngine::Collider::Tag::ENEMYBULLET;
+
+	float timer_ = 0.0f;
+
+	bool beenCreated_ = false;
+
+private:
+
+	void CreateDamageGround();
+
+	/// <summary>
+	/// 基底クラスにオブジェクトのサイズ情報取得させる
+	/// </summary>
+	/// <returns>オブジェクトのサイズ</returns>
+	MyEngine::Vector3 GetObjectSize() const override { return objectSize_; }
+
+	/// <summary>
+	/// 基底クラスにコライダーのサイズ情報取得させる
+	/// </summary>
+	/// <returns>コライダーのサイズ</returns>
+	float GetColliderSize() const override { return colliderSize_; }
+
+	/// <summary>
+	/// 基底クラスに移動速度情報取得させる
+	/// </summary>
+	/// <returns>移動速度</returns>
+	float GetSpeed() const override { return speed_; }
+
+	/// <summary>
+	/// 基底クラスに生存時間情報取得させる
+	/// </summary>
+	/// <returns>生存時間</returns>
+	float GetLifeTime() const override { return lifeTime_; }
+
+	/// <summary>
+	/// 基底クラスにコライダーのタグ情報取得させる
+	/// </summary>
+	/// <returns>コライダーのタグ</returns>
+	MyEngine::Collider::Tag GetColliderTag() const override { return colliderTag_; }
+
+};
+
+
 
 ============================================================
 File Path: Application/Object/Bullet/Player/JetBullet.cpp
@@ -3402,6 +3564,130 @@ private:
 };
 
 ============================================================
+File Path: Application/Object/Enemy/BombEnemy.cpp
+============================================================
+#include "BombEnemy.h"
+
+#include "Object/Manager/ObjectManager.h"
+#include "Object/Bullet/Core/BulletManager.h"
+
+#include <numbers>
+
+using namespace MyEngine;
+
+void BombEnemy::Initialize(BulletManager* bulletPtr, MyEngine::Vector3 pos) {
+
+	bulletManager_ = bulletPtr;
+
+	object_ = std::make_unique<Object3D>();
+
+	object_->Initialize();
+
+	object_->SetModel("Oni");
+
+	object_->GetWorldTransform().translate_ = pos;
+
+	object_->GetWorldTransform().rotate_ = Vector3(0.0f, std::numbers::pi_v<float>, 0.0f);
+
+	object_->TransformUpdate();
+}
+
+void BombEnemy::Update() {
+
+	timer_ += 1.0f / 60.0f;
+
+	object_->GetWorldTransform().translate_.z -= speed_;
+
+	if (timer_ >= coolTime_) {
+
+		if (shootCount_ <= maxCount_) {
+
+			bulletManager_->AddBullet(
+				object_->GetWorldTransform().translate_,
+				Vector3(0.0f, -1.0f, -1.0f),
+				BulletManager::BulletType::GROUND
+			);
+
+			shootCount_++;
+		}
+	}
+
+	if (object_->GetWorldTransform().translate_.z <= -100.0f) {
+		canRemove_ = true;
+	}
+
+	object_->Update();
+}
+
+void BombEnemy::Draw() {
+
+	object_->Draw(LayerType::OBJECT);
+}
+
+============================================================
+File Path: Application/Object/Enemy/BombEnemy.h
+============================================================
+#pragma once
+
+#include "3d/Object/Object3D.h"
+
+class BulletManager;
+
+class BombEnemy {
+
+public:
+
+	void Initialize(BulletManager* bulletPtr, MyEngine::Vector3 pos);
+
+	void Update();
+
+	void Draw();
+
+private:
+
+	std::unique_ptr<MyEngine::Object3D> object_;
+
+	BulletManager* bulletManager_;
+
+	float speed_ = 3.0f;
+
+	float timer_ = 0.0f;
+
+	float coolTime_ = 1.0f;
+
+	int shootCount_ = 0;
+
+	int maxCount_ = 3;
+
+	//削除可能フラグ
+	bool canRemove_;
+
+	//削除中フラグ
+	bool isRemove_;
+
+public:
+
+	/// <summary>
+	/// 削除中フラグのセッター
+	/// </summary>
+	/// <param name="flag">フラグ</param>
+	void SetIsRemove(bool flag) { isRemove_ = flag; }
+
+	/// <summary>
+	/// 削除可能フラグのゲッター
+	/// </summary>
+	/// <returns>フラグ</returns>
+	bool GetCanRemove() { return canRemove_; }
+
+	/// <summary>
+	/// 削除中フラグのゲッター
+	/// </summary>
+	/// <returns>フラグ</returns>
+	bool GetIsRemove() { return isRemove_; }
+
+};
+
+============================================================
 File Path: Application/Object/Enemy/Enemy.cpp
 ============================================================
 #include "Enemy.h"
@@ -3640,9 +3926,6 @@ void Enemy::Draw() {
 
 	//影オブジェクトの描画
 	shadow_->Draw();
-
-	//コライダーの描画
-	collider_->Draw();
 
 	//各エミッターの描画
 	explosiveEmitter_->Draw();
@@ -4170,6 +4453,8 @@ File Path: Application/Object/Enemy/EnemyManager.cpp
 
 #include <Math/Utility/Random.h>
 
+#include <imgui.h>
+
 #include "numbers"
 
 using namespace MyEngine;
@@ -4239,6 +4524,11 @@ void EnemyManager::Update() {
 		//エネミーの更新
 		enemy->Update();
 	}
+
+	for (auto& bombEnemy : bombEnemies_) {
+
+		bombEnemy->Update();
+	}
 }
 
 ///=====================================================/// 
@@ -4262,6 +4552,11 @@ void EnemyManager::Draw() {
 
 		//エネミーの描画
 		enemy->Draw();
+	}
+
+	for (auto& bombEnemy : bombEnemies_) {
+
+		bombEnemy->Draw();
 	}
 }
 
@@ -4293,6 +4588,8 @@ void EnemyManager::SpawnUpdate() {
 
 	//タイマーを進ませる
 	spawnTimer_ += 1.0f / 60.0f;
+
+	bombEnemySpawnTimer_ += 1.0f / 60.0f;
 
 	//スポーン間隔を越えたら
 	if (spawnTimer_ >= spawnInterval_) {
@@ -4328,6 +4625,13 @@ void EnemyManager::SpawnUpdate() {
 		//タイマーのリセット
 		spawnTimer_ = 0.0f;
 	}
+
+	if (bombEnemySpawnTimer_ >= bombEnemySpawnInterval_) {
+
+		SpawnBombEnemy();
+
+		bombEnemySpawnTimer_ = 0.0f;
+	}
 }
 
 ///============================================================/// 
@@ -4361,6 +4665,17 @@ void EnemyManager::Spawn(Vector3 entryPos, Vector3 standbyPos, ObjectData object
 
 }
 
+void EnemyManager::SpawnBombEnemy() {
+
+	//エネミーを生成
+	ObjectManager::GetInstance()->SpawnBombEnemy();
+
+	//エネミーリストに追加
+	bombEnemies_.push_back(ObjectManager::GetInstance()->GetBombEnemies().back());
+
+	bombEnemies_.back()->Initialize(bulletManager_,RandomRangeVector3(bombEnemySpawnOffset_,bombEnemySpawnRange_));
+}
+
 ///=====================================================/// 
 /// 管理している敵オブジェクトの削除処理
 ///=====================================================///
@@ -4368,6 +4683,18 @@ void EnemyManager::DeleteEnemy() {
 
 	//エネミーの削除
 	enemies_.remove_if([](Enemy* enemy) {
+		if (enemy->GetCanRemove()) {
+			enemy->SetIsRemove(true);
+			return true;
+		}
+		return false;
+		});
+}
+
+void EnemyManager::DeleteBombEnemy() {
+
+	//エネミーの削除
+	bombEnemies_.remove_if([](BombEnemy* enemy) {
 		if (enemy->GetCanRemove()) {
 			enemy->SetIsRemove(true);
 			return true;
@@ -4390,12 +4717,30 @@ std::list<Enemy*> EnemyManager::GetEnemyList() {
 	return enemyList;
 }
 
+void EnemyManager::ImGui() {
+
+#ifdef _USE_IMGUI
+
+	ImGui::Begin("EnemyManager");
+
+	if (ImGui::Button("Create")) {
+
+		SpawnBombEnemy();
+	}
+
+	ImGui::End();
+
+#endif // _USE_IMGUI
+
+}
+
 ============================================================
 File Path: Application/Object/Enemy/EnemyManager.h
 ============================================================
 #pragma once
 
 #include <Object/Enemy/Enemy.h>
+#include "Object/Enemy/BombEnemy.h"
 
 #include "3d/Camera/Camera.h"
 
@@ -4448,6 +4793,8 @@ public:
 	/// </summary>
 	void StartClearUpdate();
 
+	void ImGui();
+
 	///-------------------------------------------/// 
 	/// クラス内処理関数
 	///-------------------------------------------///
@@ -4466,10 +4813,14 @@ private:
 	/// <param name="objectData">敵の見た目やパラメータを含むオブジェクトデータ</param>
 	void Spawn(MyEngine::Vector3 entryPos, MyEngine::Vector3 standbyPos, ObjectData objectData);
 
+	void SpawnBombEnemy();
+
 	/// <summary>
 	/// 管理している敵オブジェクトの削除処理を行います。
 	/// </summary>
 	void DeleteEnemy();
+
+	void DeleteBombEnemy();
 
 	///-------------------------------------------/// 
 	/// メンバ変数
@@ -4494,11 +4845,17 @@ private:
 	//エネミーリスト
 	std::list<Enemy*> enemies_;
 
+	std::list<BombEnemy*> bombEnemies_;
+
 	//スポーンタイマー
 	float spawnTimer_;
 
 	//スポーン間隔
 	float spawnInterval_;
+
+	float bombEnemySpawnTimer_ = 0.0f;
+
+	float bombEnemySpawnInterval_ = 5.0f;
 
 	//スポーン最大数
 	uint32_t spawnMaxSize_;
@@ -4514,6 +4871,10 @@ private:
 
 	//スポーン範囲
 	MyEngine::Vector3 spawnRange_;
+
+	MyEngine::Vector3 bombEnemySpawnOffset_ = { 0.0f,5.0f,1000.0f };
+
+	MyEngine::Vector3 bombEnemySpawnRange_ = { 10.0f,0.0f,0.0f };
 
 	//スポーンフラグ
 	bool isSpawn_;
@@ -5215,6 +5576,123 @@ public:
 };
 
 ============================================================
+File Path: Application/Object/Ground/DamageGround.cpp
+============================================================
+#include "DamageGround.h"
+
+using namespace MyEngine;
+
+DamageGround::~DamageGround() {
+
+	collider_->Remove();
+}
+
+void DamageGround::Initialize(Vector3 pos) {
+
+	object_ = std::make_unique<Object3D>();
+
+	object_->Initialize();
+
+	object_->SetModel("Cube");
+
+	object_->GetWorldTransform().scale_ = { 7.0f,0.1f,10.0f };
+
+	Vector3 scale = object_->GetWorldTransform().scale_;
+
+	object_->GetWorldTransform().translate_ = { pos.x,pos.y + scale.y / 2.0f,pos.z };
+
+	object_->GetModel()->SetColor({ 1.0f,0.0f,0.0f,1.0f });
+
+	//生成
+	collider_ = std::make_unique<AABBCollider>();
+
+	//初期化
+	collider_->Initialize(&object_->GetWorldTransform());
+
+	//タグの設定
+	collider_->SetTag(Collider::Tag::ENEMYBULLET);
+
+	//大きさの設定
+	collider_->SetTransform(Vector3(0.0f, 0.0f, 0.0f), Vector3(scale.x / 2.0f, 1.0f, scale.z / 2.0f));
+
+	speed_ = 200.0f;
+
+	deadLine_ = -100.0f;
+
+	isDead_ = false;
+
+	object_->Update();
+}
+
+void DamageGround::Update() {
+
+	if (object_->GetWorldTransform().translate_.z <= deadLine_) {
+		isDead_ = true;
+	}
+
+	object_->GetWorldTransform().translate_.z -= speed_ * 1.0f / 60.0f;
+
+	object_->Update();
+
+}
+
+void DamageGround::TransformUpdate() {
+
+	// オブジェクトの座標のみ更新
+	object_->Update();
+
+}
+
+void DamageGround::Draw() {
+
+	object_->Draw(LayerType::OBJECT);
+}
+
+============================================================
+File Path: Application/Object/Ground/DamageGround.h
+============================================================
+#pragma once
+
+#include <3d/Object/Object3D.h>
+#include <3d/Collider/AABBCollider.h>
+
+#include <Math/Vector/Vector3.h>
+
+#include <vector>
+#include <memory>
+
+class DamageGround {
+
+public:
+
+	~DamageGround();
+
+	void Initialize(MyEngine::Vector3 pos);
+
+	void Update();
+
+	void TransformUpdate();
+
+	void Draw();
+
+	bool GetIsDead() const { return isDead_; }
+
+private:
+
+	std::unique_ptr<MyEngine::Object3D> object_;
+
+	//コライダー
+	std::unique_ptr<MyEngine::AABBCollider> collider_;
+
+	float speed_;
+
+	float deadLine_;
+
+	bool isDead_;
+
+};
+
+============================================================
 File Path: Application/Object/Ground/Ground.cpp
 ============================================================
 #include "Ground.h"
@@ -5224,6 +5702,8 @@ File Path: Application/Object/Ground/Ground.cpp
 #include "3d/Model/Model.h"
 
 #include <Math/Utility/MakeMatrixMath.h>
+
+#include <numbers>
 
 using namespace MyEngine;
 
@@ -5246,7 +5726,7 @@ void Ground::Initialize() {
 	// オブジェクトのスケール設定
 	object_->GetWorldTransform().scale_ = { 200.0f, 1000.0f, 1.0f };
 
-	object_->GetWorldTransform().rotate_ = { 3.14f / 2.0f,0.0f,0.0f };
+	object_->GetWorldTransform().rotate_ = { std::numbers::pi_v<float> / 2.0f,0.0f,0.0f };
 
 	// 環境光係数の設定
 	object_->GetModel()->SetEnvironmentCoefficient(0.0f);
@@ -5352,6 +5832,11 @@ File Path: Application/Object/Ground/GroundManager.cpp
 
 using namespace MyEngine;
 
+GroundManager* GroundManager::GetInstance() {
+	static GroundManager instance;
+	return &instance;
+}
+
 ///=====================================================/// 
 /// 地面と建物群を初期化
 ///=====================================================///
@@ -5369,6 +5854,8 @@ void GroundManager::Initialize() {
 	buildingStartX_ = 30.0f;
 
 	buildingStartZ_ = 1000.0f;
+
+	wallPos_ = { 0.0f,0.0f,1000.0f };
 
 	maxBuildingNum_ = 200;
 
@@ -5388,7 +5875,7 @@ void GroundManager::Initialize() {
 			std::unique_ptr<Building> building = std::make_unique<Building>();
 
 			//建物のスケール計算
-			Vector3 scale = { buildingWidth_,buildingHeight_ + RandomFloat(-buildingRandomRange_,buildingRandomRange_),buildingWidth_};
+			Vector3 scale = { buildingWidth_,buildingHeight_ + RandomFloat(-buildingRandomRange_,buildingRandomRange_),buildingWidth_ };
 
 			//建物の座標計算
 			Vector3 pos = {
@@ -5430,6 +5917,13 @@ void GroundManager::Finalize() {
 ///=====================================================///
 void GroundManager::Update() {
 
+	damageGround_.remove_if([](const std::unique_ptr<DamageGround>& damageGround) {
+		if (damageGround->GetIsDead()) {
+			return true;
+		}
+		return false;
+		});
+
 	//地面の更新
 	ground_->Update();
 
@@ -5443,6 +5937,12 @@ void GroundManager::Update() {
 
 		building->Update();
 	}
+
+	for (auto& damageGround : damageGround_) {
+
+		damageGround->Update();
+	}
+
 }
 
 ///=====================================================/// 
@@ -5457,6 +5957,11 @@ void GroundManager::TransformUpdate() {
 	for (auto& building : building_) {
 
 		building->TransformUpdate();
+	}
+
+	for (auto& damageGround : damageGround_) {
+
+		damageGround->TransformUpdate();
 	}
 }
 
@@ -5473,6 +5978,11 @@ void GroundManager::Draw() {
 
 		building->Draw();
 	}
+
+	for (auto& damageGround : damageGround_) {
+
+		damageGround->Draw();
+	}
 }
 
 ///=====================================================/// 
@@ -5482,20 +5992,19 @@ void GroundManager::ImGui() {
 
 #ifdef _USE_IMGUI
 
-	ImGui::Begin("GroundManager");
-
-	for (auto& building : building_) {
-		ImGui::Text("Pos : (%f, %f, %f)",
-			building->GetWorldTransform().translate_.x,
-			building->GetWorldTransform().translate_.y,
-			building->GetWorldTransform().translate_.z
-		);
-	}
-
-	ImGui::End();
-
 #endif // _USE_IMGUI
 
+}
+
+void GroundManager::CreateDamageGround(MyEngine::Vector3 pos) {
+
+	std::unique_ptr<DamageGround> newDamageGround;
+
+	newDamageGround = std::make_unique<DamageGround>();
+
+	newDamageGround->Initialize(pos);
+
+	damageGround_.push_back(std::move(newDamageGround));
 }
 
 ============================================================
@@ -5505,6 +6014,7 @@ File Path: Application/Object/Ground/GroundManager.h
 
 #include <Object/Ground/Ground.h>
 #include <Object/Ground/Building.h>
+#include <Object/Ground/DamageGround.h>
 
 #include "memory"
 #include "vector"
@@ -5515,6 +6025,8 @@ class GroundManager {
 	/// メンバ関数
 	///-------------------------------------------///
 public:
+
+	static GroundManager* GetInstance();
 
 	/// <summary>
 	/// 地面と建物群を初期化します。
@@ -5546,6 +6058,8 @@ public:
 	/// </summary>
 	void ImGui();
 
+	void CreateDamageGround(MyEngine::Vector3 pos);
+
 	///-------------------------------------------/// 
 	/// メンバ変数
 	///-------------------------------------------///
@@ -5556,6 +6070,8 @@ private:
 
 	//建物オブジェクト
 	std::vector<std::unique_ptr<Building>> building_;
+
+	std::list<std::unique_ptr<DamageGround>> damageGround_;
 
 	//建物の幅
 	float buildingWidth_;
@@ -5577,6 +6093,8 @@ private:
 
 	//建物の最大数
 	int maxBuildingNum_;
+
+	MyEngine::Vector3 wallPos_;
 
 };
 
@@ -5766,6 +6284,7 @@ File Path: Application/Object/Manager/ObjectManager.cpp
 
 #include <Object/Player/Player.h>
 #include <Object/Enemy/Enemy.h>
+#include <Object/Enemy/BombEnemy.h>
 #include <Object/Enemy/EnemyManager.h>
 
 using namespace MyEngine;
@@ -5783,6 +6302,14 @@ void ObjectManager::Update() {
 	//エネミーの削除
 	enemies_.remove_if([](const std::unique_ptr<Enemy>& enemy) {
 		if (enemy->GetIsRemove()) {
+			return true;
+		}
+		return false;
+		});
+
+	//エネミーの削除
+	bombEnemy_.remove_if([](const std::unique_ptr<BombEnemy>& bombEnemy) {
+		if (bombEnemy->GetIsRemove()) {
 			return true;
 		}
 		return false;
@@ -5818,6 +6345,10 @@ void ObjectManager::SpawnEnemy() {
 	enemies_.push_back(std::make_unique<Enemy>());
 }
 
+void ObjectManager::SpawnBombEnemy() {
+	bombEnemy_.push_back(std::make_unique<BombEnemy>());
+}
+
 void ObjectManager::ClearAll() {
 	player_.reset();
 	enemies_.clear();
@@ -5835,6 +6366,18 @@ std::list<Enemy*> ObjectManager::GetEnemies() {
 	return enemyList;
 }
 
+std::list<BombEnemy*> ObjectManager::GetBombEnemies() {
+
+	std::list<BombEnemy*> bombEnemies;
+
+	for (auto& bombEnemy : bombEnemy_) {
+		bombEnemies.push_back(bombEnemy.get());
+	}
+
+	return bombEnemies;
+}
+
+
 ============================================================
 File Path: Application/Object/Manager/ObjectManager.h
 ============================================================
@@ -5845,6 +6388,7 @@ File Path: Application/Object/Manager/ObjectManager.h
 
 class Player;
 class Enemy;
+class BombEnemy;
 class EnemyManager;
 
 class ObjectManager {
@@ -5863,6 +6407,8 @@ public:
 
 	void SpawnEnemy();
 
+	void SpawnBombEnemy();
+
 	void ClearAll();
 
 private:
@@ -5871,6 +6417,8 @@ private:
 
 	std::list<std::unique_ptr<Enemy>> enemies_;
 
+	std::list<std::unique_ptr<BombEnemy>> bombEnemy_;
+
 	int killCount_ = 0;
 
 public:
@@ -5878,6 +6426,8 @@ public:
 	Player* GetPlayer() { return player_.get(); }
 
 	std::list<Enemy*> GetEnemies();
+
+	std::list<BombEnemy*> GetBombEnemies();
 
 	int GetKillCount() { return killCount_; }
 
@@ -6471,9 +7021,6 @@ void Player::Update() {
 	//移動可能であれば
 	if (isMoveActive_) {
 
-		//コライダーの更新
-		collider_->Update();
-
 		//レティクルの更新
 		lockOn_->Update();
 	}
@@ -6520,9 +7067,6 @@ void Player::Draw() {
 
 	//移動可能であれば
 	if (isMoveActive_) {
-
-		//コライダーの描画
-		collider_->Draw();
 
 		//レティクルの描画
 		lockOn_->Draw();
@@ -6659,20 +7203,24 @@ void Player::Attack() {
 ///=====================================================///
 void Player::IsCollision() {
 
+	core_->GetModel()->SetColor({ 1.0f,1.0f,1.0f,1.0f });
+
 	//接触状態であれば
-	if (collider_->GetIsTrigger()) {
+	if (collider_->GetIsCollision()) {
 
 		//接触相手のタグがPLAYERBULLETであれば
 		if (collider_->CheckHitTag(Collider::Tag::ENEMYBULLET)) {
 
-			//移動不可にする
-			isMoveActive_ = false;
+			core_->GetModel()->SetColor({ 1.0f,0.0f,0.0f,1.0f });
 
-			//死亡フラグを立てる
-			isDead_ = true;
+			////移動不可にする
+			//isMoveActive_ = false;
 
-			//死亡時爆発エミッターを発生
-			emitterList_[static_cast<size_t>(EmitterType::EXPLOSIVE)]->Emit();
+			////死亡フラグを立てる
+			//isDead_ = true;
+
+			////死亡時爆発エミッターを発生
+			//emitterList_[static_cast<size_t>(EmitterType::EXPLOSIVE)]->Emit();
 		}
 	}
 
@@ -8770,7 +9318,7 @@ void GameScene::Initialize(MyEngine::EngineContext context) {
 
 	/// === グラウンドマネージャーの生成 === ///
 
-	groundManager_ = std::make_unique<GroundManager>();
+	groundManager_ = GroundManager::GetInstance();
 
 	groundManager_->Initialize();
 
@@ -8927,6 +9475,12 @@ void GameScene::ImGui() {
 	ImGui::Text("Shift + RightClick : Rotate Camera");
 	ImGui::Text("Shift + MiddleWheel : Move Offset Camera");
 
+	groundManager_->ImGui();
+
+	bulletManager_->ImGui();
+
+	enemyManager_->ImGui();
+
 	//ImGuiの終了
 	ImGui::End();
 
@@ -9007,7 +9561,7 @@ private:
 	std::unique_ptr<BulletManager> bulletManager_;
 
 	//グラウンドマネージャー
-	std::unique_ptr<GroundManager> groundManager_;
+	GroundManager* groundManager_;
 
 	//シーンのイベント管理
 	std::unique_ptr<GameSceneProgress> sceneProgress_;
@@ -12556,6 +13110,7 @@ File Path: Engine/3d/Collider/AABBCollider.cpp
 #include "AABBCollider.h"
 
 #include "ColliderManager.h"
+#include "3d/Model/ModelManager.h"
 
 #include "cstdlib"
 
@@ -12587,6 +13142,15 @@ namespace MyEngine {
 			(std::fabsf(aabb_.min.z) + std::fabsf(aabb_.max.z)) / 2.0f
 		};
 
+		//球体モデルを作成
+		ModelManager::GetInstance()->CreateMeshModel("SphereMesh", MeshType::SPHERE, "Resource/Texture/white_128x128.png");
+
+		//デバッグオブジェクトに球体モデルを設定
+		debugObject_->SetModel("SphereMesh");
+
+		//親オブジェクトのワールドトランスフォームとペアレント設定
+		debugObject_->GetWorldTransform().SetParent(&worldTransform_);
+
 		//コライダーマネージャーに登録
 		ColliderManager::GetInstance()->AddCollider(this);
 	}
@@ -12607,6 +13171,21 @@ namespace MyEngine {
 
 		//コライダーの描画
 		Collider::Draw();
+	}
+
+	void AABBCollider::SetTransform(Vector3 pos, Vector3 scale) {
+
+		worldTransform_.translate_ = pos;
+
+		worldTransform_.scale_ = scale;
+
+		Vector3 minScale = { -scale.x,-scale.y,-scale.z };
+
+		Vector3 maxScale = { scale.x,scale.y,scale.z };
+
+		aabb_.min = minScale;
+
+		aabb_.max = maxScale;
 	}
 }
 
@@ -12666,6 +13245,8 @@ namespace MyEngine {
 		/// <returns>AABB</returns>
 		AABB GetAABB() const { return aabb_; }
 
+		void SetTransform(Vector3 pos, Vector3 scale);
+
 	};
 }
 
@@ -12675,6 +13256,7 @@ File Path: Engine/3d/Collider/Collider.cpp
 #include "Collider.h"
 
 #include <Math/Utility/MakeMatrixMath.h>
+#include <3d/Collider/ColliderManager.h>
 
 #include "algorithm"
 
@@ -12701,7 +13283,7 @@ namespace MyEngine {
 		hitTagBefore_.clear();
 
 		//描画フラグの設定
-		isDraw_ = false;
+		isDraw_ = true;
 
 		//アクティブフラグの設定
 		isActive_ = true;
@@ -12797,6 +13379,12 @@ namespace MyEngine {
 		//デバッグオブジェクトの描画
 		debugObject_->Draw();
 	}
+
+	void Collider::Remove() {
+
+		//コライダーマネージャーから削除
+		ColliderManager::GetInstance()->RemoveCollider(this);
+	}
 }
 
 ============================================================
@@ -12861,6 +13449,8 @@ namespace MyEngine {
 		/// Collider の描画を行います。
 		/// </summary>
 		virtual void Draw();
+
+		void Remove();
 
 		///-------------------------------------------/// 
 		/// メンバ変数
@@ -13010,8 +13600,13 @@ namespace MyEngine {
 	///=====================================================///
 	void ColliderManager::Update() {
 
+		for (auto& collider : colliders_) {
+			collider->Update();
+		}
+
 		//全コライダーの接触判定
 		CheckAllCollision();
+
 	}
 
 	///=====================================================/// 
@@ -13063,6 +13658,7 @@ namespace MyEngine {
 					//接触相手のタグを登録
 					(*it1)->AddHitTag((*it2)->GetTag());
 					(*it2)->AddHitTag((*it1)->GetTag());
+
 				}
 			}
 		}
@@ -13389,14 +13985,6 @@ namespace MyEngine {
 		Collider::Draw();
 	}
 
-	///=====================================================/// 
-	/// SphereCollider をコライダーマネージャーから削除
-	///=====================================================///
-	void SphereCollider::Remove() {
-
-		//コライダーマネージャーから削除
-		ColliderManager::GetInstance()->RemoveCollider(this);
-	}
 }
 
 ============================================================
@@ -13437,11 +14025,6 @@ namespace MyEngine {
 		/// SphereCollider を描画します。
 		/// </summary>
 		void Draw() override;
-
-		/// <summary>
-		/// SphereCollider をコライダーマネージャーから削除します。
-		/// </summary>
-		void Remove();
 
 		///-------------------------------------------/// 
 		/// メンバ変数
@@ -23749,7 +24332,7 @@ namespace MyEngine {
 		flash_ = Flash::GetInstance();
 		flash_->Initialize(camera_.get());
 
-		sceneManager_->ChangeScene(SceneManager::SceneType::kTitle);
+		sceneManager_->ChangeScene(SceneManager::SceneType::kGame);
 
 	}
 
@@ -29538,6 +30121,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Application\Object\Enemy\State\EnemyMoveState.cpp" />
     <ClCompile Include="Application\Effect\Manager\EmitterManager.cpp" />
     <ClCompile Include="Application\Scene\GameScene\Event\ClearEvent.cpp" />
+    <ClCompile Include="Application\Object\Ground\DamageGround.cpp" />
+    <ClCompile Include="Application\Object\Enemy\BombEnemy.cpp" />
     <ClCompile Include="Engine\3d\Mesh\CubeMesh.cpp" />
     <ClCompile Include="Engine\3d\Collider\AABBCollider.cpp" />
     <ClCompile Include="Engine\3d\Collider\Collider.cpp" />
@@ -29587,6 +30172,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Application\Scene\GameScene\GameSceneProgress.cpp" />
     <ClCompile Include="Application\Scene\GameScene\Event\GameSceneEventBase.cpp" />
     <ClCompile Include="Application\Scene\GameScene\Event\GameSceneEventFactory.cpp" />
+    <ClCompile Include="Application\Object\Bullet\Enemy\GroundBullet.cpp" />
     <ClCompile Include="main.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Development|x64'">MaxSpeed</Optimization>
       <WholeProgramOptimization Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</WholeProgramOptimization>
@@ -29650,6 +30236,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Application\Effect\Manager\EmitterManager.h" />
     <ClInclude Include="Application\Scene\GameScene\Event\ClearEvent.h" />
     <ClInclude Include="Application\Scene\EngineContext.h" />
+    <ClInclude Include="Application\Object\Ground\DamageGround.h" />
+    <ClInclude Include="Application\Object\Enemy\BombEnemy.h" />
     <ClInclude Include="Engine\3d\Mesh\CubeMesh.h" />
     <ClInclude Include="Engine\3d\Collider\AABBCollider.h" />
     <ClInclude Include="Engine\3d\Collider\Collider.h" />
@@ -29748,6 +30336,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Application\Scene\GameScene\Event\GameSceneEventBase.h" />
     <ClInclude Include="Application\Scene\GameScene\Event\GameSceneEventFactory.h" />
     <ClInclude Include="Engine\Base\View\ViewManagerBase.h" />
+    <ClInclude Include="Application\Object\Bullet\Enemy\GroundBullet.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Application\LevelEditor\Python\add_collider.py">
@@ -30303,6 +30892,9 @@ File Path: Engine.vcxproj.filters
     <ClCompile Include="Engine\Base\Framework.cpp" />
     <ClCompile Include="Engine\Base\Game.cpp" />
     <ClCompile Include="Engine\Base\View\ViewManagerBase.cpp" />
+    <ClCompile Include="Application\Object\Ground\DamageGround.cpp" />
+    <ClCompile Include="Application\Object\Bullet\Enemy\GroundBullet.cpp" />
+    <ClCompile Include="Application\Object\Enemy\BombEnemy.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application\Object\Camera\FollowCamera.h">
@@ -30630,6 +31222,9 @@ File Path: Engine.vcxproj.filters
     <ClInclude Include="Engine\Base\Game.h" />
     <ClInclude Include="Engine\Base\View\ViewManagerBase.h" />
     <ClInclude Include="Application\Scene\EngineContext.h" />
+    <ClInclude Include="Application\Object\Ground\DamageGround.h" />
+    <ClInclude Include="Application\Object\Bullet\Enemy\GroundBullet.h" />
+    <ClInclude Include="Application\Object\Enemy\BombEnemy.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resource\Shader\DebugObject.hlsli">
