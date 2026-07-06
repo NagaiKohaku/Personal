@@ -355,6 +355,9 @@
     <ClCompile Include="Engine\Base\Framework.cpp" />
     <ClCompile Include="Engine\Base\Game.cpp" />
     <ClCompile Include="Engine\Base\View\ViewManagerBase.cpp" />
+    <ClCompile Include="Application\Object\Ground\DamageGround.cpp" />
+    <ClCompile Include="Application\Object\Bullet\Enemy\GroundBullet.cpp" />
+    <ClCompile Include="Application\Object\Enemy\BombEnemy.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application\Object\Camera\FollowCamera.h">
@@ -682,6 +685,9 @@
     <ClInclude Include="Engine\Base\Game.h" />
     <ClInclude Include="Engine\Base\View\ViewManagerBase.h" />
     <ClInclude Include="Application\Scene\EngineContext.h" />
+    <ClInclude Include="Application\Object\Ground\DamageGround.h" />
+    <ClInclude Include="Application\Object\Bullet\Enemy\GroundBullet.h" />
+    <ClInclude Include="Application\Object\Enemy\BombEnemy.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resource\Shader\DebugObject.hlsli">

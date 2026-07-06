@@ -28,7 +28,7 @@ public:
 	/// <summary>
 	/// 更新
 	/// </summary>
-	void Update();
+	virtual void Update();
 
 	/// <summary>
 	/// 座標のみ更新
@@ -38,7 +38,7 @@ public:
 	/// <summary>
 	/// 描画
 	/// </summary>
-	void Draw();
+	virtual void Draw();
 
 protected:
 

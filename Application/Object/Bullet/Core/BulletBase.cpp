@@ -59,6 +59,8 @@ void BulletBase::Initialize(Vector3 pos, Vector3 direction) {
 	lifeTimeMax_ = GetLifeTime();
 
 	isDead_ = false;
+
+	object_->Update();
 }
 
 ///=====================================================/// 
@@ -83,9 +85,6 @@ void BulletBase::Update() {
 
 	//オブジェクトの更新
 	object_->Update();
-
-	//コライダーの更新
-	collider_->Update();
 }
 
 ///=====================================================/// 
@@ -105,8 +104,6 @@ void BulletBase::Draw() {
 	//オブジェクトの描画
 	object_->Draw(LayerType::OBJECT);
 
-	//コライダーの描画
-	collider_->Draw();
 }
 
 ///=====================================================/// 

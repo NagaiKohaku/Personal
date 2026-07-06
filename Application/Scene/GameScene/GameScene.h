@@ -67,7 +67,7 @@ private:
 	std::unique_ptr<BulletManager> bulletManager_;
 
 	//グラウンドマネージャー
-	std::unique_ptr<GroundManager> groundManager_;
+	GroundManager* groundManager_;
 
 	//シーンのイベント管理
 	std::unique_ptr<GameSceneProgress> sceneProgress_;

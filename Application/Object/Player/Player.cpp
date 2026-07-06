@@ -186,9 +186,6 @@ void Player::Update() {
 	//移動可能であれば
 	if (isMoveActive_) {
 
-		//コライダーの更新
-		collider_->Update();
-
 		//レティクルの更新
 		lockOn_->Update();
 	}
@@ -235,9 +232,6 @@ void Player::Draw() {
 
 	//移動可能であれば
 	if (isMoveActive_) {
-
-		//コライダーの描画
-		collider_->Draw();
 
 		//レティクルの描画
 		lockOn_->Draw();
@@ -374,20 +368,24 @@ void Player::Attack() {
 ///=====================================================///
 void Player::IsCollision() {
 
+	core_->GetModel()->SetColor({ 1.0f,1.0f,1.0f,1.0f });
+
 	//接触状態であれば
-	if (collider_->GetIsTrigger()) {
+	if (collider_->GetIsCollision()) {
 
 		//接触相手のタグがPLAYERBULLETであれば
 		if (collider_->CheckHitTag(Collider::Tag::ENEMYBULLET)) {
 
-			//移動不可にする
-			isMoveActive_ = false;
+			core_->GetModel()->SetColor({ 1.0f,0.0f,0.0f,1.0f });
 
-			//死亡フラグを立てる
-			isDead_ = true;
+			////移動不可にする
+			//isMoveActive_ = false;
 
-			//死亡時爆発エミッターを発生
-			emitterList_[static_cast<size_t>(EmitterType::EXPLOSIVE)]->Emit();
+			////死亡フラグを立てる
+			//isDead_ = true;
+
+			////死亡時爆発エミッターを発生
+			//emitterList_[static_cast<size_t>(EmitterType::EXPLOSIVE)]->Emit();
 		}
 	}
 

@@ -1,6 +1,7 @@
 #include "AABBCollider.h"
 
 #include "ColliderManager.h"
+#include "3d/Model/ModelManager.h"
 
 #include "cstdlib"
 
@@ -32,6 +33,15 @@ namespace MyEngine {
 			(std::fabsf(aabb_.min.z) + std::fabsf(aabb_.max.z)) / 2.0f
 		};
 
+		//球体モデルを作成
+		ModelManager::GetInstance()->CreateMeshModel("SphereMesh", MeshType::SPHERE, "Resource/Texture/white_128x128.png");
+
+		//デバッグオブジェクトに球体モデルを設定
+		debugObject_->SetModel("SphereMesh");
+
+		//親オブジェクトのワールドトランスフォームとペアレント設定
+		debugObject_->GetWorldTransform().SetParent(&worldTransform_);
+
 		//コライダーマネージャーに登録
 		ColliderManager::GetInstance()->AddCollider(this);
 	}
@@ -52,5 +62,20 @@ namespace MyEngine {
 
 		//コライダーの描画
 		Collider::Draw();
+	}
+
+	void AABBCollider::SetTransform(Vector3 pos, Vector3 scale) {
+
+		worldTransform_.translate_ = pos;
+
+		worldTransform_.scale_ = scale;
+
+		Vector3 minScale = { -scale.x,-scale.y,-scale.z };
+
+		Vector3 maxScale = { scale.x,scale.y,scale.z };
+
+		aabb_.min = minScale;
+
+		aabb_.max = maxScale;
 	}
 }

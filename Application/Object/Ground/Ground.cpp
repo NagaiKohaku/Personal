@@ -6,6 +6,8 @@
 
 #include <Math/Utility/MakeMatrixMath.h>
 
+#include <numbers>
+
 using namespace MyEngine;
 
 void Ground::Initialize() {
@@ -27,7 +29,7 @@ void Ground::Initialize() {
 	// オブジェクトのスケール設定
 	object_->GetWorldTransform().scale_ = { 200.0f, 1000.0f, 1.0f };
 
-	object_->GetWorldTransform().rotate_ = { 3.14f / 2.0f,0.0f,0.0f };
+	object_->GetWorldTransform().rotate_ = { std::numbers::pi_v<float> / 2.0f,0.0f,0.0f };
 
 	// 環境光係数の設定
 	object_->GetModel()->SetEnvironmentCoefficient(0.0f);

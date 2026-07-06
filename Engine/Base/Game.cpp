@@ -41,7 +41,7 @@ namespace MyEngine {
 		flash_ = Flash::GetInstance();
 		flash_->Initialize(camera_.get());
 
-		sceneManager_->ChangeScene(SceneManager::SceneType::kTitle);
+		sceneManager_->ChangeScene(SceneManager::SceneType::kGame);
 
 	}
 

@@ -235,9 +235,6 @@ void Enemy::Draw() {
 	//影オブジェクトの描画
 	shadow_->Draw();
 
-	//コライダーの描画
-	collider_->Draw();
-
 	//各エミッターの描画
 	explosiveEmitter_->Draw();
 	clearExplosiveEmitter_->Draw();

@@ -11,6 +11,11 @@
 
 using namespace MyEngine;
 
+GroundManager* GroundManager::GetInstance() {
+	static GroundManager instance;
+	return &instance;
+}
+
 ///=====================================================/// 
 /// 地面と建物群を初期化
 ///=====================================================///
@@ -28,6 +33,8 @@ void GroundManager::Initialize() {
 	buildingStartX_ = 30.0f;
 
 	buildingStartZ_ = 1000.0f;
+
+	wallPos_ = { 0.0f,0.0f,1000.0f };
 
 	maxBuildingNum_ = 200;
 
@@ -47,7 +54,7 @@ void GroundManager::Initialize() {
 			std::unique_ptr<Building> building = std::make_unique<Building>();
 
 			//建物のスケール計算
-			Vector3 scale = { buildingWidth_,buildingHeight_ + RandomFloat(-buildingRandomRange_,buildingRandomRange_),buildingWidth_};
+			Vector3 scale = { buildingWidth_,buildingHeight_ + RandomFloat(-buildingRandomRange_,buildingRandomRange_),buildingWidth_ };
 
 			//建物の座標計算
 			Vector3 pos = {
@@ -89,6 +96,13 @@ void GroundManager::Finalize() {
 ///=====================================================///
 void GroundManager::Update() {
 
+	damageGround_.remove_if([](const std::unique_ptr<DamageGround>& damageGround) {
+		if (damageGround->GetIsDead()) {
+			return true;
+		}
+		return false;
+		});
+
 	//地面の更新
 	ground_->Update();
 
@@ -102,6 +116,12 @@ void GroundManager::Update() {
 
 		building->Update();
 	}
+
+	for (auto& damageGround : damageGround_) {
+
+		damageGround->Update();
+	}
+
 }
 
 ///=====================================================/// 
@@ -116,6 +136,11 @@ void GroundManager::TransformUpdate() {
 	for (auto& building : building_) {
 
 		building->TransformUpdate();
+	}
+
+	for (auto& damageGround : damageGround_) {
+
+		damageGround->TransformUpdate();
 	}
 }
 
@@ -132,6 +157,11 @@ void GroundManager::Draw() {
 
 		building->Draw();
 	}
+
+	for (auto& damageGround : damageGround_) {
+
+		damageGround->Draw();
+	}
 }
 
 ///=====================================================/// 
@@ -141,18 +171,17 @@ void GroundManager::ImGui() {
 
 #ifdef _USE_IMGUI
 
-	ImGui::Begin("GroundManager");
-
-	for (auto& building : building_) {
-		ImGui::Text("Pos : (%f, %f, %f)",
-			building->GetWorldTransform().translate_.x,
-			building->GetWorldTransform().translate_.y,
-			building->GetWorldTransform().translate_.z
-		);
-	}
-
-	ImGui::End();
-
 #endif // _USE_IMGUI
 
+}
+
+void GroundManager::CreateDamageGround(MyEngine::Vector3 pos) {
+
+	std::unique_ptr<DamageGround> newDamageGround;
+
+	newDamageGround = std::make_unique<DamageGround>();
+
+	newDamageGround->Initialize(pos);
+
+	damageGround_.push_back(std::move(newDamageGround));
 }

@@ -168,6 +168,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Application\Object\Enemy\State\EnemyMoveState.cpp" />
     <ClCompile Include="Application\Effect\Manager\EmitterManager.cpp" />
     <ClCompile Include="Application\Scene\GameScene\Event\ClearEvent.cpp" />
+    <ClCompile Include="Application\Object\Ground\DamageGround.cpp" />
+    <ClCompile Include="Application\Object\Enemy\BombEnemy.cpp" />
     <ClCompile Include="Engine\3d\Mesh\CubeMesh.cpp" />
     <ClCompile Include="Engine\3d\Collider\AABBCollider.cpp" />
     <ClCompile Include="Engine\3d\Collider\Collider.cpp" />
@@ -217,6 +219,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Application\Scene\GameScene\GameSceneProgress.cpp" />
     <ClCompile Include="Application\Scene\GameScene\Event\GameSceneEventBase.cpp" />
     <ClCompile Include="Application\Scene\GameScene\Event\GameSceneEventFactory.cpp" />
+    <ClCompile Include="Application\Object\Bullet\Enemy\GroundBullet.cpp" />
     <ClCompile Include="main.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Development|x64'">MaxSpeed</Optimization>
       <WholeProgramOptimization Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</WholeProgramOptimization>
@@ -280,6 +283,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Application\Effect\Manager\EmitterManager.h" />
     <ClInclude Include="Application\Scene\GameScene\Event\ClearEvent.h" />
     <ClInclude Include="Application\Scene\EngineContext.h" />
+    <ClInclude Include="Application\Object\Ground\DamageGround.h" />
+    <ClInclude Include="Application\Object\Enemy\BombEnemy.h" />
     <ClInclude Include="Engine\3d\Mesh\CubeMesh.h" />
     <ClInclude Include="Engine\3d\Collider\AABBCollider.h" />
     <ClInclude Include="Engine\3d\Collider\Collider.h" />
@@ -378,6 +383,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Application\Scene\GameScene\Event\GameSceneEventBase.h" />
     <ClInclude Include="Application\Scene\GameScene\Event\GameSceneEventFactory.h" />
     <ClInclude Include="Engine\Base\View\ViewManagerBase.h" />
+    <ClInclude Include="Application\Object\Bullet\Enemy\GroundBullet.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Application\LevelEditor\Python\add_collider.py">

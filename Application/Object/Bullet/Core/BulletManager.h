@@ -20,7 +20,8 @@ public:
 	enum class BulletType {
 		TANK, //戦車状態の弾
 		JET,  //戦闘機状態の弾
-		ENEMY //敵の弾
+		ENEMY, //敵の弾
+		GROUND
 	};
 
 	///-------------------------------------------/// 
@@ -52,6 +53,8 @@ public:
 	/// 新しい弾を生成して管理リストに追加します。
 	/// </summary>
 	void AddBullet(MyEngine::Vector3 pos, MyEngine::Vector3 direction, BulletType type);
+
+	void ImGui();
 
 	///-------------------------------------------/// 
 	/// クラス内処理関数

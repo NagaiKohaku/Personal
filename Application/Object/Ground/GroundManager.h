@@ -2,6 +2,7 @@
 
 #include <Object/Ground/Ground.h>
 #include <Object/Ground/Building.h>
+#include <Object/Ground/DamageGround.h>
 
 #include "memory"
 #include "vector"
@@ -12,6 +13,8 @@ class GroundManager {
 	/// メンバ関数
 	///-------------------------------------------///
 public:
+
+	static GroundManager* GetInstance();
 
 	/// <summary>
 	/// 地面と建物群を初期化します。
@@ -43,6 +46,8 @@ public:
 	/// </summary>
 	void ImGui();
 
+	void CreateDamageGround(MyEngine::Vector3 pos);
+
 	///-------------------------------------------/// 
 	/// メンバ変数
 	///-------------------------------------------///
@@ -53,6 +58,8 @@ private:
 
 	//建物オブジェクト
 	std::vector<std::unique_ptr<Building>> building_;
+
+	std::list<std::unique_ptr<DamageGround>> damageGround_;
 
 	//建物の幅
 	float buildingWidth_;
@@ -74,5 +81,7 @@ private:
 
 	//建物の最大数
 	int maxBuildingNum_;
+
+	MyEngine::Vector3 wallPos_;
 
 };

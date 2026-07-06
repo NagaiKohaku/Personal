@@ -34,11 +34,6 @@ namespace MyEngine {
 		/// </summary>
 		void Draw() override;
 
-		/// <summary>
-		/// SphereCollider をコライダーマネージャーから削除します。
-		/// </summary>
-		void Remove();
-
 		///-------------------------------------------/// 
 		/// メンバ変数
 		///-------------------------------------------///

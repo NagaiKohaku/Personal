@@ -3,6 +3,9 @@
 #include <Object/Bullet/Player/JetBullet.h>
 #include <Object/Bullet/Player/TankBullet.h>
 #include <Object/Bullet/Enemy/EnemyBullet.h>
+#include <Object/Bullet/Enemy/GroundBullet.h>
+
+#include <imgui.h>
 
 using namespace MyEngine;
 
@@ -87,6 +90,10 @@ std::unique_ptr<BulletBase> BulletManager::CreateBullet(BulletType type) {
 
 		newBullet = std::make_unique<EnemyBullet>();
 		break;
+	case BulletType::GROUND:
+
+		newBullet = std::make_unique<GroundBullet>();
+		break;
 	}
 
 	return std::move(newBullet);
@@ -108,4 +115,21 @@ void BulletManager::RemoveBullet() {
 
 		return false;
 		});
+}
+
+void BulletManager::ImGui() {
+
+#ifdef _USE_IMGUI
+
+	ImGui::Begin("BulletManager");
+
+	if (ImGui::Button("Create")) {
+
+		AddBullet(Vector3(2.0f, 30.0f, 200.0f), Vector3(0.0f, -1.0f, -1.0f), BulletType::GROUND);
+	}
+
+	ImGui::End();
+
+#endif // _USE_IMGUI
+
 }
