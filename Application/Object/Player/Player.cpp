@@ -156,6 +156,14 @@ void Player::Update() {
 		Move();
 	}
 
+	if (damageCoolTimer_ > 0.0f) {
+
+		damageCoolTimer_ -= 1.0f / 60.0f;
+	} else {
+
+		damageCoolTimer_ = 0.0f;
+	}
+
 	//移動可能であれば
 	if (isMoveActive_) {
 
@@ -325,34 +333,37 @@ void Player::Move() {
 	//移動量をリセット
 	inputDirection_ = { 0.0f,0.0f,0.0f };
 
-	if (isMoveActive_) {
+	if (damageCoolTimer_ == 0.0f) {
 
-		//Wキーが押されたら上方向に移動
-		if (Input::GetInstance()->isPushKey(DIK_W)) {
+		if (isMoveActive_) {
 
-			inputDirection_.y += 1.0f;
-		}
+			//Wキーが押されたら上方向に移動
+			if (Input::GetInstance()->isPushKey(DIK_W)) {
 
-		//Sキーが押されたら下方向に移動
-		if (Input::GetInstance()->isPushKey(DIK_S)) {
+				inputDirection_.y += 1.0f;
+			}
 
-			inputDirection_.y -= 1.0f;
-		}
+			//Sキーが押されたら下方向に移動
+			if (Input::GetInstance()->isPushKey(DIK_S)) {
 
-		//Aキーが押されたら左方向に移動
-		if (Input::GetInstance()->isPushKey(DIK_A)) {
+				inputDirection_.y -= 1.0f;
+			}
 
-			inputDirection_.x -= 1.0f;
-		}
+			//Aキーが押されたら左方向に移動
+			if (Input::GetInstance()->isPushKey(DIK_A)) {
 
-		//Dキーが押されたら右方向に移動
-		if (Input::GetInstance()->isPushKey(DIK_D)) {
+				inputDirection_.x -= 1.0f;
+			}
 
-			inputDirection_.x += 1.0f;
+			//Dキーが押されたら右方向に移動
+			if (Input::GetInstance()->isPushKey(DIK_D)) {
+
+				inputDirection_.x += 1.0f;
+			}
 		}
 	}
 
-	movementState_->Update(*this);
+	movementState_->Update(this);
 }
 
 ///=====================================================/// 
@@ -373,22 +384,31 @@ void Player::IsCollision() {
 	//接触状態であれば
 	if (collider_->GetIsCollision()) {
 
-		//接触相手のタグがPLAYERBULLETであれば
-		if (collider_->CheckHitTag(Collider::Tag::ENEMYBULLET)) {
+		if (damageCoolTimer_ == 0.0f) {
 
-			core_->GetModel()->SetColor({ 1.0f,0.0f,0.0f,1.0f });
+			//接触相手のタグがPLAYERBULLETであれば
+			if (collider_->CheckHitTag(Collider::Tag::ENEMYBULLET)) {
 
-			////移動不可にする
-			//isMoveActive_ = false;
+				core_->GetModel()->SetColor({ 1.0f,0.0f,0.0f,1.0f });
 
-			////死亡フラグを立てる
-			//isDead_ = true;
+				hp_--;
 
-			////死亡時爆発エミッターを発生
-			//emitterList_[static_cast<size_t>(EmitterType::EXPLOSIVE)]->Emit();
+				damageCoolTimer_ = damageCoolTimeMax_;
+
+				if (hp_ <= 0) {
+
+					//移動不可にする
+					isMoveActive_ = false;
+
+					//死亡フラグを立てる
+					isDead_ = true;
+
+					//死亡時爆発エミッターを発生
+					emitterList_[static_cast<size_t>(EmitterType::EXPLOSIVE)]->Emit();
+				}
+			}
 		}
 	}
-
 }
 
 ///=====================================================/// 

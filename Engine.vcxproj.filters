@@ -358,6 +358,7 @@
     <ClCompile Include="Application\Object\Ground\DamageGround.cpp" />
     <ClCompile Include="Application\Object\Bullet\Enemy\GroundBullet.cpp" />
     <ClCompile Include="Application\Object\Enemy\BombEnemy.cpp" />
+    <ClCompile Include="Application\Object\Player\State\MovementState\MovementState.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application\Object\Camera\FollowCamera.h">

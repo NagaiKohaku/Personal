@@ -10,7 +10,7 @@ public:
 
 	void Enter() override;
 
-	void Update(Player& player) override;
+	void Update(Player* player) override;
 
 private:
 
