@@ -22,11 +22,11 @@ void TankAttackState::Update(Player& player) {
 
 	attackTimer_ += 1.0f / 60.0f;
 
+	//ロックオンの更新
+	player.UpdateLockOn(lockOnRange_);
+
 	//タイマーが攻撃間隔を超えたら
 	if (attackTimer_ >= attackInterval_) {
-
-		//ロックオンの更新
-		player.UpdateLockOn(lockOnRange_);
 
 		//スペースキーが押されていたら
 		if (Input::GetInstance()->isPushKey(DIK_SPACE)) {
