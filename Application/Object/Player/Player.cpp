@@ -158,8 +158,20 @@ void Player::Update() {
 
 	if (damageCoolTimer_ > 0.0f) {
 
+		core_->GetModel()->SetColor({ 1.0f,0.0f,0.0f,1.0f });
+
+		leftWing_->GetModel()->SetColor({ 1.0f,0.0f,0.0f,1.0f });
+
+		rightWing_->GetModel()->SetColor({ 1.0f,0.0f,0.0f,1.0f });
+
 		damageCoolTimer_ -= 1.0f / 60.0f;
 	} else {
+
+		core_->GetModel()->SetColor({ 1.0f,1.0f,1.0f,1.0f });
+
+		leftWing_->GetModel()->SetColor({ 1.0f,1.0f,1.0f,1.0f });
+
+		rightWing_->GetModel()->SetColor({ 1.0f,1.0f,1.0f,1.0f });
 
 		damageCoolTimer_ = 0.0f;
 	}
@@ -379,8 +391,6 @@ void Player::Attack() {
 ///=====================================================///
 void Player::IsCollision() {
 
-	core_->GetModel()->SetColor({ 1.0f,1.0f,1.0f,1.0f });
-
 	//接触状態であれば
 	if (collider_->GetIsCollision()) {
 
@@ -389,11 +399,13 @@ void Player::IsCollision() {
 			//接触相手のタグがPLAYERBULLETであれば
 			if (collider_->CheckHitTag(Collider::Tag::ENEMYBULLET)) {
 
-				core_->GetModel()->SetColor({ 1.0f,0.0f,0.0f,1.0f });
-
 				hp_--;
 
 				damageCoolTimer_ = damageCoolTimeMax_;
+
+				damagePos_ = core_->GetWorldTransform().translate_;
+
+				Shake::GetInstance()->Start(0.5f, 1.0f);
 
 				if (hp_ <= 0) {
 

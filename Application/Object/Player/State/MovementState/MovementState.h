@@ -20,6 +20,8 @@ public:
 
 	virtual void RightWingMoveUpdate();
 
+	MyEngine::Vector3 KnockBack();
+
 protected:
 
 	Player* player_;
@@ -53,5 +55,7 @@ protected:
 	MyEngine::Vector3 movePos_ = { 0.0f,0.0f,0.0f };
 
 	MyEngine::Vector3 moveRotate_ = { 0.0f,0.0f,0.0f };
+
+	MyEngine::Vector3 knockBackPower_ = { 0.0f, 3.0f, -10.0f };
 
 };

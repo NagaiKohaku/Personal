@@ -16,13 +16,19 @@ void MovementState::Update(Player* player) {
 
 	Vector3 velocity = player->GetInputDirection() * moveSpeed_;
 
-	movePos_ = player->GetCoreWorldTransform().translate_ + velocity;
+	if (player_->GetDamageCoolTime() > 0.0f) {
 
-	movePos_ = {
-		std::clamp(movePos_.x,initialPos_.x - moveRange_.x,initialPos_.x + moveRange_.x),
-		std::clamp(movePos_.y,initialPos_.y - moveRange_.y,initialPos_.y + moveRange_.y),
-		std::clamp(movePos_.z,initialPos_.z - moveRange_.z,initialPos_.z + moveRange_.z),
-	};
+		movePos_ = KnockBack();
+	} else {
+
+		movePos_ = player->GetCoreWorldTransform().translate_ + velocity;
+
+		movePos_ = {
+			std::clamp(movePos_.x,initialPos_.x - moveRange_.x,initialPos_.x + moveRange_.x),
+			std::clamp(movePos_.y,initialPos_.y - moveRange_.y,initialPos_.y + moveRange_.y),
+			std::clamp(movePos_.z,initialPos_.z - moveRange_.z,initialPos_.z + moveRange_.z),
+		};
+	}
 
 	moveRotate_ = {
 		-Normalize(velocity).y,
@@ -91,4 +97,9 @@ void MovementState::RightWingMoveUpdate() {
 	player_->SetRightWingWorldTransform(rightWingWT);
 
 	player_->SetRightTrailWorldTransform(rightTrailWT);
+}
+
+Vector3 MovementState::KnockBack() {
+
+	return EaseIn(player_->GetDamagePos(), player_->GetDamagePos() + knockBackPower_, player_->GetDamageCoolTime(), 2.0f);
 }

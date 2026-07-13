@@ -167,11 +167,13 @@ private:
 	//破壊フラグ
 	bool isDestroy_;
 
-	int hp_ = 1000;
+	int hp_ = 3;
 
 	float damageCoolTimer_ = 0.0f;
 
 	float damageCoolTimeMax_ = 0.3f;
+
+	MyEngine::Vector3 damagePos_;
 
 	///-------------------------------------------///
 	/// ゲッター・セッター
@@ -217,6 +219,10 @@ public:
 	float GetAttackTimeRatio() {
 		return attackState_->GetAttackTimer() / attackState_->GetAttackInterval();
 	}
+
+	float GetDamageCoolTime() const { return damageCoolTimer_ / damageCoolTimeMax_; }
+
+	MyEngine::Vector3 GetDamagePos() const { return damagePos_; }
 
 	/// <summary>
 	/// 座標を設定
