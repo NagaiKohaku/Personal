@@ -91,6 +91,7 @@
 └── └── └──     └── MovementState/
 └── └── └──         ├── JetMoveState.cpp
 └── └── └──         ├── JetMoveState.h
+└── └── └──         ├── MovementState.cpp
 └── └── └──         ├── MovementState.h
 └── └── └──         ├── TankMoveState.cpp
 └── └── └──         └── TankMoveState.h
@@ -6991,6 +6992,26 @@ void Player::Update() {
 		Move();
 	}
 
+	if (damageCoolTimer_ > 0.0f) {
+
+		core_->GetModel()->SetColor({ 1.0f,0.0f,0.0f,1.0f });
+
+		leftWing_->GetModel()->SetColor({ 1.0f,0.0f,0.0f,1.0f });
+
+		rightWing_->GetModel()->SetColor({ 1.0f,0.0f,0.0f,1.0f });
+
+		damageCoolTimer_ -= 1.0f / 60.0f;
+	} else {
+
+		core_->GetModel()->SetColor({ 1.0f,1.0f,1.0f,1.0f });
+
+		leftWing_->GetModel()->SetColor({ 1.0f,1.0f,1.0f,1.0f });
+
+		rightWing_->GetModel()->SetColor({ 1.0f,1.0f,1.0f,1.0f });
+
+		damageCoolTimer_ = 0.0f;
+	}
+
 	//移動可能であれば
 	if (isMoveActive_) {
 
@@ -7160,34 +7181,37 @@ void Player::Move() {
 	//移動量をリセット
 	inputDirection_ = { 0.0f,0.0f,0.0f };
 
-	if (isMoveActive_) {
+	if (damageCoolTimer_ == 0.0f) {
 
-		//Wキーが押されたら上方向に移動
-		if (Input::GetInstance()->isPushKey(DIK_W)) {
+		if (isMoveActive_) {
 
-			inputDirection_.y += 1.0f;
-		}
+			//Wキーが押されたら上方向に移動
+			if (Input::GetInstance()->isPushKey(DIK_W)) {
 
-		//Sキーが押されたら下方向に移動
-		if (Input::GetInstance()->isPushKey(DIK_S)) {
+				inputDirection_.y += 1.0f;
+			}
 
-			inputDirection_.y -= 1.0f;
-		}
+			//Sキーが押されたら下方向に移動
+			if (Input::GetInstance()->isPushKey(DIK_S)) {
 
-		//Aキーが押されたら左方向に移動
-		if (Input::GetInstance()->isPushKey(DIK_A)) {
+				inputDirection_.y -= 1.0f;
+			}
 
-			inputDirection_.x -= 1.0f;
-		}
+			//Aキーが押されたら左方向に移動
+			if (Input::GetInstance()->isPushKey(DIK_A)) {
 
-		//Dキーが押されたら右方向に移動
-		if (Input::GetInstance()->isPushKey(DIK_D)) {
+				inputDirection_.x -= 1.0f;
+			}
 
-			inputDirection_.x += 1.0f;
+			//Dキーが押されたら右方向に移動
+			if (Input::GetInstance()->isPushKey(DIK_D)) {
+
+				inputDirection_.x += 1.0f;
+			}
 		}
 	}
 
-	movementState_->Update(*this);
+	movementState_->Update(this);
 }
 
 ///=====================================================/// 
@@ -7203,27 +7227,36 @@ void Player::Attack() {
 ///=====================================================///
 void Player::IsCollision() {
 
-	core_->GetModel()->SetColor({ 1.0f,1.0f,1.0f,1.0f });
-
 	//接触状態であれば
 	if (collider_->GetIsCollision()) {
 
-		//接触相手のタグがPLAYERBULLETであれば
-		if (collider_->CheckHitTag(Collider::Tag::ENEMYBULLET)) {
+		if (damageCoolTimer_ == 0.0f) {
 
-			core_->GetModel()->SetColor({ 1.0f,0.0f,0.0f,1.0f });
+			//接触相手のタグがPLAYERBULLETであれば
+			if (collider_->CheckHitTag(Collider::Tag::ENEMYBULLET)) {
 
-			////移動不可にする
-			//isMoveActive_ = false;
+				hp_--;
 
-			////死亡フラグを立てる
-			//isDead_ = true;
+				damageCoolTimer_ = damageCoolTimeMax_;
 
-			////死亡時爆発エミッターを発生
-			//emitterList_[static_cast<size_t>(EmitterType::EXPLOSIVE)]->Emit();
+				damagePos_ = core_->GetWorldTransform().translate_;
+
+				Shake::GetInstance()->Start(0.5f, 1.0f);
+
+				if (hp_ <= 0) {
+
+					//移動不可にする
+					isMoveActive_ = false;
+
+					//死亡フラグを立てる
+					isDead_ = true;
+
+					//死亡時爆発エミッターを発生
+					emitterList_[static_cast<size_t>(EmitterType::EXPLOSIVE)]->Emit();
+				}
+			}
 		}
 	}
-
 }
 
 ///=====================================================/// 
@@ -7436,6 +7469,14 @@ private:
 	//破壊フラグ
 	bool isDestroy_;
 
+	int hp_ = 3;
+
+	float damageCoolTimer_ = 0.0f;
+
+	float damageCoolTimeMax_ = 0.3f;
+
+	MyEngine::Vector3 damagePos_;
+
 	///-------------------------------------------///
 	/// ゲッター・セッター
 	///-------------------------------------------///
@@ -7480,6 +7521,10 @@ public:
 	float GetAttackTimeRatio() {
 		return attackState_->GetAttackTimer() / attackState_->GetAttackInterval();
 	}
+
+	float GetDamageCoolTime() const { return damageCoolTimer_ / damageCoolTimeMax_; }
+
+	MyEngine::Vector3 GetDamagePos() const { return damagePos_; }
 
 	/// <summary>
 	/// 座標を設定
@@ -7829,11 +7874,11 @@ void TankAttackState::Update(Player& player) {
 
 	attackTimer_ += 1.0f / 60.0f;
 
+	//ロックオンの更新
+	player.UpdateLockOn(lockOnRange_);
+
 	//タイマーが攻撃間隔を超えたら
 	if (attackTimer_ >= attackInterval_) {
-
-		//ロックオンの更新
-		player.UpdateLockOn(lockOnRange_);
 
 		//スペースキーが押されていたら
 		if (Input::GetInstance()->isPushKey(DIK_SPACE)) {
@@ -7882,128 +7927,32 @@ using namespace MyEngine;
 
 void JetMoveState::Enter() {
 
-	initialPos_ = { 0.0f,2.0f,0.0f };
-
-	moveRange_ = { 7.0f,4.0f,0.0f };
-
 	rotRange_ = { 0.5f,0.0f,0.3f };
 
-	moveSpeed_ = 1.0f;
+	leftWingTranslate_ = { -1.35f, 0.0f, 0.0f };
 
-	moveStrength_ = 10.0f;
+	leftWingRotate_ = { 0.0f, 0.0f, 0.0f };
 
-	rotStrength_ = 10.0f;
+	leftWingTrailPos_ = { -0.75f, 0.0f, 0.0f };
 
-	minJetHeight_ = 1.0f;
+	rightWingTranslate_ = { 1.35f, 0.0f, 0.0f };
+
+	rightWingRotate_ = { 0.0f, 0.0f, 0.0f };
+
+	rightWingTrailPos_ = { 0.75f, 0.0f, 0.0f };
 }
 
-void JetMoveState::Update(Player& player) {
+void JetMoveState::Update(Player* player) {
 
 	//高度が一定値を下回ったら戦車モードに変更
-	if (player.GetWorldPos().y <= minJetHeight_) {
+	if (player->GetWorldPos().y <= stateChangeHeight_) {
 
-		player.ChangeTankState();
+		player->ChangeTankState();
 
 		return;
 	}
 
-	//各オブジェクトのワールド変換取得
-	WorldTransform coreWT = player.GetCoreWorldTransform();
-	WorldTransform leftWingWT = player.GetLeftWingWorldTransform();
-	WorldTransform rightWingWT = player.GetRightWingWorldTransform();
-	WorldTransform leftTrailWT = player.GetLeftTrailWorldTransform();
-	WorldTransform rightTrailWT = player.GetRightTrailWorldTransform();
-
-	//コアオブジェクトの現在角度
-	Vector3 playerPos = coreWT.translate_;
-	Vector3 playerRot = coreWT.rotate_;
-
-	//左ウィングの現在座標・回転
-	Vector3 leftWingPos = leftWingWT.translate_;
-	Vector3 leftWingRot = leftWingWT.rotate_;
-
-	//右ウィングの現在座標・回転
-	Vector3 rightWingPos = rightWingWT.translate_;
-	Vector3 rightWingRot = rightWingWT.rotate_;
-
-	//左トレイルの現在座標
-	Vector3 leftTrailPos = leftTrailWT.translate_;
-
-	//右トレイルの現在座標
-	Vector3 rightTrailPos = rightTrailWT.translate_;
-
-	//移動量の計算
-	Vector3 velocity = player.GetInputDirection() * moveSpeed_;
-
-	//移動後座標の計算
-	Vector3 movePos = playerPos + velocity;
-
-	//移動範囲で制限
-	movePos = {
-		std::clamp(movePos.x,initialPos_.x - moveRange_.x,initialPos_.x + moveRange_.x),
-		std::clamp(movePos.y,initialPos_.y - moveRange_.y,initialPos_.y + moveRange_.y),
-		std::clamp(movePos.z,initialPos_.z - moveRange_.z,initialPos_.z + moveRange_.z),
-	};
-
-	//左右移動でZ軸回転、上下移動でX軸回転をするように設定
-	Vector3 rotate = {
-		-Normalize(velocity).y,
-		0.0f,
-		-Normalize(velocity).x
-	};
-
-	//回転範囲で制限
-	rotate = {
-		std::clamp(rotate.x,-rotRange_.x,rotRange_.x),
-		std::clamp(rotate.y,-rotRange_.y,rotRange_.y),
-		std::clamp(rotate.z,-rotRange_.z,rotRange_.z)
-	};
-
-	/// === コアオブジェクトの移動・回転 === ///
-
-	//コアオブジェクトの移動・回転
-	coreWT.translate_ = Lerp(playerPos, movePos, moveStrength_ / 100.0f);
-	coreWT.rotate_ = Lerp(playerRot, rotate, rotStrength_ / 100.0f);
-
-	//地面より下に行かないようにする
-	coreWT.translate_.y = fmaxf(minJetHeight_, coreWT.translate_.y);
-
-	//移動後のワールド座標を設定
-	player.SetCoreWorldTransform(coreWT);
-
-	/// === 左ウィングの移動・回転 === ///
-
-	//左ウィングの移動・回転
-	leftWingWT.translate_ = EaseOut(leftWingPos, Vector3(-1.35f, 0.0f, 0.0f), 0.1f, 2.0f);
-	leftWingWT.rotate_ = EaseOut(leftWingRot, Vector3(0.0f, 0.0f, 0.0f), 0.1f, 2.0f);
-
-	//移動後のワールド座標を設定
-	player.SetLeftWingWorldTransform(leftWingWT);
-
-	/// === 右ウィングの移動・回転 === ///
-
-	//右ウィングの移動・回転
-	rightWingWT.translate_ = EaseOut(rightWingPos, Vector3(1.35f, 0.0f, 0.0f), 0.1f, 2.0f);
-	rightWingWT.rotate_ = EaseOut(rightWingRot, Vector3(0.0f, 0.0f, 0.0f), 0.1f, 2.0f);
-
-	//移動後のワールド座標を設定
-	player.SetRightWingWorldTransform(rightWingWT);
-
-	/// === 左トレイルの移動 === ///
-
-	//左トレイルの移動
-	leftTrailWT.translate_ = EaseOut(leftTrailPos, Vector3(-0.75f, 0.0f, 0.0f), 0.1f, 2.0f);
-
-	//移動後のワールド座標を設定
-	player.SetLeftTrailWorldTransform(leftTrailWT);
-
-	/// === 右トレイルの移動 === ///
-
-	//右トレイルの移動
-	rightTrailWT.translate_ = EaseOut(rightTrailPos, Vector3(0.75f, 0.0f, 0.0f), 0.1f, 2.0f);
-
-	//移動後のワールド座標を設定
-	player.SetRightTrailWorldTransform(rightTrailWT);
+	MovementState::Update(player);
 }
 
 ============================================================
@@ -8021,29 +7970,124 @@ public:
 
 	void Enter() override;
 
-	void Update(Player& player) override;
-
-private:
-
-	MyEngine::Vector3 initialPos_;
-
-	MyEngine::Vector3 moveRange_;
-
-	MyEngine::Vector3 rotRange_;
-
-	float moveSpeed_;
-
-	float moveStrength_;
-
-	float rotStrength_;
-
-	float minJetHeight_;
+	void Update(Player* player) override;
 };
+
+============================================================
+File Path: Application/Object/Player/State/MovementState/MovementState.cpp
+============================================================
+#include "MovementState.h"
+
+#include "Math/Vector/Vector3.h"
+#include "Object/Player/Player.h"
+#include "Math/Utility/Easing.h"
+
+#include "imgui.h"
+
+#include <algorithm>
+
+using namespace MyEngine;
+
+void MovementState::Update(Player* player) {
+
+	player_ = player;
+
+	Vector3 velocity = player->GetInputDirection() * moveSpeed_;
+
+	if (player_->GetDamageCoolTime() > 0.0f) {
+
+		movePos_ = KnockBack();
+	} else {
+
+		movePos_ = player->GetCoreWorldTransform().translate_ + velocity;
+
+		movePos_ = {
+			std::clamp(movePos_.x,initialPos_.x - moveRange_.x,initialPos_.x + moveRange_.x),
+			std::clamp(movePos_.y,initialPos_.y - moveRange_.y,initialPos_.y + moveRange_.y),
+			std::clamp(movePos_.z,initialPos_.z - moveRange_.z,initialPos_.z + moveRange_.z),
+		};
+	}
+
+	moveRotate_ = {
+		-Normalize(velocity).y,
+		0.0f,
+		-Normalize(velocity).x
+	};
+
+	moveRotate_ = {
+		std::clamp(moveRotate_.x,-rotRange_.x,rotRange_.x),
+		std::clamp(moveRotate_.y,-rotRange_.y,rotRange_.y),
+		std::clamp(moveRotate_.z,-rotRange_.z,rotRange_.z)
+	};
+
+	CoreMoveUpdate();
+
+	LeftWingMoveUpdate();
+
+	RightWingMoveUpdate();
+
+}
+
+void MovementState::CoreMoveUpdate() {
+
+	WorldTransform coreWT = player_->GetCoreWorldTransform();
+
+	//コアオブジェクトの移動・回転
+	coreWT.translate_ = Lerp(coreWT.translate_, movePos_, moveStrength_ / 100.0f);
+	coreWT.rotate_ = Lerp(coreWT.rotate_, moveRotate_, rotStrength_ / 100.0f);
+
+	//地面より下に行かないようにする
+	coreWT.translate_.y = fmaxf(1.0f, coreWT.translate_.y);
+
+	coreWT.translate_ = coreWT.translate_;
+
+	//移動後のワールド座標を設定
+	player_->SetCoreWorldTransform(coreWT);
+}
+
+void MovementState::LeftWingMoveUpdate() {
+
+	WorldTransform leftWingWT = player_->GetLeftWingWorldTransform();
+
+	WorldTransform leftTrailWT = player_->GetLeftTrailWorldTransform();
+
+	leftWingWT.translate_ = EaseOut(leftWingWT.translate_, leftWingTranslate_, 0.1f, 2.0f);
+	leftWingWT.rotate_ = EaseOut(leftWingWT.rotate_, leftWingRotate_, 0.1f, 2.0f);
+
+	leftTrailWT.translate_ = EaseOut(leftTrailWT.translate_, leftWingTrailPos_, 0.1f, 2.0f);
+
+	player_->SetLeftWingWorldTransform(leftWingWT);
+
+	player_->SetLeftTrailWorldTransform(leftTrailWT);
+}
+
+void MovementState::RightWingMoveUpdate() {
+
+	WorldTransform rightWingWT = player_->GetRightWingWorldTransform();
+
+	WorldTransform rightTrailWT = player_->GetRightTrailWorldTransform();
+
+	rightWingWT.translate_ = EaseOut(rightWingWT.translate_, rightWingTranslate_, 0.1f, 2.0f);
+	rightWingWT.rotate_ = EaseOut(rightWingWT.rotate_, rightWingRotate_, 0.1f, 2.0f);
+
+	rightTrailWT.translate_ = EaseOut(rightTrailWT.translate_, rightWingTrailPos_, 0.1f, 2.0f);
+
+	player_->SetRightWingWorldTransform(rightWingWT);
+
+	player_->SetRightTrailWorldTransform(rightTrailWT);
+}
+
+Vector3 MovementState::KnockBack() {
+
+	return EaseIn(player_->GetDamagePos(), player_->GetDamagePos() + knockBackPower_, player_->GetDamageCoolTime(), 2.0f);
+}
 
 ============================================================
 File Path: Application/Object/Player/State/MovementState/MovementState.h
 ============================================================
 #pragma once
+
+#include "Math/Vector/Vector3.h"
 
 class Player;
 
@@ -8055,7 +8099,52 @@ public:
 
 	virtual void Enter() = 0;
 
-	virtual void Update(Player& player) = 0;
+	virtual void Update(Player* player);
+
+	virtual void CoreMoveUpdate();
+
+	virtual void LeftWingMoveUpdate();
+
+	virtual void RightWingMoveUpdate();
+
+	MyEngine::Vector3 KnockBack();
+
+protected:
+
+	Player* player_;
+
+	MyEngine::Vector3 initialPos_ = { 0.0f,2.0f,0.0f };
+
+	MyEngine::Vector3 moveRange_ = { 7.0f,4.0f,0.0f };;
+
+	MyEngine::Vector3 rotRange_ = { 0.0f,0.0f,0.0f };
+
+	MyEngine::Vector3 leftWingTranslate_ = { 0.0f,0.0f,0.0f };
+
+	MyEngine::Vector3 leftWingRotate_ = { 0.0f,0.0f,0.0f };
+
+	MyEngine::Vector3 leftWingTrailPos_ = { 0.0f,0.0f,0.0f };
+
+	MyEngine::Vector3 rightWingTranslate_ = { 0.0f,0.0f,0.0f };
+
+	MyEngine::Vector3 rightWingRotate_ = { 0.0f,0.0f,0.0f };
+
+	MyEngine::Vector3 rightWingTrailPos_ = { 0.0f,0.0f,0.0f };
+
+	float moveSpeed_ = 1.0f;
+
+	float moveStrength_ = 10.0f;
+
+	float rotStrength_ = 10.0f;
+
+	float stateChangeHeight_ = 1.0f;
+
+	MyEngine::Vector3 movePos_ = { 0.0f,0.0f,0.0f };
+
+	MyEngine::Vector3 moveRotate_ = { 0.0f,0.0f,0.0f };
+
+	MyEngine::Vector3 knockBackPower_ = { 0.0f, 3.0f, -10.0f };
+
 };
 
 ============================================================
@@ -8074,138 +8163,32 @@ using namespace MyEngine;
 
 void TankMoveState::Enter() {
 
-	initialPos_ = { 0.0f,2.0f,0.0f };
+	rotRange_ = { 0.5f,0.0f,0.3f };
 
-	moveRange_ = { 7.0f,4.0f,0.0f };
+	leftWingTranslate_ = { -0.75f, 0.0f, 0.0f };
 
-	rotRange_ = { 0.0f,0.5f,0.0f };
+	leftWingRotate_ = { 0.0f, 0.0f, -std::numbers::pi_v<float> / 2.0f - std::numbers::pi_v<float> *2.0f };
 
-	moveSpeed_ = 0.75f;
+	leftWingTrailPos_ = { 0.75f, 0.0f, 0.0f };
 
-	moveStrength_ = 10.0f;
+	rightWingTranslate_ = { 0.75f, 0.0f, 0.0f };
 
-	rotStrength_ = 10.0f;
+	rightWingRotate_ = { 0.0f, 0.0f, std::numbers::pi_v<float> / 2.0f + std::numbers::pi_v<float> *2.0f };
 
-	maxTankHeight_ = 1.0f;
+	rightWingTrailPos_ = { -0.75f, 0.0f, 0.0f };
 }
 
-void TankMoveState::Update(Player& player) {
+void TankMoveState::Update(Player* player) {
 
 	//高度が一定値を超えたらジェットモードに変更
-	if (player.GetWorldPos().y > maxTankHeight_) {
+	if (player->GetWorldPos().y > stateChangeHeight_) {
 
-		player.ChangeJetState();
+		player->ChangeJetState();
 
 		return;
 	}
 
-	//各オブジェクトのワールド変換取得
-	WorldTransform coreWT = player.GetCoreWorldTransform();
-	WorldTransform leftWingWT = player.GetLeftWingWorldTransform();
-	WorldTransform rightWingWT = player.GetRightWingWorldTransform();
-	WorldTransform leftTrailWT = player.GetLeftTrailWorldTransform();
-	WorldTransform rightTrailWT = player.GetRightTrailWorldTransform();
-
-	//コアオブジェクトの現在角度
-	Vector3 playerPos = coreWT.translate_;
-	Vector3 playerRot = coreWT.rotate_;
-
-	//左ウィングの現在座標・回転
-	Vector3 leftWingPos = leftWingWT.translate_;
-	Vector3 leftWingRot = leftWingWT.rotate_;
-
-	//右ウィングの現在座標・回転
-	Vector3 rightWingPos = rightWingWT.translate_;
-	Vector3 rightWingRot = rightWingWT.rotate_;
-
-	//左トレイルの現在座標
-	Vector3 leftTrailPos = leftTrailWT.translate_;
-
-	//右トレイルの現在座標
-	Vector3 rightTrailPos = rightTrailWT.translate_;
-
-	//移動量の計算
-	Vector3 velocity = player.GetInputDirection() * moveSpeed_;
-
-	//移動後座標の計算
-	Vector3 movePos = playerPos + velocity;
-
-	//移動範囲で制限
-	movePos = {
-		std::clamp(movePos.x,initialPos_.x - moveRange_.x,initialPos_.x + moveRange_.x),
-		std::clamp(movePos.y,initialPos_.y - moveRange_.y,initialPos_.y + moveRange_.y),
-		std::clamp(movePos.z,initialPos_.z - moveRange_.z,initialPos_.z + moveRange_.z),
-	};
-
-	//左右移動でZ軸回転、上下移動でX軸回転をするように設定
-	Vector3 rotate = {
-		-Normalize(velocity).y,
-		0.0f,
-		-Normalize(velocity).x
-	};
-
-	//回転範囲で制限
-	rotate = {
-		std::clamp(rotate.x,-rotRange_.x,rotRange_.x),
-		std::clamp(rotate.y,-rotRange_.y,rotRange_.y),
-		std::clamp(rotate.z,-rotRange_.z,rotRange_.z)
-	};
-
-	/// === コアオブジェクトの移動・回転 === ///
-
-	//コアオブジェクトの移動・回転
-	coreWT.translate_ = Lerp(playerPos, movePos, moveStrength_ / 100.0f);
-	coreWT.rotate_ = Lerp(playerRot, rotate, rotStrength_ / 100.0f);
-
-	//地面より下に行かないようにする
-	coreWT.translate_.y = fmaxf(maxTankHeight_, coreWT.translate_.y);
-
-	//移動後のワールド座標を設定
-	player.SetCoreWorldTransform(coreWT);
-
-	/// === 左ウィングの移動・回転 === ///
-
-	//左ウィングの移動・回転
-	leftWingWT.translate_ = EaseOut(leftWingPos, Vector3(-0.75f, 0.0f, 0.0f), 0.1f, 2.0f);
-	leftWingWT.rotate_ = EaseOut(
-		leftWingRot,
-		Vector3(0.0f, 0.0f, -std::numbers::pi_v<float> / 2.0f - std::numbers::pi_v<float> *2.0f),
-		0.1f,
-		2.0f
-	);
-
-	//移動後のワールド座標を設定
-	player.SetLeftWingWorldTransform(leftWingWT);
-
-	/// === 右ウィングの移動・回転 === ///
-
-	//右ウィングの移動・回転
-	rightWingWT.translate_ = EaseOut(rightWingPos, Vector3(0.75f, 0.0f, 0.0f), 0.1f, 2.0f);
-	rightWingWT.rotate_ = EaseOut(
-		rightWingRot,
-		Vector3(0.0f, 0.0f, std::numbers::pi_v<float> / 2.0f + std::numbers::pi_v<float> *2.0f),
-		0.1f,
-		2.0f
-	);
-
-	//移動後のワールド座標を設定
-	player.SetRightWingWorldTransform(rightWingWT);
-
-	/// === 左トレイルの移動 === ///
-
-	//左トレイルの移動
-	leftTrailWT.translate_ = EaseOut(leftTrailPos, Vector3(0.75f, 0.0f, 0.0f), 0.1f, 2.0f);
-
-	//移動後のワールド座標を設定
-	player.SetLeftTrailWorldTransform(leftTrailWT);
-
-	/// === 右トレイルの移動 === ///
-
-	//右トレイルの移動
-	rightTrailWT.translate_ = EaseOut(rightTrailPos, Vector3(-0.75f, 0.0f, 0.0f), 0.1f, 2.0f);
-
-	//移動後のワールド座標を設定
-	player.SetRightTrailWorldTransform(rightTrailWT);
+	MovementState::Update(player);
 }
 
 ============================================================
@@ -8223,7 +8206,7 @@ public:
 
 	void Enter() override;
 
-	void Update(Player& player) override;
+	void Update(Player* player) override;
 
 private:
 
@@ -30120,6 +30103,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Application\Object\Enemy\State\EnemyExitState.cpp" />
     <ClCompile Include="Application\Object\Enemy\State\EnemyMoveState.cpp" />
     <ClCompile Include="Application\Effect\Manager\EmitterManager.cpp" />
+    <ClCompile Include="Application\Object\Player\State\MovementState\MovementState.cpp" />
     <ClCompile Include="Application\Scene\GameScene\Event\ClearEvent.cpp" />
     <ClCompile Include="Application\Object\Ground\DamageGround.cpp" />
     <ClCompile Include="Application\Object\Enemy\BombEnemy.cpp" />
@@ -30895,6 +30879,7 @@ File Path: Engine.vcxproj.filters
     <ClCompile Include="Application\Object\Ground\DamageGround.cpp" />
     <ClCompile Include="Application\Object\Bullet\Enemy\GroundBullet.cpp" />
     <ClCompile Include="Application\Object\Enemy\BombEnemy.cpp" />
+    <ClCompile Include="Application\Object\Player\State\MovementState\MovementState.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application\Object\Camera\FollowCamera.h">
