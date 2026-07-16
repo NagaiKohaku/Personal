@@ -1,6 +1,6 @@
 #include "ClearEvent.h"
 
-#include <Effect/Manager/UIManager.h>
+#include <UI/UIManager.h>
 #include <Effect/Flash/Flash.h>
 #include <Effect/Shake/Shake.h>
 #include <Effect/Fade/Fade.h>

@@ -224,6 +224,8 @@ public:
 
 	MyEngine::Vector3 GetDamagePos() const { return damagePos_; }
 
+	int GetHP() const { return hp_; }
+
 	/// <summary>
 	/// 座標を設定
 	/// </summary>

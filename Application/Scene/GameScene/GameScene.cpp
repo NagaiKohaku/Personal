@@ -4,7 +4,7 @@
 #include "Base/Input.h"
 #include "Scene/SceneManager.h"
 #include <Object/Manager/ObjectManager.h>
-#include <Effect/Manager/UIManager.h>
+#include <UI/UIManager.h>
 #include <Effect/Manager/EmitterManager.h>
 
 #include "Scene/GameScene/Event/StartEvent.h"

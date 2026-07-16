@@ -1,6 +1,6 @@
 #include "GameOverEvent.h"
 
-#include <Effect/Manager/UIManager.h>
+#include <UI/UIManager.h>
 #include <Effect/Shake/Shake.h>
 #include <Effect/Fade/Fade.h>
 #include <Base/OffScreen.h>

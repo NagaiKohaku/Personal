@@ -7,7 +7,7 @@
 #include <3d/Collider/ColliderManager.h>
 #include <Object/Manager/ObjectManager.h>
 #include <Effect/Manager/EmitterManager.h>
-#include <Effect/Manager/UIManager.h>
+#include <UI/UIManager.h>
 #include <LevelEditor/LevelDataLoader.h>
 #include <3d/Camera/Camera.h>
 #include <Scene/EngineContext.h>
