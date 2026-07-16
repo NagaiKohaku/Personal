@@ -41,4 +41,9 @@ void GameSceneProgress::ChangeEvent(GameSceneEventBase::EventType type) {
 	event_ = GameSceneEventFactory::Create(type);
 
 	event_->Start(context_, player_, followCamera_);
+
+	if (type == GameSceneEventBase::EventType::CLEAR || type == GameSceneEventBase::EventType::GAMEOVER) {
+
+		isResultEvent_ = true;
+	}
 }

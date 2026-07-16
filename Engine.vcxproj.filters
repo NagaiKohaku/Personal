@@ -359,6 +359,7 @@
     <ClCompile Include="Application\Object\Bullet\Enemy\GroundBullet.cpp" />
     <ClCompile Include="Application\Object\Enemy\BombEnemy.cpp" />
     <ClCompile Include="Application\Object\Player\State\MovementState\MovementState.cpp" />
+    <ClCompile Include="Application\UI\CountNumber.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application\Object\Camera\FollowCamera.h">
@@ -689,6 +690,7 @@
     <ClInclude Include="Application\Object\Ground\DamageGround.h" />
     <ClInclude Include="Application\Object\Bullet\Enemy\GroundBullet.h" />
     <ClInclude Include="Application\Object\Enemy\BombEnemy.h" />
+    <ClInclude Include="Application\UI\CountNumber.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resource\Shader\DebugObject.hlsli">

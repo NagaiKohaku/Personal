@@ -12,6 +12,8 @@
 #include <Object/Ground/GroundManager.h>
 #include "Scene/GameScene/GameSceneProgress.h"
 
+#include "UI/CountNumber.h"
+
 #include "memory"
 
 /// <summary>
@@ -71,4 +73,8 @@ private:
 
 	//シーンのイベント管理
 	std::unique_ptr<GameSceneProgress> sceneProgress_;
+
+	std::unique_ptr<CountNumber> countNumber_;
+
+	MyEngine::Vector2 countNumberPos_ = { 1190.0f,60.0f };
 };
