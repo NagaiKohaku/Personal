@@ -104,6 +104,12 @@ void GameScene::Initialize(MyEngine::EngineContext context) {
 
 	sceneProgress_->Initialize(context_, player_, followCamera_.get());
 
+	countNumber_ = std::make_unique<CountNumber>();
+
+	countNumber_->Initialize(context_.camera);
+
+	countNumber_->SetCenterPos(countNumberPos_);
+
 	/// === フェードの設定 === ///
 
 	Fade::GetInstance()->SetPlayer(player_);
@@ -146,6 +152,15 @@ void GameScene::Update() {
 	context_.camera->Update();
 
 	sceneProgress_->Update();
+
+	countNumber_->SetDrawNumber(ObjectManager::GetInstance()->GetKillCount());
+
+	if (sceneProgress_->IsResultEvent()) {
+
+		countNumber_->SetIsDraw(false);
+	}
+
+	countNumber_->Update();
 
 	if (sceneProgress_->canMove()) {
 
@@ -201,6 +216,8 @@ void GameScene::Draw() {
 
 	//イベントの描画
 	sceneProgress_->Draw();
+
+	countNumber_->Draw();
 
 }
 

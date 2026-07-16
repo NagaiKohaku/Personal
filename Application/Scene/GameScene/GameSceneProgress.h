@@ -32,7 +32,11 @@ private:
 
 	FollowCamera* followCamera_;
 
+	bool isResultEvent_ = false;
+
 public:
 
 	bool canMove() { return event_->canMove(); }
+
+	bool IsResultEvent() { return isResultEvent_; }
 };
