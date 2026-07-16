@@ -77,6 +77,8 @@ void ClearEvent::Update() {
 
 	arrowTimer_ += (1.0f / 60.0f) * timerDirection_;
 
+	sceneChangeTimer_ += 1.0f / 60.0f;
+
 	if (arrowTimer_ >= 1.0f) {
 
 		arrowTimer_ = 1.0f;
@@ -112,16 +114,19 @@ void ClearEvent::Update() {
 
 	if (context_.input->IsTriggerPushKey(DIK_SPACE)) {
 
-		canMove_ = true;
+		if (sceneChangeTimer_ >= sceneChangeMaxTime_) {
 
-		//クリアUIを隠す
-		UIManager::GetInstance()->GetUIGroup("Clear")->isActive = false;
+			canMove_ = true;
 
-		//画面をフラッシュさせる
-		Flash::GetInstance()->Start(0.5f, Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+			//クリアUIを隠す
+			UIManager::GetInstance()->GetUIGroup("Clear")->isActive = false;
 
-		//色を反転させる
-		context_.offScreen->SetColorReverseRatio(0.0f);
+			//画面をフラッシュさせる
+			Flash::GetInstance()->Start(0.5f, Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+
+			//色を反転させる
+			context_.offScreen->SetColorReverseRatio(0.0f);
+		}
 	}
 
 	if (canMove_) {
