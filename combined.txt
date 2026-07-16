@@ -98,32 +98,35 @@
 └── └── └── Shadow/
 └── └──     ├── Shadow.cpp
 └── └──     └── Shadow.h
-└── └── Scene/
-└──     ├── EngineContext.h
-└──     ├── GameScene/
-└──     └── ├── Event/
-└──     └── └── ├── ClearEvent.cpp
-└──     └── └── ├── ClearEvent.h
-└──     └── └── ├── GameEvent.cpp
-└──     └── └── ├── GameEvent.h
-└──     └── └── ├── GameOverEvent.cpp
-└──     └── └── ├── GameOverEvent.h
-└──     └── └── ├── GameSceneEventBase.cpp
-└──     └── └── ├── GameSceneEventBase.h
-└──     └── └── ├── GameSceneEventFactory.cpp
-└──     └── └── ├── GameSceneEventFactory.h
-└──     └── └── ├── PauseEvent.cpp
-└──     └── └── ├── PauseEvent.h
-└──     └── └── ├── StartEvent.cpp
-└──     └── └── └── StartEvent.h
-└──     └── ├── GameScene.cpp
-└──     └── ├── GameScene.h
-└──     └── ├── GameSceneProgress.cpp
-└──     └── └── GameSceneProgress.h
-└──     ├── ParticleEditorScene.cpp
-└──     ├── ParticleEditorScene.h
-└──     ├── TitleScene.cpp
-└──     └── TitleScene.h
+└── ├── Scene/
+└── └── ├── EngineContext.h
+└── └── ├── GameScene/
+└── └── └── ├── Event/
+└── └── └── └── ├── ClearEvent.cpp
+└── └── └── └── ├── ClearEvent.h
+└── └── └── └── ├── GameEvent.cpp
+└── └── └── └── ├── GameEvent.h
+└── └── └── └── ├── GameOverEvent.cpp
+└── └── └── └── ├── GameOverEvent.h
+└── └── └── └── ├── GameSceneEventBase.cpp
+└── └── └── └── ├── GameSceneEventBase.h
+└── └── └── └── ├── GameSceneEventFactory.cpp
+└── └── └── └── ├── GameSceneEventFactory.h
+└── └── └── └── ├── PauseEvent.cpp
+└── └── └── └── ├── PauseEvent.h
+└── └── └── └── ├── StartEvent.cpp
+└── └── └── └── └── StartEvent.h
+└── └── └── ├── GameScene.cpp
+└── └── └── ├── GameScene.h
+└── └── └── ├── GameSceneProgress.cpp
+└── └── └── └── GameSceneProgress.h
+└── └── ├── ParticleEditorScene.cpp
+└── └── ├── ParticleEditorScene.h
+└── └── ├── TitleScene.cpp
+└── └── └── TitleScene.h
+└── └── UI/
+└──     ├── CountNumber.cpp
+└──     └── CountNumber.h
 ├── Engine/
 └── ├── 2d/
 └── └── ├── Object/
@@ -381,6 +384,16 @@
 └── └── ├── KillToTitle/
 └── └── ├── MoveButton/
 └── └── ├── MoveHelp/
+└── └── ├── NumberEight/
+└── └── ├── NumberFive/
+└── └── ├── NumberFour/
+└── └── ├── NumberNine/
+└── └── ├── NumberOne/
+└── └── ├── NumberSeven/
+└── └── ├── NumberSix/
+└── └── ├── NumberThree/
+└── └── ├── NumberTwo/
+└── └── ├── NumberZero/
 └── └── ├── Particle/
 └── └── ├── Pause/
 └── └── ├── PauseHelp/
@@ -9337,6 +9350,12 @@ void GameScene::Initialize(MyEngine::EngineContext context) {
 
 	sceneProgress_->Initialize(context_, player_, followCamera_.get());
 
+	countNumber_ = std::make_unique<CountNumber>();
+
+	countNumber_->Initialize(context_.camera);
+
+	countNumber_->SetCenterPos(countNumberPos_);
+
 	/// === フェードの設定 === ///
 
 	Fade::GetInstance()->SetPlayer(player_);
@@ -9379,6 +9398,15 @@ void GameScene::Update() {
 	context_.camera->Update();
 
 	sceneProgress_->Update();
+
+	countNumber_->SetDrawNumber(ObjectManager::GetInstance()->GetKillCount());
+
+	if (sceneProgress_->IsResultEvent()) {
+
+		countNumber_->SetIsDraw(false);
+	}
+
+	countNumber_->Update();
 
 	if (sceneProgress_->canMove()) {
 
@@ -9435,6 +9463,8 @@ void GameScene::Draw() {
 	//イベントの描画
 	sceneProgress_->Draw();
 
+	countNumber_->Draw();
+
 }
 
 ///=====================================================/// 
@@ -9488,6 +9518,8 @@ File Path: Application/Scene/GameScene/GameScene.h
 #include <Object/Camera/FollowCamera.h>
 #include <Object/Ground/GroundManager.h>
 #include "Scene/GameScene/GameSceneProgress.h"
+
+#include "UI/CountNumber.h"
 
 #include "memory"
 
@@ -9548,6 +9580,10 @@ private:
 
 	//シーンのイベント管理
 	std::unique_ptr<GameSceneProgress> sceneProgress_;
+
+	std::unique_ptr<CountNumber> countNumber_;
+
+	MyEngine::Vector2 countNumberPos_ = { 1190.0f,60.0f };
 };
 
 ============================================================
@@ -9596,6 +9632,11 @@ void GameSceneProgress::ChangeEvent(GameSceneEventBase::EventType type) {
 	event_ = GameSceneEventFactory::Create(type);
 
 	event_->Start(context_, player_, followCamera_);
+
+	if (type == GameSceneEventBase::EventType::CLEAR || type == GameSceneEventBase::EventType::GAMEOVER) {
+
+		isResultEvent_ = true;
+	}
 }
 
 ============================================================
@@ -9635,9 +9676,13 @@ private:
 
 	FollowCamera* followCamera_;
 
+	bool isResultEvent_ = false;
+
 public:
 
 	bool canMove() { return event_->canMove(); }
+
+	bool IsResultEvent() { return isResultEvent_; }
 };
 
 ============================================================
@@ -10455,6 +10500,146 @@ private:
 
 	//フェードフラグ
 	bool isFade_;
+};
+
+============================================================
+File Path: Application/UI/CountNumber.cpp
+============================================================
+#include "CountNumber.h"
+
+using namespace MyEngine;
+
+void CountNumber::Initialize(Camera* _camera) {
+
+	camera_ = _camera;
+
+	for (auto& fileName : fileNames_) {
+
+		CreateOnesPlaceSprite(fileName);
+		CreateTensPlaceSprite(fileName);
+	}
+
+}
+
+void CountNumber::Update() {
+
+	for (auto& onesSprite : onesPlaceSprites_) {
+
+		onesSprite->SetTranslate(centerPos_ - distance_);
+
+		onesSprite->Update();
+	}
+
+	for (auto& tensSprite : tensPlaceSprites_) {
+
+		tensSprite->SetTranslate(centerPos_ + distance_);
+
+		tensSprite->Update();
+	}
+}
+
+void CountNumber::Draw() {
+
+	int onesPlace = drawNumber_ / 10;
+
+	int tensPlace = drawNumber_ % 10;
+
+	if (isDraw_) {
+
+		onesPlaceSprites_[onesPlace]->Draw(LayerType::UI);
+
+		tensPlaceSprites_[tensPlace]->Draw(LayerType::UI);
+	}
+}
+
+void CountNumber::CreateOnesPlaceSprite(std::string fileName) {
+
+	std::unique_ptr<Object2D> newObject = std::make_unique<Object2D>();
+
+	newObject->Initialize(camera_);
+
+	newObject->SetSprite(fileName);
+
+	onesPlaceSprites_.push_back(std::move(newObject));
+}
+
+void CountNumber::CreateTensPlaceSprite(std::string fileName) {
+
+	std::unique_ptr<Object2D> newObject = std::make_unique<Object2D>();
+
+	newObject->Initialize(camera_);
+
+	newObject->SetSprite(fileName);
+
+	tensPlaceSprites_.push_back(std::move(newObject));
+}
+
+============================================================
+File Path: Application/UI/CountNumber.h
+============================================================
+#pragma once
+
+#include "2d/Object/Object2D.h"
+#include "3d/Camera/Camera.h"
+#include "Math/Transform/WorldTransform.h"
+
+#include <memory>
+#include <vector>
+
+class CountNumber {
+
+public:
+
+	void Initialize(MyEngine::Camera* _camera);
+
+	void Update();
+
+	void Draw();
+
+private:
+
+	void CreateOnesPlaceSprite(std::string fileName);
+
+	void CreateTensPlaceSprite(std::string fileName);
+
+private:
+
+	MyEngine::Camera* camera_;
+
+	std::unique_ptr<MyEngine::WorldTransform> worldTransform_;
+
+	std::vector<std::unique_ptr<MyEngine::Object2D>> onesPlaceSprites_;
+
+	std::vector<std::unique_ptr<MyEngine::Object2D>> tensPlaceSprites_;
+
+	int drawNumber_ = 0;
+
+	MyEngine::Vector2 centerPos_ = { 640.0f,360.0f };
+
+	MyEngine::Vector2 distance_ = { 27.5f,0.0f };
+
+	std::vector<std::string> fileNames_ = {
+		"NumberZero",
+		"NumberOne",
+		"NumberTwo",
+		"NumberThree",
+		"NumberFour",
+		"NumberFive",
+		"NumberSix",
+		"NumberSeven",
+		"NumberEight",
+		"NumberNine"
+	};
+
+	bool isDraw_ = true;
+
+public:
+
+	void SetCenterPos(const MyEngine::Vector2 pos) { centerPos_ = pos; }
+
+	void SetDrawNumber(const int number) { drawNumber_ = number; }
+
+	void SetIsDraw(const bool flag) { isDraw_ = flag; }
 };
 
 ============================================================
@@ -30107,6 +30292,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Application\Scene\GameScene\Event\ClearEvent.cpp" />
     <ClCompile Include="Application\Object\Ground\DamageGround.cpp" />
     <ClCompile Include="Application\Object\Enemy\BombEnemy.cpp" />
+    <ClCompile Include="Application\UI\CountNumber.cpp" />
     <ClCompile Include="Engine\3d\Mesh\CubeMesh.cpp" />
     <ClCompile Include="Engine\3d\Collider\AABBCollider.cpp" />
     <ClCompile Include="Engine\3d\Collider\Collider.cpp" />
@@ -30222,6 +30408,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Application\Scene\EngineContext.h" />
     <ClInclude Include="Application\Object\Ground\DamageGround.h" />
     <ClInclude Include="Application\Object\Enemy\BombEnemy.h" />
+    <ClInclude Include="Application\UI\CountNumber.h" />
     <ClInclude Include="Engine\3d\Mesh\CubeMesh.h" />
     <ClInclude Include="Engine\3d\Collider\AABBCollider.h" />
     <ClInclude Include="Engine\3d\Collider\Collider.h" />
@@ -30880,6 +31067,7 @@ File Path: Engine.vcxproj.filters
     <ClCompile Include="Application\Object\Bullet\Enemy\GroundBullet.cpp" />
     <ClCompile Include="Application\Object\Enemy\BombEnemy.cpp" />
     <ClCompile Include="Application\Object\Player\State\MovementState\MovementState.cpp" />
+    <ClCompile Include="Application\UI\CountNumber.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application\Object\Camera\FollowCamera.h">
@@ -31210,6 +31398,7 @@ File Path: Engine.vcxproj.filters
     <ClInclude Include="Application\Object\Ground\DamageGround.h" />
     <ClInclude Include="Application\Object\Bullet\Enemy\GroundBullet.h" />
     <ClInclude Include="Application\Object\Enemy\BombEnemy.h" />
+    <ClInclude Include="Application\UI\CountNumber.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resource\Shader\DebugObject.hlsli">
