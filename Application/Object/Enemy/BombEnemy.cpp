@@ -28,6 +28,13 @@ void BombEnemy::Update() {
 
 	timer_ += 1.0f / 60.0f;
 
+	if (std::fabsf(object_->GetWorldTransform().translate_.x) >= turnRangeX_) {
+
+		moveDirectionX_ *= -1.0f;
+	}
+
+	object_->GetWorldTransform().translate_.x += moveDirectionX_ * (speed_ / 10.0f);
+
 	object_->GetWorldTransform().translate_.z -= speed_;
 
 	if (timer_ >= coolTime_) {
@@ -39,6 +46,8 @@ void BombEnemy::Update() {
 				Vector3(0.0f, -1.0f, -1.0f),
 				BulletManager::BulletType::GROUND
 			);
+
+			timer_ = 0.0f;
 
 			shootCount_++;
 		}
