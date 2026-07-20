@@ -1,6 +1,6 @@
 #include "PauseEvent.h"
 
-#include <Effect/Manager/UIManager.h>
+#include <UI/UIManager.h>
 #include <Effect/Manager/EmitterManager.h>
 #include <Effect/Fade/Fade.h>
 #include <Base/Input.h>

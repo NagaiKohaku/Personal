@@ -266,7 +266,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Application\Object\Manager\ObjectManager.cpp" />
     <ClCompile Include="Application\Object\Player\State\AttackState\TankAttackState.cpp" />
     <ClCompile Include="Application\Object\Player\State\MovementState\TankMoveState.cpp" />
-    <ClCompile Include="Application\Effect\Manager\UIManager.cpp" />
+    <ClCompile Include="Application\UI\UIManager.cpp" />
     <ClCompile Include="Application\Scene\GameScene\Event\StartEvent.cpp" />
     <ClCompile Include="Application\Scene\GameScene\Event\PauseEvent.cpp" />
     <ClCompile Include="Engine\Base\View\ViewManagerBase.cpp" />
@@ -377,7 +377,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Application\Object\Player\State\MovementState\MovementState.h" />
     <ClInclude Include="Application\Object\Player\State\MovementState\JetMoveState.h" />
     <ClInclude Include="Application\Object\Player\State\MovementState\TankMoveState.h" />
-    <ClInclude Include="Application\Effect\Manager\UIManager.h" />
+    <ClInclude Include="Application\UI\UIManager.h" />
     <ClInclude Include="Application\Scene\GameScene\Event\GameOverEvent.h" />
     <ClInclude Include="Application\Scene\GameScene\Event\StartEvent.h" />
     <ClInclude Include="Application\Scene\GameScene\Event\GameEvent.h" />

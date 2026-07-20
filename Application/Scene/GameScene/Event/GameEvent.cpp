@@ -2,7 +2,7 @@
 
 #include <Base/Input.h>
 #include <Object/Manager/ObjectManager.h>
-#include <Effect/Manager/UIManager.h>
+#include <UI/UIManager.h>
 #include <Math/Utility/MakeMatrixMath.h>
 
 using namespace MyEngine;
@@ -65,6 +65,27 @@ void GameEvent::Update() {
 	}
 
 	UIManager::GetInstance()->Get2DObject("Reticle", "SpaceButton")->GetSprite()->SetRatio(player_->GetAttackTimeRatio());
+
+	std::vector<Object2D*> hpUIs;
+
+	int playerHP = player_->GetHP();
+
+	hpUIs.push_back(UIManager::GetInstance()->Get2DObject("Reticle", "HP01"));
+	hpUIs.push_back(UIManager::GetInstance()->Get2DObject("Reticle", "HP02"));
+	hpUIs.push_back(UIManager::GetInstance()->Get2DObject("Reticle", "HP03"));
+
+	for (auto hpUI : hpUIs) {
+
+		if (playerHP > 0) {
+
+			hpUI->GetSprite()->SetRatio(1.0f);
+		} else {
+
+			hpUI->GetSprite()->SetRatio(0.0f);
+		}
+
+		playerHP--;
+	}
 }
 
 void GameEvent::Draw() {

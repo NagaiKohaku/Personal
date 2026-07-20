@@ -41,4 +41,8 @@ private:
 
 	bool isFade_ = false;
 
+	float sceneChangeTimer_ = 0.0f;
+
+	float sceneChangeMaxTime_ = 1.0f;
+
 };

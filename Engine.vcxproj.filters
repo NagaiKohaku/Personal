@@ -244,7 +244,7 @@
     <ClCompile Include="Application\Effect\Manager\EmitterManager.cpp">
       <Filter>Application\Effect\Manager</Filter>
     </ClCompile>
-    <ClCompile Include="Application\Effect\Manager\UIManager.cpp">
+    <ClCompile Include="Application\UI\UIManager.cpp">
       <Filter>Application\Effect\Manager</Filter>
     </ClCompile>
     <ClCompile Include="Application\Object\Shadow\Shadow.cpp">
@@ -560,7 +560,7 @@
     <ClInclude Include="Application\Effect\Manager\EmitterManager.h">
       <Filter>Application\Effect\Manager</Filter>
     </ClInclude>
-    <ClInclude Include="Application\Effect\Manager\UIManager.h">
+    <ClInclude Include="Application\UI\UIManager.h">
       <Filter>Application\Effect\Manager</Filter>
     </ClInclude>
     <ClInclude Include="Application\Object\Shadow\Shadow.h">

@@ -11,7 +11,7 @@
 #include <Effect/Fade/Fade.h>
 #include <Effect/Shake/Shake.h>
 
-#include <Effect/Manager/UIManager.h>
+#include <UI/UIManager.h>
 
 #include <Base/Input.h>
 

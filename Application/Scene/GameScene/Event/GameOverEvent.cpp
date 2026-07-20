@@ -1,6 +1,6 @@
 #include "GameOverEvent.h"
 
-#include <Effect/Manager/UIManager.h>
+#include <UI/UIManager.h>
 #include <Effect/Shake/Shake.h>
 #include <Effect/Fade/Fade.h>
 #include <Base/OffScreen.h>
@@ -44,6 +44,8 @@ void GameOverEvent::Update() {
 
 	arrowTimer_ += (1.0f / 60.0f) * timerDirection_;
 
+	sceneChangeTimer_ += 1.0f / 60.0f;
+
 	if (arrowTimer_ >= 1.0f) {
 
 		arrowTimer_ = 1.0f;
@@ -66,11 +68,14 @@ void GameOverEvent::Update() {
 
 	if (context_.input->IsTriggerPushKey(DIK_SPACE)) {
 
-		if (!isFade_) {
+		if (sceneChangeTimer_ >= sceneChangeMaxTime_) {
 
-			Fade::GetInstance()->StartFadeOut();
+			if (!isFade_) {
 
-			isFade_ = true;
+				Fade::GetInstance()->StartFadeOut();
+
+				isFade_ = true;
+			}
 		}
 	}
 }
