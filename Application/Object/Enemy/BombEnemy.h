@@ -26,6 +26,10 @@ private:
 
 	float coolTime_ = 1.0f;
 
+	float turnRangeX_ = 15.0f;
+
+	float moveDirectionX_ = 1.0f;
+
 	int shootCount_ = 0;
 
 	int maxCount_ = 3;
